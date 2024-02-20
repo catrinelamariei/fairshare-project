@@ -1,0 +1,39 @@
+W2 (20/2/2024) meeting notes
+
+TODO:
+Short:
+Ask on townsquare about language template				Due: today
+Split flowchart work							Due: this week	
+Knockout!!! (study guide) 						Due: this week
+Decide on which DB to use						Due: preferably this week
+Decide on unit testing framework					Due: preferably this week
+
+Workflow for this week:
+UI flowchart (payments part) & DB flowchart -> Classes -> DB -> GETs
+
+Decisions:
+Checkstyle: use default from OOP
+Flowchart sketcher: benjamin
+Currency: TBD, adjust DB later
+
+Updates:
+Started UI flowchart, in alternateflowchart branch (https://gitlab.ewi.tudelft.nl/cse1105/2023-2024/teams/oopp-team-34/-/blob/alternateflowchart/docs/FlowChart.drawio?ref_type=heads)
+Started DB flowchart, in https://drive.google.com/file/d/1zM_k0aSH5gLYB6yuTCuXqQOTBuc5l5kF/view 
+Mostly finished with git assignments
+
+
+Q&A:
+1. Language support: 
+Live translate support Not needed, only static content
+Language template live/restart server? Are the steps: add, restart server, then new template applies to everyone on server? TBD (ask on townsquare)
+2. Server connection model
+User doesn’t directly communicate with DB (communicates with controller using MVC model)
+Server is on localhost, not on browser
+3. DB technology
+Can choose own DB (traditional i.e. not key-value)
+Configure DB in java
+Testing: mockito
+
+Other notes:
+Ask questions related to project backlog in townsquare (mattermost) in the future 
+Getters, setters, equals test cuz why not
