@@ -5,6 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 @Entity
 public class Participant {
 
@@ -29,4 +34,18 @@ public class Participant {
       this.iban = iban;
    }
 
+   @Override
+   public boolean equals(Object obj) {
+      return EqualsBuilder.reflectionEquals(this, obj);
+   }
+
+   @Override
+   public int hashCode() {
+      return HashCodeBuilder.reflectionHashCode(this);
+   }
+
+   @Override
+   public String toString() {
+      return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+   }
 }
