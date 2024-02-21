@@ -2,6 +2,7 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+import jakarta.persistence.Column;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,8 +19,11 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
 
+    @Column(columnDefinition = "CLOB NOT NULL")
     public String name;
-    public List<String> tags;
+
+    @Column(columnDefinition = "CLOB")
+    public String tags;
 
     /**
      * Empty constructor for event
@@ -30,13 +34,21 @@ public class Event {
     }
 
     /**
-     * Constructure for event
+     * Constructor for event
+     * Concatenate list of tags to a single string separated by "#"
+     * IMPORTANT: Don't let user include "#" in their input
      * @param name  name of the event
      * @param tags  list of tags the event is associated to
      */
     public Event(String name, List<String> tags) {
         this.name = name;
-        this.tags = tags;
+        StringBuilder sb = new StringBuilder();
+        // concatenate with "#"
+        for (String tag : tags) {
+            sb.append(tag).append("#");
+        }
+        // remove the last "#"
+        sb.setLength(sb.length()-2);
     }
 
 
