@@ -15,9 +15,10 @@
  */
 package client;
 
-import client.scenes.AddQuoteCtrl;
-import client.scenes.MainCtrl;
-import client.scenes.QuoteOverviewCtrl;
+import client.scenes.AdminPageCtrl;
+import client.scenes.EventPageCtrl;
+import client.MainCtrl;
+import client.scenes.StartPageCtrl;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
@@ -27,7 +28,8 @@ public class MyModule implements Module {
     @Override
     public void configure(Binder binder) {
         binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(AddQuoteCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(QuoteOverviewCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(StartPageCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
     }
 }
