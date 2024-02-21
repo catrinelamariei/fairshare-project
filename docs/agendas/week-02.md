@@ -25,6 +25,7 @@ Agenda Items:
   - Checkstyle for the project (2 min)
   - Decide SQL database, maybe SQLite (2 min)
   - Split the work for this week (7 min)
+  - unit testing (5 min)
 - Summarize action points: Who , what , when? (5 min)
 - Feedback round: What went well and what can be improved next time? (2 min)
 - Planned meeting duration != actual duration? Where/why did you mis -estimate? (54 min)
