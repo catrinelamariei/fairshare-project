@@ -7,19 +7,19 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class EventPageCtrl {
+public class PrivCheckPageCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
 
     @Inject
-    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public PrivCheckPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
 
     public void initialize(URL location, ResourceBundle resources) {}
 
-    public void nextPage() {
-        mainCtrl.showAdminCheckPage();
+    public void adminPage() {
+        mainCtrl.showAdminPage();
     }
 }
