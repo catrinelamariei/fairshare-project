@@ -22,8 +22,8 @@ public class Event {
     @Column(columnDefinition = "CLOB NOT NULL")
     public String name;
 
-    @Column(columnDefinition = "CLOB")
-    public String tags;
+
+    public List<String> tags;
 
     /**
      * Empty constructor for event
@@ -35,20 +35,12 @@ public class Event {
 
     /**
      * Constructor for event
-     * Concatenate list of tags to a single string separated by "#"
-     * IMPORTANT: Don't let user include "#" in their input
      * @param name  name of the event
      * @param tags  list of tags the event is associated to
      */
     public Event(String name, List<String> tags) {
         this.name = name;
-        StringBuilder sb = new StringBuilder();
-        // concatenate with "#"
-        for (String tag : tags) {
-            sb.append(tag).append("#");
-        }
-        // remove the last "#"
-        sb.setLength(sb.length()-2);
+        this.tags = tags;
     }
 
 
