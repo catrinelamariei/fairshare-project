@@ -45,4 +45,14 @@ public class MainCtrl {
         primaryStage.setTitle("Home Screen");
         primaryStage.setScene(startPage);
     }
+
+    public void showEventPage() {
+        primaryStage.setTitle("<EventName>: overview");
+        primaryStage.setScene(eventPage);
+    }
+
+    public void showAdminPage() {
+        primaryStage.setTitle("<EventName>: admin panel");
+        primaryStage.setScene(adminPage);
+    }
 }
