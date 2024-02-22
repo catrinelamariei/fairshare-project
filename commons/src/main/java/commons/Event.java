@@ -2,17 +2,15 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
 import java.util.List;
+import java.util.Set;
 
+@Entity
 public class Event {
 
     @Id
@@ -22,8 +20,9 @@ public class Event {
     @Column(columnDefinition = "CLOB NOT NULL")
     public String name;
 
+    @OneToMany(mappedBy="event")
+    public Set<Tag> tags;
 
-    public List<String> tags;
 
     /**
      * Empty constructor for event
@@ -36,12 +35,11 @@ public class Event {
     /**
      * Constructor for event
      * @param name  name of the event
-     * @param tags  list of tags the event is associated to
      */
-    public Event(String name, List<String> tags) {
+    public Event(String name) {
         this.name = name;
-        this.tags = tags;
     }
+
 
 
     @Override
