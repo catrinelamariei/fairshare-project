@@ -24,22 +24,20 @@ public class Event {
     public Set<Tag> tags;
 
 
-    /**
-     * Empty constructor for event
-     */
     @SuppressWarnings("unused")
     private Event() {
         // for object mapper
     }
 
-    /**
-     * Constructor for event
-     * @param name  name of the event
-     */
     public Event(String name) {
         this.name = name;
     }
 
+    public boolean addTag(Tag tag) {
+        if (tags.contains(tag)) return false;
+        else tags.add(tag);
+        return true;
+    }
 
 
     @Override
