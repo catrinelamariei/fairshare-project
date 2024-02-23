@@ -19,7 +19,7 @@ public class AdminPageCtrl {
 
     public void initialize(URL location, ResourceBundle resources) {}
 
-    public void nextPage() {
+    public void homePage() {
         mainCtrl.showStartPage();
     }
 }

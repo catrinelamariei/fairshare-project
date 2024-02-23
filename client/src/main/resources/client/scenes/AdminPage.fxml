@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AdminPageCtrl">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AdminPageCtrl">
    <children>
-      <Button alignment="CENTER" layoutX="274.0" layoutY="188.0" mnemonicParsing="false" onAction="#nextPage" text="Button" />
+      <Button alignment="CENTER" layoutX="77.0" layoutY="99.0" mnemonicParsing="false" onAction="#homePage" text="Home" />
+      <Button layoutX="163.0" layoutY="99.0" mnemonicParsing="false" text="Upload JSON" />
+      <Button layoutX="371.0" layoutY="99.0" mnemonicParsing="false" text="Button" />
    </children>
 </AnchorPane>

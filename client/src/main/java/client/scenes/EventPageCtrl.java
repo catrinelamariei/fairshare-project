@@ -20,6 +20,6 @@ public class EventPageCtrl {
     public void initialize(URL location, ResourceBundle resources) {}
 
     public void nextPage() {
-        mainCtrl.showAdminPage();
+        mainCtrl.showAdminCheckPage();
     }
 }
