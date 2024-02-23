@@ -8,25 +8,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
-@IdClass(TagPK.class)
 public class Tag {
 
     @ManyToOne
-    @Id
+    @MapsId("eventId")
     @JoinColumn(name="event_id", referencedColumnName ="id", nullable=false)
     public Event event;
 
     @Id
     public String name;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
+
+    @Column(columnDefinition = "enum('RED','ORANGE','YELLOW','GREEN','BLUE','INDIGO','VIOLET')")
+    @Enumerated(EnumType.STRING)
     public Color color;
+
 
     public enum Color {
         RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET;
     }
 
-    private Tag() {
+    public Tag() {
         // for object mapper
     }
 
