@@ -24,12 +24,16 @@ public class PrivCheckPageCtrl {
 
     public void initialize(URL location, ResourceBundle resources) {}
 
-    public void adminPage() {
+    public void login() {
         if(password.getText().equals("abc")) {
-            mainCtrl.showAdminPage();
+            adminPage();
         }else{
             text.setStyle("-fx-text-fill: red;");
             text.setText("Wrong code");
         }
+    }
+
+    public void adminPage(){
+        mainCtrl.showAdminPage();
     }
 }
