@@ -23,13 +23,13 @@ class EventTest {
         t = new Tag(e, "name", BLUE);
         tags = new HashSet<>();
         tags.add(t);
+        e.addTag(t);
     }
 
 
     @Test
     void checkConstructor() {
         assertEquals("name", e.name);
-        assertTrue(e.addTag(t));
         assertEquals(tags, e.tags);
     }
 
@@ -37,8 +37,7 @@ class EventTest {
     void equalsSame() {
         Event e2 = new Event("name");
         Tag t2 = new Tag(e2, "name", BLUE);
-        Set<Tag> tags2 = new HashSet<>();
-        tags2.add(t2);
+        e2.addTag(t2);
         assertEquals(e, e2);
     }
 
@@ -46,8 +45,7 @@ class EventTest {
     void equalsDifferentName() {
         Event e2 = new Event("name2");
         Tag t2 = new Tag(e2, "name", BLUE);
-        Set<Tag> tags2 = new HashSet<>();
-        tags2.add(t2);
+        e2.addTag(t2);
         assertNotEquals(e, e2);
     }
 
@@ -55,8 +53,7 @@ class EventTest {
     void equalsDifferentTags() {
         Event e2 = new Event("name");
         Tag t2 = new Tag(e2, "name2", RED);
-        Set<Tag> tags2 = new HashSet<>();
-        tags2.add(t2);
+        e2.addTag(t2);
         assertNotEquals(e, e2);
     }
 
@@ -64,14 +61,31 @@ class EventTest {
     void equalsHashCode() {
         Event e2 = new Event("name");
         Tag t2 = new Tag(e2, "name", BLUE);
-        Set<Tag> tags2 = new HashSet<>();
-        tags2.add(t2);
+        e2.addTag(t2);
         assertEquals(e.hashCode(), e2.hashCode());
     }
 
     @Test
     void testToString() {
-        e = new Event("name");
         assertNotNull(e.toString());
+    }
+
+    @Test
+    void addTagTrue() {
+        Tag t2 = new Tag(e, "name2", RED);
+        assertTrue(e.addTag(t2));
+    }
+
+    @Test
+    void addTestSameTag() {
+        boolean temp = e.tags.contains(t);
+        assertFalse(e.addTag(t));
+    }
+
+    @Test
+    void addTestEquivalentTag() {
+        Tag t2 = new Tag(e, "name", BLUE);
+        assertTrue(e.addTag(t));
+        assertFalse(e.addTag(t2));
     }
 }
