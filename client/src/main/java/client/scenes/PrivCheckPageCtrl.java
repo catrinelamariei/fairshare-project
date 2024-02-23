@@ -2,7 +2,7 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.utils.ServerUtils;
-import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
 
 import javax.inject.Inject;
@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 public class PrivCheckPageCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    public TextField password;
+    public PasswordField password;
     public Text text;
 
     @Inject
