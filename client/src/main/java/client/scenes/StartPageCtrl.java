@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
@@ -41,6 +42,50 @@ public class StartPageCtrl {
     public StartPageCtrl(ServerUtils serverUtils, MainCtrl mainCtrl) {
         this.serverUtils = serverUtils;
         this.mainCtrl = mainCtrl;
+    }
+    public void onCreateEvent() {
+        String text = newEvent.getText();
+        if (text != null && !text.isEmpty()) {
+            events.add(text);
+            newEvent.clear();
+            //confirmation dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Event Created");
+            alert.setHeaderText(null);
+            alert.setContentText(text + " Event Created!");
+            alert.showAndWait();
+        } else {
+            // Display an error message if the input is invalid
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter a valid event name.");
+            alert.showAndWait();
+        }
+
+    }
+
+    //this method still needs work done
+    //because it doesn't do anything after you press join
+    public void onJoinEvent(){
+        String text = joinedEvent.getText();
+        if (text != null && !text.isEmpty()) {
+            System.out.println(text + " Event joined");
+            joinedEvent.clear();
+        } else {
+            // Display an error message if the input is invalid
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter a valid event name.");
+            alert.showAndWait(); //35
+        }
+    }
+
+    public void onViewEvent(){
+       // String eventName = event.getText();
+
+        System.out.println("Redirecting to ");
     }
 
 
