@@ -7,6 +7,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.Objects;
+
 @Entity
 public class Tag {
 
@@ -40,6 +42,15 @@ public class Tag {
     }
 
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o.getClass()!=this.getClass()) return false;
+//        Tag that = (Tag) o;
+//        return event.equals(that.event) && name.equals(that.name);
+//    }
+
+
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
@@ -47,7 +58,7 @@ public class Tag {
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return Objects.hash(event, name, color);
     }
 
     @Override

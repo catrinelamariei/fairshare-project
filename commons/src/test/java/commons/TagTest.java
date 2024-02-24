@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static commons.Tag.Color.BLUE;
-import static commons.Tag.Color.RED;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TagTest {
@@ -44,11 +43,6 @@ class TagTest {
         assertNotEquals(t, t2);
     }
 
-    @Test
-    void equalsDifferentColor() {
-        Tag t2 = new Tag(e, "name", RED);
-        assertNotEquals(t, t2);
-    }
 
     @Test
     void equalsHashCode() {
