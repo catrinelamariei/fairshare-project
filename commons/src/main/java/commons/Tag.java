@@ -4,7 +4,6 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Objects;
@@ -27,7 +26,7 @@ public class Tag {
 
 
     public enum Color {
-        RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET;
+        RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET
     }
 
     public Tag() {
