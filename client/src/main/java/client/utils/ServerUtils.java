@@ -53,6 +53,15 @@ public class ServerUtils {
                 .get(new GenericType<List<Quote>>() {});
 	}
 
+	//I need an Event class in order to create this method
+//	public List<Event> getEvent() {
+//		return ClientBuilder.newClient(new ClientConfig()) //
+//				.target(SERVER).path("fake/path") //
+//				.request(APPLICATION_JSON) //
+//				.accept(APPLICATION_JSON) //
+//				.get(new GenericType<List<Event>>() {});
+//	}
+
 	public Quote addQuote(Quote quote) {
 		return ClientBuilder.newClient(new ClientConfig()) //
 				.target(SERVER).path("api/quotes") //
