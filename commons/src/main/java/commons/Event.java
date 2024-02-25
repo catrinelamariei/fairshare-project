@@ -39,6 +39,17 @@ public class Event {
         return true;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
 
     // this is a custom equals method that doesn't consider tags
     // need some method later on to ensure event with same name can't be instantiated multiple times

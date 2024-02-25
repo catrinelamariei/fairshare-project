@@ -45,6 +45,7 @@ public class TransactionTest {
         assertNotEquals(transaction1, differentTransaction);
     }
 
+
     @Test
     public void equalsHashCode() {
         Date date = new Date();
