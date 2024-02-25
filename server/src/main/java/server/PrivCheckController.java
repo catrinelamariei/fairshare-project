@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class PrivCheckController {
 
-    private static String code = "abc"; // need to generate random
+    private static String code; // need to generate random
 
     public PrivCheckController(){
         super();
