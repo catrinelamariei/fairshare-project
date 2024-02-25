@@ -1,5 +1,6 @@
 package client.scenes;
 import client.utils.ServerUtils;
+import commons.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 public class StartPageCtrl {
     private ServerUtils serverUtils;
     private MainCtrl mainCtrl;
-    private ArrayList events = new ArrayList<String>();
+    private ArrayList eventIds = new ArrayList<Long>();
     @FXML
     private Button createButton;
     @FXML
@@ -35,7 +36,9 @@ public class StartPageCtrl {
     public void onCreateEvent() {
         String text = newEvent.getText();
         if (text != null && !text.isEmpty()) {
-            events.add(text);
+            Event e = new Event(text);
+            serverUtils.addEvent(e);
+            eventIds.add(e.getId());
             newEvent.clear();
             //confirmation dialog
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

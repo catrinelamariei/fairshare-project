@@ -20,10 +20,12 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import commons.Event;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Quote;
@@ -53,14 +55,18 @@ public class ServerUtils {
                 .get(new GenericType<List<Quote>>() {});
 	}
 
-	//I need an Event class in order to create this method
-//	public List<Event> getEvent() {
-//		return ClientBuilder.newClient(new ClientConfig()) //
-//				.target(SERVER).path("fake/path") //
-//				.request(APPLICATION_JSON) //
-//				.accept(APPLICATION_JSON) //
-//				.get(new GenericType<List<Event>>() {});
-//	}
+	/**
+	 * Adds and event to the database.
+	 * @param event the event to be added
+	 * @return the event that was added
+	 */
+	public Event addEvent(Event event) {
+		return ClientBuilder.newClient(new ClientConfig()) //
+				.target(SERVER).path("api/event") //
+				.request(APPLICATION_JSON) //
+				.accept(APPLICATION_JSON) //
+				.post(Entity.entity(event, APPLICATION_JSON), Event.class);
+	}
 
 	public Quote addQuote(Quote quote) {
 		return ClientBuilder.newClient(new ClientConfig()) //
