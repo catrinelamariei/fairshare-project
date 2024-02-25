@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static commons.Tag.Color.BLUE;
-import static commons.Tag.Color.RED;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventTest {
