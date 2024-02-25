@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -41,14 +42,18 @@ public class Event {
     }
 
 
+    // this is a custom equals method that doesn't consider tags
+    // need some method later on to ensure event with same name can't be instantiated multiple times
     @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Event event)) return false;
+        return id == event.id && Objects.equals(name, event.name);
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return Objects.hash(id, name);
     }
 
     @Override

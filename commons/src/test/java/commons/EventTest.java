@@ -25,16 +25,17 @@ class EventTest {
         assertEquals(tags, e.tags);
     }
 
-//    @Test
-//    void equalsSame() {
-//        Event e = new Event("name");
-//        Tag t = new Tag(e, "name", BLUE);
-//        e.addTag(t);
-//        Event e2 = new Event("name");
-//        Tag t2 = new Tag(e2, "name", BLUE);
-//        e2.addTag(t2);
-//        assertEquals(e, e2);
-//    }
+    @Test
+    void equalsSame() {
+        Event e = new Event("name");
+        Tag t = new Tag(e, "name", BLUE);
+        e.addTag(t);
+        Event e2 = new Event("name");
+        Tag t2 = new Tag(e2, "name", BLUE);
+        e2.addTag(t2);
+        assertEquals(t, t2);
+        assertEquals(e, e2);
+    }
 
     @Test
     void equalsDifferentName() {
@@ -47,16 +48,6 @@ class EventTest {
         assertNotEquals(e, e2);
     }
 
-    @Test
-    void equalsDifferentTags() {
-        Event e = new Event("name");
-        Tag t = new Tag(e, "name", BLUE);
-        e.addTag(t);
-        Event e2 = new Event("name");
-        Tag t2 = new Tag(e2, "name2", RED);
-        e2.addTag(t2);
-        assertNotEquals(e, e2);
-    }
 
     @Test
     void equalsHashCode() {
@@ -84,20 +75,20 @@ class EventTest {
         assertTrue(e.addTag(t));
     }
 
-//    @Test
-//    void addTestSameTag() {
-//        Event e = new Event("name");
-//        Tag t = new Tag(e, "name", BLUE);
-//        assertTrue(e.addTag(t));
-//        assertFalse(e.addTag(t));
-//    }
-//
-//    @Test
-//    void addTestEquivalentTag() {
-//        Event e = new Event("name");
-//        Tag t = new Tag(e, "name", BLUE);
-//        Tag t2 = new Tag(e, "name", BLUE);
-//        assertTrue(e.addTag(t));
-//        assertFalse(e.addTag(t2));
-//    }
+    @Test
+    void addTestSameTag() {
+        Event e = new Event("name");
+        Tag t = new Tag(e, "name", BLUE);
+        assertTrue(e.addTag(t));
+        assertFalse(e.addTag(t));
+    }
+
+    @Test
+    void addTestEquivalentTag() {
+        Event e = new Event("name");
+        Tag t = new Tag(e, "name", BLUE);
+        Tag t2 = new Tag(e, "name", BLUE);
+        assertTrue(e.addTag(t));
+        assertFalse(e.addTag(t2));
+    }
 }

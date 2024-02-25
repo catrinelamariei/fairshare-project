@@ -41,15 +41,6 @@ public class Tag {
     }
 
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o.getClass()!=this.getClass()) return false;
-//        Tag that = (Tag) o;
-//        return event.equals(that.event) && name.equals(that.name);
-//    }
-
-
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
