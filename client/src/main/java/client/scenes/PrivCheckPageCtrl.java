@@ -44,7 +44,12 @@ public class PrivCheckPageCtrl {
 
 
 
-
+    public void RequestCodeGeneration(){
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8080/privCheck";
+        String response = restTemplate.getForObject(url, String.class);
+        System.out.println("Response: " + response);
+    }
     public String PostRequest(String code) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:8080/privCheck";
