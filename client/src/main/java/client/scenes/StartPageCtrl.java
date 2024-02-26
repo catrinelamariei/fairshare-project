@@ -20,7 +20,11 @@ public class StartPageCtrl implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {}
 
-    public void nextPage() {
+    public void eventPage() {
         mainCtrl.showEventPage();
     }
+    public void adminPage() {
+        mainCtrl.showAdminCheckPage();
+    }
+
 }
