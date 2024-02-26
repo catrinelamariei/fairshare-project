@@ -9,6 +9,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Transaction {
@@ -21,15 +23,29 @@ public class Transaction {
     public String currencyCode;
     @Column(columnDefinition = "NUMERIC(21,2)")
     public BigDecimal amount;
+    @ManyToOne
+    public Participant author;
+
+    @ManyToMany(cascade = CascadeType.DETACH)
+    public Set<Participant> participants;
+
+    @ManyToMany(cascade = CascadeType.DETACH)
+    public Set<Tag> tags;
+
+
+
     @SuppressWarnings("unused")
     private Transaction() {
         // for object mapper
     }
 
-    public Transaction(Date date,String currencyCode, BigDecimal amount) {
+    public Transaction(Date date,String currencyCode, BigDecimal amount, Participant author) {
         this.date = date;
         this.currencyCode = currencyCode;
         this.amount = amount;
+        this.tags = new HashSet<Tag>();
+        this.author = author;
+        this.participants = new HashSet<>();
     }
 
     @Override

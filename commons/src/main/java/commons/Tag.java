@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Tag {
@@ -23,7 +25,8 @@ public class Tag {
     @Column(columnDefinition = "enum('RED','ORANGE','YELLOW','GREEN','BLUE','INDIGO','VIOLET')")
     @Enumerated(EnumType.STRING)
     public Color color;
-
+   @ManyToMany(mappedBy = "tags")
+    public Set<Transaction> transactions;
 
     public enum Color {
         RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET
@@ -38,6 +41,7 @@ public class Tag {
         this.event = event;
         this.name = name;
         this.color = color;
+        this.transactions = new HashSet<Transaction>();
     }
 
 

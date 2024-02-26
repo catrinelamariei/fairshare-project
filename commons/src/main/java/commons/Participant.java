@@ -1,14 +1,14 @@
 package commons;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Participant {
@@ -21,6 +21,11 @@ public class Participant {
    public String lastName;
    public String email;
    public String iban;
+   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+   public Set<Transaction> paidTransactions;
+
+   @ManyToMany(mappedBy = "participants")
+   public Set<Transaction> participatedTransactions;
 
    @SuppressWarnings("unused")
    private Participant() {
@@ -32,6 +37,8 @@ public class Participant {
       this.lastName = lastName;
       this.email = email;
       this.iban = iban;
+      this.paidTransactions = new HashSet<>();
+      this.participatedTransactions = new HashSet<>();
    }
 
    @Override
