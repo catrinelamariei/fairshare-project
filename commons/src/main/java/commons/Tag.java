@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 public class Tag {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("eventId")
     @JoinColumn(name="event_id", referencedColumnName ="id", nullable=false)
     public Event event;
@@ -20,7 +20,7 @@ public class Tag {
     public String name;
 
 
-    @Column(columnDefinition = "enum('RED','ORANGE','YELLOW','GREEN','BLUE','INDIGO','VIOLET')")
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     public Color color;
 

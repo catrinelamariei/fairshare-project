@@ -16,10 +16,10 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
+    @Column(nullable = false)
     public String name;
 
-    @OneToMany(mappedBy="event")
+    @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
     public Set<Tag> tags;
 
 
