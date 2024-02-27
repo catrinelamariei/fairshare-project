@@ -25,10 +25,6 @@ public class EventController {
             return ResponseEntity.badRequest().build();
         }
 
-        if (repo.existsById(event.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
-
         repo.save(event);
         return ResponseEntity.ok().build();
     }
