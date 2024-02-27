@@ -28,7 +28,7 @@ public class EventPageCtrl {
         mainCtrl.showStartPage();
     }
     public void gotoAdminLogin() {
-        mainCtrl.showAdminPage();
+        mainCtrl.showAdminCheckPage();
     }
 
     public void copyInviteCode() {
