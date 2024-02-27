@@ -22,6 +22,9 @@ public class Event {
     @OneToMany(mappedBy="event")
     public Set<Tag> tags;
 
+    @OneToMany(mappedBy="event")
+    public Set<Participant> participants;
+
 
     @SuppressWarnings("unused")
     public Event() {
@@ -31,6 +34,7 @@ public class Event {
     public Event(String name) {
         this.name = name;
         this.tags = new HashSet<>();
+        this.participants = new HashSet<>();
     }
 
     public boolean addTag(Tag tag) {
@@ -50,6 +54,11 @@ public class Event {
     public Set<Tag> getTags() {
         return tags;
     }
+
+    public Set<Participant> getParticipants() {
+        return participants;
+    }
+
 
     // this is a custom equals method that doesn't consider tags
     // need some method later on to ensure event with same name can't be instantiated multiple times

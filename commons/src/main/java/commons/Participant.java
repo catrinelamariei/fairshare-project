@@ -21,6 +21,9 @@ public class Participant {
    public String lastName;
    public String email;
    public String iban;
+
+   @ManyToOne
+   public Event event;
    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
    public Set<Transaction> paidTransactions;
 
