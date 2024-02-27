@@ -10,12 +10,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.UUID;
+
 @Entity
 public class Participant {
 
    @Id
-   @GeneratedValue(strategy = GenerationType.AUTO)
-   public long id;
+   @GeneratedValue(strategy = GenerationType.UUID)
+   public UUID id;
 
    public String firstName;
    public String lastName;

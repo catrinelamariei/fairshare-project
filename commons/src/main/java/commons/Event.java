@@ -8,13 +8,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 public class Event {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    public UUID id;
 
     @Column(columnDefinition = "CLOB NOT NULL")
     public String name;
@@ -39,7 +40,7 @@ public class Event {
         return true;
     }
 
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
