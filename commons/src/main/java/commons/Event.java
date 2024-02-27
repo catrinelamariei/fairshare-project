@@ -14,13 +14,13 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    private long id;
 
     @Column(nullable = false)
-    public String name;
+    private String name;
 
     @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
-    public Set<Tag> tags;
+    private Set<Tag> tags;
 
 
     @SuppressWarnings("unused")
@@ -49,6 +49,18 @@ public class Event {
 
     public Set<Tag> getTags() {
         return tags;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 
     // this is a custom equals method that doesn't consider tags

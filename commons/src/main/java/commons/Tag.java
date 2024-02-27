@@ -14,15 +14,15 @@ public class Tag {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("eventId")
     @JoinColumn(name="event_id", referencedColumnName ="id", nullable=false)
-    public Event event;
+    private Event event;
 
     @Id
-    public String name;
+    private String name;
 
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    public Color color;
+    private Color color;
 
 
     public enum Color {
@@ -40,6 +40,29 @@ public class Tag {
         this.color = color;
     }
 
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
     @Override
     public boolean equals(Object obj) {
