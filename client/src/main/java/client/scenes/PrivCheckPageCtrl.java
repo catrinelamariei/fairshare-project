@@ -30,7 +30,7 @@ public class PrivCheckPageCtrl {
     public void login() {
         String response = PostRequest(password.getText());
 
-        if(response.equals("Token")) {
+        if(!response.equals("Invalid password")) {
             adminPage();
         }else{
             text.setStyle("-fx-text-fill: red;");
@@ -46,13 +46,12 @@ public class PrivCheckPageCtrl {
 
     public void RequestCodeGeneration(){
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/privCheck";
+        String url = "http://localhost:8080/admin";
         String response = restTemplate.getForObject(url, String.class);
-        System.out.println("Response: " + response);
     }
     public String PostRequest(String code) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/privCheck";
+        String url = "http://localhost:8080/admin";
         ResponseEntity<String> response = restTemplate.postForEntity(url, code, String.class);
         return response.getBody();
     }
