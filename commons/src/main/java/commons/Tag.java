@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class Tag {
@@ -17,7 +18,11 @@ public class Tag {
     private Event event;
 
     @Id
-    private String name;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    public UUID id;
+
+    @Column(nullable = false)
+    public String name;
 
 
     @Column(nullable = false)
