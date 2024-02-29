@@ -1,12 +1,14 @@
 package client.scenes;
+import client.MainCtrl;
 import client.utils.ServerUtils;
+
+import javax.inject.Inject;
 import commons.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
-import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class StartPageCtrl {
@@ -78,5 +80,10 @@ public class StartPageCtrl {
         System.out.println("Redirecting to ");
     }
 
-
+    public void eventPage() {
+        mainCtrl.showEventPage();
+    }
+    public void adminPage() {
+        mainCtrl.showAdminCheckPage();
+    }
 }

@@ -11,13 +11,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    public UUID id;
     @Column(columnDefinition = "TIMESTAMP(0)")
     public Date date;
     public String currencyCode;
