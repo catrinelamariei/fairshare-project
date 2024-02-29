@@ -12,14 +12,13 @@ import java.util.UUID;
 @Entity
 public class Tag {
 
-    @ManyToOne
-    @MapsId("eventId")
-    @JoinColumn(name="event_id", referencedColumnName ="id", nullable=false)
-    public Event event;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
+
+    @ManyToOne
+    public Event event;
+
 
     public String name;
 

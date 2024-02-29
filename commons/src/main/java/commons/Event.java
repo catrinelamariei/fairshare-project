@@ -20,7 +20,7 @@ public class Event {
     @Column(columnDefinition = "CLOB NOT NULL")
     public String name;
 
-    @OneToMany(mappedBy="event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     public Set<Tag> tags;
 
 
@@ -35,8 +35,10 @@ public class Event {
     }
 
     public boolean addTag(Tag tag) {
+        if(tags == null) tags = new HashSet<>();
         if (tags.contains(tag)) return false;
         else tags.add(tag);
+        tag.event = this;
         return true;
     }
 
