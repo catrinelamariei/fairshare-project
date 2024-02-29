@@ -1,7 +1,5 @@
 package commons;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -10,6 +8,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Event {
@@ -57,9 +57,6 @@ public class Event {
         return tags;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public void setName(String name) {
         this.name = name;
