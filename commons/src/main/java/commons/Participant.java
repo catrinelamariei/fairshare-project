@@ -36,6 +36,17 @@ public class Participant {
       this.iban = iban;
    }
 
+   public UUID getId() {
+      return id;
+   }
+   public String getFirstName() {
+      return firstName;
+   }
+   public String getLastName() {
+      return lastName;
+   }
+   public String getEmail() { return email;}
+
    @Override
    public boolean equals(Object obj) {
       return EqualsBuilder.reflectionEquals(this, obj);
