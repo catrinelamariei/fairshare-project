@@ -1,14 +1,15 @@
 package commons;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Event {
@@ -17,11 +18,14 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
-    public String name;
+    @Column(nullable = false)
+    private String name;
 
-    @OneToMany(mappedBy="event")
-    public Set<Tag> tags;
+    @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
+    private Set<Tag> tags;
+
+    @Column (nullable = false)
+    private LocalDateTime creationDate;
 
 
     @SuppressWarnings("unused")
@@ -32,6 +36,7 @@ public class Event {
     public Event(String name) {
         this.name = name;
         this.tags = new HashSet<>();
+        this.creationDate = LocalDateTime.now();
     }
 
     public boolean addTag(Tag tag) {
@@ -50,6 +55,23 @@ public class Event {
 
     public Set<Tag> getTags() {
         return tags;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     // this is a custom equals method that doesn't consider tags

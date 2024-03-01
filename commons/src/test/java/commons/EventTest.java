@@ -20,8 +20,8 @@ class EventTest {
         e.addTag(t);
         Set<Tag> tags = new HashSet<>();
         tags.add(t);
-        assertEquals("name", e.name);
-        assertEquals(tags, e.tags);
+        assertEquals("name", e.getName());
+        assertEquals(tags, e.getTags());
     }
 
     @Test
