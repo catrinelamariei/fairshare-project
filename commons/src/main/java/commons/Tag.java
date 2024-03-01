@@ -27,7 +27,6 @@ public class Tag {
     @Enumerated(EnumType.STRING)
     private Color color;
 
-
     public enum Color {
         RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET
     }
@@ -41,6 +40,9 @@ public class Tag {
         this.event = event;
         this.name = name;
         this.color = color;
+    }
+    public UUID GetId() {
+        return id;
     }
 
     public Event getEvent() {

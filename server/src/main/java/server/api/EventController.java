@@ -30,6 +30,9 @@ public class EventController {
         if (event == null || event.getName() == null || event.getName() == "") {
             return ResponseEntity.badRequest().build();
         }
+        event.addTag(new Tag(event, "food", Tag.Color.GREEN));
+        event.addTag(new Tag(event, "entrance fees", Tag.Color.BLUE));
+        event.addTag(new Tag(event, "travel", Tag.Color.RED));
         repo.save(event);
         return ResponseEntity.ok().build();
     }
@@ -64,7 +67,7 @@ public class EventController {
             return ResponseEntity.badRequest().build();
         }
         Event e = repo.findById(id).get();
-        e.name = event.name;
+        e.setName(event.getName());
         repo.save(e);
 
         return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
