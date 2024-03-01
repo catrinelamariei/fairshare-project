@@ -60,9 +60,11 @@ public class EventController {
 
 
     @Transactional
-    @PutMapping(path = {"" , "/"})
-    public ResponseEntity<EventDTO> updateById(@RequestBody Event event) {
-        UUID id = event.id;
+    @PutMapping("/{id}")
+    public ResponseEntity<EventDTO> updateById(@PathVariable("id") UUID id,@RequestBody Event event) {
+        if (id==null || event == null || event.getName() == null || event.getName() == "") {
+            return ResponseEntity.badRequest().build();
+        }
         if (!repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
         }
