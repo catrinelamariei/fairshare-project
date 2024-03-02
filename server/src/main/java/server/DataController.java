@@ -3,7 +3,7 @@ package server;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 @RestController
-public class JsonData {
+public class DataController {
 
     private static String code; // need to generate random
     private JwtTokenService jwtTokenService;
@@ -14,10 +14,10 @@ public class JsonData {
         String value = token.replace("Bearer ", "");
         JwtTokenService jwtTokenService = new JwtTokenService();
         if(jwtTokenService.isValidToken(value,request.getRemoteAddr())){
-            return "YAY";
+            return "Valid Token";
         }
         else {
-            return token;
+            return "Invalid Token";
         }
     }
 }
