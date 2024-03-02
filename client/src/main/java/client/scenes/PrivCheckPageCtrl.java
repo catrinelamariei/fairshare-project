@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.MainCtrl;
+import client.UserData;
 import client.utils.ServerUtils;
 import javafx.scene.control.PasswordField;
 import javafx.scene.text.Text;
@@ -31,6 +32,9 @@ public class PrivCheckPageCtrl {
         String response = PostRequest(password.getText());
 
         if(!response.equals("Invalid password")) {
+            UserData data = UserData.getInstance();
+            data.setToken(response);
+            System.out.println("1. token: " + response);
             adminPage();
         }else{
             text.setStyle("-fx-text-fill: red;");

@@ -16,7 +16,7 @@ public class JwtTokenService {
                     .compact();
         }
 
-        public boolean isValidUsername(String token, String ip) {
+        public boolean isValidToken(String token, String ip) {
             try {
                 Claims claims = Jwts.parser()
                         .setSigningKey(secretKey)
@@ -24,8 +24,11 @@ public class JwtTokenService {
                         .getBody();
 
                 String tokenIp = claims.getSubject();
+                System.out.println("tokenIp: " + tokenIp);
+                System.out.println("ip: " + ip);
                 return ip.equals(tokenIp);
             } catch (Exception e) {
+                System.out.println("Error, token: " + token +", ip: "+ip);
                 return false; // Token validation failed
             }
         }
