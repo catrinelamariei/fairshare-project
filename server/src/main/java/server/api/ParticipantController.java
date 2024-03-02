@@ -2,10 +2,12 @@ package server.api;
 
 import commons.DTOs.ParticipantDTO;
 import commons.Participant;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.ParticipantRepository;
 
+import java.nio.file.Path;
 import java.util.UUID;
 
 @RestController
@@ -17,7 +19,17 @@ public class ParticipantController {
       this.repo = repo;
    }
 
-   @PostMapping(path = {"" , "/"})
+   @Transactional
+   @GetMapping("/{id}")
+   public ResponseEntity<ParticipantDTO> getById(@PathVariable("id") UUID id) {
+      if (!repo.existsById(id)) {
+         return ResponseEntity.badRequest().build();
+      }
+      return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
+   }
+
+   @Transactional
+   @PostMapping(path = {"", "/"})
    public ResponseEntity<Participant> createParticipant(@RequestBody Participant participant) {
       if (participant == null || participant.getFirstName() == null || participant.getLastName() == null
               || participant.getFirstName() == "" || participant.getLastName() == "") {
@@ -28,13 +40,32 @@ public class ParticipantController {
       return ResponseEntity.ok().build();
    }
 
-   @GetMapping("/{id}")
-   public ResponseEntity<ParticipantDTO> getById(@PathVariable("id") UUID id) {
-      if (!repo.existsById(id)) {
+   @Transactional
+   @PutMapping(path = {"", "/"})
+   public ResponseEntity<ParticipantDTO> updateParticipant(@RequestBody Participant participant) {
+      UUID id = participant.id;
+      if(!repo.existsById(id)){
          return ResponseEntity.badRequest().build();
       }
+
+      Participant p = repo.findById(id).get();
+      p.firstName = participant.firstName;
+      p.lastName = participant.lastName;
+      p.email = participant.email;
+      p.iban = participant.iban;
+
+      repo.save(p);
       return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
    }
 
+   @Transactional
+   @DeleteMapping("/{id}")
+   public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
+      if(!repo.existsById(id)) {
+         return ResponseEntity.badRequest().build();
+      }
+      repo.deleteById(id);
+      return ResponseEntity.ok().build();
+   }
 
 }
