@@ -12,14 +12,12 @@ import java.util.UUID;
 @Entity
 public class Tag {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("eventId")
-    @JoinColumn(name="event_id", referencedColumnName ="id", nullable=false)
-    private Event event;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
+    
+    @ManyToOne
+    public Event event;
 
     @Column(nullable = false)
     public String name;
@@ -28,7 +26,6 @@ public class Tag {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Color color;
-
 
     public enum Color {
         RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET
@@ -43,6 +40,9 @@ public class Tag {
         this.event = event;
         this.name = name;
         this.color = color;
+    }
+    public UUID GetId() {
+        return id;
     }
 
     public Event getEvent() {

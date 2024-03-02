@@ -3,7 +3,7 @@ package commons;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class Event {
     private Set<Tag> tags;
 
     @Column (nullable = false)
-    private LocalDateTime creationDate;
+    private Date creationDate;
 
 
     @SuppressWarnings("unused")
@@ -36,12 +36,14 @@ public class Event {
     public Event(String name) {
         this.name = name;
         this.tags = new HashSet<>();
-        this.creationDate = LocalDateTime.now();
+        this.creationDate = new Date();
     }
 
     public boolean addTag(Tag tag) {
+        if(tags == null) tags = new HashSet<>();
         if (tags.contains(tag)) return false;
         else tags.add(tag);
+        tag.event = this;
         return true;
     }
 
@@ -66,11 +68,11 @@ public class Event {
         this.tags = tags;
     }
 
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
