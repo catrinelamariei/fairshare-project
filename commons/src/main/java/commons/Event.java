@@ -3,11 +3,7 @@ package commons;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -45,6 +41,11 @@ public class Event {
         else tags.add(tag);
         tag.event = this;
         return true;
+    }
+
+    public boolean deleteTag(Tag tag) {
+        if (tag == null) return false;
+        return tags.remove(tag);
     }
 
     public UUID getId() {
