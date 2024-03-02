@@ -31,14 +31,14 @@ public class TagController {
     }
 
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<Tag> createTag(@RequestBody Tag tag) {
+    public ResponseEntity<Tag> add(@RequestBody Tag tag) {
         if (tag == null ||
             tag.getName() == null ||
-            tag.getName() == "" ||
+            tag.getName().isEmpty() ||
             tag.getColor()==null ||
             tag.getEvent()==null ||
             tag.getEvent().getName() == null ||
-            tag.getEvent().getName() == "") {
+            tag.getEvent().getName().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         repo.save(tag);
@@ -51,7 +51,8 @@ public class TagController {
     public ResponseEntity<TagDTO> updateById(@PathVariable("id") UUID id,@RequestBody Tag tag) {
         if (tag==null ||
             id==null ||
-            tag.getName() == null || tag.getName() == "" ||
+            tag.getName() == null ||
+            tag.getName().isEmpty() ||
             tag.getColor()==null ||
             tag.getEvent()==null) {
             return ResponseEntity.badRequest().build();
