@@ -31,7 +31,8 @@ public class ParticipantController {
    @PostMapping(path = {"", "/"})
    public ResponseEntity<Participant> createParticipant(@RequestBody Participant participant) {
       if (participant == null || participant.getFirstName() == null || participant.getLastName() == null
-              || participant.getFirstName() == "" || participant.getLastName() == "") {
+              || participant.getFirstName() == "" || participant.getLastName() == ""
+              || participant.getEmail() == "" || participant.getIban() == ""){
          return ResponseEntity.badRequest().build();
       }
 
@@ -40,10 +41,13 @@ public class ParticipantController {
    }
 
    @Transactional
-   @PutMapping(path = {"", "/"})
-   public ResponseEntity<ParticipantDTO> updateParticipant(@RequestBody Participant participant) {
-      UUID id = participant.id;
+   @PutMapping("/{id}")
+   public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id, @RequestBody Participant participant) {
       if(!repo.existsById(id)){
+         return ResponseEntity.badRequest().build();
+      } else if(participant == null || id == null
+              || participant.getFirstName() == null || participant.getLastName() == null
+              || participant.getFirstName() == "" || participant.getLastName() == ""){
          return ResponseEntity.badRequest().build();
       }
 

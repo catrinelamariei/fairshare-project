@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -19,9 +20,16 @@ public class Participant {
    @GeneratedValue(strategy = GenerationType.UUID)
    public UUID id;
 
+   @Column(columnDefinition = "CLOB NOT NULL")
    public String firstName;
+
+   @Column(columnDefinition = "CLOB NOT NULL")
    public String lastName;
+
+   @Column(columnDefinition = "CLOB NOT NULL")
    public String email;
+
+   @Column(columnDefinition = "CLOB NOT NULL")
    public String iban;
 
    @SuppressWarnings("unused")
@@ -51,6 +59,27 @@ public class Participant {
    public String getIban(){
       return iban;
    }
+
+   public void setID(UUID id){
+      this.id = id;
+   }
+
+   public void setFirstName(String fName){
+      this.firstName = fName;
+   }
+
+   public void setLastName(String lName){
+      this.lastName = lName;
+   }
+
+   public void setEmail(String email){
+      this.email = email;
+   }
+
+   public void setIban(String iban){
+      this.iban = iban;
+   }
+
 
    @Override
    public boolean equals(Object obj) {
