@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartPageCtrl">
    <children>
       <Button fx:id="joinButton" layoutX="306.0" layoutY="154.0" mnemonicParsing="false" onAction="#onJoinEvent" text="Join" />
@@ -19,7 +18,7 @@
       <Hyperlink fx:id="eventA" layoutX="124.0" layoutY="256.0" onAction="#onViewEvent" text="Event A" />
       <Hyperlink fx:id="eventB" layoutX="124.0" layoutY="280.0" onAction="#onViewEvent" text="Event B" />
       <Hyperlink fx:id="eventC" layoutX="124.0" layoutY="304.0" onAction="#onViewEvent" text="Event C" />
-      <Button alignment="CENTER" layoutX="274.0" layoutY="188.0" mnemonicParsing="false" onAction="#eventPage" text="EventPage" />
-      <Button alignment="CENTER" layoutX="274.0" layoutY="229.0" mnemonicParsing="false" onAction="#adminPage" text="AdminPage" />
+      <Button alignment="CENTER" layoutX="460.0" layoutY="129.0" mnemonicParsing="false" onAction="#eventPage" text="EventPage" />
+      <Button alignment="CENTER" layoutX="457.0" layoutY="180.0" mnemonicParsing="false" onAction="#adminPage" text="AdminPage" />
    </children>
 </AnchorPane>
