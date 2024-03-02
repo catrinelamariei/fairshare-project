@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.ParticipantRepository;
 
-import java.nio.file.Path;
 import java.util.UUID;
 
 @RestController
