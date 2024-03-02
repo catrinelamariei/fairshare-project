@@ -38,7 +38,7 @@ public class Tag {
 
     public Tag(Event event, String name, Color color) {
         this.event = event;
-        event.addTag(this);
+        if (event!=null) event.addTag(this);
         this.name = name;
         this.color = color;
     }
