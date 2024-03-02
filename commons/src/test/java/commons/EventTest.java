@@ -2,7 +2,6 @@ package commons;
 
 import org.junit.jupiter.api.Test;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +16,6 @@ class EventTest {
     void checkConstructor() {
         Event e = new Event("name");
         Tag t = new Tag(e, "name", BLUE);
-        e.addTag(t);
         Set<Tag> tags = new HashSet<>();
         tags.add(t);
         assertEquals("name", e.getName());
