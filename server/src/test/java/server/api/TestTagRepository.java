@@ -53,19 +53,24 @@ public class TestTagRepository implements TagRepository {
 
     }
 
+
+    @Override
+    public Tag getById(UUID uuid) {
+        call("getById");
+        return find(uuid).get();
+    }
+
     @Override
     public Tag getOne(UUID uuid) {
         return null;
     }
 
-    @Override
-    public Tag getById(UUID uuid) {
-        return null;
-    }
+
 
     @Override
     public Tag getReferenceById(UUID uuid) {
-        return null;
+        call("getReferenceById");
+        return find(uuid).get();
     }
 
     @Override
@@ -107,7 +112,6 @@ public class TestTagRepository implements TagRepository {
     @Override
     public <S extends Tag> S save(S entity) {
         call("save");
-        entity.id = UUID.randomUUID();
         tags.add(entity);
         return entity;
     }
@@ -119,12 +123,18 @@ public class TestTagRepository implements TagRepository {
 
     @Override
     public Optional<Tag> findById(UUID uuid) {
-        return Optional.empty();
+        call("getById");
+        return Optional.of(find(uuid).get());
+    }
+
+    private Optional<Tag> find(UUID uuid) {
+        return tags.stream().filter(t -> t.id == uuid).findFirst();
     }
 
     @Override
     public boolean existsById(UUID uuid) {
-        return false;
+        call("existsById");
+        return find(uuid).isPresent();
     }
 
     @Override
@@ -144,7 +154,8 @@ public class TestTagRepository implements TagRepository {
 
     @Override
     public void deleteById(UUID uuid) {
-
+        call("deleteById");
+        tags.remove(find(uuid));
     }
 
     @Override
@@ -176,4 +187,6 @@ public class TestTagRepository implements TagRepository {
     public Page<Tag> findAll(Pageable pageable) {
         return null;
     }
+
+
 }

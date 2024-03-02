@@ -45,7 +45,9 @@ public class Event {
 
     public boolean deleteTag(Tag tag) {
         if (tag == null) return false;
-        return tags.remove(tag);
+        var temp1 = tags.contains(tag);
+        var temp = tags.remove(tag);
+        return temp;
     }
 
     public UUID getId() {
