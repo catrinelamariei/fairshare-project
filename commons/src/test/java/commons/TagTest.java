@@ -19,9 +19,9 @@ class TagTest {
 
     @Test
     void checkConstructor() {
-        assertEquals(e, t.event);
-        assertEquals("name", t.name);
-        assertEquals(BLUE, t.color);
+        assertEquals(e, t.getEvent());
+        assertEquals("name", t.getName());
+        assertEquals(BLUE, t.getColor());
     }
 
     @Test

@@ -14,19 +14,18 @@ import java.util.UUID;
 @Entity
 public class Tag {
 
-    @ManyToOne
-    @MapsId("eventId")
-    @JoinColumn(name="event_id", referencedColumnName ="id", nullable=false)
-    public Event event;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
+    
+    @ManyToOne
+    public Event event;
 
+    @Column(nullable = false)
     public String name;
 
 
-    @Column(columnDefinition = "enum('RED','ORANGE','YELLOW','GREEN','BLUE','INDIGO','VIOLET')")
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     public Color color;
    @ManyToMany(mappedBy = "tags")
@@ -47,7 +46,33 @@ public class Tag {
         this.color = color;
         this.transactions = new HashSet<Transaction>();
     }
+    public UUID GetId() {
+        return id;
+    }
 
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
     @Override
     public boolean equals(Object obj) {
