@@ -1,13 +1,13 @@
 package commons;
 
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Tag {
@@ -38,10 +38,11 @@ public class Tag {
 
     public Tag(Event event, String name, Color color) {
         this.event = event;
+        if (event!=null) event.addTag(this);
         this.name = name;
         this.color = color;
     }
-    public UUID GetId() {
+    public UUID getId() {
         return id;
     }
 
