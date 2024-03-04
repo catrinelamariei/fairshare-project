@@ -108,11 +108,11 @@ public class JSONController {
 
         //create DataPackage
         DataPackage pkg = new DataPackage();
-        // TODO: wait for rebase <FK transactions>
-//        pkg.eventList = List.of(target);
-//        pkg.participantList = target.get;
-//        pkg.tagList = tagRepo.findAll();
-//        pkg.tsList = tsRepo.findAll();
+        pkg.eventList = List.of(target);
+        pkg.participantList = new ArrayList<>(target.getParticipants());
+        pkg.tagList = new ArrayList<>(target.getTags());
+        // TODO: reimplement below using SQL
+        pkg.tsList = pkg.participantList.stream().flatMap(author -> author.paidTransactions.stream()).toList();
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -145,8 +145,7 @@ public class JSONController {
 
         //delete eventID and associated values
         if (eventRepo.existsById(id)) {
-            Event target = eventRepo.findById(id).get();
-            // TODO recursively delete elements (achieved using cascade)
+            eventRepo.deleteById(id); //will delete all associated values through cascading
         }
 
         loadPackage(pkg);

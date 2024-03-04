@@ -23,7 +23,7 @@ public class Event {
     @Column (nullable = false)
     private Date creationDate;
 
-    @OneToMany(mappedBy="event")
+    @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
     public Set<Participant> participants;
 
 
