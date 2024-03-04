@@ -15,6 +15,7 @@ import server.database.ParticipantRepository;
 import server.database.TagRepository;
 import server.database.TransactionRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,10 +90,8 @@ public class JSONController {
         tagRepo.deleteAll();
         tsRepo.deleteAll();
 
-        //load entire package
+        //load package and return
         loadPackage(pkg);
-
-        //return success
         return ResponseEntity.ok().build();
     }
 
@@ -102,8 +101,22 @@ public class JSONController {
      * @return string containing JSON of event and related entities
      */
     @GetMapping(path="/{id}")
-    public ResponseEntity<String> getEventJSON(@PathVariable("id") UUID id) {
-        return null;
+    public ResponseEntity<String> getEventJSON(@PathVariable("id") UUID id) throws JsonProcessingException {
+        //validate ID (401 - NOT_FOUND)
+        if (!eventRepo.existsById(id)) return ResponseEntity.notFound().build();
+        Event target = eventRepo.findById(id).get();
+
+        //create DataPackage
+        DataPackage pkg = new DataPackage();
+        // TODO: wait for rebase <FK transactions>
+//        pkg.eventList = List.of(target);
+//        pkg.participantList = target.get;
+//        pkg.tagList = tagRepo.findAll();
+//        pkg.tsList = tsRepo.findAll();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(pkg));
     }
 
     /**
@@ -133,7 +146,7 @@ public class JSONController {
         //delete eventID and associated values
         if (eventRepo.existsById(id)) {
             Event target = eventRepo.findById(id).get();
-            // TODO recursively delete elements
+            // TODO recursively delete elements (achieved using cascade)
         }
 
         loadPackage(pkg);

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
+import server.api.dependencies.TestTransactionRepository;
 import server.database.TransactionRepository;
 import static org.springframework.http.HttpStatus.*;
 

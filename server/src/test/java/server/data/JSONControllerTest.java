@@ -2,8 +2,8 @@ package server.data;
 
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.BeforeEach;
-//import server.api.TestTagRepository;
-//import server.api.TestTransactionRepository;
+//import server.api.dependencies.TestTagRepository;
+//import server.api.dependencies.TestTransactionRepository;
 
 public class JSONControllerTest {
     private JSONController sut;
