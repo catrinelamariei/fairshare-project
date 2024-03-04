@@ -2,6 +2,7 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+import commons.DTOs.TransactionDTO;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -23,14 +24,31 @@ public class Transaction {
     @Column(columnDefinition = "NUMERIC(21,2)")
     public BigDecimal amount;
     @SuppressWarnings("unused")
-    private Transaction() {
-        // for object mapper
+    protected Transaction() {
+        // for object mapper (needs to be public/protected)
     }
 
     public Transaction(Date date,String currencyCode, BigDecimal amount) {
         this.date = date;
         this.currencyCode = currencyCode;
         this.amount = amount;
+    }
+
+    public Transaction(TransactionDTO dto) {
+        this.id = dto.id;
+        this.date = dto.date;
+        this.currencyCode = dto.currencyCode;
+        this.amount = dto.amount;
+    }
+
+    /**
+     * validates a transaction
+     * @param ts transaction to be checked
+     * @return true if is valid (not null and all values present and amount is not negative)
+     */
+    public static boolean validate(Transaction ts) {
+        return !(ts == null || ts.id == null || ts.date == null || ts.currencyCode == null || ts.amount == null ||
+                ts.currencyCode.isEmpty() || ts.amount.compareTo(BigDecimal.ZERO) < 0);
     }
 
     public UUID getId() {

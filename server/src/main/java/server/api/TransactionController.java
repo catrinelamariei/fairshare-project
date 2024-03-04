@@ -5,8 +5,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.TransactionRepository;
-import java.math.BigDecimal;
+
 import java.util.UUID;
+
+import static commons.Transaction.validate;
+
 @RestController
 @RequestMapping("/api/transaction")
 public class TransactionController {
@@ -18,8 +21,7 @@ public class TransactionController {
 
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
-        if(transaction==null ||transaction.getAmount()==null
-                || transaction.getAmount().compareTo(BigDecimal.ZERO)==0){
+        if(!validate(transaction)){
             return ResponseEntity.badRequest().build();
         }
         repo.save(transaction);
@@ -29,34 +31,43 @@ public class TransactionController {
     @GetMapping("/{id}")
     public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
     }
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionDTO> updateById(@PathVariable("id") UUID id, @RequestBody Transaction transaction) {
-        if(transaction==null ||transaction.getAmount()==null
-                || transaction.getAmount().compareTo(BigDecimal.ZERO)==0){
+    public ResponseEntity<TransactionDTO> updateTransactionById(@PathVariable("id") UUID id, @RequestBody Transaction transaction) {
+        if(!validate(transaction)){
             return ResponseEntity.badRequest().build();
         }
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         Transaction t = repo.findById(id).get();
+        t.setDate(transaction.getDate());
+        t.setCurrencyCode(transaction.getCurrencyCode());
         t.setAmount(transaction.getAmount());
         repo.save(t);
         return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
     }
 
+    //id is already included in transactionDTO
+    @Transactional
+    @PutMapping("")
+    public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody Transaction ts) {
+        return updateTransactionById(ts.id, ts);
+    }
+
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable("id") UUID id) {
+    public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
+        TransactionDTO out = new TransactionDTO(repo.findById(id).get());
         repo.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(out);
     }
 }
