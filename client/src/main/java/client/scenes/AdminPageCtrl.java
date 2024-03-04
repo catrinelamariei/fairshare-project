@@ -34,7 +34,7 @@ public class AdminPageCtrl {
     }
 
     public void sendGetRequest() {
-        String url = "http://127.0.0.1:8080/data";
+        String url = "http://localhost:8080/data";
 
 
         UserData data = UserData.getInstance();
