@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
@@ -25,7 +27,9 @@ public class Tag {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Color color;
+    public Color color;
+   @ManyToMany(mappedBy = "tags")
+    public Set<Transaction> transactions;
 
     public enum Color {
         RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET
@@ -41,6 +45,7 @@ public class Tag {
         if (event!=null) event.addTag(this);
         this.name = name;
         this.color = color;
+        this.transactions = new HashSet<Transaction>();
     }
     public UUID getId() {
         return id;
