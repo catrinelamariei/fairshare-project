@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.DTOs.TransactionDTO;
+import commons.Participant;
 import commons.Transaction;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,13 +35,15 @@ class TransactionControllerTest {
 
         ts1 = new Transaction(
                 new Date(), "usd",
-                new BigDecimal("6.79"));
+                new BigDecimal("6.79"),
+                new Participant("Author", "last name", "email", "iban"));
         ts1.id = new UUID(0,1);
         ctrl.createTransaction(ts1);
 
         ts2 = new Transaction(
                 new Date(), "usd",
-                new BigDecimal("0.00"));
+                new BigDecimal("0.00"),
+                new Participant("Author 2", "last name", "email", "iban"));
         ts2.id = new UUID(0,2);
     }
 
@@ -56,7 +59,8 @@ class TransactionControllerTest {
         Date d = new Date(2004, 1, 22);
         String s = "";
         BigDecimal amount = null;
-        Transaction t = new Transaction(d,s,amount);
+        Participant p = new Participant("Author", "last name", "email", "iban");
+        Transaction t = new Transaction(d,s,amount,p);
         var actual = ctrl.createTransaction(t);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -66,7 +70,9 @@ class TransactionControllerTest {
         Date d = new Date(2004, 1, 22);
         String s = "";
         BigDecimal amount = new BigDecimal("-19.99");
-        Transaction t = new Transaction(d,s,amount);
+        Participant p = new Participant("Author", "last name", "email", "iban");
+
+        Transaction t = new Transaction(d,s,amount,p);
         var actual = ctrl.createTransaction(t);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
