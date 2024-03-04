@@ -1,31 +1,36 @@
 package server;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-@Controller
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
+@RestController
 public class PrivCheckController {
 
     private static String code; // need to generate random
+    private JwtTokenService jwtTokenService;
 
     public PrivCheckController(){
         super();
         this.generatePassword();
     }
 
-    @PostMapping("/privCheck")
+
+    @PostMapping("/admin")
     @ResponseBody
-    public String checkPassword(@RequestBody String password) {
+    public String checkPassword(@RequestBody String password, HttpServletRequest request) {
         if (password.equals(code)) {
-            return "Token"; // need to return auth token
+            // Instantiate JwtTokenService
+            JwtTokenService jwtTokenService = new JwtTokenService();
+
+            // Generate JWT token
+            String ipAddress = request.getRemoteAddr();
+            return JwtTokenService.generateToken(ipAddress);
         } else {
-            return "No Token"; // error code maybe?
+            return "Invalid password"; // Return appropriate error message
         }
     }
 
-    @GetMapping("/privCheck")
+
+    @GetMapping("/admin")
     @ResponseBody
     public String generatePassword(){
         code = CodeGenerator.generateRandomString(6);
