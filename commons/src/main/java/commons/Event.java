@@ -23,6 +23,9 @@ public class Event {
     @Column (nullable = false)
     private Date creationDate;
 
+    @OneToMany(mappedBy="event")
+    public Set<Participant> participants;
+
 
     @SuppressWarnings("unused")
     public Event() {
@@ -32,6 +35,7 @@ public class Event {
     public Event(String name) {
         this.name = name;
         this.tags = new HashSet<>();
+        this.participants = new HashSet<>();
         this.creationDate = new Date();
     }
 
@@ -62,6 +66,9 @@ public class Event {
         return tags;
     }
 
+    public Set<Participant> getParticipants() {
+        return participants;
+    }
 
     public void setName(String name) {
         this.name = name;

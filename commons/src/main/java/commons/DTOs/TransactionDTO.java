@@ -1,8 +1,10 @@
 package commons.DTOs;
 
+import commons.Participant;
 import commons.Transaction;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
 
 public class TransactionDTO {
@@ -10,18 +12,23 @@ public class TransactionDTO {
     public Date date;
     public String currencyCode;
     public BigDecimal amount;
+    public Participant author;
+    public Set<Participant> participants;
 
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
         this.date = transaction.getDate();
         this.currencyCode = transaction.getCurrencyCode();
         this.amount = transaction.getAmount();
+        this.author = transaction.getAuthor();
+        this.participants = transaction.getParticipants();
     }
 
-    public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount) {
+    public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount, Participant author) {
         this.id = id;
         this.date = date;
         this.currencyCode = currencyCode;
         this.amount = amount;
+        this.author = author;
     }
 }

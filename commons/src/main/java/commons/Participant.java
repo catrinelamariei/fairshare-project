@@ -1,16 +1,14 @@
 package commons;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -32,6 +30,14 @@ public class Participant {
    @Column(columnDefinition = "CLOB NOT NULL")
    public String iban;
 
+   @ManyToOne
+   public Event event;
+   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+   public Set<Transaction> paidTransactions;
+
+   @ManyToMany(mappedBy = "participants")
+   public Set<Transaction> participatedTransactions;
+
    @SuppressWarnings("unused")
    private Participant() {
       // for object mapper
@@ -42,6 +48,8 @@ public class Participant {
       this.lastName = lastName;
       this.email = email;
       this.iban = iban;
+      this.paidTransactions = new HashSet<>();
+      this.participatedTransactions = new HashSet<>();
    }
 
    public UUID getId() {
