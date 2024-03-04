@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import commons.Event;
+import commons.Transaction;
 import org.glassfish.jersey.client.ClientConfig;
 
 import commons.Quote;
@@ -65,6 +66,19 @@ public class ServerUtils {
 				.request(APPLICATION_JSON) //
 				.accept(APPLICATION_JSON) //
 				.post(Entity.entity(event, APPLICATION_JSON), Event.class);
+	}
+
+	/**
+	 * Adds a transaction to the database.
+	 * @param transaction the transaction to be added
+	 * @return the transaction that was added
+	 */
+	public Transaction addTransaction(Transaction transaction) {
+		return ClientBuilder.newClient(new ClientConfig()) //
+				.target(SERVER).path("api/transaction") //
+				.request(APPLICATION_JSON) //
+				.accept(APPLICATION_JSON) //
+				.post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
 	}
 
 	public Quote addQuote(Quote quote) {
