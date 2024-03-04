@@ -1,4 +1,4 @@
-package server;
+package server.Authentication;
 
 import java.security.SecureRandom;
 

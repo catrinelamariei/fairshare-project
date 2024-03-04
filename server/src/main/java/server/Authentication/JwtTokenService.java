@@ -1,4 +1,4 @@
-package server;
+package server.Authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

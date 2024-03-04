@@ -1,4 +1,4 @@
-package server;
+package server.Authentication;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;

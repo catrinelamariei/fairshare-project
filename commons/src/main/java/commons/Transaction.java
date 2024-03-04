@@ -55,6 +55,9 @@ public class Transaction {
         this.date = dto.date;
         this.currencyCode = dto.currencyCode;
         this.amount = dto.amount;
+        this.author = dto.author;
+        this.participants = dto.participants;
+        this.tags = dto.tags;
     }
 
     /**
@@ -81,6 +84,18 @@ public class Transaction {
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    public Participant getAuthor() {
+        return author;
+    }
+
+    public Set<Participant> getParticipants() {
+        return participants;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
     }
 
     public void setId(UUID id) {
