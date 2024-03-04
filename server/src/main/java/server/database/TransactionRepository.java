@@ -7,6 +7,4 @@ import commons.Transaction;
 
 import java.util.UUID;
 
-public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
-
-}
+public interface TransactionRepository extends JpaRepository<Transaction, UUID> {}

@@ -8,13 +8,20 @@ import java.util.UUID;
 public class TransactionDTO {
     public UUID id;
     public Date date;
-    public String currency;
+    public String currencyCode;
     public BigDecimal amount;
 
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
         this.date = transaction.getDate();
-        this.currency = transaction.getCurrencyCode();
+        this.currencyCode = transaction.getCurrencyCode();
         this.amount = transaction.getAmount();
+    }
+
+    public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount) {
+        this.id = id;
+        this.date = date;
+        this.currencyCode = currencyCode;
+        this.amount = amount;
     }
 }
