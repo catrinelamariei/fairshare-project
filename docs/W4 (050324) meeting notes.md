@@ -15,7 +15,7 @@
 - Issue Distribution: Assign the issues earlier in the week to plan better.
 - Weights: Use weights instead of time estimated.
 - Priority: Use labels to prioritize issues.
-
+- Closing Issues: Use 'closes #issue_number' in merge requests.
 
 ## Updates:
 - Created endpoints and DTO's, database connection established.
