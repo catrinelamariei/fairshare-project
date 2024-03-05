@@ -14,93 +14,93 @@ import java.util.UUID;
 @Entity
 public class Participant {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.UUID)
-   public UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    public UUID id;
 
-   @Column(columnDefinition = "CLOB NOT NULL")
-   public String firstName;
+    @Column(columnDefinition = "CLOB NOT NULL")
+    public String firstName;
 
-   @Column(columnDefinition = "CLOB NOT NULL")
-   public String lastName;
+    @Column(columnDefinition = "CLOB NOT NULL")
+    public String lastName;
 
-   @Column(columnDefinition = "CLOB NOT NULL")
-   public String email;
+    @Column(columnDefinition = "CLOB NOT NULL")
+    public String email;
 
-   @Column(columnDefinition = "CLOB NOT NULL")
-   public String iban;
+    @Column(columnDefinition = "CLOB NOT NULL")
+    public String iban;
 
-   @ManyToOne
-   public Event event;
-   @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-   public Set<Transaction> paidTransactions;
+    @ManyToOne
+    public Event event;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    public Set<Transaction> paidTransactions;
 
-   @ManyToMany(mappedBy = "participants")
-   public Set<Transaction> participatedTransactions;
+    @ManyToMany(mappedBy = "participants")
+    public Set<Transaction> participatedTransactions;
 
-   @SuppressWarnings("unused")
-   private Participant() {
+    @SuppressWarnings("unused")
+    private Participant() {
       // for object mapper
-   }
+    }
 
-   public Participant(String firstName, String lastName, String email, String iban) {
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.email = email;
-      this.iban = iban;
-      this.paidTransactions = new HashSet<>();
-      this.participatedTransactions = new HashSet<>();
-   }
+    public Participant(String firstName, String lastName, String email, String iban) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.iban = iban;
+        this.paidTransactions = new HashSet<>();
+        this.participatedTransactions = new HashSet<>();
+    }
 
-   public UUID getId() {
-      return id;
-   }
-   public String getFirstName() {
-      return firstName;
-   }
-   public String getLastName() {
-      return lastName;
-   }
-   public String getEmail() {
-      return email;
-   }
-   public String getIban(){
-      return iban;
-   }
+    public UUID getId() {
+        return id;
+    }
+    public String getFirstName() {
+        return firstName;
+    }
+    public String getLastName() {
+        return lastName;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public String getIban(){
+        return iban;
+    }
 
-   public void setID(UUID id){
-      this.id = id;
-   }
+    public void setID(UUID id){
+        this.id = id;
+    }
 
-   public void setFirstName(String fName){
-      this.firstName = fName;
-   }
+    public void setFirstName(String fName){
+        this.firstName = fName;
+    }
 
-   public void setLastName(String lName){
-      this.lastName = lName;
-   }
+    public void setLastName(String lName){
+        this.lastName = lName;
+    }
 
-   public void setEmail(String email){
-      this.email = email;
-   }
+    public void setEmail(String email){
+        this.email = email;
+    }
 
-   public void setIban(String iban){
-      this.iban = iban;
-   }
+    public void setIban(String iban){
+        this.iban = iban;
+    }
 
 
-   @Override
-   public boolean equals(Object obj) {
-      return EqualsBuilder.reflectionEquals(this, obj);
-   }
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
 
-   @Override
-   public int hashCode() {
-      return HashCodeBuilder.reflectionHashCode(this);
-   }
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
 
-   @Override
-   public String toString() {
-      return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
-   }
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
 }

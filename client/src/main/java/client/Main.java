@@ -28,7 +28,8 @@ public class Main extends Application {
         var mainPage = FXML.load(StartPageCtrl.class, "client", "scenes", "StartPage.fxml");
         var eventPage = FXML.load(EventPageCtrl.class, "client", "scenes", "EventPage.fxml");
         var adminPage = FXML.load(AdminPageCtrl.class, "client", "scenes", "AdminPage.fxml");
-        var privCheckPage = FXML.load(PrivCheckPageCtrl.class, "client", "scenes", "PrivCheckPage.fxml");
+        var privCheckPage = FXML.load(PrivCheckPageCtrl.class, "client",
+                "scenes", "PrivCheckPage.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage, privCheckPage, startPage);
