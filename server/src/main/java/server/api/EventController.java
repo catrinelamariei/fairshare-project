@@ -61,7 +61,8 @@ public class EventController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<EventDTO> updateById(@PathVariable("id") UUID id,@RequestBody Event event) {
+    public ResponseEntity<EventDTO> updateById(@PathVariable("id") UUID id,
+                                               @RequestBody Event event) {
         if (id==null || event == null || event.getName() == null || event.getName() == "") {
             return ResponseEntity.badRequest().build();
         }
