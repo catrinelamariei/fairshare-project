@@ -38,7 +38,8 @@ public class TransactionController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionDTO> updateTransactionById(@PathVariable("id") UUID id, @RequestBody Transaction transaction) {
+    public ResponseEntity<TransactionDTO> updateTransactionById(@PathVariable("id") UUID id,
+                                                            @RequestBody Transaction transaction) {
         if(!validate(transaction)){
             return ResponseEntity.badRequest().build();
         }

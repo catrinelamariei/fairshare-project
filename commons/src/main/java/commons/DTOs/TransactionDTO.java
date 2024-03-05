@@ -27,7 +27,8 @@ public class TransactionDTO {
         this.tags = transaction.getTags();
     }
 
-    public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount, Participant author) {
+    public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount,
+                          Participant author) {
         this.id = id;
         this.date = date;
         this.currencyCode = currencyCode;
