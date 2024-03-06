@@ -45,7 +45,8 @@ public class AdminPageCtrl {
 
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> responseEntity =
+                restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         String response = responseEntity.getBody();
 
         System.out.println("Response from server: " + response);
