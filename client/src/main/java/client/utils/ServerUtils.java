@@ -34,58 +34,57 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 
 public class ServerUtils {
+    private static final String SERVER = "http://localhost:8080/";
 
-	private static final String SERVER = "http://localhost:8080/";
+    public void getQuotesTheHardWay() throws IOException, URISyntaxException {
+        var url = new URI("http://localhost:8080/api/quotes").toURL();
+        var is = url.openConnection().getInputStream();
+        var br = new BufferedReader(new InputStreamReader(is));
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
+    }
 
-	public void getQuotesTheHardWay() throws IOException, URISyntaxException {
-		var url = new URI("http://localhost:8080/api/quotes").toURL();
-		var is = url.openConnection().getInputStream();
-		var br = new BufferedReader(new InputStreamReader(is));
-		String line;
-		while ((line = br.readLine()) != null) {
-			System.out.println(line);
-		}
-	}
-
-	public List<Quote> getQuotes() {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/quotes") //
-				.request(APPLICATION_JSON) //
-				.accept(APPLICATION_JSON) //
+    public List<Quote> getQuotes() {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/quotes") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
                 .get(new GenericType<List<Quote>>() {});
-	}
+    }
 
-	/**
-	 * Adds and event to the database.
-	 * @param event the event to be added
-	 * @return the event that was added
-	 */
-	public Event addEvent(Event event) {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/event") //
-				.request(APPLICATION_JSON) //
-				.accept(APPLICATION_JSON) //
-				.post(Entity.entity(event, APPLICATION_JSON), Event.class);
-	}
+    /**
+     * Adds and event to the database.
+     * @param event the event to be added
+     * @return the event that was added
+     */
+    public Event addEvent(Event event) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/event") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(event, APPLICATION_JSON), Event.class);
+    }
 
-	/**
-	 * Adds a transaction to the database.
-	 * @param transaction the transaction to be added
-	 * @return the transaction that was added
-	 */
-	public Transaction addTransaction(Transaction transaction) {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/transaction") //
-				.request(APPLICATION_JSON) //
-				.accept(APPLICATION_JSON) //
-				.post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
-	}
+    /**
+     * Adds a transaction to the database.
+     * @param transaction the transaction to be added
+     * @return the transaction that was added
+     */
+    public Transaction addTransaction(Transaction transaction) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/transaction") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
+    }
 
-	public Quote addQuote(Quote quote) {
-		return ClientBuilder.newClient(new ClientConfig()) //
-				.target(SERVER).path("api/quotes") //
-				.request(APPLICATION_JSON) //
-				.accept(APPLICATION_JSON) //
-				.post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
-	}
+    public Quote addQuote(Quote quote) {
+        return ClientBuilder.newClient(new ClientConfig()) //
+                .target(SERVER).path("api/quotes") //
+                .request(APPLICATION_JSON) //
+                .accept(APPLICATION_JSON) //
+                .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
+    }
 }
