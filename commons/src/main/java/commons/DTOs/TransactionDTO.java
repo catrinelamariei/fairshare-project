@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public class TransactionDTO {
     public UUID id;
+    public UUID eventId;
     public Date date;
     public String currencyCode;
     public BigDecimal amount;
@@ -25,6 +26,7 @@ public class TransactionDTO {
         this.author = transaction.getAuthor();
         this.participants = transaction.getParticipants();
         this.tags = transaction.getTags();
+        this.eventId = transaction.getEvent().getId();
     }
 
     public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount,

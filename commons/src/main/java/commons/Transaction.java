@@ -28,6 +28,9 @@ public class Transaction {
     @ManyToOne
     public Participant author;
 
+    @ManyToOne
+    public Event event;
+
     @ManyToMany(cascade = CascadeType.DETACH)
     public Set<Participant> participants;
 
@@ -41,7 +44,9 @@ public class Transaction {
         // for object mapper (needs to be public/protected)
     }
 
-    public Transaction(Date date,String currencyCode, BigDecimal amount, Participant author) {
+    public Transaction(Event event, Date date,String currencyCode,
+                       BigDecimal amount, Participant author) {
+        this.event = event;
         this.date = date;
         this.currencyCode = currencyCode;
         this.amount = amount;
@@ -114,6 +119,9 @@ public class Transaction {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+    public Event getEvent() {
+        return event;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -129,4 +137,5 @@ public class Transaction {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
+
 }

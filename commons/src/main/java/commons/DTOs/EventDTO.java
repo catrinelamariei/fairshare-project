@@ -12,6 +12,8 @@ public class EventDTO {
     public String name;
     public Set<TagDTO> tags;
     public Date date;
+    public Set<ParticipantDTO> participants;
+    public Set<TransactionDTO> transactions;
 
     public EventDTO(Event event) {
         this.id = event.getId();
@@ -19,5 +21,11 @@ public class EventDTO {
         this.tags = new HashSet<>();
         event.getTags().forEach(tag -> tags.add(new TagDTO(tag)));
         this.date = event.getCreationDate();
+        this.participants = new HashSet<>();
+        event.getParticipants().forEach(
+                participant -> participants.add(new ParticipantDTO(participant)));
+        this.transactions = new HashSet<>();
+        event.getTransactions().forEach(
+                transaction -> transactions.add(new TransactionDTO(transaction)));
     }
 }

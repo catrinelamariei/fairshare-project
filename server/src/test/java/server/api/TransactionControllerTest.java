@@ -1,6 +1,8 @@
 package server.api;
 
+import commons.DTOs.EventDTO;
 import commons.DTOs.TransactionDTO;
+import commons.Event;
 import commons.Participant;
 import commons.Transaction;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,24 +30,26 @@ class TransactionControllerTest {
     void setUp() {
         repo = new TestTransactionRepository();
         ctrl = new TransactionController(repo);
-
+        Event event = new Event("event");
         tsDTO1 = new TransactionDTO(
                 new UUID(0,0),
                 new Date(), "eur",
                 new BigDecimal("5.20"),
-                new Participant("Clay", "Smith", "mail0", "iban0"));
+                new Participant(event,"Clay", "Smith", "mail0", "iban0"));
 
         ts1 = new Transaction(
+                event,
                 new Date(), "usd",
                 new BigDecimal("6.79"),
-                new Participant("Max", "Well", "mail1", "iban1"));
+                new Participant(event,"Max", "Well", "mail1", "iban1"));
         ts1.id = new UUID(0,1);
         ctrl.createTransaction(ts1);
 
         ts2 = new Transaction(
+                new Event("event"),
                 new Date(), "usd",
                 new BigDecimal("0.00"),
-                new Participant("Bob", "Snow", "email2", "iban"));
+                new Participant(event,"Bob", "Snow", "email2", "iban"));
         ts2.id = new UUID(0,2);
     }
 
@@ -61,8 +65,9 @@ class TransactionControllerTest {
         Date d = new Date(2004, 1, 22);
         String s = "";
         BigDecimal amount = null;
-        Participant author = new Participant("Frey", "Port", "mail3", "iban3");
-        Transaction t = new Transaction(d,s,amount, author);
+        Event ev = new Event("event");
+        Participant author = new Participant(ev,"Frey", "Port", "mail3", "iban3");
+        Transaction t = new Transaction(ev,d,s,amount, author);
         var actual = ctrl.createTransaction(t);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -71,9 +76,10 @@ class TransactionControllerTest {
     void createNegativeAmountTransaction() {
         Date d = new Date(2004, 1, 22);
         String s = "";
+        Event event = new Event("event");
         BigDecimal amount = new BigDecimal("-19.99");
-        Participant author = new Participant("Frey", "Port", "mail3", "iban3");
-        Transaction t = new Transaction(d,s,amount, author);
+        Participant author = new Participant(event,"Frey", "Port", "mail3", "iban3");
+        Transaction t = new Transaction(event, d,s,amount, author);
         var actual = ctrl.createTransaction(t);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
