@@ -13,6 +13,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class TagControllerTest {
 
@@ -67,7 +68,7 @@ public class TagControllerTest {
     @Test
     public void getUnsuccessful() {
         Tag t = getTag("tag_name");
-        assertEquals(BAD_REQUEST, sut.getById(t.getId()).getStatusCode());
+        assertEquals(NOT_FOUND, sut.getById(t.getId()).getStatusCode());
     }
 
     // TODO: repo.calledMethods
@@ -84,7 +85,7 @@ public class TagControllerTest {
     public void putUnsuccessful() {
         Tag t = getTag("tag_name");
         Tag t2 = getTag("new_name");
-        assertEquals(BAD_REQUEST, sut.updateById(t.getId(), t2).getStatusCode());
+        assertEquals(NOT_FOUND, sut.updateById(t.getId(), t2).getStatusCode());
         t2 = getTag(null);
         sut.add(t);
         assertEquals(BAD_REQUEST, sut.updateById(t.getId(), t2).getStatusCode());

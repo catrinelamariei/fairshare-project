@@ -22,7 +22,7 @@ public class ParticipantController {
    @GetMapping("/{id}")
    public ResponseEntity<ParticipantDTO> getById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
     }
@@ -46,7 +46,7 @@ public class ParticipantController {
    public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id,
                                                            @RequestBody Participant participant) {
         if(!repo.existsById(id)){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         } else if(participant == null || id == null
               || participant.getFirstName() == null || participant.getLastName() == null
               || participant.getFirstName() == "" || participant.getLastName() == ""){
@@ -67,7 +67,7 @@ public class ParticipantController {
    @DeleteMapping("/{id}")
    public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
         if(!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         repo.deleteById(id);
         return ResponseEntity.ok().build();
