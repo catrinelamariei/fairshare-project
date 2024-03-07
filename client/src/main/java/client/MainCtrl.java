@@ -29,7 +29,9 @@ public class MainCtrl {
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
-                           Pair<AdminPageCtrl, Parent> adminPage, Pair<PrivCheckPageCtrl, Parent> privCheckPage, Pair<StartPageCtrl, Parent> page) {
+                           Pair<AdminPageCtrl, Parent> adminPage,
+                           Pair<PrivCheckPageCtrl, Parent> privCheckPage,
+                           Pair<StartPageCtrl, Parent> page) {
 
         this.primaryStage = primaryStage;
 

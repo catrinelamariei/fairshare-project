@@ -42,8 +42,9 @@ public class JSONController {
         tsRepo.saveAll(pkg.tsList);
     }
 
-    public JSONController(ObjectMapper objectMapper, EventRepository eventRepo, ParticipantRepository participantRepo,
-                          TagRepository tagRepo, TransactionRepository tsRepo) {
+    public JSONController(ObjectMapper objectMapper, EventRepository eventRepo,
+                          ParticipantRepository participantRepo, TagRepository tagRepo,
+                          TransactionRepository tsRepo) {
         this.objectMapper = objectMapper;
         this.eventRepo = eventRepo;
         this.participantRepo = participantRepo;
@@ -101,7 +102,8 @@ public class JSONController {
      * @return string containing JSON of event and related entities
      */
     @GetMapping(path="/{id}")
-    public ResponseEntity<String> getEventJSON(@PathVariable("id") UUID id) throws JsonProcessingException {
+    public ResponseEntity<String> getEventJSON(@PathVariable("id") UUID id)
+        throws JsonProcessingException {
         //validate ID (401 - NOT_FOUND)
         if (!eventRepo.existsById(id)) return ResponseEntity.notFound().build();
         Event target = eventRepo.findById(id).get();
@@ -112,7 +114,8 @@ public class JSONController {
         pkg.participantList = new ArrayList<>(target.getParticipants());
         pkg.tagList = new ArrayList<>(target.getTags());
         // TODO: reimplement below using SQL
-        pkg.tsList = pkg.participantList.stream().flatMap(author -> author.paidTransactions.stream()).toList();
+        pkg.tsList = pkg.participantList.stream().flatMap(author ->
+            author.paidTransactions.stream()).toList();
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

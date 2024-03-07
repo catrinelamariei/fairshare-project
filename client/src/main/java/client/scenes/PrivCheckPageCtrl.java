@@ -29,7 +29,7 @@ public class PrivCheckPageCtrl {
     public void initialize(URL location, ResourceBundle resources) {}
 
     public void login() {
-        String response = PostRequest(password.getText());
+        String response = postRequest(password.getText());
 
         if(!response.equals("Invalid password")) {
             UserData data = UserData.getInstance();
@@ -48,12 +48,12 @@ public class PrivCheckPageCtrl {
 
 
 
-    public void RequestCodeGeneration(){
+    public void requestCodeGeneration(){
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:8080/admin";
         String response = restTemplate.getForObject(url, String.class);
     }
-    public String PostRequest(String code) {
+    public String postRequest(String code) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:8080/admin";
         ResponseEntity<String> response = restTemplate.postForEntity(url, code, String.class);

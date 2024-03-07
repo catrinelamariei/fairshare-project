@@ -176,7 +176,9 @@ public class TestTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public <S extends Transaction, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
+    public <S extends Transaction, R> R findBy(Example<S> example,
+                                               Function<FluentQuery.FetchableFluentQuery<S>,
+                                               R> queryFunction) {
         return null;
     }
 }

@@ -12,63 +12,65 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/participants")
 public class ParticipantController {
-   private final ParticipantRepository repo;
+    private final ParticipantRepository repo;
 
-   public ParticipantController(ParticipantRepository repo){
-      this.repo = repo;
-   }
+    public ParticipantController(ParticipantRepository repo){
+        this.repo = repo;
+    }
 
-   @Transactional
+    @Transactional
    @GetMapping("/{id}")
    public ResponseEntity<ParticipantDTO> getById(@PathVariable("id") UUID id) {
-      if (!repo.existsById(id)) {
-         return ResponseEntity.badRequest().build();
-      }
-      return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
-   }
+        if (!repo.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
+    }
 
-   @Transactional
+    @Transactional
    @PostMapping(path = {"", "/"})
    public ResponseEntity<Participant> createParticipant(@RequestBody Participant participant) {
-      if (participant == null || participant.getFirstName() == null || participant.getLastName() == null
-              || participant.getFirstName() == "" || participant.getLastName() == ""
-              || participant.getEmail() == "" || participant.getIban() == ""){
-         return ResponseEntity.badRequest().build();
-      }
+        if (participant == null || participant.getFirstName() == null ||
+                participant.getLastName() == null || participant.getFirstName() == ""
+                || participant.getLastName() == "" || participant.getEmail() == ""
+                || participant.getIban() == ""){
+            return ResponseEntity.badRequest().build();
+        }
 
-      repo.save(participant);
-      return ResponseEntity.ok().build();
-   }
+        repo.save(participant);
+        return ResponseEntity.ok().build();
+    }
 
-   @Transactional
+    @Transactional
    @PutMapping("/{id}")
-   public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id, @RequestBody Participant participant) {
-      if(!repo.existsById(id)){
-         return ResponseEntity.badRequest().build();
-      } else if(participant == null || id == null
+   public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id,
+                                                           @RequestBody Participant participant) {
+        if(!repo.existsById(id)){
+            return ResponseEntity.badRequest().build();
+        } else if(participant == null || id == null
               || participant.getFirstName() == null || participant.getLastName() == null
               || participant.getFirstName() == "" || participant.getLastName() == ""){
-         return ResponseEntity.badRequest().build();
-      }
+            return ResponseEntity.badRequest().build();
+        }
 
-      Participant p = repo.findById(id).get();
-      p.firstName = participant.firstName;
-      p.lastName = participant.lastName;
-      p.email = participant.email;
-      p.iban = participant.iban;
+        Participant p = repo.findById(id).get();
+        p.firstName = participant.firstName;
+        p.lastName = participant.lastName;
+        p.email = participant.email;
+        p.iban = participant.iban;
 
-      repo.save(p);
-      return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
-   }
+        repo.save(p);
+        return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
+    }
 
-   @Transactional
+    @Transactional
    @DeleteMapping("/{id}")
    public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
-      if(!repo.existsById(id)) {
-         return ResponseEntity.badRequest().build();
-      }
-      repo.deleteById(id);
-      return ResponseEntity.ok().build();
-   }
+        if(!repo.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+        }
+        repo.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 
 }

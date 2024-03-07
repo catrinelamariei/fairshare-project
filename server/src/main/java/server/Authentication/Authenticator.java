@@ -10,7 +10,8 @@ public class Authenticator implements HandlerInterceptor {
     private JwtTokenService jwtTokenService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+                             Object handler) {
         String token = request.getHeader("Authorization");
         JwtTokenService jwtTokenService = new JwtTokenService();
 
