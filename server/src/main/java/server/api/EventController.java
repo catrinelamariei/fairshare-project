@@ -40,7 +40,7 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<EventDTO> getById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
     }
@@ -48,7 +48,7 @@ public class EventController {
     @GetMapping("/{id}/tags")
     public ResponseEntity<Set<TagDTO>> getEventTagsById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         Set<Tag> tags = repo.findById(id).get().getTags();
         Set<TagDTO> dtos = new HashSet<>();
@@ -67,7 +67,7 @@ public class EventController {
             return ResponseEntity.badRequest().build();
         }
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         Event e = repo.findById(id).get();
         e.setName(event.getName());
@@ -80,7 +80,7 @@ public class EventController {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         repo.deleteById(id);
         return ResponseEntity.ok().build();

@@ -24,7 +24,7 @@ public class TagController {
     @GetMapping("/{id}")
     public ResponseEntity<TagDTO> getById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new TagDTO(repo.findById(id).get()));
     }
@@ -58,7 +58,7 @@ public class TagController {
             return ResponseEntity.badRequest().build();
         }
         if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         Tag t = repo.findById(id).get();
         t.setName(tag.getName());
@@ -71,7 +71,7 @@ public class TagController {
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity deleteById(@PathVariable("id") UUID id) {
 //        if (!repo.existsById(id)) {
-//            return ResponseEntity.badRequest().build();
+//            return ResponseEntity.notFound().build();
 //        }
 //        Tag t = repo.findById(id).get();
 //        repo.deleteById(id);
