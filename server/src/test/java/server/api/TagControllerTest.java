@@ -111,14 +111,24 @@ public class TagControllerTest {
 //        assertTrue(repo.calledMethods.contains("deleteById"));
 //    }
 
+    /**
+     * Test the getById method of the TagController
+     * This test is successful if the method returns a ResponseEntity with the tag using mocking the repository
+     * by giving instructions to the mock object how it should behave when it is called.
+     * The method getById should return a ResponseEntity with the tag.
+     * The mock(class) creates a fake object that can be used to test the behavior of the method.
+     */
     @Test
     public void TestGetById() {
         Tag t = getTag("tag_name");
         t.id = new UUID(0, 1);
+
         TagRepository mock = mock(TagRepository.class);
         when(mock.existsById(t.id)).thenReturn(true);
         when(mock.findById(t.id)).thenReturn(java.util.Optional.of(t));
+
         TagController controller = new TagController(mock);
+
         assertEquals(ResponseEntity.ok(new TagDTO(t)), controller.getById(t.id));
     }
 
