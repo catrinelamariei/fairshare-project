@@ -13,7 +13,9 @@ class ParticipantTest {
       String lastName = "lname";
       String email = "fname@gmail.com";
       String iban = "NL02ABNA0123456789";
-      Participant participant = new Participant(firstName, lastName, email, iban);
+      Event event = new Event("event");
+      Participant participant = new Participant(event,firstName, lastName, email, iban);
+      assertEquals(event, participant.event);
       assertEquals(firstName, participant.firstName);
       assertEquals(lastName, participant.lastName);
       assertEquals(email, participant.email);
@@ -26,8 +28,9 @@ class ParticipantTest {
       String lastName = "Doe";
       String email = "jane_doe@gmail.com";
       String iban = "NL02ABNA0123456789";
-      Participant p1 = new Participant(firstName, lastName, email, iban);
-      Participant p2 = new Participant(firstName, lastName, email, iban);
+      Event event = new Event("event");
+      Participant p1 = new Participant(event, firstName, lastName, email, iban);
+      Participant p2 = new Participant(event, firstName, lastName, email, iban);
       assertEquals(p1,p2);
    }
 
@@ -38,12 +41,14 @@ class ParticipantTest {
       String lastName = "Doe";
       String email = "jane_doe@gmail.com";
       String iban = "NL02ABNA0123456789";
-      Participant p1 = new Participant(firstName, lastName, email, iban);
+        Event event = new Event("event");
+      Participant p1 = new Participant(event, firstName, lastName, email, iban);
       String firstName2 = "Jane";
       String lastName2 = "Doe";
       String email2 = "jane_doe2@gmail.com";
       String iban2 = "NL07ABNA0003456789";
-      Participant p2 = new Participant(firstName2, lastName2, email2, iban2);
+      Event event2 = new Event("event2");
+      Participant p2 = new Participant(event2, firstName2, lastName2, email2, iban2);
       assertNotEquals(p1,p2);
    }
 
@@ -53,8 +58,9 @@ class ParticipantTest {
       String lastName = "Doe";
       String email = "jane_doe@gmail.com";
       String iban = "NL02ABNA0123456789";
-      Participant p1 = new Participant(firstName, lastName, email, iban);
-      Participant p2 = new Participant(firstName, lastName, email, iban);
+      Event event = new Event("event");
+      Participant p1 = new Participant(event, firstName, lastName, email, iban);
+      Participant p2 = new Participant(event, firstName, lastName, email, iban);
       assertEquals(p1,p2);
       assertEquals(p1.hashCode(), p2.hashCode());
    }
@@ -65,7 +71,8 @@ class ParticipantTest {
       String lastName = "Doe";
       String email = "jane_doe@gmail.com";
       String iban = "NL02ABNA0123456789";
-      Participant p = new Participant(firstName, lastName, email, iban);
+      Event event = new Event("event");
+      Participant p = new Participant(event, firstName, lastName, email, iban);
       String actual = p.toString();
 
       assertTrue(actual.contains(Participant.class.getSimpleName()));

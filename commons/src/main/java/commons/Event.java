@@ -26,6 +26,9 @@ public class Event {
     @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
     public Set<Participant> participants;
 
+    @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
+    public Set<Transaction> transactions;
+
 
     @SuppressWarnings("unused")
     public Event() {
@@ -37,6 +40,7 @@ public class Event {
         this.tags = new HashSet<>();
         this.participants = new HashSet<>();
         this.creationDate = new Date();
+        this.transactions = new HashSet<>();
     }
 
     public boolean addTag(Tag tag) {
@@ -84,6 +88,25 @@ public class Event {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public boolean addParticipant(Participant participant) {
+        if(participants == null) participants = new HashSet<>();
+        if(participants.contains(participant)) return false;
+        participants.add(participant);
+        participant.event = this;
+        return true;
+    }
+
+    public boolean addTransaction(Transaction transaction) {
+        if(transactions == null) transactions = new HashSet<>();
+        if(transactions.contains(transaction)) return false;
+        transactions.add(transaction);
+        transaction.event = this;
+        return true;
     }
 
     // this is a custom equals method that doesn't consider tags

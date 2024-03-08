@@ -39,17 +39,18 @@ public class Participant {
     public Set<Transaction> participatedTransactions;
 
     @SuppressWarnings("unused")
-    private Participant() {
+    public Participant() {
       // for object mapper
     }
 
-    public Participant(String firstName, String lastName, String email, String iban) {
+    public Participant(Event event,String firstName, String lastName, String email, String iban) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.iban = iban;
         this.paidTransactions = new HashSet<>();
         this.participatedTransactions = new HashSet<>();
+        this.event = event;
     }
 
     public UUID getId() {
@@ -87,6 +88,9 @@ public class Participant {
     public void setIban(String iban){
         this.iban = iban;
     }
+    public Event getEvent() {
+        return event;
+    }
 
 
     @Override
@@ -103,4 +107,6 @@ public class Participant {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
+
+
 }

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class ParticipantDTO {
     public UUID id;
+    public UUID eventId;
     public String firstName;
     public String lastName;
     public String email;
@@ -17,5 +18,6 @@ public class ParticipantDTO {
         this.lastName = participant.getLastName();
         this.email = participant.getEmail();
         this.iban = participant.getIban();
+        this.eventId = participant.getEvent().getId();
     }
 }
