@@ -1,0 +1,28 @@
+.transaction {
+    -fx-alignment: center-left;
+    -fx-pref-height: 100;
+    -fx-pref-width: 703;
+}
+
+.transaction > *, .transaction > * > * {
+    margin: 10;
+}
+
+.transaction > Text {
+    -fx-font-size: 15;
+}
+
+.transaction > VBox {
+    -fx-alignment: center-left;
+    -fx-pref-height: 200;
+    -fx-pref-width: 100;
+
+}
+
+.transaction > VBox > .desc {
+    -fx-font-size: 20;
+}
+
+.transaction > VBox > .participants {
+    -fx-font: italic 15 "System";
+}
