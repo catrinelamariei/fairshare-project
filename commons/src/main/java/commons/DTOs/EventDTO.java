@@ -2,16 +2,16 @@ package commons.DTOs;
 
 import commons.Event;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Date;
 
 public class EventDTO {
     public UUID id;
     public String name;
     public Set<TagDTO> tags;
-    public Date date;
+    public final Date date;
     public Set<ParticipantDTO> participants;
     public Set<TransactionDTO> transactions;
 
