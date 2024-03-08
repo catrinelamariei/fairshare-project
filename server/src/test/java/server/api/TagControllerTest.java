@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import server.api.dependencies.TestTagRepository;
+import server.database.TagRepository;
 
 import java.util.UUID;
 
@@ -14,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import static org.mockito.Mockito.*;
 
 public class TagControllerTest {
 
@@ -108,15 +111,23 @@ public class TagControllerTest {
 //        assertTrue(repo.calledMethods.contains("deleteById"));
 //    }
 
+    @Test
+    public void TestGetById() {
+        Tag t = getTag("tag_name");
+        t.id = new UUID(0, 1);
+        TagRepository mock = mock(TagRepository.class);
+        when(mock.existsById(t.id)).thenReturn(true);
+        when(mock.findById(t.id)).thenReturn(java.util.Optional.of(t));
+        TagController controller = new TagController(mock);
+        assertEquals(ResponseEntity.ok(new TagDTO(t)), controller.getById(t.id));
+    }
+
 
     // helper methods:
 
     private static Tag getTag(String name) {
-        Tag t = new Tag(new Event("event_name"),  name, Tag.Color.RED);
+        Tag t = new Tag(new Event("event_name"), name, Tag.Color.RED);
         t.id = new UUID(0L, 0L);
         return t;
     }
-
-
-
 }
