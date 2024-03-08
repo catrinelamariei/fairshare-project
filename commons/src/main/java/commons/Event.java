@@ -21,7 +21,7 @@ public class Event {
     private Set<Tag> tags;
 
     @Column (nullable = false)
-    private Date creationDate;
+    private final Date creationDate;
 
     @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
     public Set<Participant> participants;
@@ -33,6 +33,7 @@ public class Event {
     @SuppressWarnings("unused")
     public Event() {
         // for object mapper
+        this.creationDate = new Date();
     }
 
     public Event(String name) {
@@ -86,9 +87,6 @@ public class Event {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
     public Set<Transaction> getTransactions() {
         return transactions;
     }
