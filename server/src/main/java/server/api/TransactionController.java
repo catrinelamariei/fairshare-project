@@ -40,17 +40,23 @@ public class TransactionController {
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDTO> updateTransactionById(@PathVariable("id") UUID id,
                                                             @RequestBody Transaction transaction) {
+        //validation
         if(!validate(transaction)){
             return ResponseEntity.badRequest().build();
         }
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
+
+        //updating
         Transaction t = repo.findById(id).get();
         t.setDate(transaction.getDate());
         t.setCurrencyCode(transaction.getCurrencyCode());
         t.setAmount(transaction.getAmount());
+        t.subject = transaction.subject;
         repo.save(t);
+
+        //finalising
         return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
     }
 

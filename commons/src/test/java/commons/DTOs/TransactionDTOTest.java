@@ -9,7 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class TransactionDTOTest {
     @Test
     void testConstructor() {
-        Transaction t = new Transaction(new Event("event"), new java.util.Date(), "usd", new java.math.BigDecimal("0.00"), null);
+        Transaction t = new Transaction(new Event("event"), new java.util.Date(), "usd",
+                new java.math.BigDecimal("0.00"), null, "Chicken-nuggets");
         TransactionDTO tDTO = new TransactionDTO(t);
         assertEquals(t.getId(), tDTO.id);
         assertEquals(t.getDate(), tDTO.date);
