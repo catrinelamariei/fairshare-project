@@ -2,7 +2,6 @@ package commons;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
-import commons.DTOs.TransactionDTO;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,6 +36,8 @@ public class Transaction {
     @ManyToMany(cascade = CascadeType.DETACH)
     public Set<Tag> tags;
 
+    @Column(nullable = false)
+    public String subject;
 
 
     @SuppressWarnings("unused")
@@ -45,7 +46,7 @@ public class Transaction {
     }
 
     public Transaction(Event event, Date date,String currencyCode,
-                       BigDecimal amount, Participant author) {
+                       BigDecimal amount, Participant author, String subject) {
         this.event = event;
         this.date = date;
         this.currencyCode = currencyCode;
@@ -53,16 +54,7 @@ public class Transaction {
         this.tags = new HashSet<Tag>();
         this.author = author;
         this.participants = new HashSet<>();
-    }
-
-    public Transaction(TransactionDTO dto) {
-        this.id = dto.id;
-        this.date = dto.date;
-        this.currencyCode = dto.currencyCode;
-        this.amount = dto.amount;
-        this.author = dto.author;
-        this.participants = dto.participants;
-        this.tags = dto.tags;
+        this.subject = subject;
     }
 
     /**
@@ -73,7 +65,7 @@ public class Transaction {
     public static boolean validate(Transaction ts) {
         return !(ts == null || ts.id == null || ts.date == null || ts.currencyCode == null ||
             ts.amount == null || ts.currencyCode.isEmpty() ||
-            ts.amount.compareTo(BigDecimal.ZERO) < 0);
+            ts.amount.compareTo(BigDecimal.ZERO) < 0 || ts.subject == null);
     }
 
     public UUID getId() {

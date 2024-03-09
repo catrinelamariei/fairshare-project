@@ -17,6 +17,7 @@ public class TransactionDTO {
     public Participant author;
     public Set<Participant> participants;
     public Set<Tag> tags;
+    public String subject;
 
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
@@ -27,14 +28,16 @@ public class TransactionDTO {
         this.participants = transaction.getParticipants();
         this.tags = transaction.getTags();
         this.eventId = transaction.getEvent().getId();
+        this.subject = transaction.subject;
     }
 
     public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount,
-                          Participant author) {
+                          Participant author, String subject) {
         this.id = id;
         this.date = date;
         this.currencyCode = currencyCode;
         this.amount = amount;
         this.author = author;
+        this.subject = subject;
     }
 }

@@ -35,13 +35,15 @@ class TransactionControllerTest {
                 new UUID(0,0),
                 new Date(), "eur",
                 new BigDecimal("5.20"),
-                new Participant(event,"Clay", "Smith", "mail0", "iban0"));
+                new Participant(event,"Clay", "Smith", "mail0", "iban0"),
+                "Big-mac");
 
         ts1 = new Transaction(
                 event,
                 new Date(), "usd",
                 new BigDecimal("6.79"),
-                new Participant(event,"Max", "Well", "mail1", "iban1"));
+                new Participant(event,"Max", "Well", "mail1", "iban1"),
+                "XXL-BIG-MAC");
         ts1.id = new UUID(0,1);
         ctrl.createTransaction(ts1);
 
@@ -49,7 +51,8 @@ class TransactionControllerTest {
                 new Event("event"),
                 new Date(), "usd",
                 new BigDecimal("0.00"),
-                new Participant(event,"Bob", "Snow", "email2", "iban"));
+                new Participant(event,"Bob", "Snow", "email2", "iban"),
+                "XXL-Double-Double-Extra-Big-Mac");
         ts2.id = new UUID(0,2);
     }
 
@@ -67,7 +70,7 @@ class TransactionControllerTest {
         BigDecimal amount = null;
         Event ev = new Event("event");
         Participant author = new Participant(ev,"Frey", "Port", "mail3", "iban3");
-        Transaction t = new Transaction(ev,d,s,amount, author);
+        Transaction t = new Transaction(ev,d,s,amount, author, "macie");
         var actual = ctrl.createTransaction(t);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
@@ -79,7 +82,7 @@ class TransactionControllerTest {
         Event event = new Event("event");
         BigDecimal amount = new BigDecimal("-19.99");
         Participant author = new Participant(event,"Frey", "Port", "mail3", "iban3");
-        Transaction t = new Transaction(event, d,s,amount, author);
+        Transaction t = new Transaction(event, d,s,amount, author, "macie");
         var actual = ctrl.createTransaction(t);
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
