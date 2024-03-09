@@ -21,7 +21,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
    <center>
       <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color: gray;" BorderPane.alignment="CENTER">
          <children>
@@ -131,7 +131,7 @@
                                  <content>
                                     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="-Infinity" prefWidth="800.0" vbarPolicy="ALWAYS">
                                        <content>
-                                          <VBox alignment="TOP_CENTER" maxWidth="-Infinity" prefHeight="333.0" prefWidth="766.0">
+                                          <VBox alignment="TOP_CENTER" maxWidth="-Infinity" prefHeight="333.0" prefWidth="766.0" fx:id="transactions">
                                              <children>
                                                 <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="100.0" prefWidth="703.0" styleClass="transaction">
                                                    <children>

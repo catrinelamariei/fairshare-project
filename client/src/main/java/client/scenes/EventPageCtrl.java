@@ -2,9 +2,13 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.utils.ServerUtils;
+import commons.DTOs.EventDTO;
+import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 import commons.Participant;
-import commons.Transaction;
+import jakarta.ws.rs.WebApplicationException;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
@@ -18,24 +22,59 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.util.List;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
-public class EventPageCtrl {
+public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final Integer eventId;
+    private final UUID eventId;
+    @FXML
+    private VBox transactions;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.eventId = 1; //temporary placeholder
+        this.eventId = new UUID(0,1); //temporary placeholder
     }
 
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO: fetch and display transactions + participants
-        // TODO: set parent container of transactions to .transaction class
+        // TEST:
+        System.out.println("Initializing EventPage");
+
+        TransactionDTO tsDTO = new TransactionDTO(
+                new UUID(0,1),
+                new Date(),
+                "eur",
+                new BigDecimal("10.99"),
+                new ParticipantDTO("Max", "Well", "mail@me.com", "FR1234"),
+                "Burgerzz"
+        );
+        tsDTO.participants = new HashSet<ParticipantDTO>();
+        tsDTO.participants.add(new ParticipantDTO("Bo", "To", "mail", "iban"));
+
+        HBox node = createTransactionNode(tsDTO);
+        transactions.getChildren().add(node);
+
+        try {
+            EventDTO event = server.getEvent(eventId);
+
+            //load transactions
+            for (TransactionDTO ts : event.transactions) {
+                transactions.getChildren().add(createTransactionNode(ts));
+            }
+
+            // TODO: load participants
+
+        } catch (WebApplicationException e) {
+            System.err.printf("Error while fetching EVENT<%s>: %s%n", eventId, e);
+        }
     }
 
     public void gotoHome() {
@@ -72,8 +111,8 @@ public class EventPageCtrl {
         Text date = new Text(ts.date.toString());
 
         //main body
-        Text desc = new Text(String.format("%s payed %.2f%s for %s"),
-            ts.author, ts.amount, ts.currencyCode, ts.subject);
+        Text desc = new Text(String.format("%s payed %.2f%s for %s",
+            ts.author, ts.amount, ts.currencyCode, ts.subject));
         desc.getStyleClass().add("desc"); //set css class to .desc
 
         Text particants = new Text(ts.participants.toString());
@@ -82,12 +121,13 @@ public class EventPageCtrl {
         VBox body = new VBox(desc, particants);
 
         //image
-        Image img = new Image("@../Images/764599.png", 30d, 30d, true, false); //set imageview size
+        Image img = new Image("/client/Images/764599.png", 30d, 30d, true, false); //set imageview size
         ImageView imgv = new ImageView(img);
         Button btn = new Button("", imgv);
 
-        HBox out = new HBox(date, body, btn);
-        out.setHgrow(body, Priority.ALWAYS); //manage hbox.hgrow -> make it expand
+        HBox out = new HBox(date, body, btn); //new HBox with children
+        out.getStyleClass().add(".transaction"); //css class .transaction
+        out.setHgrow(body, Priority.ALWAYS); //manage HBox.Hgrow -> make it expand
 
         return out;
     }

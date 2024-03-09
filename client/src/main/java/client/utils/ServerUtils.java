@@ -17,12 +17,16 @@ package client.utils;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import commons.DTOs.EventDTO;
 import commons.Event;
 import commons.Transaction;
+import jakarta.ws.rs.WebApplicationException;
 import org.glassfish.jersey.client.ClientConfig;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+
+import java.util.UUID;
 
 public class ServerUtils {
     private static final String SERVER = "http://localhost:8080/";
@@ -38,6 +42,13 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(event, APPLICATION_JSON), Event.class);
+    }
+
+    public EventDTO getEvent(UUID id) throws WebApplicationException {
+        return ClientBuilder.newClient()
+                .target(SERVER).path("api/event/" + id)
+                .request(APPLICATION_JSON)
+                .get(EventDTO.class);
     }
 
     /**
