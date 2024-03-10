@@ -53,7 +53,7 @@ public class PrivCheckPageCtrl {
 
     public void requestCodeGeneration(){
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/admin";
+        String url = serverUrl + "/admin";
         String response = restTemplate.getForObject(url, String.class);
     }
     public String postRequest(String code) {
