@@ -131,7 +131,7 @@
                                  <content>
                                     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="-Infinity" prefWidth="800.0" vbarPolicy="ALWAYS">
                                        <content>
-                                          <VBox alignment="TOP_CENTER" maxWidth="-Infinity" prefHeight="333.0" prefWidth="766.0" fx:id="transactions">
+                                          <VBox fx:id="transactions" alignment="TOP_CENTER" maxWidth="-Infinity" prefHeight="333.0" prefWidth="766.0">
                                              <children>
                                                 <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="100.0" prefWidth="703.0" styleClass="transaction">
                                                    <children>
@@ -174,7 +174,14 @@
                                     </ScrollPane>
                                  </content>
                             </Tab>
-                            <Tab text="Add Expense" />
+                            <Tab text="Add Expense">
+                                 <content>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
+                                       <children>
+                                          <Button alignment="CENTER" contentDisplay="CENTER" layoutX="339.0" layoutY="127.0" mnemonicParsing="false" onAction="#testAddTransaction" text="Add Transaction" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content></Tab>
                               <Tab text="Queries" />
                           </tabs>
                         </TabPane>

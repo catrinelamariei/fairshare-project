@@ -5,7 +5,7 @@
 }
 
 .transaction > *, .transaction > * > * {
-    margin: 10;
+    /* insets not working */
 }
 
 .transaction > Text {
