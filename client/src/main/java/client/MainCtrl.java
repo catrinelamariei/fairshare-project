@@ -57,7 +57,12 @@ public class MainCtrl {
     }
 
     public void showEventPage() {
-        primaryStage.setTitle("<EventName>: overview");
+
+        UserData data = UserData.getInstance();
+        String eventUUID = data.getCurrentUUID();
+
+        eventPageCtrl.loadEvent();
+        primaryStage.setTitle(eventUUID+": overview");
         primaryStage.setScene(eventPage);
     }
 

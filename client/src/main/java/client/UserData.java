@@ -7,6 +7,8 @@ public final class UserData {
     private String token;
     private String currentUUID;
     private ArrayList<String> recentUUIDs;
+
+    private String serverUrl = "http://localhost:8080";
     private final static UserData INSTANCE = new UserData();
 
     private UserData() {}
@@ -37,5 +39,13 @@ public final class UserData {
 
     public void setCurrentUUID(String currentUUID) {
         this.currentUUID = currentUUID;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 }
