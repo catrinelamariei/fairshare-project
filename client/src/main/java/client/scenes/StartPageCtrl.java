@@ -1,5 +1,6 @@
 package client.scenes;
 import client.MainCtrl;
+import client.UserData;
 import client.utils.ServerUtils;
 
 import javax.inject.Inject;
@@ -65,7 +66,10 @@ public class StartPageCtrl {
         String text = joinedEvent.getText();
         if (text != null && !text.isEmpty()) {
             System.out.println(text + " Event joined");
+            UserData data = UserData.getInstance();
+            data.setCurrentUUID(text);
             joinedEvent.clear();
+            eventPage();
         } else {
             // Display an error message if the input is invalid
             Alert alert = new Alert(Alert.AlertType.ERROR);

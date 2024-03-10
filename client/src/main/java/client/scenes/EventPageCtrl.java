@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.MainCtrl;
+import client.UserData;
 import client.utils.ServerUtils;
 
 import javax.inject.Inject;
@@ -13,13 +14,14 @@ import java.util.ResourceBundle;
 public class EventPageCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final Integer eventId;
+    private final String eventUUID;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.eventId = 1; //temporary placeholder
+        UserData data = UserData.getInstance();
+        this.eventUUID = data.getCurrentUUID();
     }
 
     public void initialize(URL location, ResourceBundle resources) {}
@@ -36,11 +38,10 @@ public class EventPageCtrl {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
         //get invite code (String)
-        String invCode = "123456789"; //temporary placeholder (content)
         String eventName = "NewYearEvent"; //temporary placeholder (owner)
 
         //copy data to clipboard
-        StringSelection content = new StringSelection(invCode);
+        StringSelection content = new StringSelection(this.eventUUID);
         StringSelection owner = new StringSelection(eventName);
         clipboard.setContents(content, owner);
 
