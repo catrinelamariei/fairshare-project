@@ -23,12 +23,14 @@ public class EventPageCtrl implements Initializable {
     private EventDTO eventDTO;
 
     private Stage stage;
-    private String serverUrl;
+    private final String SERVER;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        UserData data = UserData.getInstance();
+        this.SERVER = data.getServerUrl();
     }
 
     @Override
@@ -38,7 +40,6 @@ public class EventPageCtrl implements Initializable {
 
     public void loadEvent() {
         UserData data = UserData.getInstance();
-        this.serverUrl = data.getServerUrl();
         this.eventUUID = data.getCurrentUUID();
         this.eventDTO = getEventDTO();
         System.out.println(eventDTO);
@@ -71,7 +72,7 @@ public class EventPageCtrl implements Initializable {
 
     public EventDTO getEventDTO(){
         RestTemplate restTemplate = new RestTemplate();
-        String url = serverUrl + "/api/event/" +this.eventUUID;
+        String url = SERVER + "/api/event/" +this.eventUUID;
         System.out.println(url);
         try{
             return restTemplate.getForObject(url, EventDTO.class);
