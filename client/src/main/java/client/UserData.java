@@ -1,12 +1,14 @@
 package client;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class UserData {
 
     private String token;
     private String currentUUID;
-    private ArrayList<String> recentUUIDs;
+    private Set<String> recentUUIDs = new HashSet<>();
 
     private String serverUrl = "http://localhost:8080";
     private final static UserData INSTANCE = new UserData();
@@ -25,11 +27,11 @@ public final class UserData {
         return this.token;
     }
 
-    public ArrayList<String> getRecentUUIDs() {
+    public Set<String> getRecentUUIDs() {
         return recentUUIDs;
     }
 
-    public void setRecentUUIDs(ArrayList<String> recentUUIDs) {
+    public void setRecentUUIDs(Set<String> recentUUIDs) {
         this.recentUUIDs = recentUUIDs;
     }
 
@@ -38,6 +40,7 @@ public final class UserData {
     }
 
     public void setCurrentUUID(String currentUUID) {
+        recentUUIDs.add(currentUUID);
         this.currentUUID = currentUUID;
     }
 
