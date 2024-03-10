@@ -1,12 +1,11 @@
 package commons.DTOs;
 
-import commons.Participant;
-import commons.Tag;
 import commons.Transaction;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class TransactionDTO {
     public UUID id;
@@ -14,9 +13,9 @@ public class TransactionDTO {
     public Date date;
     public String currencyCode;
     public BigDecimal amount;
-    public Participant author;
-    public Set<Participant> participants;
-    public Set<Tag> tags;
+    public ParticipantDTO author;
+    public Set<ParticipantDTO> participants;
+    public Set<TagDTO> tags;
     public String subject;
 
     public TransactionDTO(Transaction transaction) {
@@ -24,15 +23,16 @@ public class TransactionDTO {
         this.date = transaction.getDate();
         this.currencyCode = transaction.getCurrencyCode();
         this.amount = transaction.getAmount();
-        this.author = transaction.getAuthor();
-        this.participants = transaction.getParticipants();
-        this.tags = transaction.getTags();
+        this.author = new ParticipantDTO(transaction.getAuthor());
+        this.participants = transaction.getParticipants().stream().map(ParticipantDTO::new)
+                .collect(Collectors.toSet());
+        this.tags = transaction.getTags().stream().map(TagDTO::new).collect(Collectors.toSet());
         this.eventId = transaction.getEvent().getId();
         this.subject = transaction.subject;
     }
 
     public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount,
-                          Participant author, String subject) {
+                          ParticipantDTO author, String subject) {
         this.id = id;
         this.date = date;
         this.currencyCode = currencyCode;
