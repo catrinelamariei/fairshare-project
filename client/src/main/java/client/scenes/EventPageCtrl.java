@@ -8,8 +8,11 @@ import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 import commons.Participant;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
@@ -17,8 +20,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Popup;
+import javafx.util.Duration;
+import javafx.scene.control.Label;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -35,6 +42,8 @@ public class EventPageCtrl implements Initializable {
     private final UUID eventId;
     @FXML
     private VBox transactions;
+    @FXML
+    private Button copyButton;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -73,16 +82,35 @@ public class EventPageCtrl implements Initializable {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
         //get invite code (String)
-        String invCode = "123456789"; //temporary placeholder (content)
-        String eventName = "NewYearEvent"; //temporary placeholder (owner)
-
         //copy data to clipboard
-        StringSelection content = new StringSelection(invCode);
-        StringSelection owner = new StringSelection(eventName);
-        clipboard.setContents(content, owner);
+        StringSelection content = new StringSelection(eventId.toString());
+        clipboard.setContents(content, null);
+
 
         //display copied for 3 seconds
-        System.out.println("Copied to clipboard!"); //temporary placeholder
+        Label label = new Label("Copied to clipboard!");
+        label.setStyle("-fx-font-size: 14px;"); // Set label font size
+        StackPane stackPane = new StackPane(label);
+        stackPane.setStyle(
+                "-fx-background-color: white; -fx-border-color: black;" +
+                        " -fx-border-width: 1px; -fx-padding: 2px");
+
+
+        Popup popup = new Popup();
+        popup.getContent().add(stackPane);
+        popup.setAutoHide(true);
+        Bounds boundsInScreen = copyButton.localToScreen(copyButton.getBoundsInLocal());
+
+        // Position the popup under the button
+        double x = boundsInScreen.getMinX();
+        double y = boundsInScreen.getMaxY();
+        popup.show(copyButton.getScene().getWindow(), x, y);
+
+        final double popupDurationSeconds = 1.5;
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(popupDurationSeconds),
+                e -> popup.hide()));
+        timeline.setCycleCount(1);
+        timeline.play();
     }
 
     public void testAddTransaction() {
