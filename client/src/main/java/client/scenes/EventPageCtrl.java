@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.MainCtrl;
+import client.scenes.javaFXClasses.ParticipantNode;
 import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
 import commons.DTOs.EventDTO;
@@ -11,6 +12,7 @@ import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
@@ -35,6 +37,8 @@ public class EventPageCtrl implements Initializable {
     private final UUID eventId;
     @FXML
     private VBox transactions;
+    @FXML
+    private Accordion participants;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -146,12 +150,10 @@ public class EventPageCtrl implements Initializable {
         return out;
     }
 
-    /**
-     * Create a javFX node representing a participant
-     * @param p participant to be displayed (data source)
-     * @return a node filled with data
-     */
-    private TitledPane createParticipantNode(Participant p) {
-        return null;
+    public void participantNodeAddTest() {
+        ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(
+                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9"
+        ));
+        participants.getPanes().add(participantNode);
     }
 }

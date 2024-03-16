@@ -199,7 +199,7 @@
                                  <content>
                                     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
                                        <content>
-                                          <Accordion styleClass="participants" stylesheets="@stylesheets/EventPage.css">
+                                          <Accordion fx:id="participants" styleClass="participants" stylesheets="@stylesheets/EventPage.css">
                                             <panes>
                                               <TitledPane animated="false" styleClass="participants" text="Chris">
                                                    <content>
@@ -277,7 +277,10 @@
                             </Tab>
                             <Tab text="Add Participant">
                               <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
+                                       <children>
+                                          <Button layoutX="345.0" layoutY="128.0" mnemonicParsing="false" onAction="#participantNodeAddTest" text="TEST BUTTON" />
+                                       </children></AnchorPane>
                               </content>
                             </Tab>
                           </tabs>
