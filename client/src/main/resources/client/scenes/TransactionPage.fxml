@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.TransactionPageCtrl">
+    <bottom>
+        <HBox prefHeight="39.0" prefWidth="800.0" style="-fx-background-color: dimgray;" BorderPane.alignment="CENTER" />
+    </bottom>
+   <left>
+        <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color:grey;" BorderPane.alignment="CENTER">
+            <children>
+                <HBox prefWidth="200.0" style="-fx-background-color: dimgray;">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#gotoHome" style="-fx-background-color: darkgray;" text="Home">
+                            <HBox.margin>
+                                <Insets left="5.0" />
+                            </HBox.margin>
+                        </Button>
+                        <HBox>
+                            <children>
+                                <MenuButton mnemonicParsing="false" style="-fx-background-color:grey;" text="New Year Party">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#gotoAdminLogin" text="Admin Panel" />
+                                    </items>
+                                    <HBox.margin>
+                                        <Insets left="5.0" />
+                                    </HBox.margin>
+                                </MenuButton>
+                                <Button mnemonicParsing="false" style="-fx-background-color:grey;" text="x">
+                                    <HBox.margin>
+                                        <Insets left="-5.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <Button layoutX="67.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: darkgray;" text="Other Event">
+                            <HBox.margin>
+                                <Insets left="5.0" />
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                </HBox>
+                <VBox prefWidth="100.0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" prefWidth="200.0">
+                            <children>
+                                <Pane HBox.hgrow="ALWAYS" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Add/Edit Expense" textAlignment="CENTER" wrappingWidth="416.5113830566406">
+                     <font>
+                        <Font name="System Bold" size="50.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
+            <HBox prefHeight="62.0" prefWidth="800.0">
+               <children>
+                  <VBox prefHeight="100.0" prefWidth="395.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Who paid?">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="100.0" prefWidth="411.0">
+                     <children>
+                        <ChoiceBox prefHeight="25.0" prefWidth="180.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="62.0" prefWidth="800.0">
+               <children>
+                  <VBox prefHeight="62.0" prefWidth="393.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="What for?">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="62.0" prefWidth="406.0">
+                     <children>
+                        <TextField prefHeight="25.0" prefWidth="180.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="62.0" prefWidth="800.0">
+               <children>
+                  <VBox prefHeight="62.0" prefWidth="393.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How much?">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="62.0" prefWidth="282.0">
+                     <children>
+                        <TextField prefHeight="25.0" prefWidth="157.0" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="62.0" prefWidth="125.0">
+                     <children>
+                        <ChoiceBox prefHeight="25.0" prefWidth="122.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox prefHeight="62.0" prefWidth="800.0">
+               <children>
+                  <VBox prefHeight="62.0" prefWidth="393.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="When?">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="62.0" prefWidth="406.0">
+                     <children>
+                        <DatePicker />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox prefHeight="297.0" prefWidth="800.0">
+               <children>
+                  <VBox prefHeight="55.0" prefWidth="800.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How to split?" wrappingWidth="150.1474609375">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <HBox prefHeight="49.0" prefWidth="800.0">
+                     <children>
+                        <CheckBox mnemonicParsing="false" text="Equally between everyone">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                  </HBox>
+                  <VBox prefHeight="227.0" prefWidth="800.0">
+                     <children>
+                        <HBox prefHeight="49.0" prefWidth="800.0">
+                           <children>
+                              <CheckBox mnemonicParsing="false" text="Only some people">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="173.0" prefWidth="800.0">
+                           <children>
+                              <HBox prefHeight="167.0" prefWidth="61.0" />
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="-Infinity" prefHeight="167.0" prefWidth="774.0" vbarPolicy="ALWAYS" />
+                              <HBox prefHeight="167.0" prefWidth="797.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <HBox prefHeight="62.0" prefWidth="800.0">
+               <children>
+                  <VBox prefHeight="62.0" prefWidth="393.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Expense Type">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="62.0" prefWidth="282.0">
+                     <children>
+                        <TextField prefHeight="25.0" prefWidth="157.0" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="62.0" prefWidth="125.0">
+                     <children>
+                        <ChoiceBox prefHeight="25.0" prefWidth="122.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            </children>
+        </VBox>
+   </left>
+</BorderPane>
