@@ -2,7 +2,7 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.utils.ServerUtils;
-import client.utils.TransactionNode;
+import client.scenes.javaFXClasses.TransactionNode;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
@@ -124,7 +124,7 @@ public class EventPageCtrl implements Initializable {
                 .map(p -> p.firstName)
                 .collect(Collectors.joining(", "))
                 + ")"); //concatenate with ", " in between each name
-        particants.getStyleClass().add("participants"); //set css class to .participants
+        particants.getStyleClass().add("participantText"); //set css class to .participants
 
         VBox body = new VBox(desc, particants);
 
