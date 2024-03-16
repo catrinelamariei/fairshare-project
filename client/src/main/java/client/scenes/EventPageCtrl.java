@@ -7,11 +7,14 @@ import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 import commons.Participant;
+import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,22 +22,32 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class EventPageCtrl implements Initializable {
+
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private final UUID eventId;
     @FXML
     private VBox transactions;
+
+    @FXML
+    private TextField transactionName;
+    @FXML
+    private TextField transactionAmount;
+    @FXML
+    private TextField currencyCode;
+    @FXML
+    private DatePicker transactionDate;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -154,4 +167,24 @@ public class EventPageCtrl implements Initializable {
     private TitledPane createParticipantNode(Participant p) {
         return null;
     }
+
+    /**
+     * This method is NOT done. I had to put parameters, because I didn't know how to
+     * get the event and author
+     */
+    public void onCreateTransaction(UUID eventId, Participant p){
+        String name = transactionName.getText();
+        BigDecimal amount = new BigDecimal(transactionAmount.getText());
+        String currency = currencyCode.getText();
+        LocalDate date = transactionDate.getValue();
+        Date d = java.sql.Date.valueOf(date);
+//        Event e = eventRepository.get(eventId);
+//        Transaction t = new Transaction(e, d, currency, amount, p, name);
+        Transaction t = new Transaction();
+        server.addTransaction(t);
+    }
+
+
+
+
 }

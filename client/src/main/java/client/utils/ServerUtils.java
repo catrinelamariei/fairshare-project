@@ -18,6 +18,7 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import commons.DTOs.EventDTO;
+import commons.DTOs.TransactionDTO;
 import commons.Event;
 import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
@@ -62,5 +63,12 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
+    }
+
+    public TransactionDTO getTransaction(UUID id) throws WebApplicationException {
+        return ClientBuilder.newClient()
+                .target(SERVER).path("api/transaction/" + id)
+                .request(APPLICATION_JSON)
+                .get(TransactionDTO.class);
     }
 }

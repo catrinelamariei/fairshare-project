@@ -4,12 +4,14 @@
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -178,7 +180,15 @@
                                  <content>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
                                        <children>
-                                          <Button alignment="CENTER" contentDisplay="CENTER" layoutX="339.0" layoutY="127.0" mnemonicParsing="false" onAction="#testAddTransaction" text="Add Transaction" />
+                                          <Button fx:id="addTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="580.0" layoutY="127.0" mnemonicParsing="false" onAction="#onCreateTransaction" text="Add Transaction" />
+                                          <DatePicker fx:id="transactionDate" layoutX="166.0" layoutY="220.0" />
+                                          <Text layoutX="166.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction date" />
+                                          <Text layoutX="166.0" layoutY="157.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Currency code" />
+                                          <Text layoutX="166.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amount" />
+                                          <Text layoutX="166.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction name" wrappingWidth="94.60001373291016" />
+                                          <TextField fx:id="transactionName" layoutX="166.0" layoutY="40.0" />
+                                          <TextField fx:id="transactionAmount" layoutX="167.0" layoutY="101.0" />
+                                          <TextField fx:id="currencyCode" layoutX="167.0" layoutY="160.0" />
                                        </children>
                                     </AnchorPane>
                                  </content></Tab>

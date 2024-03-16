@@ -41,7 +41,7 @@ public class Transaction {
 
 
     @SuppressWarnings("unused")
-    protected Transaction() {
+    public Transaction() {
         // for object mapper (needs to be public/protected)
     }
 
