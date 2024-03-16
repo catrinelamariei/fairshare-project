@@ -169,10 +169,9 @@ public class EventPageCtrl implements Initializable {
     }
 
     /**
-     * This method is NOT done. I had to put parameters, because I didn't know how to
-     * get the event and author
+     * This method is NOT done.
      */
-    public void onCreateTransaction(UUID eventId, Participant p){
+    public void onCreateTransaction(){
         String name = transactionName.getText();
         BigDecimal amount = new BigDecimal(transactionAmount.getText());
         String currency = currencyCode.getText();
