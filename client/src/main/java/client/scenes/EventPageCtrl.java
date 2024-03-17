@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import javafx.event.ActionEvent;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
@@ -48,6 +49,9 @@ public class EventPageCtrl implements Initializable {
     private TextField currencyCode;
     @FXML
     private DatePicker transactionDate;
+
+    @FXML
+    private Button deleteTransactionButton;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -121,6 +125,8 @@ public class EventPageCtrl implements Initializable {
      * @return a node filled with data
      */
     private TransactionNode createTransactionNode(TransactionDTO ts) {
+        TransactionNode out = new TransactionNode(); //new TransactionNode (=HBox)
+
         //date
         Calendar calendar = (new Calendar.Builder()).setInstant(ts.date).build();
         Text date = new Text(String.format("%d/%d/%d", calendar.get(Calendar.DATE),
@@ -141,15 +147,18 @@ public class EventPageCtrl implements Initializable {
 
         VBox body = new VBox(desc, particants);
 
+        // Delete Button
+        Button deleteTransactionButton = new Button("Delete");
+        deleteTransactionButton.setOnAction(event -> onDeleteTransaction(event));
+
         //image
         Image img = new Image("/client/Images/764599.png", 30d, 30d, true, false); //imageview size
         ImageView imgv = new ImageView(img);
         Button btn = new Button("", imgv);
 
         //assembling it all
-        TransactionNode out = new TransactionNode(); //new TransactionNode (=HBox)
         btn.setOnAction(out::editTransaction); //attach method to button
-        out.getChildren().addAll(date, body, btn); //add all nodes to HBox
+        out.getChildren().addAll(date, body, btn, deleteTransactionButton); //add all nodes to HBox
         out.id = ts.id; //so we can reference it (e.g. for updating)
         out.getStyleClass().add("transaction"); //css class .transaction
         out.setHgrow(body, Priority.ALWAYS); //manage HBox.Hgrow -> make it expand
@@ -183,7 +192,27 @@ public class EventPageCtrl implements Initializable {
         server.addTransaction(t);
     }
 
-
-
+    public void onDeleteTransaction(ActionEvent event) {
+        Button btn = (Button) event.getSource();
+        HBox transactionNode = (HBox) btn.getParent();
+        if (transactionNode == null) {
+            System.err.println("Error: TransactionNode is null.");
+            return;
+        }
+        String transactionIdString = transactionNode.getId();
+        if (transactionIdString == null || transactionIdString.isEmpty()) {
+            System.err.println("Error: TransactionNode ID is null or empty.");
+            return;
+        }
+        try {
+            UUID transactionId = UUID.fromString(transactionIdString);
+            transactions.getChildren().remove(transactionNode);
+            server.deleteTransactionById(transactionId);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error parsing UUID: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error deleting transaction: " + e.getMessage());
+        }
+    }
 
 }

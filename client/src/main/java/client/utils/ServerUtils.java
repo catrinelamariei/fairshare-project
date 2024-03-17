@@ -71,4 +71,11 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .get(TransactionDTO.class);
     }
+
+    public void deleteTransactionById(UUID id) throws WebApplicationException {
+        ClientBuilder.newClient()
+                .target(SERVER).path("api/transaction/" + id)
+                .request()
+                .delete(); // Send DELETE request
+    }
 }
