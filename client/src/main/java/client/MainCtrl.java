@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.util.UUID;
+
 public class MainCtrl {
 
     private Stage primaryStage;
@@ -58,6 +60,7 @@ public class MainCtrl {
 
     public void showEventPage() {
         primaryStage.setTitle("<EventName>: overview");
+        eventPageCtrl.load(new UUID(0,0)); //INITIALIZE eventPage with data; placeholder id
         primaryStage.setScene(eventPage);
     }
 

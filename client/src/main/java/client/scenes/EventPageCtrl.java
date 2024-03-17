@@ -1,20 +1,20 @@
 package client.scenes;
 
 import client.MainCtrl;
+import client.scenes.javaFXClasses.ParticipantNode;
 import client.utils.ServerUtils;
-import client.utils.TransactionNode;
+import client.scenes.javaFXClasses.TransactionNode;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Participant;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -36,9 +36,11 @@ public class EventPageCtrl implements Initializable {
 
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final UUID eventId;
+    private UUID eventId;
     @FXML
     private VBox transactions;
+    @FXML
+    private Accordion participants;
 
     @FXML
     private TextField transactionName;
@@ -60,7 +62,12 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void initialize(URL location, ResourceBundle resources) {
+    }
+
+    public void load(UUID id) {
         System.out.println("Initializing EventPage");
+        this.eventId = id;
+        ParticipantNode.init(); //do some styling
 
         try {
             EventDTO event = server.getEvent(eventId);
@@ -70,7 +77,10 @@ public class EventPageCtrl implements Initializable {
                 transactions.getChildren().add(createTransactionNode(ts));
             }
 
-            // TODO: load participants
+            //load participants
+            for (ParticipantDTO p : event.participants) {
+                participants.getPanes().add(new ParticipantNode(p));
+            }
 
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n", eventId, e);
@@ -142,7 +152,7 @@ public class EventPageCtrl implements Initializable {
                 .map(p -> p.firstName)
                 .collect(Collectors.joining(", "))
                 + ")"); //concatenate with ", " in between each name
-        particants.getStyleClass().add("participants"); //set css class to .participants
+        particants.getStyleClass().add("participantText"); //set css class to .participants
 
         VBox body = new VBox(desc, particants);
 
@@ -168,12 +178,13 @@ public class EventPageCtrl implements Initializable {
     }
 
     /**
-     * Create a javFX node representing a participant
-     * @param p participant to be displayed (data source)
-     * @return a node filled with data
+     * placeholder test method for testing the node generator
      */
-    private TitledPane createParticipantNode(Participant p) {
-        return null;
+    public void participantNodeAddTest() {
+        ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(
+                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9"
+        ));
+        participants.getPanes().add(participantNode);
     }
 
     /**
