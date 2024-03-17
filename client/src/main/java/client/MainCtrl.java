@@ -60,7 +60,7 @@ public class MainCtrl {
 
     public void showEventPage() {
         UserData data = UserData.getInstance();
-        String eventUUID = data.getCurrentUUID();
+        UUID eventUUID = data.getCurrentUUID();
 
         eventPageCtrl.loadEvent();
         primaryStage.setTitle(eventUUID+": overview");

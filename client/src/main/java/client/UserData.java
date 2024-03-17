@@ -2,12 +2,13 @@ package client;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public final class UserData {
 
     private String token;
-    private String currentUUID;
-    private Set<String> recentUUIDs = new HashSet<>();
+    private UUID currentUUID;
+    private Set<UUID> recentUUIDs = new HashSet<>();
 
     private String serverUrl = "http://localhost:8080";
     private final static UserData INSTANCE = new UserData();
@@ -26,19 +27,19 @@ public final class UserData {
         return this.token;
     }
 
-    public Set<String> getRecentUUIDs() {
+    public Set<UUID> getRecentUUIDs() {
         return recentUUIDs;
     }
 
-    public void setRecentUUIDs(Set<String> recentUUIDs) {
+    public void setRecentUUIDs(Set<UUID> recentUUIDs) {
         this.recentUUIDs = recentUUIDs;
     }
 
-    public String getCurrentUUID() {
+    public UUID getCurrentUUID() {
         return currentUUID;
     }
 
-    public void setCurrentUUID(String currentUUID) {
+    public void setCurrentUUID(UUID currentUUID) {
         recentUUIDs.add(currentUUID);
         this.currentUUID = currentUUID;
     }

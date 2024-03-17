@@ -41,7 +41,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Accordion participants;
 
-    private String eventUUID;
+    private UUID eventUUID;
 
     private EventDTO eventDTO;
 
@@ -54,7 +54,7 @@ public class EventPageCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
         UserData data = UserData.getInstance();
         this.serverUrl = data.getServerUrl();
-	this.eventId = new UUID(0,1); //temporary placeholder
+	    this.eventId = data.getCurrentUUID();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -98,7 +98,7 @@ public class EventPageCtrl implements Initializable {
         String eventName = "NewYearEvent"; //temporary placeholder (owner)
 
         //copy data to clipboard
-        StringSelection content = new StringSelection(this.eventUUID);
+        StringSelection content = new StringSelection(this.eventUUID.toString());
         StringSelection owner = new StringSelection(eventName);
         clipboard.setContents(content, owner);
 
@@ -140,14 +140,14 @@ public class EventPageCtrl implements Initializable {
             ts.author.firstName, ts.amount, ts.currencyCode, ts.subject));
         desc.getStyleClass().add("desc"); //set css class to .desc
 
-        Text particants = new Text("(" +
+        Text participants = new Text("(" +
                 ts.participants.stream()
                 .map(p -> p.firstName)
                 .collect(Collectors.joining(", "))
                 + ")"); //concatenate with ", " in between each name
-        particants.getStyleClass().add("participantText"); //set css class to .participants
+        participants.getStyleClass().add("participantText"); //set css class to .participants
 
-        VBox body = new VBox(desc, particants);
+        VBox body = new VBox(desc, participants);
 
         //image
         Image img = new Image("/client/Images/764599.png", 30d, 30d, true, false); //imageview size
@@ -179,23 +179,9 @@ public class EventPageCtrl implements Initializable {
     public void loadEvent() {
         UserData data = UserData.getInstance();
         this.eventUUID = data.getCurrentUUID();
-        this.eventDTO = getEventDTO();
+        ServerUtils serverUtils = new ServerUtils();
+        this.eventDTO = serverUtils.getEvent(this.eventUUID);
         System.out.println(eventDTO);
         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n");
     }
-
-
-
-    public EventDTO getEventDTO(){
-        RestTemplate restTemplate = new RestTemplate();
-        String url = serverUrl + "/api/event/" +this.eventUUID;
-        System.out.println(url);
-        try{
-            return restTemplate.getForObject(url, EventDTO.class);
-        }catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-    }
-
 }
