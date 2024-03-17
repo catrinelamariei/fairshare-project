@@ -48,10 +48,12 @@ public class ServerUtils {
                 .post(Entity.entity(event, APPLICATION_JSON), Event.class);
     }
 
+    //I think there is a problem with this method
     public EventDTO getEvent(UUID id) throws WebApplicationException {
         return ClientBuilder.newClient()
                 .target(SERVER).path("api/event/" + id)
                 .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
                 .get(EventDTO.class);
     }
 
@@ -83,14 +85,20 @@ public class ServerUtils {
     }
 
     public void updateEvent(EventDTO eventDTO) throws WebApplicationException {
-        WebTarget target = ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER)
-                .path("api/event/" + eventDTO.getId());
-        Invocation.Builder invocationBuilder = target.request(APPLICATION_JSON);
-        Response response = invocationBuilder.put(Entity.entity(eventDTO, APPLICATION_JSON));
-
-        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-            throw new WebApplicationException("Failed to update event. Status: " + response.getStatus());
-        }
+//        WebTarget target = ClientBuilder.newClient(new ClientConfig())
+//                .target(SERVER)
+//                .path("api/event/" + eventDTO.getId());
+//        Invocation.Builder invocationBuilder = target.request(APPLICATION_JSON);
+//        Response response = invocationBuilder.put(Entity.entity(eventDTO, APPLICATION_JSON));
+//
+//        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+//            throw new WebApplicationException("Failed to update event. Status: " + response.getStatus());
+//        }
+        System.out.println("am intrat");
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("/api/event/"+eventDTO.getId())
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(eventDTO, APPLICATION_JSON), Event.class);
     }
 }

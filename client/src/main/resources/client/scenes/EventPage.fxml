@@ -185,7 +185,7 @@
                                  <content>
                                     <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
                                        <children>
-                                          <Button fx:id="addTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="580.0" layoutY="127.0" mnemonicParsing="false" onAction="#onCreateTransaction" text="Add Transaction" />
+                                          <Button fx:id="addTransactionButton" alignment="CENTER" contentDisplay="CENTER" layoutX="580.0" layoutY="127.0" mnemonicParsing="false" onAction="#onCreateTransaction" text="Add Transaction" />
                                           <DatePicker fx:id="transactionDate" layoutX="166.0" layoutY="220.0" />
                                           <Text layoutX="166.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction date" />
                                           <Text layoutX="166.0" layoutY="157.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Currency code" />

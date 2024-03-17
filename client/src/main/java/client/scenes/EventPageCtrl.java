@@ -282,7 +282,7 @@ public class EventPageCtrl implements Initializable {
         String lName = lastName.getText();
         String mail = email.getText();
         String ibanText = iban.getText();
-        if (fName == null || lName == null || mail == null || ibanText == null) {
+        if (fName.isEmpty() || lName.isEmpty()|| mail.isEmpty()||ibanText.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
