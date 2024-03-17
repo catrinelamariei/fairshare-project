@@ -1,9 +1,6 @@
 package client;
 
-import client.scenes.AdminPageCtrl;
-import client.scenes.EventPageCtrl;
-import client.scenes.PrivCheckPageCtrl;
-import client.scenes.StartPageCtrl;
+import client.scenes.*;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -30,8 +27,11 @@ public class Main extends Application {
         var adminPage = FXML.load(AdminPageCtrl.class, "client", "scenes", "AdminPage.fxml");
         var privCheckPage = FXML.load(PrivCheckPageCtrl.class, "client",
                 "scenes", "PrivCheckPage.fxml");
+        var transactionPage = FXML.load(TransactionPageCtrl.class, "client",
+            "scenes", "TransactionPage.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
-        mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage, privCheckPage, startPage);
+        mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
+            privCheckPage, startPage, transactionPage);
     }
 }

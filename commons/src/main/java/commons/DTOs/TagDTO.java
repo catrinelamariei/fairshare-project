@@ -11,6 +11,8 @@ public class TagDTO {
     public String name;
     public Tag.Color color;
 
+    public TagDTO(){}
+
     public TagDTO(Tag tag) {
         this.id = tag.getId();
         this.eventId = tag.getEvent().getId();
