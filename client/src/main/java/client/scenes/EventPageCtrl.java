@@ -21,7 +21,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private UUID eventId;
     @FXML
     private VBox transactions;
     @FXML
@@ -54,7 +52,7 @@ public class EventPageCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
         UserData data = UserData.getInstance();
         this.serverUrl = data.getServerUrl();
-	    this.eventId = data.getCurrentUUID();
+        this.eventUUID = data.getCurrentUUID();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -62,11 +60,11 @@ public class EventPageCtrl implements Initializable {
 
     public void load(UUID id) {
         System.out.println("Initializing EventPage");
-        this.eventId = id;
+        this.eventUUID = id;
         ParticipantNode.init(); //do some styling
 
         try {
-            EventDTO event = server.getEvent(eventId);
+            EventDTO event = server.getEvent(eventUUID);
 
             //load transactions
             for (TransactionDTO ts : event.transactions) {
@@ -79,7 +77,7 @@ public class EventPageCtrl implements Initializable {
             }
 
         } catch (WebApplicationException e) {
-            System.err.printf("Error while fetching EVENT<%s>: %s%n", eventId, e);
+            System.err.printf("Error while fetching EVENT<%s>: %s%n", eventUUID, e);
         }
     }
 
