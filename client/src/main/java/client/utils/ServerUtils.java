@@ -26,6 +26,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class ServerUtils {
@@ -62,5 +63,14 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<EventDTO> getAllEvents(String token) {
+        return ClientBuilder.newClient()
+                .target(SERVER).path("event")
+                .request(APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .get(Collection.class);
     }
 }

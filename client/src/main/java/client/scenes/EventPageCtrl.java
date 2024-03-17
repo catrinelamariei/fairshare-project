@@ -119,10 +119,7 @@ public class EventPageCtrl implements Initializable {
      */
     private TransactionNode createTransactionNode(TransactionDTO ts) {
         //date
-        Calendar calendar = (new Calendar.Builder()).setInstant(ts.date).build();
-        Text date = new Text(String.format("%d/%d/%d", calendar.get(Calendar.DATE),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.YEAR)));
+        Text date = new Text(dateToString(ts.date));
 
         //main body
         Text desc = new Text(String.format("%s payed %.2f%s for %s",
@@ -154,6 +151,13 @@ public class EventPageCtrl implements Initializable {
         out.getChildren().forEach(n -> out.setMargin(n, insets)); //make all children spaced out
 
         return out;
+    }
+
+    public static String dateToString(Date date) {
+        Calendar calendar = (new Calendar.Builder()).setInstant(date).build();
+        return String.format("%d/%d/%d", calendar.get(Calendar.DATE),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.YEAR));
     }
 
     /**
