@@ -66,6 +66,7 @@ public class MainCtrl {
 
     public void showAdminPage() {
         primaryStage.setTitle("<EventName>: admin panel");
+        adminPageCtrl.load();
         primaryStage.setScene(adminPage);
     }
 
