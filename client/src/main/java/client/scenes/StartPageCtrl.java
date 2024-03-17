@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class StartPageCtrl {
     private ServerUtils serverUtils;
@@ -67,7 +68,7 @@ public class StartPageCtrl {
         if (text != null && !text.isEmpty()) {
             System.out.println(text + " Event joined");
             UserData data = UserData.getInstance();
-            data.setCurrentUUID(text);
+            data.setCurrentUUID(UUID.fromString(text));
             joinedEvent.clear();
             eventPage();
         } else {
