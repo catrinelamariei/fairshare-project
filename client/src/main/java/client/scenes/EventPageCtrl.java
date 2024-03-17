@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final UUID eventId;
+    private UUID eventId;
     @FXML
     private VBox transactions;
     @FXML
@@ -46,7 +46,11 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void initialize(URL location, ResourceBundle resources) {
+    }
+
+    public void load(UUID id) {
         System.out.println("Initializing EventPage");
+        this.eventId = id;
         ParticipantNode.init(); //do some styling
 
         try {
@@ -57,7 +61,10 @@ public class EventPageCtrl implements Initializable {
                 transactions.getChildren().add(createTransactionNode(ts));
             }
 
-            // TODO: load participants
+            //load participants
+            for (ParticipantDTO p : event.participants) {
+                participants.getPanes().add(new ParticipantNode(p));
+            }
 
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n", eventId, e);
@@ -149,6 +156,9 @@ public class EventPageCtrl implements Initializable {
         return out;
     }
 
+    /**
+     * placeholder test method for testing the node generator
+     */
     public void participantNodeAddTest() {
         ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(
                 "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9"
