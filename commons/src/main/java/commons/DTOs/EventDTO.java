@@ -15,6 +15,10 @@ public class EventDTO {
     public Set<ParticipantDTO> participants;
     public Set<TransactionDTO> transactions;
 
+    public EventDTO() {
+        this.date = new Date();
+    }
+
     public EventDTO(Event event) {
         this.id = event.getId();
         this.name = event.getName();

@@ -18,7 +18,7 @@ public class Event {
     private String name;
 
     @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
-    private Set<Tag> tags;
+    public Set<Tag> tags;
 
     @Column (nullable = false)
     private final Date creationDate;
@@ -43,6 +43,7 @@ public class Event {
         this.creationDate = new Date();
         this.transactions = new HashSet<>();
     }
+
 
     public boolean addTag(Tag tag) {
         if(tags == null) tags = new HashSet<>();
