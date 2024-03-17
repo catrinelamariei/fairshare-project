@@ -7,7 +7,6 @@ import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 import commons.Participant;
-import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -186,10 +185,23 @@ public class EventPageCtrl implements Initializable {
         String currency = currencyCode.getText();
         LocalDate date = transactionDate.getValue();
         Date d = java.sql.Date.valueOf(date);
-//        Event e = eventRepository.get(eventId);
-//        Transaction t = new Transaction(e, d, currency, amount, p, name);
-        Transaction t = new Transaction();
-        server.addTransaction(t);
+        UUID uuid = UUID.randomUUID();
+        TransactionDTO newTransactionDTO = new TransactionDTO(
+                uuid, d, currency, amount, null, name);
+        try {
+            EventDTO eventDTO = server.getEvent(eventId);
+            eventDTO.transactions.add(newTransactionDTO);
+            server.updateEvent(eventDTO);
+            HBox transactionNode = createTransactionNode(newTransactionDTO);
+            transactions.getChildren().add(transactionNode);
+
+            transactionName.clear();
+            transactionAmount.clear();
+            currencyCode.clear();
+            transactionDate.setValue(null);
+        } catch (WebApplicationException e) {
+            System.err.println("Error creating transaction: " + e.getMessage());
+        }
     }
 
     public void onDeleteTransaction(ActionEvent event) {

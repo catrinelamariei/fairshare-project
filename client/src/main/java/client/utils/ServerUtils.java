@@ -22,6 +22,9 @@ import commons.DTOs.TransactionDTO;
 import commons.Event;
 import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 
 import jakarta.ws.rs.client.ClientBuilder;
@@ -77,5 +80,17 @@ public class ServerUtils {
                 .target(SERVER).path("api/transaction/" + id)
                 .request()
                 .delete(); // Send DELETE request
+    }
+
+    public void updateEvent(EventDTO eventDTO) throws WebApplicationException {
+        WebTarget target = ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER)
+                .path("api/event/" + eventDTO.getId());
+        Invocation.Builder invocationBuilder = target.request(APPLICATION_JSON);
+        Response response = invocationBuilder.put(Entity.entity(eventDTO, APPLICATION_JSON));
+
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            throw new WebApplicationException("Failed to update event. Status: " + response.getStatus());
+        }
     }
 }
