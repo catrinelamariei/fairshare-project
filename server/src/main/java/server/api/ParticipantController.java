@@ -48,8 +48,10 @@ public class ParticipantController {
         if(!repo.existsById(id)){
             return ResponseEntity.badRequest().build();
         } else if(participant == null || id == null
-              || participant.getFirstName() == null || participant.getLastName() == null
-              || participant.getFirstName() == "" || participant.getLastName() == ""){
+                || participant.getFirstName() == null || participant.getFirstName() == ""
+                || participant.getLastName() == null || participant.getLastName() == ""
+                || participant.getEmail() == null || participant.getEmail() == ""
+                || participant.getIban() == null || participant.getIban() == "") {
             return ResponseEntity.badRequest().build();
         }
 
