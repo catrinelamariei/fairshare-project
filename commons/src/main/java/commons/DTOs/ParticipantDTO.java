@@ -2,6 +2,7 @@ package commons.DTOs;
 
 import commons.Participant;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class ParticipantDTO {
@@ -19,5 +20,30 @@ public class ParticipantDTO {
         this.email = participant.getEmail();
         this.iban = participant.getIban();
         this.eventId = participant.getEvent().getId();
+    }
+
+    public ParticipantDTO(String firstName, String lastName, String email, String iban) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.iban = iban;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ParticipantDTO that = (ParticipantDTO) o;
+        return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName)
+                && Objects.equals(email, that.email) && Objects.equals(iban, that.iban);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, email, iban);
     }
 }

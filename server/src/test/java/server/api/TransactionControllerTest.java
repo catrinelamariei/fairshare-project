@@ -1,6 +1,7 @@
 package server.api;
 
 import commons.DTOs.EventDTO;
+import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 import commons.Event;
 import commons.Participant;
@@ -35,7 +36,7 @@ class TransactionControllerTest {
                 new UUID(0,0),
                 new Date(), "eur",
                 new BigDecimal("5.20"),
-                new Participant(event,"Clay", "Smith", "mail0", "iban0"),
+                new ParticipantDTO("Clay", "Smith", "mail0", "iban0"),
                 "Big-mac");
 
         ts1 = new Transaction(
