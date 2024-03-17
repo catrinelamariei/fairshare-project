@@ -7,13 +7,13 @@ import client.scenes.javaFXClasses.TransactionNode;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
+import commons.Participant;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.Accordion;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,6 +42,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Accordion participants;
 
+    //transaction attributes and buttons
     @FXML
     private TextField transactionName;
     @FXML
@@ -50,9 +51,22 @@ public class EventPageCtrl implements Initializable {
     private TextField currencyCode;
     @FXML
     private DatePicker transactionDate;
-
+    @FXML
+    private Button addTransactionButton;
     @FXML
     private Button deleteTransactionButton;
+
+    //participant attributes and buttons
+    @FXML
+    private TextField firstName;
+    @FXML
+    private TextField lastName;
+    @FXML
+    private TextField email;
+    @FXML
+    private TextField iban;
+    @FXML
+    private Button addParticipantButton;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -62,6 +76,10 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void initialize(URL location, ResourceBundle resources) {
+        addParticipantButton.setOnAction(event -> onAddParticipant());
+        addTransactionButton.setOnAction(event -> onCreateTransaction());
+        deleteTransactionButton.setOnAction(this::onDeleteTransaction);
+
     }
 
     public void load(UUID id) {
@@ -192,24 +210,45 @@ public class EventPageCtrl implements Initializable {
      */
     public void onCreateTransaction(){
         String name = transactionName.getText();
-        BigDecimal amount = new BigDecimal(transactionAmount.getText());
+        String transactionAmountString = transactionAmount.getText();
         String currency = currencyCode.getText();
         LocalDate date = transactionDate.getValue();
+        if(name==null || transactionAmountString==null || currency==null || date==null){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter valid transaction information");
+            alert.showAndWait();
+            return;
+        }
+        try {
+
+            BigDecimal amount = new BigDecimal(transactionAmountString);
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter a number for the Amount field");
+            alert.showAndWait();
+            return;
+        }
+
+        BigDecimal amount = new BigDecimal(transactionAmountString);
         Date d = java.sql.Date.valueOf(date);
         UUID uuid = UUID.randomUUID();
         TransactionDTO newTransactionDTO = new TransactionDTO(
                 uuid, d, currency, amount, null, name);
         try {
+            transactionName.clear();
+            transactionAmount.clear();
+            currencyCode.clear();
+            transactionDate.setValue(null);
             EventDTO eventDTO = server.getEvent(eventId);
             eventDTO.transactions.add(newTransactionDTO);
             server.updateEvent(eventDTO);
             HBox transactionNode = createTransactionNode(newTransactionDTO);
             transactions.getChildren().add(transactionNode);
 
-            transactionName.clear();
-            transactionAmount.clear();
-            currencyCode.clear();
-            transactionDate.setValue(null);
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
@@ -237,5 +276,33 @@ public class EventPageCtrl implements Initializable {
             System.err.println("Error deleting transaction: " + e.getMessage());
         }
     }
+
+    public void onAddParticipant() {
+        String fName = firstName.getText();
+        String lName = lastName.getText();
+        String mail = email.getText();
+        String ibanText = iban.getText();
+        if (fName == null || lName == null || mail == null || ibanText == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Please enter valid participant data");
+            alert.showAndWait();
+            return;
+        }
+        try {
+            ParticipantDTO participantDTO = new ParticipantDTO(fName, lName, mail, ibanText);
+            EventDTO eventDTO = server.getEvent(eventId);
+            eventDTO.participants.add(participantDTO);
+            server.updateEvent(eventDTO);
+        } catch (WebApplicationException e) {
+            System.err.println("Error adding participant: " + e.getMessage());
+        }
+        firstName.clear();
+        lastName.clear();
+        email.clear();
+        iban.clear();
+    }
+
 
 }

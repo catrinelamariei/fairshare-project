@@ -308,7 +308,16 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
                                        <children>
-                                          <Button layoutX="345.0" layoutY="128.0" mnemonicParsing="false" onAction="#participantNodeAddTest" text="TEST BUTTON" />
+                                          <Button layoutX="642.0" layoutY="206.0" mnemonicParsing="false" onAction="#participantNodeAddTest" text="TEST BUTTON" />
+                                          <Text layoutX="165.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name" />
+                                          <Text layoutX="165.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name" />
+                                          <Text layoutX="164.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email" />
+                                          <Text layoutX="165.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IBAN" />
+                                          <TextField fx:id="firstName" layoutX="165.0" layoutY="55.0" />
+                                          <TextField fx:id="lastName" layoutX="166.0" layoutY="109.0" />
+                                          <TextField fx:id="email" layoutX="166.0" layoutY="161.0" />
+                                          <TextField fx:id="iban" layoutX="166.0" layoutY="206.0" />
+                                          <Button fx:id="addParticipantButton" layoutX="424.0" layoutY="109.0" mnemonicParsing="false" onAction="#onAddParticipant" text="Add Participant" />
                                        </children></AnchorPane>
                               </content>
                             </Tab>
