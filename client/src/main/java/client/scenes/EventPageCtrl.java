@@ -7,14 +7,12 @@ import client.scenes.javaFXClasses.TransactionNode;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Participant;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -49,6 +47,7 @@ public class EventPageCtrl implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("Initializing EventPage");
+        ParticipantNode.init(); //do some styling
 
         try {
             EventDTO event = server.getEvent(eventId);

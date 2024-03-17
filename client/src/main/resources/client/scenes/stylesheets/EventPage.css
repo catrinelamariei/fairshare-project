@@ -27,8 +27,3 @@
 .transaction > VBox > .participantText {
     -fx-font: italic 15 "System";
 }
-
-/*Participants Part*/
-.participants {
-
-}

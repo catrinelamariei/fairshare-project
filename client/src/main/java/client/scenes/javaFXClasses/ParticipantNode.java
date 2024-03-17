@@ -2,13 +2,17 @@ package client.scenes.javaFXClasses;
 
 import commons.DTOs.ParticipantDTO;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+
+import java.util.List;
 
 public class ParticipantNode extends TitledPane {
     //create text (shared among all ParticipantNodes)
@@ -16,12 +20,28 @@ public class ParticipantNode extends TitledPane {
     static Text emailText = new Text("Email");
     static Text ibanText = new Text("IBAN");
     static Text bicText = new Text("BIC");
+
     //text-fields are Participant dependant (on data)
     TextField nameField;
     TextField emailField;
     TextField ibanField;
     TextField bicField;
     Button toggleEditButton;
+
+    //css styling managed through java
+    private static final String textStyle = "-fx-font: bold 20 \"System\"; ";
+    private static final String textFieldStyle =
+            "-fx-font: italic 16 \"System\"; " +
+            "-fx-min-width: 300; ";
+
+    /**
+     * initializes styling on shared/static nodes
+     */
+    public static void init() {
+        //apply style to all text
+        List.of(nameText, emailText, ibanText, bicText)
+                .forEach(t -> t.setStyle(textStyle));
+    }
 
     /**
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
@@ -35,6 +55,12 @@ public class ParticipantNode extends TitledPane {
         emailField = new TextField(participant.email);
         ibanField = new TextField(participant.iban);
         bicField = new TextField("???");
+        //apply style
+        List.of(nameField, emailField, ibanField, bicField)
+                .forEach(tf -> {
+                    tf.setStyle(textFieldStyle);
+                    tf.setEditable(false);
+                });
 
         //create table
         GridPane gridPane = new GridPane();
@@ -47,17 +73,29 @@ public class ParticipantNode extends TitledPane {
         gridPane.add(ibanField, 1, 2);
         gridPane.add(bicField, 1, 3);
 
+        //set insets
+        Insets insets = new Insets(10.0d);
+        gridPane.getChildren().forEach(n -> gridPane.setMargin(n, insets));
+
+        //set HGrow
+        ColumnConstraints col0 = new ColumnConstraints();
+        ColumnConstraints col1  = new ColumnConstraints();
+        col1.setHgrow(Priority.ALWAYS);
+        gridPane.getColumnConstraints().addAll(col0, col1);
+
         //create button
         toggleEditButton = new Button("toggle edit");
         toggleEditButton.setOnAction(this::toggleEdit);
+        toggleEditButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
         //create pane
-        Pane filler = new Pane(toggleEditButton);
+        TilePane filler = new TilePane(toggleEditButton);
+        filler.setAlignment(Pos.CENTER); //child in center
+        filler.resize(0d, 0d); //it should shrink
 
         //create HBox, set child
         HBox container = new HBox(gridPane, filler);
         this.setContent(container);
-        System.out.printf("TITLEDPANE: %b, %b\n", this.collapsibleProperty(), this.expandedProperty());
     }
 
     /**
@@ -65,6 +103,6 @@ public class ParticipantNode extends TitledPane {
      * maybe a submit/cancel button appears?
      */
     private void toggleEdit(ActionEvent actionEvent) {
-
+        System.out.println("Started Editing");
     }
 }
