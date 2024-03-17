@@ -1,6 +1,7 @@
 package client.scenes;
 
 import client.MainCtrl;
+import client.UserData;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
@@ -19,6 +20,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -92,11 +95,10 @@ public class EventPageCtrl implements Initializable {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
         //get invite code (String)
-        String invCode = "123456789"; //temporary placeholder (content)
         String eventName = "NewYearEvent"; //temporary placeholder (owner)
 
         //copy data to clipboard
-        StringSelection content = new StringSelection(invCode);
+        StringSelection content = new StringSelection(this.eventUUID);
         StringSelection owner = new StringSelection(eventName);
         clipboard.setContents(content, owner);
 
@@ -182,21 +184,7 @@ public class EventPageCtrl implements Initializable {
         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n");
     }
 
-    public void copyInviteCode() {
-        //get system singleton of clipboard
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-        //get invite code (String)
-        String eventName = "NewYearEvent"; //temporary placeholder (owner)
-
-        //copy data to clipboard
-        StringSelection content = new StringSelection(this.eventUUID);
-        StringSelection owner = new StringSelection(eventName);
-        clipboard.setContents(content, owner);
-
-        //display copied for 3 seconds
-        System.out.println("Copied to clipboard!"); //temporary placeholder
-    }
 
     public EventDTO getEventDTO(){
         RestTemplate restTemplate = new RestTemplate();
