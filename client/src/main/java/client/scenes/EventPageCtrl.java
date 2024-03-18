@@ -2,9 +2,10 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.scenes.javaFXClasses.ParticipantNode;
-import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
+import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
