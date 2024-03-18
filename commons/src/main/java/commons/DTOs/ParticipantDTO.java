@@ -13,6 +13,8 @@ public class ParticipantDTO {
     public String email;
     public String iban;
 
+    public ParticipantDTO() {}
+
     public ParticipantDTO(Participant participant){
         this.id = participant.getId();
         this.firstName = participant.getFirstName();

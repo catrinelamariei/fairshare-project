@@ -2,8 +2,8 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.scenes.javaFXClasses.ParticipantNode;
-import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
@@ -15,7 +15,6 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -24,9 +23,10 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.math.BigDecimal;
 import java.net.URL;
-import java.util.*;
+import java.util.Calendar;
+import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class EventPageCtrl implements Initializable {
@@ -96,20 +96,21 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void testAddTransaction() {
-        // TEST:
-        TransactionDTO tsDTO = new TransactionDTO(
-                new UUID(0, 1),
-                new Date(),
-                "eur",
-                new BigDecimal("10.99"),
-                new ParticipantDTO("Max", "Well", "mail@me.com", "FR1234"),
-                "Burgerzz"
-        );
-        tsDTO.participants = new HashSet<ParticipantDTO>();
-        tsDTO.participants.add(new ParticipantDTO("Bo", "To", "mail", "iban"));
-
-        HBox node = createTransactionNode(tsDTO);
-        transactions.getChildren().add(node);
+        mainCtrl.showTransactionPage();
+//        // TEST:
+//        TransactionDTO tsDTO = new TransactionDTO(
+//                new UUID(0, 1),
+//                new Date(),
+//                "eur",
+//                new BigDecimal("10.99"),
+//                new ParticipantDTO("Max", "Well", "mail@me.com", "FR1234"),
+//                "Burgerzz"
+//        );
+//        tsDTO.participants = new HashSet<ParticipantDTO>();
+//        tsDTO.participants.add(new ParticipantDTO("Bo", "To", "mail", "iban"));
+//
+//        HBox node = createTransactionNode(tsDTO);
+//        transactions.getChildren().add(node);
     }
 
     /**

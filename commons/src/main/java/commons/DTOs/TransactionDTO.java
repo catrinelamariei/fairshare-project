@@ -1,6 +1,7 @@
 package commons.DTOs;
 
 import commons.Transaction;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
@@ -17,6 +18,8 @@ public class TransactionDTO {
     public Set<ParticipantDTO> participants;
     public Set<TagDTO> tags;
     public String subject;
+
+    public TransactionDTO(){}
 
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
