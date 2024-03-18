@@ -1,9 +1,6 @@
 package client;
 
-import client.scenes.AdminPageCtrl;
-import client.scenes.EventPageCtrl;
-import client.scenes.PrivCheckPageCtrl;
-import client.scenes.StartPageCtrl;
+import client.scenes.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -26,6 +23,8 @@ public class MainCtrl {
 
     private PrivCheckPageCtrl privCheckPageCtrl;
     private Scene privCheckPage;
+    private TransactionPageCtrl transactionPageCtrl;
+    private Scene transactionPage;
 
 
 
@@ -33,7 +32,8 @@ public class MainCtrl {
                            Pair<EventPageCtrl, Parent> eventPage,
                            Pair<AdminPageCtrl, Parent> adminPage,
                            Pair<PrivCheckPageCtrl, Parent> privCheckPage,
-                           Pair<StartPageCtrl, Parent> page) {
+                           Pair<StartPageCtrl, Parent> page,
+                           Pair<TransactionPageCtrl, Parent> transactionPage) {
 
         this.primaryStage = primaryStage;
 
@@ -48,6 +48,9 @@ public class MainCtrl {
 
         this.adminPageCtrl = adminPage.getKey();
         this.adminPage = new Scene(adminPage.getValue());
+
+        this.transactionPageCtrl = transactionPage.getKey();
+        this.transactionPage = new Scene(transactionPage.getValue());
 
         showStartPage();
         primaryStage.show();
@@ -76,5 +79,10 @@ public class MainCtrl {
     public void showAdminCheckPage() {
         primaryStage.setTitle("<EventName>: admin panel login");
         primaryStage.setScene(privCheckPage);
+    }
+
+    public void showTransactionPage() {
+        primaryStage.setTitle("<EventName>: overview");
+        primaryStage.setScene(transactionPage);
     }
 }
