@@ -1,11 +1,12 @@
 package server.api;
 import commons.DTOs.TransactionDTO;
-import commons.Event;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.EventRepository;
+import server.database.ParticipantRepository;
+import server.database.TagRepository;
 import server.database.TransactionRepository;
 
 import java.util.UUID;
@@ -17,10 +18,16 @@ import static commons.Transaction.validate;
 public class TransactionController {
     private final TransactionRepository repo;
     private final EventRepository eventRepository;
+    private final TagRepository tagRepository;
+    private final ParticipantRepository participantRepository;
 
-    public TransactionController(TransactionRepository repo, EventRepository eventRepository) {
+    public TransactionController(TransactionRepository repo, EventRepository eventRepository,
+                                 TagRepository tagRepository,
+                                 ParticipantRepository participantRepository) {
         this.repo = repo;
         this.eventRepository = eventRepository;
+        this.tagRepository = tagRepository;
+        this.participantRepository = participantRepository;
     }
 
     @PostMapping(path = {"" , "/"})
@@ -31,6 +38,13 @@ public class TransactionController {
         //create transaction entity
         Transaction transaction = new Transaction(transactionDTO);
         transaction.event = eventRepository.getReferenceById(transactionDTO.eventId);
+        transaction.author = participantRepository.getReferenceById(transactionDTO.author.id);
+        transaction.participants.addAll(
+            transactionDTO.participants.stream()
+                .map(p -> participantRepository.getReferenceById(p.id)).toList());
+        transaction.tags.addAll(
+            transactionDTO.tags.stream()
+                .map(t -> tagRepository.getReferenceById(t.id)).toList());
         transaction = repo.save(transaction); //idk if these extra safes are actually necessary
 
         //update event

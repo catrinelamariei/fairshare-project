@@ -1,5 +1,6 @@
 package commons;
 
+import commons.DTOs.TransactionDTO;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -55,6 +56,16 @@ public class Transaction {
         this.author = author;
         this.participants = new HashSet<>();
         this.subject = subject;
+    }
+
+    public Transaction(TransactionDTO ts) {
+        this.id = ts.id;
+        this.date = ts.date;
+        this.currencyCode = ts.currencyCode;
+        this.amount = ts.amount;
+        this.participants = new HashSet<>();
+        this.tags = new HashSet<>();
+        this.subject = ts.subject;
     }
 
     /**
