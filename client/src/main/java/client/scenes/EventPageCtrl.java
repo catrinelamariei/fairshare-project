@@ -109,7 +109,6 @@ public class EventPageCtrl implements Initializable {
     }
     public void load(UUID id) {
         System.out.println("Initializing EventPage");
-//        this.eventId = id;
         this.eventUUID = id;
         ParticipantNode.init(); //do some styling
 
@@ -263,15 +262,6 @@ public class EventPageCtrl implements Initializable {
                 "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9"
         ));
         participants.getPanes().add(participantNode);
-    }
-
-    public void loadEvent() {
-        UserData data = UserData.getInstance();
-        this.eventUUID = data.getCurrentUUID();
-        ServerUtils serverUtils = new ServerUtils();
-//        this.eventDTO = serverUtils.getEvent(this.eventUUID);
-//        System.out.println(eventDTO);
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n");
     }
 
     /**
