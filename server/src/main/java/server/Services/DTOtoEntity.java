@@ -92,7 +92,14 @@ public class DTOtoEntity {
         return null;
     }
     public Participant update(ParticipantDTO p) {
-        return null;
+        Participant participant = participantRepository.findById(p.getId()).get();
+        p.firstName = participant.firstName;
+        p.lastName = participant.lastName;
+        p.email = participant.email;
+        p.iban = participant.iban;
+
+        participantRepository.save(participant);
+        return participant;
     }
 
     public boolean delete (ParticipantDTO p) {
