@@ -1,7 +1,9 @@
 package client.scenes;
 
 import client.MainCtrl;
+import client.UserData;
 import client.scenes.javaFXClasses.ParticipantNode;
+import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
@@ -18,6 +20,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -38,11 +41,20 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Accordion participants;
 
+    private UUID eventUUID;
+
+    private EventDTO eventDTO;
+
+    private Stage stage;
+    private final String serverUrl;
+
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.eventId = new UUID(0,1); //temporary placeholder
+        UserData data = UserData.getInstance();
+        this.serverUrl = data.getServerUrl();
+        this.eventUUID = data.getCurrentUUID();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,11 +62,11 @@ public class EventPageCtrl implements Initializable {
 
     public void load(UUID id) {
         System.out.println("Initializing EventPage");
-        this.eventId = id;
+        this.eventUUID = id;
         ParticipantNode.init(); //do some styling
 
         try {
-            EventDTO event = server.getEvent(eventId);
+            EventDTO event = server.getEvent(eventUUID);
 
             //load transactions
             for (TransactionDTO ts : event.transactions) {
@@ -67,7 +79,7 @@ public class EventPageCtrl implements Initializable {
             }
 
         } catch (WebApplicationException e) {
-            System.err.printf("Error while fetching EVENT<%s>: %s%n", eventId, e);
+            System.err.printf("Error while fetching EVENT<%s>: %s%n", eventUUID, e);
         }
     }
 
@@ -83,11 +95,10 @@ public class EventPageCtrl implements Initializable {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
         //get invite code (String)
-        String invCode = "123456789"; //temporary placeholder (content)
         String eventName = "NewYearEvent"; //temporary placeholder (owner)
 
         //copy data to clipboard
-        StringSelection content = new StringSelection(invCode);
+        StringSelection content = new StringSelection(this.eventUUID.toString());
         StringSelection owner = new StringSelection(eventName);
         clipboard.setContents(content, owner);
 
@@ -130,14 +141,14 @@ public class EventPageCtrl implements Initializable {
             ts.author.firstName, ts.amount, ts.currencyCode, ts.subject));
         desc.getStyleClass().add("desc"); //set css class to .desc
 
-        Text particants = new Text("(" +
+        Text participants = new Text("(" +
                 ts.participants.stream()
                 .map(p -> p.firstName)
                 .collect(Collectors.joining(", "))
                 + ")"); //concatenate with ", " in between each name
-        particants.getStyleClass().add("participantText"); //set css class to .participants
+        participants.getStyleClass().add("participantText"); //set css class to .participants
 
-        VBox body = new VBox(desc, particants);
+        VBox body = new VBox(desc, participants);
 
         //image
         Image img = new Image("/client/Images/764599.png", 30d, 30d, true, false); //imageview size
@@ -165,5 +176,13 @@ public class EventPageCtrl implements Initializable {
                 "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9"
         ));
         participants.getPanes().add(participantNode);
+    }
+    public void loadEvent() {
+        UserData data = UserData.getInstance();
+        this.eventUUID = data.getCurrentUUID();
+        ServerUtils serverUtils = new ServerUtils();
+        this.eventDTO = serverUtils.getEvent(this.eventUUID);
+        System.out.println(eventDTO);
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n");
     }
 }
