@@ -1,0 +1,7 @@
+.EventNode > Text {
+    -fx-font: Bold 20 "System";
+}
+
+.EventNode > Button {
+    -fx-font: Bold 16 "System";
+}

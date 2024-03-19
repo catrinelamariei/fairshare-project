@@ -34,6 +34,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -169,10 +170,7 @@ public class EventPageCtrl implements Initializable {
         TransactionNode out = new TransactionNode(); //new TransactionNode (=HBox)
 
         //date
-        Calendar calendar = (new Calendar.Builder()).setInstant(ts.date).build();
-        Text date = new Text(String.format("%d/%d/%d", calendar.get(Calendar.DATE),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.YEAR)));
+        Text date = new Text(dateToString(ts.date));
 
         //main body
         Text desc = new Text(String.format("%s payed %.2f%s for %s",
@@ -207,6 +205,13 @@ public class EventPageCtrl implements Initializable {
         out.getChildren().forEach(n -> out.setMargin(n, insets)); //make all children spaced out
 
         return out;
+    }
+
+    public static String dateToString(Date date) {
+        Calendar calendar = (new Calendar.Builder()).setInstant(date).build();
+        return String.format("%d/%d/%d", calendar.get(Calendar.DATE),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.YEAR));
     }
 
     /**
