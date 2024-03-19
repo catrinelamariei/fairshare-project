@@ -18,6 +18,7 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import commons.DTOs.EventDTO;
+import commons.DTOs.TransactionDTO;
 import commons.Event;
 import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
@@ -44,10 +45,12 @@ public class ServerUtils {
                 .post(Entity.entity(event, APPLICATION_JSON), Event.class);
     }
 
+    //I think there is a problem with this method
     public EventDTO getEvent(UUID id) throws WebApplicationException {
         return ClientBuilder.newClient()
                 .target(SERVER).path("api/event/" + id)
                 .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
                 .get(EventDTO.class);
     }
 
@@ -62,5 +65,28 @@ public class ServerUtils {
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
                 .post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
+    }
+
+    public TransactionDTO getTransaction(UUID id) throws WebApplicationException {
+        return ClientBuilder.newClient()
+                .target(SERVER).path("api/transaction/" + id)
+                .request(APPLICATION_JSON)
+                .get(TransactionDTO.class);
+    }
+
+    public void deleteTransactionById(UUID id) throws WebApplicationException {
+        ClientBuilder.newClient()
+                .target(SERVER).path("api/transaction/" + id)
+                .request()
+                .delete(); // Send DELETE request
+    }
+
+    public void updateEvent(EventDTO eventDTO) throws WebApplicationException {
+        System.out.println("am intrat");
+        ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("/api/event/"+eventDTO.getId())
+                .request(APPLICATION_JSON)
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(eventDTO, APPLICATION_JSON), Event.class);
     }
 }

@@ -32,4 +32,28 @@ public class EventDTO {
         event.getTransactions().forEach(
                 transaction -> transactions.add(new TransactionDTO(transaction)));
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<TagDTO> getTags() {
+        return tags;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public Set<ParticipantDTO> getParticipants() {
+        return participants;
+    }
+
+    public Set<TransactionDTO> getTransactions() {
+        return transactions;
+    }
 }
