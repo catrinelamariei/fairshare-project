@@ -31,7 +31,7 @@ public class TagControllerTest {
 
     @Test
     public void cannotAddNullTag() {
-        ResponseEntity<Tag> actual = sut.add(getTag(null));
+        ResponseEntity<TagDTO> actual = sut.add(getTag(null));
         assertEquals(BAD_REQUEST, actual.getStatusCode());
     }
 

@@ -20,12 +20,13 @@ public class TransactionController {
     }
 
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
+    public ResponseEntity<TransactionDTO> createTransaction(@RequestBody Transaction transaction) {
         if(!validate(transaction)){
             return ResponseEntity.badRequest().build();
         }
         repo.save(transaction);
-        return ResponseEntity.ok().build();
+        TransactionDTO transactionDTO = new TransactionDTO(transaction);
+        return ResponseEntity.ok(transactionDTO);
     }
 
     @GetMapping("/{id}")

@@ -29,7 +29,7 @@ public class ParticipantController {
 
     @Transactional
    @PostMapping(path = {"", "/"})
-   public ResponseEntity<Participant> createParticipant(@RequestBody Participant participant) {
+   public ResponseEntity<ParticipantDTO> createParticipant(@RequestBody Participant participant) {
         if (participant == null || participant.getFirstName() == null ||
                 participant.getLastName() == null || participant.getFirstName() == ""
                 || participant.getLastName() == "" || participant.getEmail() == ""
@@ -38,7 +38,8 @@ public class ParticipantController {
         }
 
         repo.save(participant);
-        return ResponseEntity.ok().build();
+        ParticipantDTO participantDTO = new ParticipantDTO(participant);
+        return ResponseEntity.ok(participantDTO);
     }
 
     @Transactional

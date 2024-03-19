@@ -30,7 +30,7 @@ public class TagController {
     }
 
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<Tag> add(@RequestBody Tag tag) {
+    public ResponseEntity<TagDTO> add(@RequestBody Tag tag) {
         if (tag == null ||
             tag.getName() == null ||
             tag.getName().isEmpty() ||
@@ -41,7 +41,8 @@ public class TagController {
             return ResponseEntity.badRequest().build();
         }
         repo.save(tag);
-        return ResponseEntity.ok().build();
+        TagDTO tagDTO = new TagDTO(tag);
+        return ResponseEntity.ok(tagDTO);
     }
 
 
