@@ -6,8 +6,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.util.UUID;
-
 public class MainCtrl {
 
     private Stage primaryStage;

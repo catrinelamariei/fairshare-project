@@ -4,7 +4,8 @@ import client.UserData;
 import client.utils.ServerUtils;
 
 import javax.inject.Inject;
-import commons.Event;
+
+import commons.DTOs.EventDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -40,10 +41,12 @@ public class StartPageCtrl {
     public void onCreateEvent() {
         String text = newEvent.getText();
         if (text != null && !text.isEmpty()) {
-            Event e = new Event(text);
-            serverUtils.addEvent(e);
+            EventDTO e = new EventDTO(null,text);
+            e = serverUtils.addEvent(e);
             eventIds.add(e.getId());
             newEvent.clear();
+            UserData.getInstance().setCurrentUUID(e.getId());
+            UserData.getInstance().getRecentUUIDs().add(e.getId());
             //confirmation dialog
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Event Created");

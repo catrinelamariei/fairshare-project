@@ -26,10 +26,11 @@ public class EventController {
 
 //    @Transactional
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<EventDTO> createEvent(@RequestBody Event event) {
-        if (event == null || event.getName() == null || event.getName() == "") {
+    public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
+        if (eventDTO == null || eventDTO.getName() == null || eventDTO.getName() == "") {
             return ResponseEntity.badRequest().build();
         }
+        Event event = new Event(eventDTO.getName());
         event.addTag(new Tag(event, "food", Tag.Color.GREEN));
         event.addTag(new Tag(event, "entrance fees", Tag.Color.BLUE));
         event.addTag(new Tag(event, "travel", Tag.Color.RED));
@@ -62,7 +63,7 @@ public class EventController {
     @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<EventDTO> updateById(@PathVariable("id") UUID id,
-                                               @RequestBody Event event) {
+                                               @RequestBody EventDTO event) {
         if (id==null || event == null || event.getName() == null || event.getName() == "") {
             return ResponseEntity.badRequest().build();
         }

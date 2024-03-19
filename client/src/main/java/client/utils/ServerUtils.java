@@ -19,7 +19,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import commons.DTOs.EventDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Event;
 import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
 import org.glassfish.jersey.client.ClientConfig;
@@ -38,12 +37,12 @@ public class ServerUtils {
      * @param event the event to be added
      * @return the event that was added
      */
-    public Event addEvent(Event event) {
+    public EventDTO addEvent(EventDTO event) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/event") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(event, APPLICATION_JSON), Event.class);
+                .post(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
     }
 
     //I think there is a problem with this method
@@ -97,6 +96,6 @@ public class ServerUtils {
                 .target(SERVER).path("/api/event/"+eventDTO.getId())
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
-                .put(Entity.entity(eventDTO, APPLICATION_JSON), Event.class);
+                .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
 }

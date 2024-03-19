@@ -129,7 +129,8 @@ public class EventPageCtrl implements Initializable {
 
         //get invite code (String)
         //copy data to clipboard
-        StringSelection content = new StringSelection(UserData.getInstance().getCurrentUUID().toString());
+        StringSelection content = new StringSelection(
+                UserData.getInstance().getCurrentUUID().toString());
         clipboard.setContents(content, null);
 
 
