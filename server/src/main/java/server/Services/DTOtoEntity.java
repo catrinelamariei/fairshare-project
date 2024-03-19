@@ -62,7 +62,19 @@ public class DTOtoEntity {
         return null;
     }
     public Transaction create(TransactionDTO t){
-        return null;
+        //create & save transactionEntity
+        Transaction transaction = new Transaction(t);
+        transaction.event = eventRepository.getReferenceById(t.eventId);
+        transaction.author = get(t.author);
+        transaction.participants.addAll(t.participants.stream().map(this::get).toList());
+        transaction.tags.addAll(t.tags.stream().map(this::get).toList());
+        transaction = transactionRepository.save(transaction); //idk if these extra safes are actually necessary
+
+        //update event
+        transaction.event.addTransaction(transaction);
+        eventRepository.save(transaction.event); //idk if these extra safes are actually necessary
+
+        return transaction;
     }
     public Transaction update(TransactionDTO t) {
         return null;

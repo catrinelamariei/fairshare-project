@@ -4,6 +4,7 @@ import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 import server.database.ParticipantRepository;
 import server.database.TagRepository;
@@ -17,17 +18,11 @@ import static commons.Transaction.validate;
 @RequestMapping("/api/transaction")
 public class TransactionController {
     private final TransactionRepository repo;
-    private final EventRepository eventRepository;
-    private final TagRepository tagRepository;
-    private final ParticipantRepository participantRepository;
+    private final DTOtoEntity d2e;
 
-    public TransactionController(TransactionRepository repo, EventRepository eventRepository,
-                                 TagRepository tagRepository,
-                                 ParticipantRepository participantRepository) {
+    public TransactionController(TransactionRepository repo, DTOtoEntity dtoToEntity) {
         this.repo = repo;
-        this.eventRepository = eventRepository;
-        this.tagRepository = tagRepository;
-        this.participantRepository = participantRepository;
+        this.d2e = dtoToEntity;
     }
 
     @PostMapping(path = {"" , "/"})
@@ -36,21 +31,7 @@ public class TransactionController {
         if(transactionDTO == null){ // TODO: better validate
             return ResponseEntity.badRequest().build();
         }
-        //create transaction entity
-        Transaction transaction = new Transaction(transactionDTO);
-        transaction.event = eventRepository.getReferenceById(transactionDTO.eventId);
-        transaction.author = participantRepository.getReferenceById(transactionDTO.author.id);
-        transaction.participants.addAll(
-            transactionDTO.participants.stream()
-                .map(p -> participantRepository.getReferenceById(p.id)).toList());
-        transaction.tags.addAll(
-            transactionDTO.tags.stream()
-                .map(t -> tagRepository.getReferenceById(t.id)).toList());
-        transaction = repo.save(transaction); //idk if these extra safes are actually necessary
-
-        //update event
-        transaction.event.addTransaction(transaction);
-        eventRepository.save(transaction.event); //idk if these extra safes are actually necessary
+        Transaction transaction = d2e.create(transactionDTO);
 
         return ResponseEntity.ok(new TransactionDTO(transaction));
     }
