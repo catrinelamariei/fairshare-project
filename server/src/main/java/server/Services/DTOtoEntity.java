@@ -68,11 +68,13 @@ public class DTOtoEntity {
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
         transaction.tags.addAll(t.tags.stream().map(this::get).toList());
-        transaction = transactionRepository.save(transaction); //idk if these extra safes are actually necessary
+        transaction = transactionRepository.save(transaction);
+        //idk if these extra safes are actually necessary
 
         //update event
         transaction.event.addTransaction(transaction);
-        eventRepository.save(transaction.event); //idk if these extra safes are actually necessary
+        eventRepository.save(transaction.event);
+        //idk if these extra safes are actually necessary
 
         return transaction;
     }

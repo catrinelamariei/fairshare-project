@@ -32,7 +32,8 @@ public class ParticipantController {
 
     @Transactional
    @PostMapping(path = {"", "/"})
-   public ResponseEntity<ParticipantDTO> createParticipant(@RequestBody ParticipantDTO participantDTO) {
+   public ResponseEntity<ParticipantDTO> createParticipant(
+           @RequestBody ParticipantDTO participantDTO) {
         if (participantDTO == null) { //TODO: further validation
             return ResponseEntity.badRequest().build();
         }
@@ -42,8 +43,9 @@ public class ParticipantController {
 
     @Transactional
    @PutMapping("/{id}")
-   public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id,
-                                                           @RequestBody ParticipantDTO participant) {
+   public ResponseEntity<ParticipantDTO> updateParticipant(
+           @PathVariable("id") UUID id,
+           @RequestBody ParticipantDTO participant) {
         if(!repo.existsById(id)){
             return ResponseEntity.notFound().build();
         } else if(participant == null || id == null
