@@ -62,12 +62,8 @@ public class MainCtrl {
     }
 
     public void showEventPage() {
-        UserData data = UserData.getInstance();
-        UUID eventUUID = data.getCurrentUUID();
-
-        eventPageCtrl.loadEvent();
-        primaryStage.setTitle(eventUUID+": overview");
-        eventPageCtrl.load(new UUID(0,0)); //INITIALIZE eventPage with data; placeholder id
+        primaryStage.setTitle("event");
+        eventPageCtrl.load(); //INITIALIZE eventPage with data
         primaryStage.setScene(eventPage);
     }
 

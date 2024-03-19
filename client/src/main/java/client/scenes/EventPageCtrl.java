@@ -27,7 +27,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
-import javafx.stage.Stage;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -40,7 +39,6 @@ import javafx.util.Duration;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -51,20 +49,10 @@ import java.util.stream.Collectors;
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private UUID eventId;
-    @FXML
-    private VBox transactions;
-    @FXML
-    private Accordion participants;
-
-    private UUID eventUUID;
-
-    private EventDTO eventDTO;
-
-    private Stage stage;
-    private final String serverUrl;
 
     //transaction attributes and buttons
+    @FXML
+    private VBox transactions;
     @FXML
     private TextField transactionName;
     @FXML
@@ -73,12 +61,10 @@ public class EventPageCtrl implements Initializable {
     private TextField currencyCode;
     @FXML
     private DatePicker transactionDate;
-    @FXML
-    private Button addTransactionButton;
-    @FXML
-    private Button deleteTransactionButton;
 
     //participant attributes and buttons
+    @FXML
+    private Accordion participants;
     @FXML
     private TextField firstName;
     @FXML
@@ -88,32 +74,22 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TextField iban;
     @FXML
-    private Button addParticipantButton;
-    @FXML
     private Button copyButton;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        UserData data = UserData.getInstance();
-        this.serverUrl = data.getServerUrl();
-        this.eventUUID = data.getCurrentUUID();
     }
 
     public void initialize(URL location, ResourceBundle resources) {
-        addParticipantButton.setOnAction(event -> onAddParticipant());
-        addTransactionButton.setOnAction(event -> onCreateTransaction());
-        deleteTransactionButton.setOnAction(this::onDeleteTransaction);
-
+        ParticipantNode.init(); //<cascade> do some styling
     }
-    public void load(UUID id) {
-        System.out.println("Initializing EventPage");
-        this.eventUUID = id;
-        ParticipantNode.init(); //do some styling
+    public void load() {
+        System.out.println("loading EventPage");
 
         try {
-            EventDTO event = server.getEvent(eventId);
+            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
             //load transactions
             for (TransactionDTO ts : event.transactions) {
@@ -126,7 +102,8 @@ public class EventPageCtrl implements Initializable {
             }
 
         } catch (WebApplicationException e) {
-            System.err.printf("Error while fetching EVENT<%s>: %s%n", eventUUID, e);
+            System.err.printf("Error while fetching EVENT<%s>: %s%n",
+                UserData.getInstance().getCurrentUUID(), e);
         }
     }
 
@@ -139,7 +116,7 @@ public class EventPageCtrl implements Initializable {
 
     public void copyInviteCode() {
 
-        if(eventId == null) {
+        if(UserData.getInstance().getCurrentUUID() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -152,7 +129,7 @@ public class EventPageCtrl implements Initializable {
 
         //get invite code (String)
         //copy data to clipboard
-        StringSelection content = new StringSelection(eventId.toString());
+        StringSelection content = new StringSelection(UserData.getInstance().getCurrentUUID().toString());
         clipboard.setContents(content, null);
 
 
@@ -182,23 +159,8 @@ public class EventPageCtrl implements Initializable {
         timeline.play();
     }
 
-
-    public void testAddTransaction() {
+    public void onNewTransaction() {
         mainCtrl.showTransactionPage();
-//        // TEST:
-//        TransactionDTO tsDTO = new TransactionDTO(
-//                new UUID(0, 1),
-//                new Date(),
-//                "eur",
-//                new BigDecimal("10.99"),
-//                new ParticipantDTO("Max", "Well", "mail@me.com", "FR1234"),
-//                "Burgerzz"
-//        );
-//        tsDTO.participants = new HashSet<ParticipantDTO>();
-//        tsDTO.participants.add(new ParticipantDTO("Bo", "To", "mail", "iban"));
-//
-//        HBox node = createTransactionNode(tsDTO);
-//        transactions.getChildren().add(node);
     }
 
     /**
@@ -302,7 +264,7 @@ public class EventPageCtrl implements Initializable {
             transactionAmount.clear();
             currencyCode.clear();
             transactionDate.setValue(null);
-            EventDTO eventDTO = server.getEvent(eventId);
+            EventDTO eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
             eventDTO.transactions.add(newTransactionDTO);
             server.updateEvent(eventDTO);
             HBox transactionNode = createTransactionNode(newTransactionDTO);
@@ -351,7 +313,7 @@ public class EventPageCtrl implements Initializable {
         }
         try {
             ParticipantDTO participantDTO = new ParticipantDTO(fName, lName, mail, ibanText);
-            EventDTO eventDTO = server.getEvent(eventId);
+            EventDTO eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
             eventDTO.participants.add(participantDTO);
             server.updateEvent(eventDTO);
         } catch (WebApplicationException e) {
