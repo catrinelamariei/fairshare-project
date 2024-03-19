@@ -38,8 +38,7 @@ public class ParticipantController {
         }
 
         repo.save(participant);
-        ParticipantDTO participantDTO = new ParticipantDTO(participant);
-        return ResponseEntity.ok(participantDTO);
+        return ResponseEntity.ok(new ParticipantDTO(participant));
     }
 
     @Transactional

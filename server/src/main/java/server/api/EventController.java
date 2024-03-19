@@ -34,8 +34,7 @@ public class EventController {
         event.addTag(new Tag(event, "entrance fees", Tag.Color.BLUE));
         event.addTag(new Tag(event, "travel", Tag.Color.RED));
         repo.save(event);
-        EventDTO eventDTO = new EventDTO(event);
-        return ResponseEntity.ok(eventDTO);
+        return ResponseEntity.ok(new EventDTO(event));
     }
 
     @GetMapping("/{id}")
@@ -74,8 +73,7 @@ public class EventController {
         e.setName(event.getName());
         repo.save(e);
 
-        EventDTO eventDTO = new EventDTO(repo.findById(id).get());
-        return ResponseEntity.ok(eventDTO);
+        return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
     }
 
     @Transactional

@@ -26,8 +26,7 @@ public class TagController {
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        TagDTO tagDTO = new TagDTO(repo.findById(id).get());
-        return ResponseEntity.ok(tagDTO);
+        return ResponseEntity.ok(new TagDTO(repo.findById(id).get()));
     }
 
     @PostMapping(path = {"" , "/"})
@@ -42,8 +41,7 @@ public class TagController {
             return ResponseEntity.badRequest().build();
         }
         repo.save(tag);
-        TagDTO tagDTO = new TagDTO(tag);
-        return ResponseEntity.ok(tagDTO);
+        return ResponseEntity.ok(new TagDTO(tag));
     }
 
 
@@ -66,8 +64,7 @@ public class TagController {
         t.setName(tag.getName());
         repo.save(t);
 
-        TagDTO tagDTO = new TagDTO(repo.findById(id).get());
-        return ResponseEntity.ok(tagDTO);
+        return ResponseEntity.ok(new TagDTO(repo.findById(id).get()));
     }
 
 //    @Transactional

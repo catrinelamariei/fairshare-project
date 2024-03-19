@@ -25,8 +25,7 @@ public class TransactionController {
             return ResponseEntity.badRequest().build();
         }
         repo.save(transaction);
-        TransactionDTO transactionDTO = new TransactionDTO(transaction);
-        return ResponseEntity.ok(transactionDTO);
+        return ResponseEntity.ok(new TransactionDTO(transaction));
     }
 
     @GetMapping("/{id}")
@@ -34,8 +33,7 @@ public class TransactionController {
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        TransactionDTO transactionDTO = new TransactionDTO(repo.findById(id).get());
-        return ResponseEntity.ok(transactionDTO);
+        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
     }
 
     @Transactional
@@ -59,8 +57,7 @@ public class TransactionController {
         repo.save(t);
 
         //finalising
-        TransactionDTO transactionDTO = new TransactionDTO(repo.findById(id).get());
-        return ResponseEntity.ok(transactionDTO);
+        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
     }
 
     //id is already included in transactionDTO
