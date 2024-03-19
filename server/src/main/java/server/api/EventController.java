@@ -26,7 +26,7 @@ public class EventController {
 
 //    @Transactional
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+    public ResponseEntity<EventDTO> createEvent(@RequestBody Event event) {
         if (event == null || event.getName() == null || event.getName() == "") {
             return ResponseEntity.badRequest().build();
         }
@@ -34,7 +34,8 @@ public class EventController {
         event.addTag(new Tag(event, "entrance fees", Tag.Color.BLUE));
         event.addTag(new Tag(event, "travel", Tag.Color.RED));
         repo.save(event);
-        return ResponseEntity.ok().build();
+        EventDTO eventDTO = new EventDTO(event);
+        return ResponseEntity.ok(eventDTO);
     }
 
     @GetMapping("/{id}")
@@ -51,11 +52,11 @@ public class EventController {
             return ResponseEntity.notFound().build();
         }
         Set<Tag> tags = repo.findById(id).get().getTags();
-        Set<TagDTO> dtos = new HashSet<>();
+        Set<TagDTO> tagDTOs = new HashSet<>();
         for (Tag tag : tags) {
-            dtos.add(new TagDTO(tag));
+            tagDTOs.add(new TagDTO(tag));
         }
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(tagDTOs);
     }
 
 
@@ -73,7 +74,8 @@ public class EventController {
         e.setName(event.getName());
         repo.save(e);
 
-        return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
+        EventDTO eventDTO = new EventDTO(repo.findById(id).get());
+        return ResponseEntity.ok(eventDTO);
     }
 
     @Transactional

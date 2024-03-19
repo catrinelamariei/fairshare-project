@@ -34,7 +34,8 @@ public class TransactionController {
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
+        TransactionDTO transactionDTO = new TransactionDTO(repo.findById(id).get());
+        return ResponseEntity.ok(transactionDTO);
     }
 
     @Transactional
@@ -58,7 +59,8 @@ public class TransactionController {
         repo.save(t);
 
         //finalising
-        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
+        TransactionDTO transactionDTO = new TransactionDTO(repo.findById(id).get());
+        return ResponseEntity.ok(transactionDTO);
     }
 
     //id is already included in transactionDTO

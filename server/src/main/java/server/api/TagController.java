@@ -26,7 +26,8 @@ public class TagController {
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new TagDTO(repo.findById(id).get()));
+        TagDTO tagDTO = new TagDTO(repo.findById(id).get());
+        return ResponseEntity.ok(tagDTO);
     }
 
     @PostMapping(path = {"" , "/"})
@@ -65,7 +66,8 @@ public class TagController {
         t.setName(tag.getName());
         repo.save(t);
 
-        return ResponseEntity.ok(new TagDTO(repo.findById(id).get()));
+        TagDTO tagDTO = new TagDTO(repo.findById(id).get());
+        return ResponseEntity.ok(tagDTO);
     }
 
 //    @Transactional
