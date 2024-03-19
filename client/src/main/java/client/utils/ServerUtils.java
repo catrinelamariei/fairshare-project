@@ -20,7 +20,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
 import org.glassfish.jersey.client.ClientConfig;
 

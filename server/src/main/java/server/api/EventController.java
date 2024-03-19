@@ -29,7 +29,8 @@ public class EventController {
 //    @Transactional
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        if (eventDTO == null || eventDTO.getName() == null || Objects.equals(eventDTO.getName(), "")) {
+        if (eventDTO == null || eventDTO.getName() == null
+                || Objects.equals(eventDTO.getName(), "")) {
             return ResponseEntity.badRequest().build();
         }
         Event event = DTOtoEntity.create(eventDTO);

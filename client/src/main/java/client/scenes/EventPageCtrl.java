@@ -15,18 +15,12 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Popup;
 
 import javax.inject.Inject;
@@ -34,7 +28,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-import javafx.event.ActionEvent;
 import javafx.util.Duration;
 
 import java.math.BigDecimal;
@@ -42,7 +35,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 
-import java.util.stream.Collectors;
 
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;

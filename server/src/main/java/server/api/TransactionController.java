@@ -31,7 +31,8 @@ public class TransactionController {
     }
 
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<TransactionDTO> createTransaction(@RequestBody TransactionDTO transactionDTO) {
+    public ResponseEntity<TransactionDTO> createTransaction(
+            @RequestBody TransactionDTO transactionDTO) {
         if(transactionDTO == null){ // TODO: better validate
             return ResponseEntity.badRequest().build();
         }
