@@ -35,6 +35,21 @@ public class TransactionDTO {
         this.subject = transaction.subject;
     }
 
+    public TransactionDTO(UUID id, UUID eventId, Date date, String currencyCode, BigDecimal amount,
+                          ParticipantDTO author, Set<ParticipantDTO> participants, Set<TagDTO> tags,
+                          String subject) {
+        this.id = id;
+        this.eventId = eventId;
+        this.date = date;
+        this.currencyCode = currencyCode;
+        this.amount = amount;
+        this.author = author;
+        this.participants = participants;
+        this.tags = tags;
+        this.subject = subject;
+    }
+
+    // TODO: this should be removed and replaced by constructor above
     public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount,
                           ParticipantDTO author, String subject) {
         this.id = id;
@@ -43,12 +58,5 @@ public class TransactionDTO {
         this.amount = amount;
         this.author = author;
         this.subject = subject;
-    }
-
-    public String dateAsString() {
-        Calendar calendar = (new Calendar.Builder()).setInstant(date).build();
-        return String.format("%d/%d/%d", calendar.get(Calendar.DATE),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.YEAR));
     }
 }

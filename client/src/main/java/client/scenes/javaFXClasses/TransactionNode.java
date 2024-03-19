@@ -13,11 +13,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TransactionNode extends HBox {
     public UUID id;
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Create a javFX node representing a transaction
@@ -27,7 +29,7 @@ public class TransactionNode extends HBox {
         super(); //initialize HBox part
 
         //date
-        Text date = new Text(ts.dateAsString());
+        Text date = new Text(formatter.format(ts.date));
 
         //main body
         Text desc = new Text(String.format("%s payed %.2f%s for %s",

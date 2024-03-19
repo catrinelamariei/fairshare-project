@@ -1,9 +1,11 @@
 package server.api;
 import commons.DTOs.TransactionDTO;
+import commons.Event;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.database.EventRepository;
 import server.database.TransactionRepository;
 
 import java.util.UUID;
@@ -14,17 +16,27 @@ import static commons.Transaction.validate;
 @RequestMapping("/api/transaction")
 public class TransactionController {
     private final TransactionRepository repo;
+    private final EventRepository eventRepository;
 
-    public TransactionController(TransactionRepository repo) {
+    public TransactionController(TransactionRepository repo, EventRepository eventRepository) {
         this.repo = repo;
+        this.eventRepository = eventRepository;
     }
 
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<TransactionDTO> createTransaction(@RequestBody Transaction transaction) {
-        if(!validate(transaction)){
+    public ResponseEntity<TransactionDTO> createTransaction(@RequestBody TransactionDTO transactionDTO) {
+        if(transactionDTO == null){ // TODO: better validate
             return ResponseEntity.badRequest().build();
         }
-        repo.save(transaction);
+        //create transaction entity
+        Transaction transaction = new Transaction(transactionDTO);
+        transaction.event = eventRepository.getReferenceById(transactionDTO.eventId);
+        transaction = repo.save(transaction); //idk if these extra safes are actually necessary
+
+        //update event
+        transaction.event.addTransaction(transaction);
+        eventRepository.save(transaction.event); //idk if these extra safes are actually necessary
+
         return ResponseEntity.ok(new TransactionDTO(transaction));
     }
 
