@@ -1,5 +1,6 @@
 package client.scenes;
 import client.MainCtrl;
+import client.UserData;
 import client.utils.ServerUtils;
 
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class StartPageCtrl {
     private ServerUtils serverUtils;
@@ -65,7 +67,10 @@ public class StartPageCtrl {
         String text = joinedEvent.getText();
         if (text != null && !text.isEmpty()) {
             System.out.println(text + " Event joined");
+            UserData data = UserData.getInstance();
+            data.setCurrentUUID(UUID.fromString(text));
             joinedEvent.clear();
+            eventPage();
         } else {
             // Display an error message if the input is invalid
             Alert alert = new Alert(Alert.AlertType.ERROR);
