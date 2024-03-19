@@ -39,9 +39,10 @@ public class DTOtoEntity {
     }
     public Event create(EventDTO e){
         Event event = new Event(e.getName());
-//        event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
-//        event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
-//        event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
+        eventRepository.save(event); // TODO: optimise this
+        event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
+        event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
+        event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
         eventRepository.save(event);
         return event;
     }
