@@ -5,6 +5,7 @@ import commons.Participant;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
 import java.util.UUID;
@@ -13,9 +14,11 @@ import java.util.UUID;
 @RequestMapping("/participants")
 public class ParticipantController {
     private final ParticipantRepository repo;
+    private final DTOtoEntity d2e;
 
-    public ParticipantController(ParticipantRepository repo){
+    public ParticipantController(ParticipantRepository repo, DTOtoEntity dtoToEntity){
         this.repo = repo;
+        this.d2e = dtoToEntity;
     }
 
     @Transactional
@@ -29,15 +32,11 @@ public class ParticipantController {
 
     @Transactional
    @PostMapping(path = {"", "/"})
-   public ResponseEntity<ParticipantDTO> createParticipant(@RequestBody Participant participant) {
-        if (participant == null || participant.getFirstName() == null ||
-                participant.getLastName() == null || participant.getFirstName() == ""
-                || participant.getLastName() == "" || participant.getEmail() == ""
-                || participant.getIban() == ""){
+   public ResponseEntity<ParticipantDTO> createParticipant(@RequestBody ParticipantDTO participantDTO) {
+        if (participantDTO == null) { //TODO: further validation
             return ResponseEntity.badRequest().build();
         }
-
-        repo.save(participant);
+        Participant participant = d2e.create(participantDTO);
         return ResponseEntity.ok(new ParticipantDTO(participant));
     }
 

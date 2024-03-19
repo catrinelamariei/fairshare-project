@@ -5,6 +5,7 @@ import commons.DTOs.TagDTO;
 import commons.Event;
 import commons.Tag;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
@@ -19,9 +20,10 @@ import java.util.UUID;
 @RequestMapping("/api/event")
 public class EventController {
     private final EventRepository repo;
-
-    public EventController(EventRepository repo) {
+    private final DTOtoEntity d2e;
+    public EventController(EventRepository repo, DTOtoEntity dtoToEntity) {
         this.repo = repo;
+        this.d2e = dtoToEntity;
     }
 
 
@@ -33,7 +35,7 @@ public class EventController {
                 || Objects.equals(eventDTO.getName(), "")) {
             return ResponseEntity.badRequest().build();
         }
-        Event event = DTOtoEntity.create(eventDTO);
+        Event event = d2e.create(eventDTO);
 
         return ResponseEntity.ok(new EventDTO(event));
     }
