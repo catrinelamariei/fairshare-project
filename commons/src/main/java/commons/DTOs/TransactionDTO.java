@@ -44,11 +44,4 @@ public class TransactionDTO {
         this.author = author;
         this.subject = subject;
     }
-
-    public String dateAsString() {
-        Calendar calendar = (new Calendar.Builder()).setInstant(date).build();
-        return String.format("%d/%d/%d", calendar.get(Calendar.DATE),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.YEAR));
-    }
 }
