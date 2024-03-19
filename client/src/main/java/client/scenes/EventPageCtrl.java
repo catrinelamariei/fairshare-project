@@ -7,6 +7,7 @@ import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
+import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.KeyFrame;
@@ -39,10 +40,7 @@ import javafx.util.Duration;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 import java.util.stream.Collectors;
 
@@ -178,32 +176,29 @@ public class EventPageCtrl implements Initializable {
         String transactionAmountString = transactionAmount.getText();
         String currency = currencyCode.getText();
         LocalDate localDate = transactionDate.getValue();
-
-        if(name==null || transactionAmountString==null || currency==null || localDate==null){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Please enter valid transaction information");
-            alert.showAndWait();
-            return;
-        }
-
         BigDecimal amount;
+
         try {
+            if(name==null || transactionAmountString==null || currency==null || localDate==null){
+                throw new IllegalArgumentException();
+            }
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Please enter a number for the Amount field");
-            alert.showAndWait();
+            alert("Please enter a number for the Amount field");
+            return;
+        } catch (IllegalArgumentException e) {
+            alert("Please enter valid transaction information");
             return;
         }
+
+        // TODO: these should be taken from user input
+        ParticipantDTO author = null;
+        Set<ParticipantDTO> participants = null;
+        Set<TagDTO> tags = null;
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
-            date, currency, amount, null, null, null, name);
-        // TODO: null values except for id should be present
+            date, currency, amount, author, participants, tags, name);
         try {
             ts = server.addTransaction(ts);
 
@@ -216,6 +211,14 @@ public class EventPageCtrl implements Initializable {
         transactionAmount.clear();
         currencyCode.clear();
         transactionDate.setValue(null);
+    }
+
+    private static void alert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 
     public void onAddParticipant() {
