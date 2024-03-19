@@ -7,9 +7,11 @@ import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,14 +29,11 @@ public class EventController {
 //    @Transactional
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        if (eventDTO == null || eventDTO.getName() == null || eventDTO.getName() == "") {
+        if (eventDTO == null || eventDTO.getName() == null || Objects.equals(eventDTO.getName(), "")) {
             return ResponseEntity.badRequest().build();
         }
-        Event event = new Event(eventDTO.getName());
-        event.addTag(new Tag(event, "food", Tag.Color.GREEN));
-        event.addTag(new Tag(event, "entrance fees", Tag.Color.BLUE));
-        event.addTag(new Tag(event, "travel", Tag.Color.RED));
-        repo.save(event);
+        Event event = DTOtoEntity.create(eventDTO);
+
         return ResponseEntity.ok(new EventDTO(event));
     }
 
