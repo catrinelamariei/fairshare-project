@@ -62,13 +62,18 @@ public class MainCtrl {
     }
 
     public void showEventPage() {
-        primaryStage.setTitle("<EventName>: overview");
+        UserData data = UserData.getInstance();
+        UUID eventUUID = data.getCurrentUUID();
+
+        eventPageCtrl.loadEvent();
+        primaryStage.setTitle(eventUUID+": overview");
         eventPageCtrl.load(new UUID(0,0)); //INITIALIZE eventPage with data; placeholder id
         primaryStage.setScene(eventPage);
     }
 
     public void showAdminPage() {
         primaryStage.setTitle("<EventName>: admin panel");
+        adminPageCtrl.load();
         primaryStage.setScene(adminPage);
     }
 

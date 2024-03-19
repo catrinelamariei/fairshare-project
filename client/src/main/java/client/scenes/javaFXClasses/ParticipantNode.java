@@ -13,8 +13,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ParticipantNode extends TitledPane {
+    private final UUID id; //to address participant contained in this node
+
     //create text (shared among all ParticipantNodes)
     static Text nameText = new Text("name");
     static Text emailText = new Text("Email");
@@ -50,6 +53,8 @@ public class ParticipantNode extends TitledPane {
     public ParticipantNode(ParticipantDTO participant) {
         super(participant.getFullName(), null);
         this.getStyleClass().add("participants"); //set CSS class
+        this.id = participant.id;
+
         //create text-field
         nameField = new TextField(participant.getFullName());
         emailField = new TextField(participant.email);

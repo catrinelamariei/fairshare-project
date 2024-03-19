@@ -16,11 +16,14 @@ import java.util.ResourceBundle;
 public class PrivCheckPageCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private final String serverUrl;
     public PasswordField password;
     public Text text;
 
     @Inject
     public PrivCheckPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
+        UserData data = UserData.getInstance();
+        this.serverUrl = data.getServerUrl();
         this.server = server;
         this.mainCtrl = mainCtrl;
         text = new Text();
@@ -50,12 +53,12 @@ public class PrivCheckPageCtrl {
 
     public void requestCodeGeneration(){
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/admin";
+        String url = serverUrl + "/admin";
         String response = restTemplate.getForObject(url, String.class);
     }
     public String postRequest(String code) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/admin";
+        String url = serverUrl + "/admin";
         ResponseEntity<String> response = restTemplate.postForEntity(url, code, String.class);
         return response.getBody();
     }
