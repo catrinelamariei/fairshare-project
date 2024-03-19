@@ -65,15 +65,16 @@ public class EventController {
     @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<EventDTO> updateById(@PathVariable("id") UUID id,
-                                               @RequestBody EventDTO event) {
-        if (id==null || event == null || event.getName() == null || event.getName() == "") {
+                                               @RequestBody EventDTO eventDTO) {
+        if (id == null || eventDTO == null || eventDTO.getName() == null
+                || Objects.equals(eventDTO.getName(), "")) {
             return ResponseEntity.badRequest().build();
         }
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
         Event e = repo.findById(id).get();
-        e.setName(event.getName());
+        e.setName(eventDTO.getName());
         repo.save(e);
 
         return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
