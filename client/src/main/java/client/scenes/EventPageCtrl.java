@@ -27,7 +27,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
-import javafx.stage.Stage;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -40,7 +39,6 @@ import javafx.util.Duration;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -63,10 +61,6 @@ public class EventPageCtrl implements Initializable {
     private TextField currencyCode;
     @FXML
     private DatePicker transactionDate;
-    @FXML
-    private Button addTransactionButton;
-    @FXML
-    private Button deleteTransactionButton;
 
     //participant attributes and buttons
     @FXML
@@ -79,8 +73,6 @@ public class EventPageCtrl implements Initializable {
     private TextField email;
     @FXML
     private TextField iban;
-    @FXML
-    private Button addParticipantButton;
     @FXML
     private Button copyButton;
 
@@ -167,23 +159,8 @@ public class EventPageCtrl implements Initializable {
         timeline.play();
     }
 
-
-    public void testAddTransaction() {
+    public void onNewTransaction() {
         mainCtrl.showTransactionPage();
-//        // TEST:
-//        TransactionDTO tsDTO = new TransactionDTO(
-//                new UUID(0, 1),
-//                new Date(),
-//                "eur",
-//                new BigDecimal("10.99"),
-//                new ParticipantDTO("Max", "Well", "mail@me.com", "FR1234"),
-//                "Burgerzz"
-//        );
-//        tsDTO.participants = new HashSet<ParticipantDTO>();
-//        tsDTO.participants.add(new ParticipantDTO("Bo", "To", "mail", "iban"));
-//
-//        HBox node = createTransactionNode(tsDTO);
-//        transactions.getChildren().add(node);
     }
 
     /**
