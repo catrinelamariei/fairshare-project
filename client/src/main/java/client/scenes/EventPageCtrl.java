@@ -90,10 +90,7 @@ public class EventPageCtrl implements Initializable {
         this.mainCtrl = mainCtrl;
     }
 
-    public void initialize(URL location, ResourceBundle resources) { //TODO: put these in fxml
-        addParticipantButton.setOnAction(event -> onAddParticipant());
-        addTransactionButton.setOnAction(event -> onCreateTransaction());
-        deleteTransactionButton.setOnAction(this::onDeleteTransaction);
+    public void initialize(URL location, ResourceBundle resources) {
         ParticipantNode.init(); //<cascade> do some styling
     }
     public void load() {
