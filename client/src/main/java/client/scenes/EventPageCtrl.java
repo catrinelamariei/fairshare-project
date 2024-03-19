@@ -139,6 +139,15 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void copyInviteCode() {
+
+        if(eventId == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Event not found");
+            alert.showAndWait();
+            return;
+        }
         //get system singleton of clipboard
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
