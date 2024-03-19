@@ -38,7 +38,7 @@ public class ServerUtils {
      * @param event the event to be added
      * @return the event that was added
      */
-    public EventDTO addEvent(EventDTO event) {
+    public EventDTO postEvent(EventDTO event) throws WebApplicationException {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/event") //
                 .request(APPLICATION_JSON) //

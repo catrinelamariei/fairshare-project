@@ -39,9 +39,9 @@ public class DTOtoEntity {
     }
     public Event create(EventDTO e){
         Event event = new Event(e.getName());
-        event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
-        event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
-        event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
+//        event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
+//        event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
+//        event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
         eventRepository.save(event);
         return event;
     }
@@ -104,7 +104,16 @@ public class DTOtoEntity {
         return null;
     }
     public Participant create(ParticipantDTO p){
-        return null;
+        //create & save participant
+        Participant participant = new Participant(p);
+        participant.event = eventRepository.getReferenceById(p.eventId);
+        participantRepository.save(participant);
+
+        //update event
+        participant.event.addParticipant(participant);
+        eventRepository.save(participant.event);
+
+        return participant;
     }
     public Participant update(ParticipantDTO p) {
         Participant participant = participantRepository.findById(p.getId()).get();

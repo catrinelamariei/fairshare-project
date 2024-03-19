@@ -176,10 +176,10 @@ public class EventPageCtrl implements Initializable {
             }
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
-            alert("Please enter a number for the Amount field");
+            MainCtrl.alert("Please enter a number for the Amount field");
             return;
         } catch (IllegalArgumentException e) {
-            alert("Please enter valid transaction information");
+            MainCtrl.alert("Please enter valid transaction information");
             return;
         }
 
@@ -204,14 +204,6 @@ public class EventPageCtrl implements Initializable {
         transactionDate.setValue(null);
     }
 
-    private static void alert(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
-    }
-
     public void onAddParticipant() {
         String fName = firstName.getText();
         String lName = lastName.getText();
@@ -223,11 +215,12 @@ public class EventPageCtrl implements Initializable {
             if (fName.isEmpty() || lName.isEmpty()|| mail.isEmpty()||ibanText.isEmpty()) {
                 throw new IllegalArgumentException();
             }
-            participantDTO = new ParticipantDTO(fName, lName, mail, ibanText);
+            participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
+                fName, lName, mail, ibanText);
             participantDTO = server.postParticipant(participantDTO);
             participants.getPanes().add(new ParticipantNode(participantDTO));
         } catch (IllegalArgumentException e) {
-            alert("Please enter valid participant data");
+            MainCtrl.alert("Please enter valid participant data");
             return;
         } catch (WebApplicationException e) {
             System.err.println("Error adding participant: " + e.getMessage());

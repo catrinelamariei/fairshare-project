@@ -1,5 +1,6 @@
 package commons.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import commons.Participant;
 
 import java.util.Objects;
@@ -24,6 +25,17 @@ public class ParticipantDTO {
         this.eventId = participant.getEvent().getId();
     }
 
+    public ParticipantDTO(UUID id, UUID eventId, String firstName, String lastName, String email,
+                          String iban) {
+        this.id = id;
+        this.eventId = eventId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.iban = iban;
+    }
+
+    // TODO: remove below for above
     public ParticipantDTO(String firstName, String lastName, String email, String iban) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -31,6 +43,7 @@ public class ParticipantDTO {
         this.iban = iban;
     }
 
+    @JsonIgnore
     public String getFullName() {
         return firstName + " " + lastName;
     }

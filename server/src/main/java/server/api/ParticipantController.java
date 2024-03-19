@@ -11,7 +11,7 @@ import server.database.ParticipantRepository;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/participants")
+@RequestMapping("/api/participants")
 public class ParticipantController {
     private final ParticipantRepository repo;
     private final DTOtoEntity d2e;

@@ -1,5 +1,6 @@
 package commons;
 
+import commons.DTOs.ParticipantDTO;
 import jakarta.persistence.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
@@ -51,6 +52,16 @@ public class Participant {
         this.paidTransactions = new HashSet<>();
         this.participatedTransactions = new HashSet<>();
         this.event = event;
+    }
+
+    public Participant(ParticipantDTO p) {
+        this.id = p.id;
+        this.firstName = p.firstName;
+        this.lastName = p.lastName;
+        this.email = p.email;
+        this.iban = p.iban;
+        this.paidTransactions = new HashSet<>();
+        this.participatedTransactions = new HashSet<>();
     }
 
     public UUID getId() {
