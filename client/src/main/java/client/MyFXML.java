@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package client;
 
+import client.scenes.EventPageCtrl;
 import com.google.inject.Injector;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,10 +29,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyFXML {
 
     private Injector injector;
+    private Map<Class<?>, Object> controllers = new HashMap<>();
 
     public MyFXML(Injector injector) {
         this.injector = injector;
@@ -39,9 +44,10 @@ public class MyFXML {
     public <T> Pair<T, Parent> load(Class<T> c, String... parts) {
         try {
             var loader = new FXMLLoader(getLocation(parts), null, null,
-                new MyFactory(), StandardCharsets.UTF_8);
+                    new MyFactory(), StandardCharsets.UTF_8);
             Parent parent = loader.load();
             T ctrl = loader.getController();
+            controllers.put(c, ctrl); // Store the controller instance
             return new Pair<>(ctrl, parent);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -51,6 +57,10 @@ public class MyFXML {
     private URL getLocation(String... parts) {
         var path = Path.of("", parts).toString();
         return MyFXML.class.getClassLoader().getResource(path);
+    }
+
+    public EventPageCtrl getController(Class<EventPageCtrl> eventPageCtrlClass) {
+        return (EventPageCtrl) controllers.get(eventPageCtrlClass);
     }
 
     private class MyFactory implements BuilderFactory, Callback<Class<?>, Object> {
