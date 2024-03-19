@@ -73,7 +73,7 @@
                      </HBox.margin>
                   </Text>
                   <Pane prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="53.0" text="Send Invites" HBox.hgrow="NEVER">
+                  <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="53.0" text="Copy invite code" HBox.hgrow="NEVER">
                      <font>
                         <Font size="25.0" />
                      </font>
