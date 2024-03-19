@@ -69,12 +69,12 @@ public class ServerUtils {
      * @param transaction the transaction to be added
      * @return the transaction that was added
      */
-    public Transaction addTransaction(Transaction transaction) {
+    public TransactionDTO addTransaction(TransactionDTO transaction) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/transaction") //
                 .request(APPLICATION_JSON) //
                 .accept(APPLICATION_JSON) //
-                .post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
+                .post(Entity.entity(transaction, APPLICATION_JSON), TransactionDTO.class);
     }
 
     public TransactionDTO getTransaction(UUID id) throws WebApplicationException {

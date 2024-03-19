@@ -23,6 +23,8 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+// BENJAMIN: not checking this because it's not being used -> feel free to merge this into
+// eventController>addTransaction
 public class TransactionPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;

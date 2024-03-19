@@ -159,10 +159,6 @@ public class EventPageCtrl implements Initializable {
         timeline.play();
     }
 
-    public void onNewTransaction() {
-        mainCtrl.showTransactionPage();
-    }
-
     /**
      * placeholder test method for testing the node generator
      */
@@ -180,8 +176,9 @@ public class EventPageCtrl implements Initializable {
         String name = transactionName.getText();
         String transactionAmountString = transactionAmount.getText();
         String currency = currencyCode.getText();
-        LocalDate date = transactionDate.getValue();
-        if(name==null || transactionAmountString==null || currency==null || date==null){
+        LocalDate localDate = transactionDate.getValue();
+
+        if(name==null || transactionAmountString==null || currency==null || localDate==null){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -189,9 +186,10 @@ public class EventPageCtrl implements Initializable {
             alert.showAndWait();
             return;
         }
-        try {
 
-            BigDecimal amount = new BigDecimal(transactionAmountString);
+        BigDecimal amount;
+        try {
+            amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -201,25 +199,22 @@ public class EventPageCtrl implements Initializable {
             return;
         }
 
-        BigDecimal amount = new BigDecimal(transactionAmountString);
-        Date d = java.sql.Date.valueOf(date);
-        UUID uuid = UUID.randomUUID();
-        TransactionDTO newTransactionDTO = new TransactionDTO(
-                uuid, d, currency, amount, null, name);
+        Date date = java.sql.Date.valueOf(localDate);
+        TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
+            date, currency, amount, null, null, null, name);
+        // TODO: null values except for id should be present
         try {
-            transactionName.clear();
-            transactionAmount.clear();
-            currencyCode.clear();
-            transactionDate.setValue(null);
-            EventDTO eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
-            eventDTO.transactions.add(newTransactionDTO);
-            server.updateEvent(eventDTO);
-            HBox transactionNode = new TransactionNode(newTransactionDTO);
-            transactions.getChildren().add(transactionNode);
+            ts = server.addTransaction(ts);
 
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
+
+        transactions.getChildren().add(new TransactionNode(ts));
+        transactionName.clear();
+        transactionAmount.clear();
+        currencyCode.clear();
+        transactionDate.setValue(null);
     }
 
     public void onAddParticipant() {
@@ -248,7 +243,5 @@ public class EventPageCtrl implements Initializable {
         email.clear();
         iban.clear();
     }
-
-
 }
 
