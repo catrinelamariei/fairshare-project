@@ -3,6 +3,7 @@ package commons.DTOs;
 import commons.Transaction;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -42,5 +43,12 @@ public class TransactionDTO {
         this.amount = amount;
         this.author = author;
         this.subject = subject;
+    }
+
+    public String dateAsString() {
+        Calendar calendar = (new Calendar.Builder()).setInstant(date).build();
+        return String.format("%d/%d/%d", calendar.get(Calendar.DATE),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.YEAR));
     }
 }

@@ -93,7 +93,7 @@ public class EventPageCtrl implements Initializable {
 
             //load transactions
             for (TransactionDTO ts : event.transactions) {
-                transactions.getChildren().add(createTransactionNode(ts));
+                transactions.getChildren().add(new TransactionNode(ts));
             }
 
             //load participants
@@ -164,59 +164,6 @@ public class EventPageCtrl implements Initializable {
     }
 
     /**
-     * Create a javFX node representing a transaction
-     * @param ts transaction to be displayed (data source)
-     * @return a node filled with data
-     */
-    private TransactionNode createTransactionNode(TransactionDTO ts) {
-        TransactionNode out = new TransactionNode(); //new TransactionNode (=HBox)
-
-        //date
-        Text date = new Text(dateToString(ts.date));
-
-        //main body
-        Text desc = new Text(String.format("%s payed %.2f%s for %s",
-                ts.author.firstName, ts.amount, ts.currencyCode, ts.subject));
-        desc.getStyleClass().add("desc"); //set css class to .desc
-
-        Text particants = new Text("(" +
-                ts.participants.stream()
-                        .map(p -> p.firstName)
-                        .collect(Collectors.joining(", "))
-                + ")"); //concatenate with ", " in between each name
-        particants.getStyleClass().add("participantText"); //set css class to .participants
-
-        VBox body = new VBox(desc, particants);
-
-        // Delete Button
-        Button deleteTransactionButton = new Button("Delete");
-        deleteTransactionButton.setOnAction(event -> onDeleteTransaction(event));
-
-        //image
-        Image img = new Image("/client/Images/764599.png", 30d, 30d, true, false); //imageview size
-        ImageView imgv = new ImageView(img);
-        Button btn = new Button("", imgv);
-
-        //assembling it all
-        btn.setOnAction(out::editTransaction); //attach method to button
-        out.getChildren().addAll(date, body, btn, deleteTransactionButton); //add all nodes to HBox
-        out.id = ts.id; //so we can reference it (e.g. for updating)
-        out.getStyleClass().add("transaction"); //css class .transaction
-        out.setHgrow(body, Priority.ALWAYS); //manage HBox.Hgrow -> make it expand
-        Insets insets = new Insets(10.0d);
-        out.getChildren().forEach(n -> out.setMargin(n, insets)); //make all children spaced out
-
-        return out;
-    }
-
-    public static String dateToString(Date date) {
-        Calendar calendar = (new Calendar.Builder()).setInstant(date).build();
-        return String.format("%d/%d/%d", calendar.get(Calendar.DATE),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.YEAR));
-    }
-
-    /**
      * placeholder test method for testing the node generator
      */
     public void participantNodeAddTest() {
@@ -267,34 +214,11 @@ public class EventPageCtrl implements Initializable {
             EventDTO eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
             eventDTO.transactions.add(newTransactionDTO);
             server.updateEvent(eventDTO);
-            HBox transactionNode = createTransactionNode(newTransactionDTO);
+            HBox transactionNode = new TransactionNode(newTransactionDTO);
             transactions.getChildren().add(transactionNode);
 
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
-        }
-    }
-
-    public void onDeleteTransaction(ActionEvent event) {
-        Button btn = (Button) event.getSource();
-        HBox transactionNode = (HBox) btn.getParent();
-        if (transactionNode == null) {
-            System.err.println("Error: TransactionNode is null.");
-            return;
-        }
-        String transactionIdString = transactionNode.getId();
-        if (transactionIdString == null || transactionIdString.isEmpty()) {
-            System.err.println("Error: TransactionNode ID is null or empty.");
-            return;
-        }
-        try {
-            UUID transactionId = UUID.fromString(transactionIdString);
-            transactions.getChildren().remove(transactionNode);
-            server.deleteTransactionById(transactionId);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Error parsing UUID: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Error deleting transaction: " + e.getMessage());
         }
     }
 
