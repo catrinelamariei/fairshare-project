@@ -39,9 +39,9 @@ public class DTOtoEntity {
     }
     public Event create(EventDTO e){
         Event event = new Event(e.getName());
-        event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
-        event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
-        event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
+//        event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
+//        event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
+//        event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
         eventRepository.save(event);
         return event;
     }
@@ -68,16 +68,31 @@ public class DTOtoEntity {
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
         transaction.tags.addAll(t.tags.stream().map(this::get).toList());
-        transaction = transactionRepository.save(transaction); //idk if these extra safes are actually necessary
+        transaction = transactionRepository.save(transaction);
+        //idk if these extra safes are actually necessary
 
         //update event
         transaction.event.addTransaction(transaction);
-        eventRepository.save(transaction.event); //idk if these extra safes are actually necessary
+        eventRepository.save(transaction.event);
+        //idk if these extra safes are actually necessary
 
         return transaction;
     }
     public Transaction update(TransactionDTO t) {
-        return null;
+
+        Transaction transaction = transactionRepository.findById(t.id).get();
+        transaction.date = t.date;
+        transaction.currencyCode = t.currencyCode;
+        transaction.amount = t.amount;
+        transaction.subject = t.subject;
+        transaction.author = get(t.author);
+        //TODO check if this is correct, not sure if we have to clear the sets
+        transaction.participants.clear();
+        transaction.participants.addAll(t.participants.stream().map(this::get).toList());
+        transaction.tags.clear();
+        transaction.tags.addAll(t.tags.stream().map(this::get).toList());
+        transactionRepository.save(transaction);
+        return transaction;
     }
 
     public boolean delete (TransactionDTO t) {
@@ -89,10 +104,26 @@ public class DTOtoEntity {
         return null;
     }
     public Participant create(ParticipantDTO p){
-        return null;
+        //create & save participant
+        Participant participant = new Participant(p);
+        participant.event = eventRepository.getReferenceById(p.eventId);
+        participantRepository.save(participant);
+
+        //update event
+        participant.event.addParticipant(participant);
+        eventRepository.save(participant.event);
+
+        return participant;
     }
     public Participant update(ParticipantDTO p) {
-        return null;
+        Participant participant = participantRepository.findById(p.getId()).get();
+        p.firstName = participant.firstName;
+        p.lastName = participant.lastName;
+        p.email = participant.email;
+        p.iban = participant.iban;
+
+        participantRepository.save(participant);
+        return participant;
     }
 
     public boolean delete (ParticipantDTO p) {

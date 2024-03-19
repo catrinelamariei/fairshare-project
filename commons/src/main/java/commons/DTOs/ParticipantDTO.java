@@ -1,5 +1,6 @@
 package commons.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import commons.Participant;
 
 import java.util.Objects;
@@ -24,6 +25,17 @@ public class ParticipantDTO {
         this.eventId = participant.getEvent().getId();
     }
 
+    public ParticipantDTO(UUID id, UUID eventId, String firstName, String lastName, String email,
+                          String iban) {
+        this.id = id;
+        this.eventId = eventId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.iban = iban;
+    }
+
+    // TODO: remove below for above
     public ParticipantDTO(String firstName, String lastName, String email, String iban) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -31,6 +43,7 @@ public class ParticipantDTO {
         this.iban = iban;
     }
 
+    @JsonIgnore
     public String getFullName() {
         return firstName + " " + lastName;
     }
@@ -47,5 +60,53 @@ public class ParticipantDTO {
     @Override
     public int hashCode() {
         return Objects.hash(firstName, lastName, email, iban);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(UUID eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getIban() {
+        return iban;
+    }
+
+    public void setIban(String iban) {
+        this.iban = iban;
     }
 }

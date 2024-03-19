@@ -11,7 +11,7 @@ import server.database.ParticipantRepository;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/participants")
+@RequestMapping("/api/participants")
 public class ParticipantController {
     private final ParticipantRepository repo;
     private final DTOtoEntity d2e;
@@ -32,7 +32,8 @@ public class ParticipantController {
 
     @Transactional
    @PostMapping(path = {"", "/"})
-   public ResponseEntity<ParticipantDTO> createParticipant(@RequestBody ParticipantDTO participantDTO) {
+   public ResponseEntity<ParticipantDTO> createParticipant(
+           @RequestBody ParticipantDTO participantDTO) {
         if (participantDTO == null) { //TODO: further validation
             return ResponseEntity.badRequest().build();
         }
@@ -42,8 +43,9 @@ public class ParticipantController {
 
     @Transactional
    @PutMapping("/{id}")
-   public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id,
-                                                           @RequestBody Participant participant) {
+   public ResponseEntity<ParticipantDTO> updateParticipant(
+           @PathVariable("id") UUID id,
+           @RequestBody ParticipantDTO participant) {
         if(!repo.existsById(id)){
             return ResponseEntity.notFound().build();
         } else if(participant == null || id == null
@@ -54,13 +56,7 @@ public class ParticipantController {
             return ResponseEntity.badRequest().build();
         }
 
-        Participant p = repo.findById(id).get();
-        p.firstName = participant.firstName;
-        p.lastName = participant.lastName;
-        p.email = participant.email;
-        p.iban = participant.iban;
-
-        repo.save(p);
+        Participant p = d2e.update(participant);
         return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
     }
 
