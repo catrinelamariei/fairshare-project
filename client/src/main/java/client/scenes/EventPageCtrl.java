@@ -201,12 +201,11 @@ public class EventPageCtrl implements Initializable {
             date, currency, amount, author, participants, tags, name);
         try {
             ts = server.addTransaction(ts);
-
+            transactions.getChildren().add(new TransactionNode(ts));
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
 
-        transactions.getChildren().add(new TransactionNode(ts));
         transactionName.clear();
         transactionAmount.clear();
         currencyCode.clear();
@@ -226,22 +225,22 @@ public class EventPageCtrl implements Initializable {
         String lName = lastName.getText();
         String mail = email.getText();
         String ibanText = iban.getText();
-        if (fName.isEmpty() || lName.isEmpty()|| mail.isEmpty()||ibanText.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Please enter valid participant data");
-            alert.showAndWait();
-            return;
-        }
+        ParticipantDTO participantDTO;
+
         try {
-            ParticipantDTO participantDTO = new ParticipantDTO(fName, lName, mail, ibanText);
-            EventDTO eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
-            eventDTO.participants.add(participantDTO);
-            server.updateEvent(eventDTO);
+            if (fName.isEmpty() || lName.isEmpty()|| mail.isEmpty()||ibanText.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+            participantDTO = new ParticipantDTO(fName, lName, mail, ibanText);
+            participantDTO = server.postParticipant(participantDTO);
+            participants.getPanes().add(new ParticipantNode(participantDTO));
+        } catch (IllegalArgumentException e) {
+            alert("Please enter valid participant data");
+            return;
         } catch (WebApplicationException e) {
             System.err.println("Error adding participant: " + e.getMessage());
         }
+
         firstName.clear();
         lastName.clear();
         email.clear();

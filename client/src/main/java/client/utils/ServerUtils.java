@@ -18,6 +18,7 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import commons.DTOs.EventDTO;
+import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
@@ -97,5 +98,12 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .accept(APPLICATION_JSON)
                 .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
+    }
+
+    public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
+        return ClientBuilder.newClient()
+            .target(SERVER).path("api/participants/")
+            .request(APPLICATION_JSON)
+            .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 }
