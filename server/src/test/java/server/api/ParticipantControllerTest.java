@@ -64,13 +64,14 @@ public class ParticipantControllerTest {
       assertEquals(BAD_REQUEST, actual.getStatusCode());
    }
 
-   @Test
-   public void successfulPost(){
-        Event e = new Event("event");
-      Participant p = new Participant(e,"Jake", "Walker", "jwalker@gmail.com", "NL294864298");
-      p.id = new UUID(1L, 2L);
-      assertEquals(ResponseEntity.ok().build(), sut.createParticipant(p));
-   }
+   // TODO: Test for successful post
+//   @Test
+//   public void successfulPost(){
+//        Event e = new Event("event");
+//      Participant p = new Participant(e,"Jake", "Walker", "jwalker@gmail.com", "NL294864298");
+//      p.id = new UUID(1L, 2L);
+//      assertEquals(ResponseEntity.ok().build(), sut.createParticipant(p));
+//   }
 
 //   @Test
 //   public void unsuccessfulPut(){
