@@ -32,6 +32,7 @@ import java.util.UUID;
 public class ServerUtils {
     private static final String SERVER = "http://localhost:8080/";
 
+    //events
     /**
      * Adds and event to the database.
      * @param event the event to be added
@@ -63,6 +64,16 @@ public class ServerUtils {
             .get(Collection.class);
     }
 
+    public void updateEvent(EventDTO eventDTO) throws WebApplicationException {
+        System.out.println("am intrat");
+        ClientBuilder.newClient(new ClientConfig())
+            .target(SERVER).path("/api/event/"+eventDTO.getId())
+            .request(APPLICATION_JSON)
+            .accept(APPLICATION_JSON)
+            .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
+    }
+
+    //transactions
     /**
      * Adds a transaction to the database.
      * @param transaction the transaction to be added
@@ -90,19 +101,13 @@ public class ServerUtils {
                 .delete(); // Send DELETE request
     }
 
-    public void updateEvent(EventDTO eventDTO) throws WebApplicationException {
-        System.out.println("am intrat");
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("/api/event/"+eventDTO.getId())
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
-    }
-
+    //participants
     public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
             .target(SERVER).path("api/participants/")
             .request(APPLICATION_JSON)
             .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
+
+    //tags
 }
