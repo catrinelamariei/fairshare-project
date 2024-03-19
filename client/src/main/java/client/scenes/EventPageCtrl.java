@@ -5,7 +5,6 @@ import client.UserData;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
-import com.google.inject.Stage;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
@@ -22,6 +21,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -39,7 +40,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class EventPageCtrl implements Initializable {
-
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private UUID eventId;
@@ -47,6 +47,13 @@ public class EventPageCtrl implements Initializable {
     private VBox transactions;
     @FXML
     private Accordion participants;
+
+    private UUID eventUUID;
+
+    private EventDTO eventDTO;
+
+    private Stage stage;
+    private final String serverUrl;
 
     //transaction attributes and buttons
     @FXML
@@ -74,13 +81,6 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button addParticipantButton;
 
-    private UUID eventUUID;
-
-    private EventDTO eventDTO;
-
-    private Stage stage;
-    private final String serverUrl;
-
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
@@ -88,10 +88,7 @@ public class EventPageCtrl implements Initializable {
         UserData data = UserData.getInstance();
         this.serverUrl = data.getServerUrl();
         this.eventUUID = data.getCurrentUUID();
-//        this.eventId = new UUID(0,1); //temporary placeholder
-
     }
-
 
     public void initialize(URL location, ResourceBundle resources) {
         addParticipantButton.setOnAction(event -> onAddParticipant());
@@ -99,7 +96,6 @@ public class EventPageCtrl implements Initializable {
         deleteTransactionButton.setOnAction(this::onDeleteTransaction);
 
     }
-
     public void load(UUID id) {
         System.out.println("Initializing EventPage");
 //        this.eventId = id;
@@ -227,8 +223,8 @@ public class EventPageCtrl implements Initializable {
         UserData data = UserData.getInstance();
         this.eventUUID = data.getCurrentUUID();
         ServerUtils serverUtils = new ServerUtils();
-        this.eventDTO = serverUtils.getEvent(this.eventUUID);
-        System.out.println(eventDTO);
+//        this.eventDTO = serverUtils.getEvent(this.eventUUID);
+//        System.out.println(eventDTO);
         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n");
     }
 

@@ -8,6 +8,7 @@ public final class UserData {
 
     private String token;
     private UUID currentUUID;
+
     private Set<UUID> recentUUIDs = new HashSet<>();
 
     private String serverUrl = "http://localhost:8080";
