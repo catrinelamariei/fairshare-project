@@ -79,7 +79,20 @@ public class DTOtoEntity {
         return transaction;
     }
     public Transaction update(TransactionDTO t) {
-        return null;
+
+        Transaction transaction = transactionRepository.findById(t.id).get();
+        transaction.date = t.date;
+        transaction.currencyCode = t.currencyCode;
+        transaction.amount = t.amount;
+        transaction.subject = t.subject;
+        transaction.author = get(t.author);
+        //TODO check if this is correct, not sure if we have to clear the sets
+        transaction.participants.clear();
+        transaction.participants.addAll(t.participants.stream().map(this::get).toList());
+        transaction.tags.clear();
+        transaction.tags.addAll(t.tags.stream().map(this::get).toList());
+        transactionRepository.save(transaction);
+        return transaction;
     }
 
     public boolean delete (TransactionDTO t) {

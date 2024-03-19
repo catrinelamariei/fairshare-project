@@ -9,7 +9,6 @@ import server.database.TransactionRepository;
 
 import java.util.UUID;
 
-import static commons.Transaction.validate;
 
 @RestController
 @RequestMapping("/api/transaction")
@@ -44,9 +43,14 @@ public class TransactionController {
     @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDTO> updateTransactionById(@PathVariable("id") UUID id,
-                                                            @RequestBody Transaction transaction) {
+            @RequestBody TransactionDTO transaction) {
         //validation
-        if(!validate(transaction)){
+        if(transaction == null || transaction.id == null
+                || transaction.getAmount() == null
+                || transaction.getCurrencyCode() == null
+                || transaction.getDate() == null
+                || transaction.subject == null
+                || transaction.subject.isEmpty()){
             return ResponseEntity.badRequest().build();
         }
         if (!repo.existsById(id)) {
@@ -54,21 +58,16 @@ public class TransactionController {
         }
 
         //updating
-        Transaction t = repo.findById(id).get();
-        t.setDate(transaction.getDate());
-        t.setCurrencyCode(transaction.getCurrencyCode());
-        t.setAmount(transaction.getAmount());
-        t.subject = transaction.subject;
-        repo.save(t);
+        Transaction ts = d2e.update(transaction);
 
         //finalising
-        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
+        return ResponseEntity.ok(new TransactionDTO(ts));
     }
 
     //id is already included in transactionDTO
     @Transactional
     @PutMapping("")
-    public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody Transaction ts) {
+    public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody TransactionDTO ts) {
         return updateTransactionById(ts.id, ts);
     }
 
