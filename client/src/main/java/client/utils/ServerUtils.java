@@ -141,7 +141,10 @@ public class ServerUtils {
     }
 
     public TagDTO postTag(TagDTO t) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("api/tags/")
+            .request(APPLICATION_JSON)
+            .post(Entity.entity(t, APPLICATION_JSON), TagDTO.class);
     }
 
     public TagDTO putTag(TagDTO t) throws WebApplicationException {

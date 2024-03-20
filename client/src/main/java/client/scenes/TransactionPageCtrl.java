@@ -68,9 +68,9 @@ public class TransactionPageCtrl implements Initializable {
         // temporary for test
         this.event = new Event("name");
         event.id = new UUID(0, 1);
-        Participant p1 = new Participant(event, "fn1", "ln1", "1@gmail.com", "ASSDF");
-        Participant p2 = new Participant(event, "fn2", "ln2", "2@gmail.com", "ASSDF");
-        Participant p3 = new Participant(event, "fn3", "ln3", "2@gmail.com", "ASSDF");
+        Participant p1 = new Participant(event, "fn1", "ln1", "1@gmail.com", "IBAN", "BIC");
+        Participant p2 = new Participant(event, "fn2", "ln2", "2@gmail.com", "IBAN", "BIC");
+        Participant p3 = new Participant(event, "fn3", "ln3", "2@gmail.com", "IBAN", "BIC");
         event.participants.add(p1);
         event.participants.add(p2);
         event.participants.add(p3);

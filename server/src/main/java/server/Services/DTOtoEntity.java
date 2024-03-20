@@ -35,7 +35,7 @@ public class DTOtoEntity {
 
     //EVENT
     public Event get(EventDTO e){
-        return eventRepository.findById(e.id).get();
+        return eventRepository.getReferenceById(e.id);
     }
     public Event create(EventDTO e){
         Event event = new Event(e.getName());
@@ -48,19 +48,20 @@ public class DTOtoEntity {
     }
 
     public Event update(EventDTO e){
-        Event event = eventRepository.findById(e.id).get();
+        Event event = eventRepository.getReferenceById(e.id);
         event.setName(e.getName());
         eventRepository.save(event);
         return event;
     }
     public boolean delete(EventDTO e){
+        if (!eventRepository.existsById(e.id)) return false;
         eventRepository.deleteById(e.id);
         return true;
     }
 
     //TRANSACTION
     public Transaction get(TransactionDTO t){
-        return null;
+        return transactionRepository.getReferenceById(t.id);
     }
     public Transaction create(TransactionDTO t){
         //create & save transactionEntity
@@ -70,18 +71,15 @@ public class DTOtoEntity {
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
         transaction.tags.addAll(t.tags.stream().map(this::get).toList());
         transaction = transactionRepository.save(transaction);
-        //idk if these extra safes are actually necessary
 
         //update event
         transaction.event.addTransaction(transaction);
         eventRepository.save(transaction.event);
-        //idk if these extra safes are actually necessary
 
         return transaction;
     }
     public Transaction update(TransactionDTO t) {
-
-        Transaction transaction = transactionRepository.findById(t.id).get();
+        Transaction transaction = transactionRepository.getReferenceById(t.id);
         transaction.date = t.date;
         transaction.currencyCode = t.currencyCode;
         transaction.amount = t.amount;
@@ -102,7 +100,7 @@ public class DTOtoEntity {
 
     //PARTICIPANT
     public Participant get(ParticipantDTO p){
-        return null;
+        return participantRepository.getReferenceById(p.id);
     }
     public Participant create(ParticipantDTO p){
         //create & save participant
@@ -133,10 +131,19 @@ public class DTOtoEntity {
 
     //TAG
     public Tag get(TagDTO t){
-        return null;
+        return tagRepository.getReferenceById(t.id);
     }
     public Tag create(TagDTO t){
-        return null;
+        //create & save tag
+        Tag tag = new Tag(t);
+        tag.event = eventRepository.getReferenceById(t.eventId);
+        tagRepository.save(tag);
+
+        //update event
+        tag.event.addTag(tag);
+        eventRepository.save(tag.event);
+
+        return tag;
     }
     public Tag update(TagDTO t) {
         return null;
