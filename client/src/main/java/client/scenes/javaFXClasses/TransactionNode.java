@@ -77,7 +77,7 @@ public class TransactionNode extends HBox {
 
         try {
             ((Pane) this.getParent()).getChildren().remove(this); //remove this node from parent
-            (new ServerUtils()).deleteTransactionById(id); // TODO: should use singleton
+            (new ServerUtils()).deleteTransaction(id); // TODO: should use singleton
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());
         } catch (Exception e) {

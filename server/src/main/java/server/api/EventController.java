@@ -47,6 +47,7 @@ public class EventController {
         return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
     }
 
+    // unused because client gets all tags from eventDTO -> different endpoint
     @GetMapping("/{id}/tags")
     public ResponseEntity<Set<TagDTO>> getEventTagsById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {

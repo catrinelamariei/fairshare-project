@@ -23,6 +23,7 @@ import java.util.UUID;
 public class AdminPageCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+
     @FXML
     private Accordion eventAccordion;
 

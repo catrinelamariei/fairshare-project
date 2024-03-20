@@ -52,7 +52,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private DatePicker transactionDate;
 
-    //participant attributes and buttons
+    // participant attributes and buttons
     @FXML
     private Accordion participants;
     @FXML
@@ -63,6 +63,8 @@ public class EventPageCtrl implements Initializable {
     private TextField email;
     @FXML
     private TextField iban;
+
+    // invite code logic
     @FXML
     private Button copyButton;
 
@@ -157,7 +159,7 @@ public class EventPageCtrl implements Initializable {
      */
     public void participantNodeAddTest() {
         ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(
-                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9"
+                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"
         ));
         participants.getPanes().add(participantNode);
     }
@@ -194,7 +196,7 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
             date, currency, amount, author, participants, tags, name);
         try {
-            ts = server.addTransaction(ts);
+            ts = server.postTransaction(ts);
             transactions.getChildren().add(new TransactionNode(ts));
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
@@ -218,7 +220,7 @@ public class EventPageCtrl implements Initializable {
                 throw new IllegalArgumentException();
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
-                fName, lName, mail, ibanText);
+                fName, lName, mail, ibanText, ""); // TODO: replace empty string with bic
             participantDTO = server.postParticipant(participantDTO);
             participants.getPanes().add(new ParticipantNode(participantDTO));
         } catch (IllegalArgumentException e) {
