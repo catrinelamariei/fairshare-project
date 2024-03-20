@@ -2,7 +2,6 @@ package server.api;
 
 import commons.DTOs.EventDTO;
 import commons.DTOs.TagDTO;
-import commons.Event;
 import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,7 +26,7 @@ public class EventController {
 //    @Transactional
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        if (eventDTO == null || !eventDTO.validate()) return ResponseEntity.badRequest().build();
+        if (eventDTO == null || eventDTO.validate()) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(new EventDTO(d2e.create(eventDTO)));
     }
 
@@ -57,7 +55,7 @@ public class EventController {
     @PutMapping("/{id}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") UUID id,
                                                 @RequestBody EventDTO eventDTO) {
-        if (id == null || eventDTO == null || !eventDTO.validate())
+        if (id == null || eventDTO == null || eventDTO.validate())
             return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         eventDTO.id = id;

@@ -1,14 +1,12 @@
 package server.api;
 
 import commons.DTOs.ParticipantDTO;
-import commons.Participant;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -24,52 +22,33 @@ public class ParticipantController {
 
     @Transactional
    @GetMapping("/{id}")
-   public ResponseEntity<ParticipantDTO> getById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
+   public ResponseEntity<ParticipantDTO> getParticipant(@PathVariable("id") UUID id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new ParticipantDTO(repo.getReferenceById(id)));
     }
 
     @Transactional
    @PostMapping(path = {"", "/"})
    public ResponseEntity<ParticipantDTO> createParticipant(
            @RequestBody ParticipantDTO participantDTO) {
-        if (participantDTO == null) { //TODO: further validation
+        if (participantDTO == null || participantDTO.validate())
             return ResponseEntity.badRequest().build();
-        }
-        Participant participant = d2e.create(participantDTO);
-        return ResponseEntity.ok(new ParticipantDTO(participant));
+        return ResponseEntity.ok(new ParticipantDTO(d2e.create(participantDTO)));
     }
 
     @Transactional
    @PutMapping("/{id}")
-   public ResponseEntity<ParticipantDTO> updateParticipant(
-           @PathVariable("id") UUID id,
-           @RequestBody ParticipantDTO participant) {
-        if(!repo.existsById(id)){
-            return ResponseEntity.notFound().build();
-        } else if(participant == null   //TODO only change if we allow IBAN and BIC to be left empty
-                || participant.getFirstName() == null
-                || Objects.equals(participant.getFirstName(), "")
-                || participant.getLastName() == null
-                || Objects.equals(participant.getLastName(), "")
-                || participant.getEmail() == null || Objects.equals(participant.getEmail(), "")
-                || participant.getIban() == null || Objects.equals(participant.getIban(), "")
-                || participant.getBic() == null || Objects.equals(participant.getBic(), "")) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Participant p = d2e.update(participant);
-        return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
+   public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id,
+                                                           @RequestBody ParticipantDTO p) {
+        if(!repo.existsById(id)) return ResponseEntity.notFound().build();
+        if(p == null || p.validate()) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(new ParticipantDTO(d2e.update(p)));
     }
 
     @Transactional
    @DeleteMapping("/{id}")
    public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
-        if(!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
+        if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();
     }

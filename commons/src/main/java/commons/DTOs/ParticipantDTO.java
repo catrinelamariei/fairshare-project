@@ -48,6 +48,14 @@ public class ParticipantDTO {
         this.bic = bic;
     }
 
+    // TODO: decide on iban/bic empty/null allowed
+    // ID allowed to be null -> assigned upon saving to DB
+    public boolean validate() {
+        return !(eventId == null || firstName == null || lastName == null || email == null
+            || iban == null || bic == null || firstName.isEmpty() || lastName.isEmpty()
+            || email.isEmpty());
+    }
+
     @JsonIgnore
     public String getFullName() {
         return firstName + " " + lastName;

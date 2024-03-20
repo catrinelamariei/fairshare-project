@@ -42,8 +42,8 @@ public class EventDTO {
     }
 
     public boolean validate() {
-        return (this.name != null && !this.name.isEmpty() && this.tags != null && this.date != null
-        && this.participants != null && this.transactions != null);
+        return !(this.name == null || this.name.isEmpty() || this.tags == null || this.date == null
+            || this.participants == null || this.transactions == null);
     }
 
     public UUID getId() {
