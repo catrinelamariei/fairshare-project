@@ -4,6 +4,7 @@ import commons.DTOs.TagDTO;
 import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNullFields;
 import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.TagRepository;
@@ -30,7 +31,7 @@ public class TagController {
 
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<TagDTO> createTag(@RequestBody TagDTO tagDTO) {
-        if (tagDTO == null && !tagDTO.validate()) return ResponseEntity.badRequest().build();
+        if (tagDTO == null || !tagDTO.validate()) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(new TagDTO(d2e.create(tagDTO)));
     }
 
@@ -39,6 +40,7 @@ public class TagController {
     public ResponseEntity<TagDTO> updateTag(@PathVariable("id") UUID id, @RequestBody TagDTO tag) {
         if (tag == null || !tag.validate()) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        tag.id = id;
         return ResponseEntity.ok(new TagDTO(d2e.update(tag)));
     }
 

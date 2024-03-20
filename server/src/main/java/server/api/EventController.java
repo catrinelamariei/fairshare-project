@@ -26,7 +26,7 @@ public class EventController {
 //    @Transactional
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        if (eventDTO == null || eventDTO.validate()) return ResponseEntity.badRequest().build();
+        if (eventDTO == null || !eventDTO.validate()) return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(new EventDTO(d2e.create(eventDTO)));
     }
 
@@ -55,7 +55,7 @@ public class EventController {
     @PutMapping("/{id}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") UUID id,
                                                 @RequestBody EventDTO eventDTO) {
-        if (id == null || eventDTO == null || eventDTO.validate())
+        if (id == null || eventDTO == null || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         eventDTO.id = id;

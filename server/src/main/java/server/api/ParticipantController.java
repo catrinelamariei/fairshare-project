@@ -31,7 +31,7 @@ public class ParticipantController {
    @PostMapping(path = {"", "/"})
    public ResponseEntity<ParticipantDTO> createParticipant(
            @RequestBody ParticipantDTO participantDTO) {
-        if (participantDTO == null || participantDTO.validate())
+        if (participantDTO == null || !participantDTO.validate())
             return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(new ParticipantDTO(d2e.create(participantDTO)));
     }
@@ -41,7 +41,8 @@ public class ParticipantController {
    public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id,
                                                            @RequestBody ParticipantDTO p) {
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
-        if(p == null || p.validate()) return ResponseEntity.badRequest().build();
+        if(p == null || !p.validate()) return ResponseEntity.badRequest().build();
+        p.id = id;
         return ResponseEntity.ok(new ParticipantDTO(d2e.update(p)));
     }
 

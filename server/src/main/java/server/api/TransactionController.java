@@ -23,9 +23,9 @@ public class TransactionController {
 
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<TransactionDTO> createTransaction(
-            @RequestBody TransactionDTO transactionDTO) {
-        if(transactionDTO == null) return ResponseEntity.badRequest().build(); //TODO: validate
-        return ResponseEntity.ok(new TransactionDTO(d2e.create(transactionDTO)));
+            @RequestBody TransactionDTO ts) {
+        if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(new TransactionDTO(d2e.create(ts)));
     }
 
     @GetMapping("/{id}")
@@ -40,6 +40,7 @@ public class TransactionController {
                                                             @RequestBody TransactionDTO ts) {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        ts.id = id;
         return ResponseEntity.ok(new TransactionDTO(d2e.update(ts)));
     }
 
