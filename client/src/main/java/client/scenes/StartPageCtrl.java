@@ -12,7 +12,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class StartPageCtrl {
