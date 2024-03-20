@@ -17,6 +17,7 @@ package client.utils;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import client.UserData;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -26,6 +27,11 @@ import org.glassfish.jersey.client.ClientConfig;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -39,7 +45,6 @@ public class ServerUtils {
         return ClientBuilder.newClient()
             .target(SERVER).path("api/event/" + id)
             .request(APPLICATION_JSON)
-            .accept(APPLICATION_JSON)
             .get(EventDTO.class);
     }
 
@@ -49,19 +54,17 @@ public class ServerUtils {
      * @return the event that was added
      */
     public EventDTO postEvent(EventDTO event) throws WebApplicationException {
-        return ClientBuilder.newClient(new ClientConfig()) //
+        return ClientBuilder.newClient() //
                 .target(SERVER).path("api/event") //
                 .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
                 .post(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
     }
 
     public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
         System.out.println("am intrat");
-        ClientBuilder.newClient(new ClientConfig())
+        return ClientBuilder.newClient()
             .target(SERVER).path("/api/event/"+eventDTO.getId())
             .request(APPLICATION_JSON)
-            .accept(APPLICATION_JSON)
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
 
@@ -70,11 +73,11 @@ public class ServerUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public Collection<EventDTO> getAllEvents(String token) throws WebApplicationException {
+    public Collection<EventDTO> getAllEvents() throws WebApplicationException {
         return ClientBuilder.newClient()
             .target(SERVER).path("event")
             .request(APPLICATION_JSON)
-            .header("Authorization", "Bearer " + token)
+            .header("Authorization", "Bearer " + UserData.getInstance().getToken())
             .get(Collection.class);
     }
 
@@ -92,10 +95,9 @@ public class ServerUtils {
      * @return the transaction that was added
      */
     public TransactionDTO postTransaction(TransactionDTO ts) throws WebApplicationException {
-        return ClientBuilder.newClient(new ClientConfig()) //
+        return ClientBuilder.newClient() //
                 .target(SERVER).path("api/transaction") //
                 .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
                 .post(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
 
@@ -153,19 +155,23 @@ public class ServerUtils {
     }
 
     //JSON
-    public String getJSON(String token) throws WebApplicationException {
+    public String getJSON() throws WebApplicationException {
+        return ClientBuilder.newClient()
+            .target(SERVER).path("data/JSON")
+            .request(APPLICATION_JSON)
+            .header("Authorization", "Bearer " + UserData.getInstance().getToken())
+            .get(String.class);
+    }
+
+    public String getJSON(UUID id) throws  WebApplicationException {
         return null;
     }
 
-    public String getJSON(String token, UUID id) throws  WebApplicationException {
-        return null;
-    }
-
-    public void putJSON(String token, String JSON) throws WebApplicationException {
+    public void putJSON(String JSON) throws WebApplicationException {
 
     }
 
-    public void putJSON(String token, String JSON, UUID id) throws WebApplicationException {
-        
+    public void putJSON(String JSON, UUID id) throws WebApplicationException {
+
     }
 }
