@@ -1,5 +1,5 @@
-// suspended due to updates to controllers and uncertainty regarding mockito usage
-// TODO: decide on this
+//TODO update or replace tests with mockito
+
 
 //package server.api;
 //

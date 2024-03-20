@@ -1,4 +1,5 @@
-//no longer working due to update to TransactionController: update or replace using mockito?
+//TODO update or replace tests with mockito
+//(no longer working due to update to TransactionController)
 
 //package server.api;
 //
