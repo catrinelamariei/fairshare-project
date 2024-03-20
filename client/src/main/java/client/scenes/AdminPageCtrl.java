@@ -1,18 +1,12 @@
 package client.scenes;
 
 import client.MainCtrl;
-import client.UserData;
 import client.scenes.javaFXClasses.EventNode;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Accordion;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import javax.inject.Inject;
 import java.net.URL;

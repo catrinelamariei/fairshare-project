@@ -21,7 +21,7 @@ class EventDTOTest {
         Event event = new Event("event");
         event.id = new UUID(0, 1);
         Tag tag = new Tag(event, "tag", Tag.Color.BLUE);
-        Participant participant = new Participant(event,"name", "surname", "mail", "iban");
+        Participant participant = new Participant(event,"name", "surname", "mail", "iban", "bic");
         Transaction transaction = new Transaction(event, new Date(), "usd",
                 new BigDecimal("0.00"), participant, "big-mac");
 

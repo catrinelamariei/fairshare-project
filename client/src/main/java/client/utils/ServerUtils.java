@@ -23,15 +23,9 @@ import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
 import jakarta.ws.rs.WebApplicationException;
-import org.glassfish.jersey.client.ClientConfig;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -168,11 +162,11 @@ public class ServerUtils {
         return null;
     }
 
-    public void putJSON(String JSON) throws WebApplicationException {
+    public void putJSON(String json) throws WebApplicationException {
 
     }
 
-    public void putJSON(String JSON, UUID id) throws WebApplicationException {
+    public void putJSON(String json, UUID id) throws WebApplicationException {
 
     }
 }

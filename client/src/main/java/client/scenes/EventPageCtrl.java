@@ -190,15 +190,16 @@ public class EventPageCtrl implements Initializable {
         }
 
         // TODO: these should be taken from user input
-        ParticipantDTO author = server.postParticipant(new ParticipantDTO(null, UserData.getInstance()
-            .getCurrentUUID(), "firstName", "lastName", "email@me.com", "iban", "bic"));
+        ParticipantDTO author = server.postParticipant(new ParticipantDTO(null,
+            UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
+            "iban", "bic"));
 
         Set<ParticipantDTO> participants = new HashSet<>(List.of(server.postParticipant(
             new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
                 "lastName", "email@me.com", "iban", "bic"))));
 
-        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null, UserData.getInstance().getCurrentUUID(),
-            "newTag", Color.BLUE))));
+        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
+            UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),

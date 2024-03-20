@@ -1,10 +1,8 @@
 package server.api;
 
 import commons.DTOs.TagDTO;
-import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNullFields;
 import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.TagRepository;
