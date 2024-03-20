@@ -59,6 +59,10 @@ public class TransactionDTO {
         this.subject = subject;
     }
 
+    public boolean validate() {
+        return true; // TODO: implement this
+    }
+
     public UUID getId() {
         return id;
     }

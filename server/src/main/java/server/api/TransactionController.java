@@ -24,61 +24,38 @@ public class TransactionController {
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<TransactionDTO> createTransaction(
             @RequestBody TransactionDTO transactionDTO) {
-        if(transactionDTO == null){ // TODO: better validate
-            return ResponseEntity.badRequest().build();
-        }
-        Transaction transaction = d2e.create(transactionDTO);
-
-        return ResponseEntity.ok(new TransactionDTO(transaction));
+        if(transactionDTO == null) return ResponseEntity.badRequest().build(); //TODO: validate
+        return ResponseEntity.ok(new TransactionDTO(d2e.create(transactionDTO)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
+    public ResponseEntity<TransactionDTO> getTransaction(@PathVariable("id") UUID id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new TransactionDTO(repo.getReferenceById(id)));
     }
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionDTO> updateTransactionById(@PathVariable("id") UUID id,
-            @RequestBody TransactionDTO transaction) {
-        //validation
-        if(transaction == null || transaction.id == null
-                || transaction.getAmount() == null
-                || transaction.getCurrencyCode() == null
-                || transaction.getDate() == null
-                || transaction.subject == null
-                || transaction.subject.isEmpty()){
-            return ResponseEntity.badRequest().build();
-        }
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        //updating
-        Transaction ts = d2e.update(transaction);
-
-        //finalising
-        return ResponseEntity.ok(new TransactionDTO(ts));
+    public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable("id") UUID id,
+                                                            @RequestBody TransactionDTO ts) {
+        if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new TransactionDTO(d2e.update(ts)));
     }
 
     //id is already included in transactionDTO
     @Transactional
     @PutMapping("")
     public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody TransactionDTO ts) {
-        return updateTransactionById(ts.id, ts);
+        return updateTransaction(ts.id, ts);
     }
 
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        TransactionDTO out = new TransactionDTO(repo.findById(id).get());
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        Transaction transaction = repo.getReferenceById(id);
         repo.deleteById(id);
-        return ResponseEntity.ok(out);
+        return ResponseEntity.ok(new TransactionDTO(transaction));
     }
 }
