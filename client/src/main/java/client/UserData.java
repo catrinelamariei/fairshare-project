@@ -11,7 +11,7 @@ public final class UserData {
 
     private Set<UUID> recentUUIDs = new HashSet<>();
 
-    private String serverUrl = "http://localhost:8080";
+    private String serverURL = "http://localhost:8080/";
     private final static UserData INSTANCE = new UserData();
 
     private UserData() {}
@@ -45,11 +45,11 @@ public final class UserData {
         this.currentUUID = currentUUID;
     }
 
-    public String getServerUrl() {
-        return serverUrl;
+    public String getServerURL() {
+        return serverURL;
     }
 
-    public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
+    public void setServerURL(String serverURL) {
+        this.serverURL = serverURL;
     }
 }

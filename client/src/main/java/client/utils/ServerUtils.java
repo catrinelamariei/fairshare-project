@@ -37,13 +37,11 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class ServerUtils {
-    private static final String SERVER = "http://localhost:8080/";
-
     //events
     //I think there is a problem with this method
     public EventDTO getEvent(UUID id) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(SERVER).path("api/event/" + id)
+            .target(UserData.getInstance().getServerURL()).path("api/event/" + id)
             .request(APPLICATION_JSON)
             .get(EventDTO.class);
     }
@@ -55,7 +53,7 @@ public class ServerUtils {
      */
     public EventDTO postEvent(EventDTO event) throws WebApplicationException {
         return ClientBuilder.newClient() //
-                .target(SERVER).path("api/event") //
+                .target(UserData.getInstance().getServerURL()).path("api/event") //
                 .request(APPLICATION_JSON) //
                 .post(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
     }
@@ -63,7 +61,7 @@ public class ServerUtils {
     public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
         System.out.println("am intrat");
         return ClientBuilder.newClient()
-            .target(SERVER).path("/api/event/"+eventDTO.getId())
+            .target(UserData.getInstance().getServerURL()).path("/api/event/"+eventDTO.getId())
             .request(APPLICATION_JSON)
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
@@ -75,7 +73,7 @@ public class ServerUtils {
     @SuppressWarnings("unchecked")
     public Collection<EventDTO> getAllEvents() throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(SERVER).path("event")
+            .target(UserData.getInstance().getServerURL()).path("event")
             .request(APPLICATION_JSON)
             .header("Authorization", "Bearer " + UserData.getInstance().getToken())
             .get(Collection.class);
@@ -84,7 +82,7 @@ public class ServerUtils {
     //transactions
     public TransactionDTO getTransaction(UUID id) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(SERVER).path("api/transaction/" + id)
+            .target(UserData.getInstance().getServerURL()).path("api/transaction/" + id)
             .request(APPLICATION_JSON)
             .get(TransactionDTO.class);
     }
@@ -96,7 +94,7 @@ public class ServerUtils {
      */
     public TransactionDTO postTransaction(TransactionDTO ts) throws WebApplicationException {
         return ClientBuilder.newClient() //
-                .target(SERVER).path("api/transaction") //
+                .target(UserData.getInstance().getServerURL()).path("api/transaction") //
                 .request(APPLICATION_JSON) //
                 .post(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
@@ -112,7 +110,7 @@ public class ServerUtils {
      */
     public void deleteTransaction(UUID id) throws WebApplicationException {
         ClientBuilder.newClient()
-                .target(SERVER).path("api/transaction/" + id)
+                .target(UserData.getInstance().getServerURL()).path("api/transaction/" + id)
                 .request()
                 .delete(); // Send DELETE request
     }
@@ -124,7 +122,7 @@ public class ServerUtils {
 
     public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(SERVER).path("api/participants/")
+            .target(UserData.getInstance().getServerURL()).path("api/participants/")
             .request(APPLICATION_JSON)
             .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
@@ -157,7 +155,7 @@ public class ServerUtils {
     //JSON
     public String getJSON() throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(SERVER).path("data/JSON")
+            .target(UserData.getInstance().getServerURL()).path("data/JSON")
             .request(APPLICATION_JSON)
             .header("Authorization", "Bearer " + UserData.getInstance().getToken())
             .get(String.class);
