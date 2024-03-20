@@ -48,19 +48,10 @@ public class TransactionDTO {
         this.subject = subject;
     }
 
-    // TODO: this should be removed and replaced by constructor above
-    public TransactionDTO(UUID id, Date date, String currencyCode, BigDecimal amount,
-                          ParticipantDTO author, String subject) {
-        this.id = id;
-        this.date = date;
-        this.currencyCode = currencyCode;
-        this.amount = amount;
-        this.author = author;
-        this.subject = subject;
-    }
-
     public boolean validate() {
-        return true; // TODO: implement this
+        return !(eventId == null || date == null || currencyCode == null || amount == null ||
+            author == null || participants == null || tags == null || subject == null ||
+            currencyCode.isEmpty() || subject.isEmpty());
     }
 
     public UUID getId() {

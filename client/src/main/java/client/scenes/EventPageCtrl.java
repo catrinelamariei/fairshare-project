@@ -87,16 +87,13 @@ public class EventPageCtrl implements Initializable {
 
             //load transactions
             transactions.getChildren().clear();
-            for (TransactionDTO ts : event.transactions) {
-                transactions.getChildren().add(new TransactionNode(ts));
-            }
+            transactions.getChildren().addAll(event.transactions.stream().map(TransactionNode::new)
+                .toList());
 
             //load participants
             participants.getPanes().clear();
-            for (ParticipantDTO p : event.participants) {
-                participants.getPanes().add(new ParticipantNode(p));
-            }
-
+            participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
+                .toList());
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
                 UserData.getInstance().getCurrentUUID(), e);
@@ -160,9 +157,8 @@ public class EventPageCtrl implements Initializable {
      * placeholder test method for testing the node generator
      */
     public void participantNodeAddTest() {
-        ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(
-                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"
-        ));
+        ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(null, null,
+                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"));
         participants.getPanes().add(participantNode);
     }
 

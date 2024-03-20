@@ -38,16 +38,6 @@ public class ParticipantDTO {
         this.bic = bic;
     }
 
-    // TODO: remove below for above
-    public ParticipantDTO(String firstName, String lastName,
-                          String email, String iban, String bic) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.iban = iban;
-        this.bic = bic;
-    }
-
     // TODO: decide on iban/bic empty/null allowed
     // ID allowed to be null -> assigned upon saving to DB
     public boolean validate() {
