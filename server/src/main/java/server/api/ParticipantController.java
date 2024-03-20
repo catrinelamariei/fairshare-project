@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -48,11 +49,11 @@ public class ParticipantController {
            @RequestBody ParticipantDTO participant) {
         if(!repo.existsById(id)){
             return ResponseEntity.notFound().build();
-        } else if(participant == null || id == null
-                || participant.getFirstName() == null || participant.getFirstName() == ""
-                || participant.getLastName() == null || participant.getLastName() == ""
-                || participant.getEmail() == null || participant.getEmail() == ""
-                || participant.getIban() == null || participant.getIban() == "") {
+        } else if(participant == null   //TODO add tests for BIC after the attribute is created
+                || participant.getFirstName() == null || Objects.equals(participant.getFirstName(), "")
+                || participant.getLastName() == null || Objects.equals(participant.getLastName(), "")
+                || participant.getEmail() == null || Objects.equals(participant.getEmail(), "")
+                || participant.getIban() == null || Objects.equals(participant.getIban(), "")) {
             return ResponseEntity.badRequest().build();
         }
 
