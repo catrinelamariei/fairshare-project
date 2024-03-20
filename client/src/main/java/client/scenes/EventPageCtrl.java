@@ -82,11 +82,13 @@ public class EventPageCtrl implements Initializable {
             EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
             //load transactions
+            transactions.getChildren().clear();
             for (TransactionDTO ts : event.transactions) {
                 transactions.getChildren().add(new TransactionNode(ts));
             }
 
             //load participants
+            participants.getPanes().clear();
             for (ParticipantDTO p : event.participants) {
                 participants.getPanes().add(new ParticipantNode(p));
             }
