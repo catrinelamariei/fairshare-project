@@ -25,29 +25,20 @@ public class EventController {
         this.d2e = dtoToEntity;
     }
 
-
-
 //    @Transactional
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        if (eventDTO == null || eventDTO.getName() == null
-                || Objects.equals(eventDTO.getName(), "")) {
-            return ResponseEntity.badRequest().build();
-        }
-        Event event = d2e.create(eventDTO);
-
-        return ResponseEntity.ok(new EventDTO(event));
+        if (eventDTO == null || !eventDTO.validate()) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(new EventDTO(d2e.create(eventDTO)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
+    public ResponseEntity<EventDTO> getEvent(@PathVariable("id") UUID id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new EventDTO(repo.getReferenceById(id)));
     }
 
-    // unused because client gets all tags from eventDTO -> different endpoint
+    @Deprecated //because client gets all tags from eventDTO -> different endpoint
     @GetMapping("/{id}/tags")
     public ResponseEntity<Set<TagDTO>> getEventTagsById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) {
@@ -64,28 +55,19 @@ public class EventController {
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<EventDTO> updateById(@PathVariable("id") UUID id,
-                                               @RequestBody EventDTO eventDTO) {
-        if (id == null || eventDTO == null || eventDTO.getName() == null
-                || Objects.equals(eventDTO.getName(), "")) {
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") UUID id,
+                                                @RequestBody EventDTO eventDTO) {
+        if (id == null || eventDTO == null || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
-        }
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        Event e = repo.findById(id).get();
-        e.setName(eventDTO.getName());
-        repo.save(e);
-
-        return ResponseEntity.ok(new EventDTO(repo.findById(id).get()));
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        eventDTO.id = id;
+        return ResponseEntity.ok(new EventDTO(d2e.update(eventDTO)));
     }
 
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();
     }

@@ -41,6 +41,11 @@ public class EventDTO {
         this.transactions = new HashSet<>();
     }
 
+    public boolean validate() {
+        return (this.name != null && !this.name.isEmpty() && this.tags != null && this.date != null
+        && this.participants != null && this.transactions != null);
+    }
+
     public UUID getId() {
         return id;
     }
