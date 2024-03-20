@@ -47,7 +47,8 @@ public class Participant {
       // for object mapper
     }
 
-    public Participant(Event event, String firstName, String lastName, String email, String iban, String bic) {
+    public Participant(Event event, String firstName,
+                       String lastName, String email, String iban, String bic) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

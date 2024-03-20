@@ -39,7 +39,8 @@ public class ParticipantDTO {
     }
 
     // TODO: remove below for above
-    public ParticipantDTO(String firstName, String lastName, String email, String iban, String bic) {
+    public ParticipantDTO(String firstName, String lastName,
+                          String email, String iban, String bic) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

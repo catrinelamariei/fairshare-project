@@ -50,8 +50,10 @@ public class ParticipantController {
         if(!repo.existsById(id)){
             return ResponseEntity.notFound().build();
         } else if(participant == null   //TODO add tests for BIC after the attribute is created
-                || participant.getFirstName() == null || Objects.equals(participant.getFirstName(), "")
-                || participant.getLastName() == null || Objects.equals(participant.getLastName(), "")
+                || participant.getFirstName() == null
+                || Objects.equals(participant.getFirstName(), "")
+                || participant.getLastName() == null
+                || Objects.equals(participant.getLastName(), "")
                 || participant.getEmail() == null || Objects.equals(participant.getEmail(), "")
                 || participant.getIban() == null || Objects.equals(participant.getIban(), "")) {
             return ResponseEntity.badRequest().build();
