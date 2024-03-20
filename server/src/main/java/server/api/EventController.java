@@ -62,6 +62,7 @@ public class EventController {
         return ResponseEntity.ok(new EventDTO(d2e.update(eventDTO)));
     }
 
+    // TODO: manage dependencies
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {

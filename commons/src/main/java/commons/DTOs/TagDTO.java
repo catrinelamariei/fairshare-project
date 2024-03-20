@@ -27,6 +27,10 @@ public class TagDTO {
         this.color = color;
     }
 
+    public boolean validate() {
+        return !(name == null || name.isEmpty() || color == null || eventId == null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

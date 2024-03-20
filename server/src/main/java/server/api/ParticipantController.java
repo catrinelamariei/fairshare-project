@@ -45,6 +45,7 @@ public class ParticipantController {
         return ResponseEntity.ok(new ParticipantDTO(d2e.update(p)));
     }
 
+    // TODO: manage dependencies
     @Transactional
    @DeleteMapping("/{id}")
    public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {

@@ -50,6 +50,7 @@ public class TransactionController {
         return updateTransaction(ts.id, ts);
     }
 
+    // TODO: manage dependencies
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
