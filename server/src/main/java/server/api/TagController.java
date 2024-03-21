@@ -42,7 +42,8 @@ public class TagController {
         return ResponseEntity.ok(new TagDTO(d2e.update(tag)));
     }
 
-    // TODO: manage dependencies
+    //TODO: manage dependencies
+    //todo fix name of method
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity updateTag(@PathVariable("id") UUID id) {
