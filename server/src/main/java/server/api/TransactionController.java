@@ -4,77 +4,60 @@ import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.Services.DTOtoEntity;
 import server.database.TransactionRepository;
 
 import java.util.UUID;
 
-import static commons.Transaction.validate;
 
 @RestController
 @RequestMapping("/api/transaction")
 public class TransactionController {
     private final TransactionRepository repo;
+    private final DTOtoEntity d2e;
 
-    public TransactionController(TransactionRepository repo) {
+    public TransactionController(TransactionRepository repo, DTOtoEntity dtoToEntity) {
         this.repo = repo;
+        this.d2e = dtoToEntity;
     }
 
     @PostMapping(path = {"" , "/"})
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
-        if(!validate(transaction)){
-            return ResponseEntity.badRequest().build();
-        }
-        repo.save(transaction);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<TransactionDTO> createTransaction(
+            @RequestBody TransactionDTO ts) {
+        if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(new TransactionDTO(d2e.create(ts)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
+    public ResponseEntity<TransactionDTO> getTransaction(@PathVariable("id") UUID id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new TransactionDTO(repo.getReferenceById(id)));
     }
 
     @Transactional
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionDTO> updateTransactionById(@PathVariable("id") UUID id,
-                                                            @RequestBody Transaction transaction) {
-        //validation
-        if(!validate(transaction)){
-            return ResponseEntity.badRequest().build();
-        }
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        //updating
-        Transaction t = repo.findById(id).get();
-        t.setDate(transaction.getDate());
-        t.setCurrencyCode(transaction.getCurrencyCode());
-        t.setAmount(transaction.getAmount());
-        t.subject = transaction.subject;
-        repo.save(t);
-
-        //finalising
-        return ResponseEntity.ok(new TransactionDTO(repo.findById(id).get()));
+    public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable("id") UUID id,
+                                                            @RequestBody TransactionDTO ts) {
+        if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        ts.id = id;
+        return ResponseEntity.ok(new TransactionDTO(d2e.update(ts)));
     }
 
     //id is already included in transactionDTO
     @Transactional
     @PutMapping("")
-    public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody Transaction ts) {
-        return updateTransactionById(ts.id, ts);
+    public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody TransactionDTO ts) {
+        return updateTransaction(ts.id, ts);
     }
 
+    // TODO: manage dependencies
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        TransactionDTO out = new TransactionDTO(repo.findById(id).get());
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        Transaction transaction = repo.getReferenceById(id);
         repo.deleteById(id);
-        return ResponseEntity.ok(out);
+        return ResponseEntity.ok(new TransactionDTO(transaction));
     }
 }

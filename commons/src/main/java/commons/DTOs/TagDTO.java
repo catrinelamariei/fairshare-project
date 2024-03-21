@@ -20,6 +20,17 @@ public class TagDTO {
         this.color = tag.getColor();
     }
 
+    public TagDTO(UUID id, UUID eventId, String name, Tag.Color color) {
+        this.id = id;
+        this.eventId = eventId;
+        this.name = name;
+        this.color = color;
+    }
+
+    public boolean validate() {
+        return !(name == null || name.isEmpty() || color == null || eventId == null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,5 +1,6 @@
 package commons;
 
+import commons.DTOs.TransactionDTO;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -57,15 +58,14 @@ public class Transaction {
         this.subject = subject;
     }
 
-    /**
-     * validates a transaction
-     * @param ts transaction to be checked
-     * @return true if is valid (not null and all values present and amount is not negative)
-     */
-    public static boolean validate(Transaction ts) {
-        return !(ts == null || ts.id == null || ts.date == null || ts.currencyCode == null ||
-            ts.amount == null || ts.currencyCode.isEmpty() ||
-            ts.amount.compareTo(BigDecimal.ZERO) < 0 || ts.subject == null);
+    public Transaction(TransactionDTO ts) {
+        this.id = ts.id;
+        this.date = ts.date;
+        this.currencyCode = ts.currencyCode;
+        this.amount = ts.amount;
+        this.participants = new HashSet<>();
+        this.tags = new HashSet<>();
+        this.subject = ts.subject;
     }
 
     public UUID getId() {

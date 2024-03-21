@@ -3,10 +3,9 @@ package client;
 import client.scenes.*;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-
-import java.util.UUID;
 
 public class MainCtrl {
 
@@ -62,12 +61,8 @@ public class MainCtrl {
     }
 
     public void showEventPage() {
-        UserData data = UserData.getInstance();
-        UUID eventUUID = data.getCurrentUUID();
-
-        eventPageCtrl.loadEvent();
-        primaryStage.setTitle(eventUUID+": overview");
-        eventPageCtrl.load(new UUID(0,0)); //INITIALIZE eventPage with data; placeholder id
+        primaryStage.setTitle("event");
+        eventPageCtrl.load(); //INITIALIZE eventPage with data
         primaryStage.setScene(eventPage);
     }
 
@@ -85,5 +80,22 @@ public class MainCtrl {
     public void showTransactionPage() {
         primaryStage.setTitle("<EventName>: overview");
         primaryStage.setScene(transactionPage);
+    }
+
+    // Display an error message if the input is invalid
+    public static void alert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
+    }
+
+    public static void inform(String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Event Created");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }

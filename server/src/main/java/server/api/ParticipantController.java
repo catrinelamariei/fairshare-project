@@ -1,76 +1,56 @@
 package server.api;
 
 import commons.DTOs.ParticipantDTO;
-import commons.Participant;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/participants")
+@RequestMapping("/api/participants")
 public class ParticipantController {
     private final ParticipantRepository repo;
+    private final DTOtoEntity d2e;
 
-    public ParticipantController(ParticipantRepository repo){
+    public ParticipantController(ParticipantRepository repo, DTOtoEntity dtoToEntity){
         this.repo = repo;
+        this.d2e = dtoToEntity;
     }
 
     @Transactional
    @GetMapping("/{id}")
-   public ResponseEntity<ParticipantDTO> getById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
+   public ResponseEntity<ParticipantDTO> getParticipant(@PathVariable("id") UUID id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new ParticipantDTO(repo.getReferenceById(id)));
     }
 
     @Transactional
    @PostMapping(path = {"", "/"})
-   public ResponseEntity<Participant> createParticipant(@RequestBody Participant participant) {
-        if (participant == null || participant.getFirstName() == null ||
-                participant.getLastName() == null || participant.getFirstName() == ""
-                || participant.getLastName() == "" || participant.getEmail() == ""
-                || participant.getIban() == ""){
+   public ResponseEntity<ParticipantDTO> createParticipant(
+           @RequestBody ParticipantDTO participantDTO) {
+        if (participantDTO == null || !participantDTO.validate())
             return ResponseEntity.badRequest().build();
-        }
-
-        repo.save(participant);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new ParticipantDTO(d2e.create(participantDTO)));
     }
 
     @Transactional
    @PutMapping("/{id}")
    public ResponseEntity<ParticipantDTO> updateParticipant(@PathVariable("id") UUID id,
-                                                           @RequestBody Participant participant) {
-        if(!repo.existsById(id)){
-            return ResponseEntity.notFound().build();
-        } else if(participant == null || id == null
-                || participant.getFirstName() == null || participant.getFirstName() == ""
-                || participant.getLastName() == null || participant.getLastName() == ""
-                || participant.getEmail() == null || participant.getEmail() == ""
-                || participant.getIban() == null || participant.getIban() == "") {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Participant p = repo.findById(id).get();
-        p.firstName = participant.firstName;
-        p.lastName = participant.lastName;
-        p.email = participant.email;
-        p.iban = participant.iban;
-
-        repo.save(p);
-        return ResponseEntity.ok(new ParticipantDTO(repo.findById(id).get()));
+                                                           @RequestBody ParticipantDTO p) {
+        if(!repo.existsById(id)) return ResponseEntity.notFound().build();
+        if(p == null || !p.validate()) return ResponseEntity.badRequest().build();
+        p.id = id;
+        return ResponseEntity.ok(new ParticipantDTO(d2e.update(p)));
     }
 
+    // TODO: manage dependencies
     @Transactional
    @DeleteMapping("/{id}")
    public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
-        if(!repo.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
+        if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();
     }

@@ -23,7 +23,7 @@ public class PrivCheckPageCtrl {
     @Inject
     public PrivCheckPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         UserData data = UserData.getInstance();
-        this.serverUrl = data.getServerUrl();
+        this.serverUrl = data.getServerURL();
         this.server = server;
         this.mainCtrl = mainCtrl;
         text = new Text();

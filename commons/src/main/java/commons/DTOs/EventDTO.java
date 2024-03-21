@@ -32,6 +32,19 @@ public class EventDTO {
         event.getTransactions().forEach(
                 transaction -> transactions.add(new TransactionDTO(transaction)));
     }
+    public EventDTO(UUID id, String name){
+        this.id = id;
+        this.name = name;
+        this.tags = new HashSet<>();
+        this.date = new Date();
+        this.participants = new HashSet<>();
+        this.transactions = new HashSet<>();
+    }
+
+    public boolean validate() {
+        return !(this.name == null || this.name.isEmpty() || this.tags == null || this.date == null
+            || this.participants == null || this.transactions == null);
+    }
 
     public UUID getId() {
         return id;

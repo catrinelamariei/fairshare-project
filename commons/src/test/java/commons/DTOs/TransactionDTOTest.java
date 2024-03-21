@@ -14,7 +14,7 @@ class TransactionDTOTest {
     void testConstructor() {
         Event event = new Event("event");
         Transaction t = new Transaction(event, new java.util.Date(), "usd",
-                new java.math.BigDecimal("0.00"), new Participant(event, "Bo", "Echt", "mail", "FR4321"), "Chicken-nuggets");
+                new java.math.BigDecimal("0.00"), new Participant(event, "Bo", "Echt", "mail", "FR4321", "Bsic1234"), "Chicken-nuggets");
         TransactionDTO tDTO = new TransactionDTO(t);
         assertEquals(t.getId(), tDTO.id);
         assertEquals(t.getDate(), tDTO.date);
