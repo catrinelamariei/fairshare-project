@@ -13,6 +13,8 @@ import commons.Tag.Color;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -44,15 +46,33 @@ public class EventPageCtrl implements Initializable {
 
     //transaction attributes and buttons
     @FXML
-    private VBox transactions;
-    @FXML
     private TextField transactionName;
+    @FXML
+    private ChoiceBox authorInput;
     @FXML
     private TextField transactionAmount;
     @FXML
     private TextField currencyCode;
     @FXML
+    private ChoiceBox currencyCodeInput;
+    @FXML
     private DatePicker transactionDate;
+    @FXML
+    private RadioButton equalSplit;
+    @FXML
+    private RadioButton customSplit;
+    @FXML
+    private VBox participantsContainer;
+    @FXML
+    private TextField tagsInput;
+    @FXML
+    private Button cancel;
+    @FXML private Button add;
+    @FXML
+    private VBox transactions;
+
+
+
 
     // participant attributes and buttons
     @FXML
@@ -94,6 +114,8 @@ public class EventPageCtrl implements Initializable {
             participants.getPanes().clear();
             participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
                 .toList());
+            authorInput.setItems(FXCollections.observableArrayList(event.participants));
+
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
                 UserData.getInstance().getCurrentUUID(), e);
@@ -162,15 +184,62 @@ public class EventPageCtrl implements Initializable {
         participants.getPanes().add(participantNode);
     }
 
-    /**
-     * This method is NOT done.
-     */
+
+//    public void onCreateTransaction(){
+//        String name = transactionName.getText();
+//        String transactionAmountString = transactionAmount.getText();
+//        String currency = currencyCode.getText();
+//        LocalDate localDate = transactionDate.getValue();
+//        BigDecimal amount;
+//
+//        try {
+//            if(name==null || transactionAmountString==null || currency==null || localDate==null){
+//                throw new IllegalArgumentException();
+//            }
+//            amount = new BigDecimal(transactionAmountString);
+//        } catch (NumberFormatException e) {
+//            MainCtrl.alert("Please enter a number for the Amount field");
+//            return;
+//        } catch (IllegalArgumentException e) {
+//            MainCtrl.alert("Please enter valid transaction information");
+//            return;
+//        }
+//
+//        // TODO: these should be taken from user input
+//        ParticipantDTO author = server.postParticipant(new ParticipantDTO(null,
+//            UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
+//            "iban", "bic"));
+//
+//        Set<ParticipantDTO> participants = new HashSet<>(List.of(server.postParticipant(
+//            new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
+//                "lastName", "email@me.com", "iban", "bic"))));
+//
+//        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
+//            UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
+//
+//        Date date = java.sql.Date.valueOf(localDate);
+//        TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
+//            date, currency, amount, author, participants, tags, name);
+//        try {
+//            ts = server.postTransaction(ts);
+//            transactions.getChildren().add(new TransactionNode(ts));
+//        } catch (WebApplicationException e) {
+//            System.err.println("Error creating transaction: " + e.getMessage());
+//        }
+//
+//        transactionName.clear();
+//        transactionAmount.clear();
+//        currencyCode.clear();
+//        transactionDate.setValue(null);
+//    }
+
     public void onCreateTransaction(){
         String name = transactionName.getText();
         String transactionAmountString = transactionAmount.getText();
         String currency = currencyCode.getText();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
+
 
         try {
             if(name==null || transactionAmountString==null || currency==null || localDate==null){
@@ -187,19 +256,19 @@ public class EventPageCtrl implements Initializable {
 
         // TODO: these should be taken from user input
         ParticipantDTO author = server.postParticipant(new ParticipantDTO(null,
-            UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
-            "iban", "bic"));
+                UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
+                "iban", "bic"));
 
         Set<ParticipantDTO> participants = new HashSet<>(List.of(server.postParticipant(
-            new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
-                "lastName", "email@me.com", "iban", "bic"))));
+                new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
+                        "lastName", "email@me.com", "iban", "bic"))));
 
         Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
-            UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
+                UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
-            date, currency, amount, author, participants, tags, name);
+                date, currency, amount, author, participants, tags, name);
         try {
             ts = server.postTransaction(ts);
             transactions.getChildren().add(new TransactionNode(ts));
