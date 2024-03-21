@@ -1,11 +1,15 @@
 package client;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 public final class UserData {
-
+    // All values in here are default values and will be overwritten at startup if a config file is found
+    // when the program terminates, all values are stored in the config file
     private String token;
     private UUID currentUUID;
 
@@ -13,9 +17,21 @@ public final class UserData {
 
     private String serverURL = "http://localhost:8080/";
     private final static UserData INSTANCE = new UserData();
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
-    private UserData() {}
+    /**
+     * tries to instantiate all data using config file from filesystem
+     */
+    private UserData() {
+        // TODO: load fields from JSON
+    }
 
+    public void save() {
+        // TODO: write fields to JSON
+
+    }
+
+    @JsonIgnore
     public static UserData getInstance() {
         return INSTANCE;
     }
