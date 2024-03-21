@@ -4,14 +4,12 @@ import client.MainCtrl;
 import client.UserData;
 import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
-import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers;
+import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Participant;
 import commons.Tag.Color;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.KeyFrame;
@@ -19,39 +17,28 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.util.Duration;
+import javafx.util.Pair;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-
-import javafx.util.Duration;
-
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.List;
-import java.util.function.Function;
-
-import javafx.util.Pair;
-import org.jgrapht.Graph;
-import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
-import org.jgrapht.alg.flow.mincost.CapacityScalingMinimumCostFlow;
-import org.jgrapht.alg.flow.mincost.MinimumCostFlowProblem;
-import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.alg.interfaces.MinimumCostFlowAlgorithm;
+import java.util.*;
 
 
 public class EventPageCtrl implements Initializable {
@@ -263,41 +250,26 @@ public class EventPageCtrl implements Initializable {
     public void debtSimplification() {
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        // Each participant is a vertex
-        Graph<ParticipantDTO, DefaultWeightedEdge> graph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
-        for (ParticipantDTO p : event.participants) {
-            graph.addVertex(p);
-        }
+        Graph<ParticipantDTO, DefaultWeightedEdge> graph =
+            new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
-        // Add transactions as edges
-        // Each weight is the total amount in each transaction divided by the number of participants (since they're splitting equally)
-        for (TransactionDTO t : event.transactions) {
-            for (ParticipantDTO p: t.participants) {
-                DefaultWeightedEdge e = graph.addEdge(p, t.author);
-                graph.setEdgeWeight(e, t.amount.doubleValue() / t.participants.size());
-            }
-        }
+
+        populateGraph(event, graph);
 
         // get total amount each participant owes/is owed
-        // put them in two priority queues, 1 for if they owe money, 1 for if they are owed money
-        // btw what's stopping me from owing someone a million euros then getting a new identity in another country?
-        // asking for friend
-        // anyways
+        // put them in two priority queues,
+        // 1 for if they owe money,
+        // 1 for if they are owed money
+
 
         // pq with descending order
-        PriorityQueue<Pair<ParticipantDTO, Double>> positive = new PriorityQueue<>((a, b) -> Double.compare(b.getValue(), a.getValue()));
+        PriorityQueue<Pair<ParticipantDTO, Double>> positive =
+            new PriorityQueue<>((a, b) -> Double.compare(b.getValue(), a.getValue()));
         // pq with acsending order
-        PriorityQueue<Pair<ParticipantDTO, Double>> negative = new PriorityQueue<>(Comparator.comparingDouble(Pair::getValue));
+        PriorityQueue<Pair<ParticipantDTO, Double>> negative =
+            new PriorityQueue<>(Comparator.comparingDouble(Pair::getValue));
 
-        for (ParticipantDTO p : event.participants) {
-            double incoming = graph.incomingEdgesOf(p).stream().mapToDouble(graph::getEdgeWeight).sum();
-            double outgoing = graph.outgoingEdgesOf(p).stream().mapToDouble(graph::getEdgeWeight).sum();
-            if (incoming > outgoing) {
-                positive.add(new Pair<>(p, incoming - outgoing));
-            } else if (incoming < outgoing) {
-                negative.add(new Pair<>(p, incoming - outgoing));
-            }
-        }
+        populatePQs(event, graph, positive, negative);
 
         while (!positive.isEmpty() && !negative.isEmpty()) {
 
@@ -323,6 +295,46 @@ public class EventPageCtrl implements Initializable {
             }
             if (credit > 0) {
                 positive.offer(new Pair<>(creditor, credit));
+            }
+        }
+    }
+
+    private static void populateGraph(EventDTO event,
+                                  Graph<ParticipantDTO, DefaultWeightedEdge> graph) {
+        // Each participant is a vertex
+        for (ParticipantDTO p : event.participants) {
+            graph.addVertex(p);
+        }
+
+        // Add transactions as edges
+        // Each weight is the total amount in each transaction
+        // divided by the number of participants
+        // (since they're splitting equally)
+        for (TransactionDTO t : event.transactions) {
+            for (ParticipantDTO p: t.participants) {
+                DefaultWeightedEdge e = graph.addEdge(p, t.author);
+                graph.setEdgeWeight(e, t.amount.doubleValue() / t.participants.size());
+            }
+        }
+    }
+
+    private static void populatePQs(EventDTO event, Graph<ParticipantDTO,
+        DefaultWeightedEdge> graph,
+                                    PriorityQueue<Pair<ParticipantDTO, Double>> positive,
+                                    PriorityQueue<Pair<ParticipantDTO, Double>> negative) {
+        for (ParticipantDTO p : event.participants) {
+            double incoming = graph.incomingEdgesOf(p)
+                .stream()
+                .mapToDouble(graph::getEdgeWeight)
+                .sum();
+            double outgoing = graph.outgoingEdgesOf(p)
+                .stream()
+                .mapToDouble(graph::getEdgeWeight)
+                .sum();
+            if (incoming > outgoing) {
+                positive.add(new Pair<>(p, incoming - outgoing));
+            } else if (incoming < outgoing) {
+                negative.add(new Pair<>(p, incoming - outgoing));
             }
         }
     }
