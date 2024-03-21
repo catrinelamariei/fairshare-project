@@ -48,6 +48,7 @@ import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.flow.mincost.CapacityScalingMinimumCostFlow;
 import org.jgrapht.alg.flow.mincost.MinimumCostFlowProblem;
 import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.alg.interfaces.MinimumCostFlowAlgorithm;
@@ -86,7 +87,7 @@ public class EventPageCtrl implements Initializable {
     private Button copyButton;
 
     @FXML
-    private ScrollPane debts_sp;
+    private VBox debts;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -96,7 +97,6 @@ public class EventPageCtrl implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
         ParticipantNode.init(); //<cascade> do some styling
-        debts_sp.setPannable(true);
     }
     public void load() {
         System.out.println("loading EventPage");
@@ -264,7 +264,7 @@ public class EventPageCtrl implements Initializable {
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
         // Each participant is a vertex
-        Graph<ParticipantDTO, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+        Graph<ParticipantDTO, DefaultWeightedEdge> graph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
         for (ParticipantDTO p : event.participants) {
             graph.addVertex(p);
         }
@@ -273,7 +273,7 @@ public class EventPageCtrl implements Initializable {
         // Each weight is the total amount in each transaction divided by the number of participants (since they're splitting equally)
         for (TransactionDTO t : event.transactions) {
             for (ParticipantDTO p: t.participants) {
-                DefaultWeightedEdge e = graph.addEdge(t.author, p);
+                DefaultWeightedEdge e = graph.addEdge(p, t.author);
                 graph.setEdgeWeight(e, t.amount.doubleValue() / t.participants.size());
             }
         }
@@ -310,8 +310,9 @@ public class EventPageCtrl implements Initializable {
             Double debt = neg.getValue();
             double settlementAmount = Math.min(credit, Math.abs(debt));
 
-            DebtNode debtNode = new DebtNode(debtor, creditor, settlementAmount);
-
+            // deal with currency later
+            DebtNode debtNode = new DebtNode(debtor, creditor, "eur", settlementAmount);
+            debts.getChildren().add(debtNode);
             // Update debts
             credit += settlementAmount;
             debt += settlementAmount;

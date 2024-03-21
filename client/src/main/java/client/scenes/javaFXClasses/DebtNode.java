@@ -1,13 +1,24 @@
 package client.scenes.javaFXClasses;
 
+import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
+import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 public class DebtNode extends HBox {
 
-    public DebtNode() {
+    public DebtNode(ParticipantDTO debtor, ParticipantDTO creditor, String currencyCode, double amount) {
         super(); //initialize HBox part
+
+        Text txt = new Text(String.format("%s gives %.2f%s to %s",
+            debtor.firstName+" "+debtor.lastName, amount, currencyCode, creditor.firstName+" "+creditor.lastName));
+
+        this.getChildren().addAll(txt);
+        Insets insets = new Insets(10.0d);
+        this.getChildren().forEach(n -> this.setMargin(n, insets));
     }
 
-    // TODO: create DebtNode
 }

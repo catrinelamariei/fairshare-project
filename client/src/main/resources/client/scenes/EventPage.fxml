@@ -115,14 +115,6 @@
                            </HBox.margin>
                         </ChoiceBox>
                         <Pane HBox.hgrow="ALWAYS" />
-                        <Button layoutX="660.0" layoutY="20.0" mnemonicParsing="false" text="Settle Debts">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                           <HBox.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </HBox.margin>
-                        </Button>
                      </children>
                   </HBox>
                </children>
@@ -209,7 +201,19 @@
                                  <content>
                                     <ScrollPane fx:id="debts_sp" prefHeight="200.0" prefWidth="200.0">
                                       <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="283.0" prefWidth="783.0">
+                                             <children>
+                                                <VBox fx:id="debts" layoutX="6.0" layoutY="12.0" prefHeight="269.0" prefWidth="771.0">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#debtSimplification" text="Settle Debts">
+                                                         <font>
+                                                            <Font size="15.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </AnchorPane>
                                       </content>
                                     </ScrollPane>
                                  </content>
