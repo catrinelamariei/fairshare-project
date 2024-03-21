@@ -17,12 +17,12 @@ package client.utils;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import client.UserData;
 import commons.DTOs.EventDTO;
+import commons.DTOs.ParticipantDTO;
+import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Event;
-import commons.Transaction;
 import jakarta.ws.rs.WebApplicationException;
-import org.glassfish.jersey.client.ClientConfig;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -31,72 +31,142 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class ServerUtils {
-    private static final String SERVER = "http://localhost:8080/";
+    //events
+    //I think there is a problem with this method
+    public EventDTO getEvent(UUID id) throws WebApplicationException {
+        return ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("api/event/" + id)
+            .request(APPLICATION_JSON)
+            .get(EventDTO.class);
+    }
 
     /**
      * Adds and event to the database.
      * @param event the event to be added
      * @return the event that was added
      */
-    public Event addEvent(Event event) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/event") //
+    public EventDTO postEvent(EventDTO event) throws WebApplicationException {
+        return ClientBuilder.newClient() //
+                .target(UserData.getInstance().getServerURL()).path("api/event") //
                 .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(event, APPLICATION_JSON), Event.class);
+                .post(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
     }
 
-    //I think there is a problem with this method
-    public EventDTO getEvent(UUID id) throws WebApplicationException {
+    public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
+        System.out.println("am intrat");
         return ClientBuilder.newClient()
-                .target(SERVER).path("api/event/" + id)
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .get(EventDTO.class);
+            .target(UserData.getInstance().getServerURL()).path("/api/event/"+eventDTO.getId())
+            .request(APPLICATION_JSON)
+            .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
+    }
+
+    public boolean deleteEvent(UUID id) throws WebApplicationException {
+        return false;
     }
 
     @SuppressWarnings("unchecked")
-    public Collection<EventDTO> getAllEvents(String token) {
+    public Collection<EventDTO> getAllEvents() throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(SERVER).path("event")
+            .target(UserData.getInstance().getServerURL()).path("event")
             .request(APPLICATION_JSON)
-            .header("Authorization", "Bearer " + token)
+            .header("Authorization", "Bearer " + UserData.getInstance().getToken())
             .get(Collection.class);
+    }
+
+    //transactions
+    public TransactionDTO getTransaction(UUID id) throws WebApplicationException {
+        return ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("api/transaction/" + id)
+            .request(APPLICATION_JSON)
+            .get(TransactionDTO.class);
     }
 
     /**
      * Adds a transaction to the database.
-     * @param transaction the transaction to be added
+     * @param ts the transaction to be added
      * @return the transaction that was added
      */
-    public Transaction addTransaction(Transaction transaction) {
-        return ClientBuilder.newClient(new ClientConfig()) //
-                .target(SERVER).path("api/transaction") //
+    public TransactionDTO postTransaction(TransactionDTO ts) throws WebApplicationException {
+        return ClientBuilder.newClient() //
+                .target(UserData.getInstance().getServerURL()).path("api/transaction") //
                 .request(APPLICATION_JSON) //
-                .accept(APPLICATION_JSON) //
-                .post(Entity.entity(transaction, APPLICATION_JSON), Transaction.class);
+                .post(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
 
-    public TransactionDTO getTransaction(UUID id) throws WebApplicationException {
-        return ClientBuilder.newClient()
-                .target(SERVER).path("api/transaction/" + id)
-                .request(APPLICATION_JSON)
-                .get(TransactionDTO.class);
+    public TransactionDTO putTransaction(TransactionDTO ts) throws WebApplicationException {
+        return null;
     }
 
-    public void deleteTransactionById(UUID id) throws WebApplicationException {
+    /**
+     * deletes a transaction from the DB
+     * @param id target for deletion
+     * @throws WebApplicationException HTTP error respose (e.g. 404 - not found)
+     */
+    public void deleteTransaction(UUID id) throws WebApplicationException {
         ClientBuilder.newClient()
-                .target(SERVER).path("api/transaction/" + id)
+                .target(UserData.getInstance().getServerURL()).path("api/transaction/" + id)
                 .request()
                 .delete(); // Send DELETE request
     }
 
-    public void updateEvent(EventDTO eventDTO) throws WebApplicationException {
-        System.out.println("am intrat");
-        ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("/api/event/"+eventDTO.getId())
-                .request(APPLICATION_JSON)
-                .accept(APPLICATION_JSON)
-                .put(Entity.entity(eventDTO, APPLICATION_JSON), Event.class);
+    //participants
+    public ParticipantDTO getParticipant(UUID id) throws WebApplicationException {
+        return null;
+    }
+
+    public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
+        return ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("api/participants/")
+            .request(APPLICATION_JSON)
+            .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
+    }
+
+    public ParticipantDTO putParticipant(ParticipantDTO p) throws WebApplicationException {
+        return null;
+    }
+
+    public void deleteParticipant(UUID id) throws WebApplicationException {
+
+    }
+
+    //tags
+    public TagDTO getTag(UUID id) throws WebApplicationException {
+        return null;
+    }
+
+    public TagDTO postTag(TagDTO t) throws WebApplicationException {
+        return ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("api/tags/")
+            .request(APPLICATION_JSON)
+            .post(Entity.entity(t, APPLICATION_JSON), TagDTO.class);
+    }
+
+    public TagDTO putTag(TagDTO t) throws WebApplicationException {
+        return null;
+    }
+
+    public void deleteTag(UUID id) throws WebApplicationException {
+
+    }
+
+    //JSON
+    public String getJSON() throws WebApplicationException {
+        return ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("data/JSON")
+            .request(APPLICATION_JSON)
+            .header("Authorization", "Bearer " + UserData.getInstance().getToken())
+            .get(String.class);
+    }
+
+    public String getJSON(UUID id) throws  WebApplicationException {
+        return null;
+    }
+
+    public void putJSON(String json) throws WebApplicationException {
+
+    }
+
+    public void putJSON(String json, UUID id) throws WebApplicationException {
+
     }
 }

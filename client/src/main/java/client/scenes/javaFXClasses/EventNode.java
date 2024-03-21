@@ -13,13 +13,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
-
-import static client.scenes.EventPageCtrl.dateToString;
-
 public class EventNode extends TitledPane {
     private final UUID id;
+    private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private TextField idField, dateField, participantField, transactionField, balanceField;
 
     /**
@@ -97,7 +96,7 @@ public class EventNode extends TitledPane {
 
         this.setText(event.name);
         idField.setText(event.id.toString());
-        dateField.setText(dateToString(event.date));
+        dateField.setText(formatter.format(event.date));
         participantField.setText(String.valueOf(event.participants.size()));
         transactionField.setText(String.valueOf(event.transactions.size()));
         balanceField.setText("n/a"); // TODO: insert issue #83

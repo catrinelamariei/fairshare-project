@@ -1,5 +1,6 @@
 package commons;
 
+import commons.DTOs.ParticipantDTO;
 import jakarta.persistence.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
@@ -30,6 +31,9 @@ public class Participant {
     @Column(columnDefinition = "CLOB NOT NULL")
     public String iban;
 
+    @Column(columnDefinition = "CLOB NOT NULL")
+    public String bic;
+
     @ManyToOne
     public Event event;
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
@@ -43,14 +47,27 @@ public class Participant {
       // for object mapper
     }
 
-    public Participant(Event event,String firstName, String lastName, String email, String iban) {
+    public Participant(Event event, String firstName,
+                       String lastName, String email, String iban, String bic) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.iban = iban;
+        this.bic = bic;
         this.paidTransactions = new HashSet<>();
         this.participatedTransactions = new HashSet<>();
         this.event = event;
+    }
+
+    public Participant(ParticipantDTO p) {
+        this.id = p.id;
+        this.firstName = p.firstName;
+        this.lastName = p.lastName;
+        this.email = p.email;
+        this.iban = p.iban;
+        this.bic = p.bic;
+        this.paidTransactions = new HashSet<>();
+        this.participatedTransactions = new HashSet<>();
     }
 
     public UUID getId() {
@@ -67,6 +84,12 @@ public class Participant {
     }
     public String getIban(){
         return iban;
+    }
+    public String getBic(){
+        return bic;
+    }
+    public Event getEvent() {
+        return event;
     }
 
     public void setID(UUID id){
@@ -88,10 +111,10 @@ public class Participant {
     public void setIban(String iban){
         this.iban = iban;
     }
-    public Event getEvent() {
-        return event;
-    }
 
+    public void setBic(String bic) {
+        this.bic = bic;
+    }
 
     @Override
     public boolean equals(Object obj) {

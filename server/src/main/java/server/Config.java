@@ -19,12 +19,22 @@ import java.util.Random;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import server.Authentication.Authenticator;
 
 @Configuration
-public class Config {
-
+@EnableWebMvc
+public class Config implements WebMvcConfigurer {
     @Bean
     public Random getRandom() {
         return new Random();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //use authenticator for all URLs regarding "/data" endpoint
+        registry.addInterceptor(new Authenticator()).addPathPatterns("/data", "/data/**");
     }
 }

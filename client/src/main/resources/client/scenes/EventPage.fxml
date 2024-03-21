@@ -172,7 +172,7 @@
                                                             </Text>
                                                          </children>
                                                       </VBox>
-                                                      <Button fx:id="deleteTransactionButton" mnemonicParsing="false" onAction="#onDeleteTransaction" text="Delete" />
+                                                      <Button fx:id="deleteTransactionButton" mnemonicParsing="false" text="Delete" />
                                                       <Button mnemonicParsing="false">
                                                          <graphic>
                                                             <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

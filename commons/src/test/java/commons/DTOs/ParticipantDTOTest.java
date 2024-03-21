@@ -9,7 +9,7 @@ class ParticipantDTOTest {
 
     @Test
     void constructorTest() {
-        commons.Participant participant = new commons.Participant(new Event("event"), "name", "surname", "mail", "iban");
+        commons.Participant participant = new commons.Participant(new Event("event"), "name", "surname", "mail", "iban", "bic");
         participant.id = new java.util.UUID(0, 1);
         ParticipantDTO participantDTO = new ParticipantDTO(participant);
         assertEquals(participant.getId(), participantDTO.id);

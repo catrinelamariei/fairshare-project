@@ -1,5 +1,6 @@
 package commons;
 
+import commons.DTOs.TagDTO;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -39,6 +40,11 @@ public class Tag {
         // for object mapper
     }
 
+    public Tag(TagDTO t) {
+        this.id = t.id;
+        this.name = t.name;
+        this.color = t.color;
+    }
 
     public Tag(Event event, String name, Color color) {
         this.event = event;
@@ -47,6 +53,7 @@ public class Tag {
         this.color = color;
         this.transactions = new HashSet<Transaction>();
     }
+
     public UUID getId() {
         return id;
     }
