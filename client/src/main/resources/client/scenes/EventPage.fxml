@@ -198,6 +198,22 @@
                                     </AnchorPane>
                                  </content></Tab>
                               <Tab text="Queries" />
+                              <Tab text="Debts">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                      </content>
+                                    </ScrollPane>
+                                 </content>
+                                 <content>
+                                    <ScrollPane fx:id="debts_sp" prefHeight="200.0" prefWidth="200.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                      </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
                           </tabs>
                         </TabPane>
                      </content>

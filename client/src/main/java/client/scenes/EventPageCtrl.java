@@ -2,13 +2,16 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.UserData;
+import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
+import commons.Participant;
 import commons.Tag.Color;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.KeyFrame;
@@ -19,6 +22,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -36,6 +40,17 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
+
+import javafx.util.Pair;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
+import org.jgrapht.alg.flow.mincost.CapacityScalingMinimumCostFlow;
+import org.jgrapht.alg.flow.mincost.MinimumCostFlowProblem;
+import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.jgrapht.alg.interfaces.MinimumCostFlowAlgorithm;
 
 
 public class EventPageCtrl implements Initializable {
@@ -70,6 +85,9 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button copyButton;
 
+    @FXML
+    private ScrollPane debts_sp;
+
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
@@ -78,6 +96,7 @@ public class EventPageCtrl implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
         ParticipantNode.init(); //<cascade> do some styling
+        debts_sp.setPannable(true);
     }
     public void load() {
         System.out.println("loading EventPage");
@@ -240,5 +259,72 @@ public class EventPageCtrl implements Initializable {
         email.clear();
         iban.clear();
     }
+
+    public void debtSimplification() {
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+        // Each participant is a vertex
+        Graph<ParticipantDTO, DefaultWeightedEdge> graph = new SimpleDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+        for (ParticipantDTO p : event.participants) {
+            graph.addVertex(p);
+        }
+
+        // Add transactions as edges
+        // Each weight is the total amount in each transaction divided by the number of participants (since they're splitting equally)
+        for (TransactionDTO t : event.transactions) {
+            for (ParticipantDTO p: t.participants) {
+                DefaultWeightedEdge e = graph.addEdge(t.author, p);
+                graph.setEdgeWeight(e, t.amount.doubleValue() / t.participants.size());
+            }
+        }
+
+        // get total amount each participant owes/is owed
+        // put them in two priority queues, 1 for if they owe money, 1 for if they are owed money
+        // btw what's stopping me from owing someone a million euros then getting a new identity in another country?
+        // asking for friend
+        // anyways
+
+        // pq with descending order
+        PriorityQueue<Pair<ParticipantDTO, Double>> positive = new PriorityQueue<>((a, b) -> Double.compare(b.getValue(), a.getValue()));
+        // pq with acsending order
+        PriorityQueue<Pair<ParticipantDTO, Double>> negative = new PriorityQueue<>(Comparator.comparingDouble(Pair::getValue));
+
+        for (ParticipantDTO p : event.participants) {
+            double incoming = graph.incomingEdgesOf(p).stream().mapToDouble(graph::getEdgeWeight).sum();
+            double outgoing = graph.outgoingEdgesOf(p).stream().mapToDouble(graph::getEdgeWeight).sum();
+            if (incoming > outgoing) {
+                positive.add(new Pair<>(p, incoming - outgoing));
+            } else if (incoming < outgoing) {
+                negative.add(new Pair<>(p, incoming - outgoing));
+            }
+        }
+
+        while (!positive.isEmpty() && !negative.isEmpty()) {
+
+            Pair<ParticipantDTO, Double> pos = positive.poll();
+            Pair<ParticipantDTO, Double> neg = negative.poll();
+
+            ParticipantDTO creditor = pos.getKey();
+            ParticipantDTO debtor = neg.getKey();
+            Double credit = pos.getValue();
+            Double debt = neg.getValue();
+            double settlementAmount = Math.min(credit, Math.abs(debt));
+
+            DebtNode debtNode = new DebtNode(debtor, creditor, settlementAmount);
+
+            // Update debts
+            credit += settlementAmount;
+            debt += settlementAmount;
+
+            // Reinsert participants into priority queues if they still have non-zero debt
+            if (debt < 0) {
+                negative.offer(new Pair<>(debtor, debt));
+            }
+            if (credit > 0) {
+                positive.offer(new Pair<>(creditor, credit));
+            }
+        }
+    }
+
 }
 
