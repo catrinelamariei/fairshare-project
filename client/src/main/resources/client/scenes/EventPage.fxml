@@ -29,7 +29,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
    <center>
-      <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color: gray;" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color: grey;" BorderPane.alignment="CENTER">
          <children>
             <HBox prefWidth="200.0" style="-fx-background-color: dimgray;">
                <children>
@@ -40,7 +40,7 @@
                   </Button>
                   <HBox>
                      <children>
-                        <MenuButton mnemonicParsing="false" style="-fx-background-color: gray;" text="New Year Party">
+                        <MenuButton mnemonicParsing="false" style="-fx-background-color: grey;" text="New Year Party">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#gotoAdminLogin" text="Admin Panel" />
                           </items>
@@ -48,7 +48,7 @@
                               <Insets left="5.0" />
                            </HBox.margin>
                         </MenuButton>
-                        <Button mnemonicParsing="false" style="-fx-background-color: gray;" text="x">
+                        <Button mnemonicParsing="false" style="-fx-background-color: grey;" text="x">
                            <HBox.margin>
                               <Insets left="-5.0" />
                            </HBox.margin>
