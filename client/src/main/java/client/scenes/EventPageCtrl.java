@@ -24,7 +24,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
@@ -141,7 +140,7 @@ public class EventPageCtrl implements Initializable {
                     authorInput.getItems().stream()
                             .map(participant -> {
                                 CheckBox checkBox = new CheckBox(participant.toString());
-                                checkBox.setUserData(participant); // Store the ParticipantDTO as user data
+                                checkBox.setUserData(participant);
                                 return checkBox;
                             })
                             .toArray(CheckBox[]::new)
@@ -220,11 +219,9 @@ public class EventPageCtrl implements Initializable {
     public void onCreateTransaction(){
         String name = transactionName.getText();
         String transactionAmountString = transactionAmount.getText();
-        //String currency = currencyCode.getText();
         String currency = (String) currencyCodeInput.getValue();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
-
 
         try {
             if(name==null || transactionAmountString==null || currency==null || localDate==null){
@@ -241,44 +238,26 @@ public class EventPageCtrl implements Initializable {
 
         ParticipantDTO author = authorInput.getValue();
 
+        //join codes for some example transactions
         //c1f05a35-1407-4ba1-ada3-0692649256b8
+        //57392209-155d-47fb-9460-3fd3ebca7853
 
         //radio buttons
         Set<ParticipantDTO> participants = new HashSet<>();
 
         RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
-        if (selectedRadioButton != null) {
-            if (selectedRadioButton == equalSplit) {
-                // Handle split equally logic
-                ObservableList<ParticipantDTO> choiceBoxItems = authorInput.getItems();
-                participants = new HashSet<>(choiceBoxItems);
-                System.out.println("Split equally selected");
-            } else if (selectedRadioButton == customSplit) {
-                //Handle custom split
-                for (Node node : vboxParticipantsTransaction.getChildren()) {
-                    if (node instanceof CheckBox) {
-                        CheckBox checkBox = (CheckBox) node;
-                        if (checkBox.isSelected()) {
-                            // Retrieve ParticipantDTO from the checkbox's UserData
-                            ParticipantDTO participantDTO = (ParticipantDTO) checkBox.getUserData();
-                            if (participantDTO != null) {
-                                participants.add(participantDTO);
-                            }
-                        }
-                    }
-                }
-                System.out.println("Split between participants selected");
-            }
-        } else {
-
+        if(selectedRadioButton!=null){
+            participants = getTransactionParticipants(selectedRadioButton);
+        }else{
             MainCtrl.alert("Please chose how to split the transaction!");
             return;
         }
+
         printParticipantsSplit(participants);
 
         // TODO: this should be taken from user input
         Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
-        UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
+                UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
@@ -303,6 +282,33 @@ public class EventPageCtrl implements Initializable {
                 checkBox.setSelected(false);
             }
         }
+    }
+
+    private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
+        Set<ParticipantDTO> participants = new HashSet<>();
+        if (selectedRadioButton == equalSplit) {
+            // Handle split equally logic
+            ObservableList<ParticipantDTO> choiceBoxItems = authorInput.getItems();
+            participants = new HashSet<>(choiceBoxItems);
+            System.out.println("Split equally selected");
+        } else {
+            //Handle custom split
+            for (Node node : vboxParticipantsTransaction.getChildren()) {
+                if (node instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) node;
+                    if (checkBox.isSelected()) {
+                        // Retrieve ParticipantDTO from the checkbox's UserData
+                        ParticipantDTO participantDTO = (ParticipantDTO) checkBox.getUserData();
+                        if (participantDTO != null) {
+                            participants.add(participantDTO);
+                        }
+                    }
+                }
+            }
+            System.out.println("Split between participants selected");
+
+        }
+        return participants;
     }
 
     public void onAddParticipant() {
