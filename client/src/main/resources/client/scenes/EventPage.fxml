@@ -196,7 +196,7 @@
                                  <content>
                                     <AnchorPane prefHeight="418.0" prefWidth="779.0" style="-fx-background-color: white;">
                                        <children>
-                                          <Button fx:id="add" alignment="CENTER" contentDisplay="CENTER" layoutX="400.0" layoutY="373.0" mnemonicParsing="false" onAction="#onCreateTransaction" text="Add Transaction">
+                                          <Button fx:id="add" alignment="CENTER" contentDisplay="CENTER" layoutX="330.0" layoutY="375.0" mnemonicParsing="false" onAction="#onCreateTransaction" text="Add Transaction">
                                              <font>
                                                 <Font size="14.0" />
                                              </font></Button>
@@ -221,35 +221,35 @@
                                           <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" />
                                           <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" />
                                           <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" />
-                                          <RadioButton fx:id="equalSplit" layoutX="460.0" layoutY="69.0" mnemonicParsing="false" text="Equally between everyone" />
-                                          <RadioButton fx:id="customSplit" layoutX="460.0" layoutY="101.0" mnemonicParsing="false" text="Only some people" />
                                           <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Who payed?">
                                              <font>
                                                 <Font size="13.0" />
                                              </font>
                                           </Text>
-                                          <Text layoutX="445.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to split the transaction?">
+                                          <Text layoutX="450.0" layoutY="258.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense type">
                                              <font>
                                                 <Font size="13.0" />
                                              </font>
                                           </Text>
-                                          <ScrollPane layoutX="470.0" layoutY="123.0" prefHeight="108.0" prefWidth="238.0">
-                                            <content>
-                                              <AnchorPane fx:id="participantsContainer" minHeight="0.0" minWidth="0.0" prefHeight="104.0" prefWidth="235.0" />
-                                            </content>
-                                          </ScrollPane>
-                                          <Text layoutX="445.0" layoutY="266.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense type">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font>
-                                          </Text>
-                                          <TextField fx:id="tagsInput" layoutX="445.0" layoutY="275.0" />
-                                          <ChoiceBox layoutX="610.0" layoutY="274.0" prefHeight="26.0" prefWidth="84.0" />
-                                          <Button fx:id="cancel" layoutX="216.0" layoutY="373.0" mnemonicParsing="false" onAction="#eventPage" prefHeight="30.0" prefWidth="114.0" text="Cancel" textFill="RED">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Button>
+                                          <TextField fx:id="tagsInput" layoutX="450.0" layoutY="275.0" />
+                                          <VBox fx:id="root" layoutX="450.0" layoutY="27.0" prefHeight="200.0" prefWidth="100.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to split the transaction?">
+                                                   <font>
+                                                      <Font size="13.0" />
+                                                   </font>
+                                                </Text>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" />
+                                                <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="Equally between everyone" />
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.800048828125" />
+                                                <RadioButton fx:id="customSplit" mnemonicParsing="false" text="Only some people" />
+                                                <ScrollPane fx:id="participantsScrollPane" prefHeight="108.0" prefWidth="148.0">
+                                                   <content>
+                                                      <VBox fx:id="vboxParticipantsTransaction" prefHeight="204.0" prefWidth="226.0" />
+                                                   </content>
+                                                </ScrollPane>
+                                             </children>
+                                          </VBox>
                                        </children>
                                     </AnchorPane>
                                  </content></Tab>

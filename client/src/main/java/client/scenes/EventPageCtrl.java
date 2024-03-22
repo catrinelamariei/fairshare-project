@@ -18,10 +18,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
@@ -48,7 +51,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TextField transactionName;
     @FXML
-    private ChoiceBox authorInput;
+    private ChoiceBox<ParticipantDTO> authorInput;
     @FXML
     private TextField transactionAmount;
     @FXML
@@ -61,16 +64,19 @@ public class EventPageCtrl implements Initializable {
     private RadioButton equalSplit;
     @FXML
     private RadioButton customSplit;
+//    @FXML
+//    private Checkbox checkboxParticipant;
     @FXML
-    private VBox participantsContainer;
+    private VBox vboxParticipantsTransaction;
+    @FXML
+    private ScrollPane participantsScrollPane;
     @FXML
     private TextField tagsInput;
-    @FXML
-    private Button cancel;
+
     @FXML private Button add;
     @FXML
     private VBox transactions;
-
+    private ToggleGroup toggleGroup;
 
 
 
@@ -98,6 +104,17 @@ public class EventPageCtrl implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
         ParticipantNode.init(); //<cascade> do some styling
+        currencyCodeInput.getItems().addAll("EUR", "USD", "CHF");
+        //radio buttons
+        toggleGroup = new ToggleGroup();
+        equalSplit.setToggleGroup(toggleGroup);
+        customSplit.setToggleGroup(toggleGroup);
+
+        //participants transaction
+        vboxParticipantsTransaction = new VBox();
+        participantsScrollPane.setContent(vboxParticipantsTransaction);
+        vboxParticipantsTransaction.getChildren().clear();
+
     }
     public void load() {
         System.out.println("loading EventPage");
@@ -114,7 +131,28 @@ public class EventPageCtrl implements Initializable {
             participants.getPanes().clear();
             participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
                 .toList());
+
+            //choice box author transaction
             authorInput.setItems(FXCollections.observableArrayList(event.participants));
+
+            //checkboxes for participants
+            vboxParticipantsTransaction.getChildren().clear();
+            vboxParticipantsTransaction.getChildren().addAll(
+                    authorInput.getItems().stream()
+                            .map(participant -> {
+                                CheckBox checkBox = new CheckBox(participant.toString());
+                                checkBox.setUserData(participant); // Store the ParticipantDTO as user data
+                                return checkBox;
+                            })
+                            .toArray(CheckBox[]::new)
+            );
+//            ObservableList<ParticipantDTO> participants = authorInput.getItems();
+//            for (ParticipantDTO participant : participants) {
+//                String participantName = participant.toString();
+//                CheckBox checkBox = new CheckBox(participantName);
+//                vboxParticipantsTransaction.getChildren().add(checkBox);
+//            }
+            //c1f05a35-1407-4ba1-ada3-0692649256b8
 
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
@@ -236,7 +274,8 @@ public class EventPageCtrl implements Initializable {
     public void onCreateTransaction(){
         String name = transactionName.getText();
         String transactionAmountString = transactionAmount.getText();
-        String currency = currencyCode.getText();
+        //String currency = currencyCode.getText();
+        String currency = (String) currencyCodeInput.getValue();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
 
@@ -255,15 +294,56 @@ public class EventPageCtrl implements Initializable {
         }
 
         // TODO: these should be taken from user input
-        ParticipantDTO author = server.postParticipant(new ParticipantDTO(null,
-                UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
-                "iban", "bic"));
+//        ParticipantDTO author = server.postParticipant(new ParticipantDTO(null,
+//                UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
+//                "iban", "bic"));
+        ParticipantDTO author = authorInput.getValue();
 
-        Set<ParticipantDTO> participants = new HashSet<>(List.of(server.postParticipant(
-                new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
-                        "lastName", "email@me.com", "iban", "bic"))));
+//        Set<ParticipantDTO> participants = new HashSet<>(List.of(server.postParticipant(
+//                new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
+//                        "lastName", "email@me.com", "iban", "bic"))));
 
-        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
+        //assuming the transaction is split equally between every participant
+//        ObservableList<ParticipantDTO> choiceBoxItems = authorInput.getItems();
+//        Set<ParticipantDTO> participants = new HashSet<>(choiceBoxItems);
+
+        //c1f05a35-1407-4ba1-ada3-0692649256b8
+
+        //radio buttons
+        Set<ParticipantDTO> participants = new HashSet<>();
+
+        RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
+        if (selectedRadioButton != null) {
+            if (selectedRadioButton == equalSplit) {
+                // Handle split equally logic
+                ObservableList<ParticipantDTO> choiceBoxItems = authorInput.getItems();
+                participants = new HashSet<>(choiceBoxItems);
+                System.out.println("Split equally selected");
+            } else if (selectedRadioButton == customSplit) {
+                //Handle custom split
+                for (Node node : vboxParticipantsTransaction.getChildren()) {
+                    if (node instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) node;
+                        if (checkBox.isSelected()) {
+                            // Retrieve ParticipantDTO from the checkbox's UserData
+                            ParticipantDTO participantDTO = (ParticipantDTO) checkBox.getUserData();
+                            if (participantDTO != null) {
+                                participants.add(participantDTO);
+                            }
+                        }
+                    }
+                }
+                System.out.println("Split between participants selected");
+            }
+        } else {
+
+            MainCtrl.alert("Please chose how to split the transaction!");
+            return;
+        }
+        printParticipantsSplit(participants);
+
+
+                Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
                 UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
 
         Date date = java.sql.Date.valueOf(localDate);
@@ -278,7 +358,7 @@ public class EventPageCtrl implements Initializable {
 
         transactionName.clear();
         transactionAmount.clear();
-        currencyCode.clear();
+        //currencyCode.clear();
         transactionDate.setValue(null);
     }
 
@@ -308,6 +388,12 @@ public class EventPageCtrl implements Initializable {
         lastName.clear();
         email.clear();
         iban.clear();
+    }
+
+    public static void printParticipantsSplit(Set<ParticipantDTO> participants){
+        for(ParticipantDTO participant : participants){
+            System.out.println(participant);
+        }
     }
 }
 
