@@ -42,7 +42,7 @@ public class EventController {
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        Set<Tag> tags = repo.findById(id).get().getTags();
+        Set<Tag> tags = repo.getReferenceById(id).getTags();
         Set<TagDTO> tagDTOs = new HashSet<>();
         for (Tag tag : tags) {
             tagDTOs.add(new TagDTO(tag));
@@ -65,7 +65,7 @@ public class EventController {
     // TODO: manage dependencies
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {
+    public ResponseEntity<EventDTO> deleteEvent(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();

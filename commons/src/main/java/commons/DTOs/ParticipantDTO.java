@@ -48,7 +48,7 @@ public class ParticipantDTO {
 
     @JsonIgnore
     public String getFullName() {
-        return firstName + " " + lastName;
+        return firstName.trim() + " " + lastName.trim();
     }
 
     @Override

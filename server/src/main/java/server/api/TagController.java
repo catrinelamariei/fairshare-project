@@ -45,7 +45,7 @@ public class TagController {
     // TODO: manage dependencies
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity updateTag(@PathVariable("id") UUID id) {
+    public ResponseEntity<TagDTO> updateTag(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();

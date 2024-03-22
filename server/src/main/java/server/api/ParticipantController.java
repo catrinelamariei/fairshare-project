@@ -49,7 +49,7 @@ public class ParticipantController {
     // TODO: manage dependencies
     @Transactional
    @DeleteMapping("/{id}")
-   public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
+   public ResponseEntity<ParticipantDTO> deleteParticipant(@PathVariable ("id") UUID id) {
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();
