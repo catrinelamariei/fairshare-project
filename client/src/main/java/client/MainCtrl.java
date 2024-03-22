@@ -1,12 +1,10 @@
 package client;
 
 import client.scenes.*;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 
 public class MainCtrl {
@@ -37,7 +35,7 @@ public class MainCtrl {
                            Pair<TransactionPageCtrl, Parent> transactionPage) {
 
         this.primaryStage = primaryStage;
-        this.primaryStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save()); //save file on termination
+        this.primaryStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
 
         this.startPageCtrl = startPage.getKey();
         this.startPage = new Scene(startPage.getValue());
