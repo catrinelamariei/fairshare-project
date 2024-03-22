@@ -21,14 +21,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -250,11 +252,7 @@ public class EventPageCtrl implements Initializable {
     public void debtSimplification() {
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        Graph<ParticipantDTO, DefaultWeightedEdge> graph =
-            new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
-
-
-        populateGraph(event, graph);
+        Graph<ParticipantDTO, DefaultWeightedEdge> graph = populateGraph(event);
 
         // get total amount each participant owes/is owed
         // put them in two priority queues,
@@ -270,6 +268,11 @@ public class EventPageCtrl implements Initializable {
             new PriorityQueue<>(Comparator.comparingDouble(Pair::getValue));
 
         populatePQs(event, graph, positive, negative);
+
+        if (positive.isEmpty()) {
+            HBox hbox = new HBox();
+            hbox.getChildren().add(new Text("No debts to simplify"));
+        }
 
         while (!positive.isEmpty() && !negative.isEmpty()) {
 
@@ -299,8 +302,10 @@ public class EventPageCtrl implements Initializable {
         }
     }
 
-    private static void populateGraph(EventDTO event,
-                                  Graph<ParticipantDTO, DefaultWeightedEdge> graph) {
+    private static Graph<ParticipantDTO, DefaultWeightedEdge> populateGraph(EventDTO event) {
+        Graph<ParticipantDTO, DefaultWeightedEdge> graph =
+            new DirectedWeightedPseudograph<>(DefaultWeightedEdge.class);
+
         // Each participant is a vertex
         for (ParticipantDTO p : event.participants) {
             graph.addVertex(p);
@@ -316,6 +321,8 @@ public class EventPageCtrl implements Initializable {
                 graph.setEdgeWeight(e, t.amount.doubleValue() / t.participants.size());
             }
         }
+
+        return graph;
     }
 
     private static void populatePQs(EventDTO event, Graph<ParticipantDTO,
