@@ -66,6 +66,7 @@ public class EventController {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {
+        if(id==null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();
