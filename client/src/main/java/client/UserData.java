@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayDeque;
 import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
@@ -18,9 +17,8 @@ public final class UserData {
     // All values in here are default values and will be overwritten at startup if a
     // config file is found when the program terminates, all values are stored in the config file
     private String token;
-    private UUID currentUUID;
 
-    private Set<UUID> recentUUIDs = new HashSet<>();
+    private ArrayDeque<UUID> recentUUIDs = new ArrayDeque<>();
 
     private String serverURL = "http://localhost:8080/";
     private final static ObjectMapper objectMapper = new ObjectMapper().enable(INDENT_OUTPUT);
@@ -56,7 +54,6 @@ public final class UserData {
      */
     private void update(UserData userData) {
         this.token = userData.token;
-        this.currentUUID = userData.currentUUID;
         this.recentUUIDs = userData.recentUUIDs;
         this.serverURL = userData.serverURL;
     }
@@ -74,21 +71,23 @@ public final class UserData {
         return this.token;
     }
 
-    public Set<UUID> getRecentUUIDs() {
+    public ArrayDeque<UUID> getRecentUUIDs() {
         return recentUUIDs;
     }
 
-    public void setRecentUUIDs(Set<UUID> recentUUIDs) {
+    public void setRecentUUIDs(ArrayDeque<UUID> recentUUIDs) {
         this.recentUUIDs = recentUUIDs;
     }
 
+    @JsonIgnore
     public UUID getCurrentUUID() {
-        return currentUUID;
+        return recentUUIDs.peekFirst();
     }
 
     public void setCurrentUUID(UUID currentUUID) {
-        recentUUIDs.add(currentUUID);
-        this.currentUUID = currentUUID;
+        recentUUIDs.remove(currentUUID); //remove if present
+        recentUUIDs.addFirst(currentUUID); //(re-)insert at front
+        save(); //save to filesystem
     }
 
     public String getServerURL() {
