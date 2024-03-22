@@ -77,6 +77,8 @@ public class EventPageCtrl implements Initializable {
 
     @FXML
     private VBox debts;
+    @FXML
+    private Button settleButton;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -250,6 +252,9 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void debtSimplification() {
+
+        debts.getChildren().clear();
+
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
         Graph<ParticipantDTO, DefaultWeightedEdge> graph = populateGraph(event);
@@ -269,11 +274,14 @@ public class EventPageCtrl implements Initializable {
 
         populatePQs(event, graph, positive, negative);
 
+        // end if no debts to simplify
         if (positive.isEmpty()) {
             HBox hbox = new HBox();
             hbox.getChildren().add(new Text("No debts to simplify"));
+            return;
         }
 
+        // display debts if there are debts to simplify
         while (!positive.isEmpty() && !negative.isEmpty()) {
 
             Pair<ParticipantDTO, Double> pos = positive.poll();
@@ -300,6 +308,10 @@ public class EventPageCtrl implements Initializable {
                 positive.offer(new Pair<>(creditor, credit));
             }
         }
+
+        // update the button
+        settleButton.setText("Refresh debts");
+
     }
 
     private static Graph<ParticipantDTO, DefaultWeightedEdge> populateGraph(EventDTO event) {
