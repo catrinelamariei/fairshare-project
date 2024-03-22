@@ -132,11 +132,20 @@ public class TransactionDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionDTO that = (TransactionDTO) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getEventId(), that.getEventId()) && Objects.equals(getDate(), that.getDate()) && Objects.equals(getCurrencyCode(), that.getCurrencyCode()) && Objects.equals(getAmount(), that.getAmount()) && Objects.equals(getAuthor(), that.getAuthor()) && Objects.equals(getParticipants(), that.getParticipants()) && Objects.equals(getTags(), that.getTags()) && Objects.equals(getSubject(), that.getSubject());
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getEventId(), that.getEventId()) &&
+                Objects.equals(getDate(), that.getDate()) &&
+                Objects.equals(getCurrencyCode(), that.getCurrencyCode()) &&
+                Objects.equals(getAmount(), that.getAmount()) &&
+                Objects.equals(getAuthor(), that.getAuthor()) &&
+                Objects.equals(getParticipants(), that.getParticipants()) &&
+                Objects.equals(getTags(), that.getTags()) &&
+                Objects.equals(getSubject(), that.getSubject());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getEventId(), getDate(), getCurrencyCode(), getAmount(), getAuthor(), getParticipants(), getTags(), getSubject());
+        return Objects.hash(getId(), getEventId(), getDate(), getCurrencyCode(),
+                getAmount(), getAuthor(), getParticipants(), getTags(), getSubject());
     }
 }

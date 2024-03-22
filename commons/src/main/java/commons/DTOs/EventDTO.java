@@ -72,11 +72,17 @@ public class EventDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventDTO eventDTO = (EventDTO) o;
-        return Objects.equals(getId(), eventDTO.getId()) && Objects.equals(getName(), eventDTO.getName()) && Objects.equals(getTags(), eventDTO.getTags()) && Objects.equals(getDate(), eventDTO.getDate()) && Objects.equals(getParticipants(), eventDTO.getParticipants()) && Objects.equals(getTransactions(), eventDTO.getTransactions());
+        return Objects.equals(getId(), eventDTO.getId()) &&
+                Objects.equals(getName(), eventDTO.getName()) &&
+                Objects.equals(getTags(), eventDTO.getTags()) &&
+                Objects.equals(getDate(), eventDTO.getDate()) &&
+                Objects.equals(getParticipants(), eventDTO.getParticipants()) &&
+                Objects.equals(getTransactions(), eventDTO.getTransactions());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getTags(), getDate(), getParticipants(), getTransactions());
+        return Objects.hash(getId(), getName(), getTags(), getDate(),
+                getParticipants(), getTransactions());
     }
 }
