@@ -95,7 +95,11 @@ public class DTOtoEntity {
     }
 
     public boolean delete (TransactionDTO t) {
-        return false;
+        if(!transactionRepository.existsById(t.id)){
+            return false;
+        }
+        transactionRepository.deleteById(t.id);
+        return true;
     }
 
     //PARTICIPANT
@@ -120,13 +124,18 @@ public class DTOtoEntity {
         p.lastName = participant.lastName;
         p.email = participant.email;
         p.iban = participant.iban;
+        p.bic = participant.bic;
 
         participantRepository.save(participant);
         return participant;
     }
 
     public boolean delete (ParticipantDTO p) {
-        return false;
+        if(!participantRepository.existsById(p.id)){
+            return false;
+        }
+        participantRepository.deleteById(p.id);
+        return true;
     }
 
     //TAG
@@ -150,6 +159,10 @@ public class DTOtoEntity {
     }
 
     public boolean delete (TagDTO t) {
-        return false;
+        if(!tagRepository.existsById(t.id)){
+            return false;
+        }
+        tagRepository.deleteById(t.id);
+        return true;
     }
 }
