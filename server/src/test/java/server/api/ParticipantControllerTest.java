@@ -1,10 +1,8 @@
 package server.api;
 
 import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
 import commons.Event;
 import commons.Participant;
-import commons.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import server.database.ParticipantRepository;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
