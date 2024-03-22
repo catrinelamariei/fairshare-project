@@ -46,7 +46,7 @@ public class Transaction {
         // for object mapper (needs to be public/protected)
     }
 
-    public Transaction(Event event, Date date,String currencyCode,
+    public Transaction(Event event, Date date, String currencyCode,
                        BigDecimal amount, Participant author, String subject) {
         this.event = event;
         this.date = date;
