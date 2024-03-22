@@ -146,12 +146,6 @@ public class EventPageCtrl implements Initializable {
                             })
                             .toArray(CheckBox[]::new)
             );
-//            ObservableList<ParticipantDTO> participants = authorInput.getItems();
-//            for (ParticipantDTO participant : participants) {
-//                String participantName = participant.toString();
-//                CheckBox checkBox = new CheckBox(participantName);
-//                vboxParticipantsTransaction.getChildren().add(checkBox);
-//            }
             //c1f05a35-1407-4ba1-ada3-0692649256b8
 
         } catch (WebApplicationException e) {
@@ -223,54 +217,6 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-//    public void onCreateTransaction(){
-//        String name = transactionName.getText();
-//        String transactionAmountString = transactionAmount.getText();
-//        String currency = currencyCode.getText();
-//        LocalDate localDate = transactionDate.getValue();
-//        BigDecimal amount;
-//
-//        try {
-//            if(name==null || transactionAmountString==null || currency==null || localDate==null){
-//                throw new IllegalArgumentException();
-//            }
-//            amount = new BigDecimal(transactionAmountString);
-//        } catch (NumberFormatException e) {
-//            MainCtrl.alert("Please enter a number for the Amount field");
-//            return;
-//        } catch (IllegalArgumentException e) {
-//            MainCtrl.alert("Please enter valid transaction information");
-//            return;
-//        }
-//
-//        // TODO: these should be taken from user input
-//        ParticipantDTO author = server.postParticipant(new ParticipantDTO(null,
-//            UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
-//            "iban", "bic"));
-//
-//        Set<ParticipantDTO> participants = new HashSet<>(List.of(server.postParticipant(
-//            new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
-//                "lastName", "email@me.com", "iban", "bic"))));
-//
-//        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
-//            UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
-//
-//        Date date = java.sql.Date.valueOf(localDate);
-//        TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
-//            date, currency, amount, author, participants, tags, name);
-//        try {
-//            ts = server.postTransaction(ts);
-//            transactions.getChildren().add(new TransactionNode(ts));
-//        } catch (WebApplicationException e) {
-//            System.err.println("Error creating transaction: " + e.getMessage());
-//        }
-//
-//        transactionName.clear();
-//        transactionAmount.clear();
-//        currencyCode.clear();
-//        transactionDate.setValue(null);
-//    }
-
     public void onCreateTransaction(){
         String name = transactionName.getText();
         String transactionAmountString = transactionAmount.getText();
@@ -293,19 +239,7 @@ public class EventPageCtrl implements Initializable {
             return;
         }
 
-        // TODO: these should be taken from user input
-//        ParticipantDTO author = server.postParticipant(new ParticipantDTO(null,
-//                UserData.getInstance().getCurrentUUID(), "firstName", "lastName", "email@me.com",
-//                "iban", "bic"));
         ParticipantDTO author = authorInput.getValue();
-
-//        Set<ParticipantDTO> participants = new HashSet<>(List.of(server.postParticipant(
-//                new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(), "firstName",
-//                        "lastName", "email@me.com", "iban", "bic"))));
-
-        //assuming the transaction is split equally between every participant
-//        ObservableList<ParticipantDTO> choiceBoxItems = authorInput.getItems();
-//        Set<ParticipantDTO> participants = new HashSet<>(choiceBoxItems);
 
         //c1f05a35-1407-4ba1-ada3-0692649256b8
 
@@ -342,9 +276,9 @@ public class EventPageCtrl implements Initializable {
         }
         printParticipantsSplit(participants);
 
-
-                Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
-                UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
+        // TODO: this should be taken from user input
+        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
+        UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
@@ -358,8 +292,17 @@ public class EventPageCtrl implements Initializable {
 
         transactionName.clear();
         transactionAmount.clear();
-        //currencyCode.clear();
+        authorInput.setValue(null);
+        equalSplit.setSelected(false);
+        customSplit.setSelected(false);
+        currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
+        for (Node node : vboxParticipantsTransaction.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) node;
+                checkBox.setSelected(false);
+            }
+        }
     }
 
     public void onAddParticipant() {
