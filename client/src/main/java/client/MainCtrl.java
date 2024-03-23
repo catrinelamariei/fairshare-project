@@ -7,6 +7,11 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.UUID;
+
 public class MainCtrl {
 
     private Stage primaryStage;
@@ -24,6 +29,28 @@ public class MainCtrl {
     private Scene privCheckPage;
     private TransactionPageCtrl transactionPageCtrl;
     private Scene transactionPage;
+
+    public MainCtrl() {
+        // Add a shutdown hook to the Java Runtime
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            // Write the recent events to the config file
+            writeToConfig();
+        }));
+    }
+
+
+    private static void writeToConfig() {
+        UserData data = UserData.getInstance();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("config.txt"))) {
+            writer.write("recent events: ");
+            for (UUID uuid : data.getRecentUUIDs()) {
+                writer.write(uuid.toString());
+                writer.newLine();
+            }
+        } catch (IOException err) {
+            System.out.println("Error when writing to config");
+        }
+    }
 
 
 
@@ -54,6 +81,8 @@ public class MainCtrl {
         showStartPage();
         primaryStage.show();
     }
+
+
 
     public void showStartPage() {
         primaryStage.setTitle("Home Screen");

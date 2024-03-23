@@ -1,7 +1,7 @@
 package client;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public final class UserData {
@@ -9,7 +9,7 @@ public final class UserData {
     private String token;
     private UUID currentUUID;
 
-    private Set<UUID> recentUUIDs = new HashSet<>();
+    private List<UUID> recentUUIDs = new ArrayList<>();
 
     private String serverURL = "http://localhost:8080/";
     private final static UserData INSTANCE = new UserData();
@@ -28,12 +28,22 @@ public final class UserData {
         return this.token;
     }
 
-    public Set<UUID> getRecentUUIDs() {
+    public List<UUID> getRecentUUIDs() {
         return recentUUIDs;
     }
 
-    public void setRecentUUIDs(Set<UUID> recentUUIDs) {
-        this.recentUUIDs = recentUUIDs;
+
+    public void addRecentUUID(UUID uuid) {
+        // if it's already a recent one: move it to the front
+        if (recentUUIDs.contains(uuid)) {
+            recentUUIDs.remove(uuid);
+            recentUUIDs.add(0, uuid);
+        // append to front it if it's a new one
+        } else recentUUIDs.add(0, uuid);
+        // store only the 5 most recent events
+        if (recentUUIDs.size() > 5) {
+            recentUUIDs.removeLast();
+        }
     }
 
     public UUID getCurrentUUID() {
@@ -41,7 +51,7 @@ public final class UserData {
     }
 
     public void setCurrentUUID(UUID currentUUID) {
-        recentUUIDs.add(currentUUID);
+        addRecentUUID(currentUUID);
         this.currentUUID = currentUUID;
     }
 
