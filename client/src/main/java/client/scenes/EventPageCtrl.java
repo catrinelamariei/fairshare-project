@@ -40,6 +40,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class EventPageCtrl implements Initializable {
@@ -322,6 +324,10 @@ public class EventPageCtrl implements Initializable {
             if (fName.isEmpty() || lName.isEmpty()|| mail.isEmpty()||ibanText.isEmpty()) {
                 throw new IllegalArgumentException();
             }
+            if (!isValidEmail(mail)) {
+                MainCtrl.alert("Please enter a valid email address");
+                return;
+            }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
                 fName, lName, mail, ibanText, ""); // TODO: replace empty string with bic
             participantDTO = server.postParticipant(participantDTO);
@@ -343,6 +349,13 @@ public class EventPageCtrl implements Initializable {
         for(ParticipantDTO participant : participants){
             System.out.println(participant);
         }
+    }
+    private boolean isValidEmail(String email) {
+        // Regex pattern to match email address
+        String regexPattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.com$";
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }
 
