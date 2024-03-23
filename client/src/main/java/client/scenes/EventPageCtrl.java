@@ -21,16 +21,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -257,27 +253,13 @@ public class EventPageCtrl implements Initializable {
 
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        Graph<ParticipantDTO, DefaultWeightedEdge> graph = populateGraph(event);
-
-        // get total amount each participant owes/is owed
-        // put them in two priority queues,
-        // 1 for if they owe money,
-        // 1 for if they are owed money
-
-
-        // pq with descending order
-        PriorityQueue<Pair<ParticipantDTO, Double>> positive =
-            new PriorityQueue<>((a, b) -> Double.compare(b.getValue(), a.getValue()));
-        // pq with acsending order
-        PriorityQueue<Pair<ParticipantDTO, Double>> negative =
-            new PriorityQueue<>(Comparator.comparingDouble(Pair::getValue));
-
-        populatePQs(event, graph, positive, negative);
+        DebtGraph graph = new DebtGraph(event);
+        PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
+        PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
         // end if no debts to simplify
         if (positive.isEmpty()) {
-            HBox hbox = new HBox();
-            hbox.getChildren().add(new Text("No debts to simplify"));
+            debts.getChildren().add(new Text("No debts to simplify"));
             return;
         }
 
@@ -297,7 +279,7 @@ public class EventPageCtrl implements Initializable {
             DebtNode debtNode = new DebtNode(debtor, creditor, "eur", settlementAmount);
             debts.getChildren().add(debtNode);
             // Update debts
-            credit += settlementAmount;
+            credit -= settlementAmount;
             debt += settlementAmount;
 
             // Reinsert participants into priority queues if they still have non-zero debt
@@ -312,50 +294,6 @@ public class EventPageCtrl implements Initializable {
         // update the button
         settleButton.setText("Refresh debts");
 
-    }
-
-    private static Graph<ParticipantDTO, DefaultWeightedEdge> populateGraph(EventDTO event) {
-        Graph<ParticipantDTO, DefaultWeightedEdge> graph =
-            new DirectedWeightedPseudograph<>(DefaultWeightedEdge.class);
-
-        // Each participant is a vertex
-        for (ParticipantDTO p : event.participants) {
-            graph.addVertex(p);
-        }
-
-        // Add transactions as edges
-        // Each weight is the total amount in each transaction
-        // divided by the number of participants
-        // (since they're splitting equally)
-        for (TransactionDTO t : event.transactions) {
-            for (ParticipantDTO p: t.participants) {
-                DefaultWeightedEdge e = graph.addEdge(p, t.author);
-                graph.setEdgeWeight(e, t.amount.doubleValue() / t.participants.size());
-            }
-        }
-
-        return graph;
-    }
-
-    private static void populatePQs(EventDTO event, Graph<ParticipantDTO,
-        DefaultWeightedEdge> graph,
-                                    PriorityQueue<Pair<ParticipantDTO, Double>> positive,
-                                    PriorityQueue<Pair<ParticipantDTO, Double>> negative) {
-        for (ParticipantDTO p : event.participants) {
-            double incoming = graph.incomingEdgesOf(p)
-                .stream()
-                .mapToDouble(graph::getEdgeWeight)
-                .sum();
-            double outgoing = graph.outgoingEdgesOf(p)
-                .stream()
-                .mapToDouble(graph::getEdgeWeight)
-                .sum();
-            if (incoming > outgoing) {
-                positive.add(new Pair<>(p, incoming - outgoing));
-            } else if (incoming < outgoing) {
-                negative.add(new Pair<>(p, incoming - outgoing));
-            }
-        }
     }
 
 }
