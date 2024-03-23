@@ -228,7 +228,8 @@ public class EventPageCtrl implements Initializable {
         ParticipantDTO participantDTO;
 
         try {
-            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty() || ibanText.isEmpty() || bicText.isEmpty()) {
+            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()
+                    || ibanText.isEmpty() || bicText.isEmpty()) {
                 throw new IllegalArgumentException();
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
