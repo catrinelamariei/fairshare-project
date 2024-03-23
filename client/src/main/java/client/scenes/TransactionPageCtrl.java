@@ -103,7 +103,7 @@ public class TransactionPageCtrl implements Initializable {
 
         equalSplit.setSelected(true);
 
-        // TODO: ensure if you check customSplit's partcipant then customSplit is also checked
+        // TODO: ensure if you check customSplit's participant then customSplit is also checked
 
     }
 
@@ -215,7 +215,7 @@ public class TransactionPageCtrl implements Initializable {
 
     private Participant findParticipant(String authortxt) {
         for (Participant p : event.participants) {
-            if ((p.firstName + " " + p.lastName).equals(authortxt)) return p;
+            if ((p.firstName.trim() + " " + p.lastName.trim()).equals(authortxt)) return p;
         }
         return null;
     }
