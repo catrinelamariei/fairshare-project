@@ -28,14 +28,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
+
+<!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
    <bottom>
       <HBox prefHeight="0.0" prefWidth="800.0" style="-fx-background-color: dimgray;" BorderPane.alignment="CENTER" />
    </bottom>
    <right>
-      <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefHeight="722.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color: gray;" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefHeight="722.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color: gray;">
          <children>
             <HBox prefWidth="200.0" style="-fx-background-color: dimgray;">
                <children>
@@ -68,7 +68,7 @@
                   </Button>
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" cache="true" prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER" cache="true" prefHeight="100.0" prefWidth="200.0">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="New Year Party" textAlignment="CENTER" wrappingWidth="343.6849365234375" HBox.hgrow="NEVER">
                      <font>
