@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.database.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,5 +79,134 @@ class DTOtoEntityTest {
         EventDTO eventDTO = new EventDTO(event);
         when(eventRepository.existsById(eventDTO.id)).thenReturn(false);
         assertFalse(d2e.delete(eventDTO));
+    }
+
+    @Test
+    void getTransaction() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
+        participant.id = new UUID(0, 2);
+        Transaction transaction = new Transaction(event, new Date(), "usd", new BigDecimal(100), participant, "Subject");
+        transaction.id = new UUID(0, 3);
+        TransactionDTO transactionDTO = new TransactionDTO(transaction);
+        when(transactionRepository.getReferenceById(transaction.id)).thenReturn(transaction);
+        assertEquals(transaction, d2e.get(transactionDTO));
+    }
+
+    @Test
+    void createTransaction() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
+        participant.id = new UUID(0, 2);
+        Transaction transaction = new Transaction(event, new Date(), "usd", new BigDecimal(100), participant, "Subject");
+        transaction.id = new UUID(0, 2);
+        TransactionDTO transactionDTO = new TransactionDTO(transaction);
+        when(eventRepository.getReferenceById(transactionDTO.eventId)).thenReturn(event);
+        when(participantRepository.getReferenceById(transaction.author.id)).thenReturn(participant);
+        when(transactionRepository.save(transaction)).thenReturn(transaction);
+        assertEquals(transaction, d2e.create(transactionDTO));
+    }
+
+    @Test
+    void updateTransaction() {
+Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
+        participant.id = new UUID(0, 2);
+        Transaction transaction = new Transaction(event, new Date(), "usd", new BigDecimal(100), participant, "Subject");
+        transaction.id = new UUID(0, 2);
+        TransactionDTO transactionDTO = new TransactionDTO(transaction);
+        transactionDTO.subject = "new subject";
+        transaction.subject = "new subject";
+        when(transactionRepository.getReferenceById(transactionDTO.id)).thenReturn(transaction);
+        when(transactionRepository.save(transaction)).thenReturn(transaction);
+        assertEquals(transaction, d2e.update(transactionDTO));
+
+        transaction.participants.add(participant);
+        transactionDTO.participants.add(new ParticipantDTO(participant));
+        when(participantRepository.getReferenceById(participant.id)).thenReturn(participant);
+        assertEquals(transaction, d2e.update(transactionDTO));
+    }
+
+    @Test
+    void getParticipant() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
+        participant.id = new UUID(0, 2);
+        ParticipantDTO participantDTO = new ParticipantDTO(participant);
+        when(participantRepository.getReferenceById(participantDTO.id)).thenReturn(participant);
+        assertEquals(participant, d2e.get(participantDTO));
+    }
+
+    @Test
+    void createParticipant() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
+        participant.id = new UUID(0, 2);
+        ParticipantDTO participantDTO = new ParticipantDTO(participant);
+        when(eventRepository.getReferenceById(participantDTO.eventId)).thenReturn(event);
+        when(participantRepository.save(participant)).thenReturn(participant);
+        assertEquals(participant, d2e.create(participantDTO));
+    }
+
+    @Test
+    void updateParticipant() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
+        participant.id = new UUID(0, 2);
+        ParticipantDTO participantDTO = new ParticipantDTO(participant);
+        participantDTO.firstName = "new name";
+        participant.firstName = "new name";
+        when(participantRepository.findById(participantDTO.getId())).thenReturn(java.util.Optional.of(participant));
+        when(participantRepository.save(participant)).thenReturn(participant);
+        assertEquals(participant, d2e.update(participantDTO));
+    }
+
+    @Test
+    void getTag() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Tag tag = new Tag(event, "tag", Tag.Color.BLUE);
+        tag.id = new UUID(0, 2);
+        TagDTO tagDTO = new TagDTO(tag);
+        when(tagRepository.getReferenceById(tagDTO.id)).thenReturn(tag);
+        assertEquals(tag, d2e.get(tagDTO));
+    }
+
+    @Test
+    void createTag() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        TagDTO tagDTO = new TagDTO();
+        tagDTO.eventId = event.id;
+        tagDTO.name = "tag";
+        tagDTO.color = Tag.Color.BLUE;
+        Event expectedEvent = new Event("event");
+        expectedEvent.id = new UUID(0, 1);
+        Tag expected = new Tag(expectedEvent, "tag", Tag.Color.BLUE);
+        expected.id = new UUID(0, 2);
+
+        when(eventRepository.getReferenceById(tagDTO.eventId)).thenReturn(event);
+        when(tagRepository.save(any())).thenReturn(expected);
+        assertEquals(expected, d2e.create(tagDTO));
+    }
+
+    @Test
+    void updateTag() {
+        Event event = new Event("event");
+        event.id = new UUID(0, 1);
+        Tag tag = new Tag(event, "tag", Tag.Color.BLUE);
+        tag.id = new UUID(0, 2);
+        TagDTO tagDTO = new TagDTO(tag);
+        tagDTO.name = "new name";
+        tag.name = "new name";
+        when(tagRepository.getReferenceById(tagDTO.id)).thenReturn(tag);
+        when(tagRepository.save(tag)).thenReturn(tag);
+        assertEquals(tag, d2e.update(tagDTO));
     }
 }

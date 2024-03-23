@@ -94,9 +94,9 @@ public class DTOtoEntity {
         return transaction;
     }
 
-    public boolean delete (TransactionDTO t) {
-        return false;
-    }
+//    public boolean delete (TransactionDTO t) {
+//        return false;
+//    }
 
     //PARTICIPANT
     public Participant get(ParticipantDTO p){
@@ -125,9 +125,9 @@ public class DTOtoEntity {
         return participant;
     }
 
-    public boolean delete (ParticipantDTO p) {
-        return false;
-    }
+//    public boolean delete (ParticipantDTO p) {
+//        return false;
+//    }
 
     //TAG
     public Tag get(TagDTO t){
@@ -137,7 +137,7 @@ public class DTOtoEntity {
         //create & save tag
         Tag tag = new Tag(t);
         tag.event = eventRepository.getReferenceById(t.eventId);
-        tagRepository.save(tag);
+        tag = tagRepository.save(tag);
 
         //update event
         tag.event.addTag(tag);
@@ -146,10 +146,14 @@ public class DTOtoEntity {
         return tag;
     }
     public Tag update(TagDTO t) {
-        return null;
+        Tag tag = tagRepository.getReferenceById(t.id);
+        tag.name = t.name;
+        tag.color = t.color;
+        tagRepository.save(tag);
+        return tag;
     }
 
-    public boolean delete (TagDTO t) {
-        return false;
-    }
+//    public boolean delete (TagDTO t) {
+//        return false;
+//    }
 }
