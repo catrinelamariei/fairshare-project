@@ -331,13 +331,18 @@ public class EventPageCtrl implements Initializable {
         ParticipantDTO participantDTO;
 
         try {
-            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()
-                    || ibanText.isEmpty() || bicText.isEmpty()) {
+            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()) {
                 throw new IllegalArgumentException();
             }
             if (!isValidEmail(mail)) {
                 MainCtrl.alert("Please enter a valid email address");
                 return;
+            }
+            if(bicText.isEmpty()){
+                bicText="-";
+            }
+            if(ibanText.isEmpty()){
+                ibanText="-";
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
                 fName, lName, mail, ibanText, bicText);
