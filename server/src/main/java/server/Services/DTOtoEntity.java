@@ -83,8 +83,8 @@ public class DTOtoEntity {
         transaction.date = t.date;
         transaction.currencyCode = t.currencyCode;
         transaction.amount = t.amount;
-        transaction.subject = t.subject;
         transaction.author = get(t.author);
+        transaction.subject = t.subject;
         //TODO check if this is correct, not sure if we have to clear the sets
         transaction.participants.clear();
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
@@ -94,9 +94,13 @@ public class DTOtoEntity {
         return transaction;
     }
 
-//    public boolean delete (TransactionDTO t) {
-//        return false;
-//    }
+    public boolean delete (TransactionDTO t) {
+        if(!transactionRepository.existsById(t.id)){
+            return false;
+        }
+        transactionRepository.deleteById(t.id);
+        return true;
+    }
 
     //PARTICIPANT
     public Participant get(ParticipantDTO p){
@@ -115,19 +119,24 @@ public class DTOtoEntity {
         return participant;
     }
     public Participant update(ParticipantDTO p) {
-        Participant participant = participantRepository.findById(p.getId()).get();
+        Participant participant = participantRepository.getReferenceById(p.id);
         p.firstName = participant.firstName;
         p.lastName = participant.lastName;
         p.email = participant.email;
         p.iban = participant.iban;
+        p.bic = participant.bic;
 
         participantRepository.save(participant);
         return participant;
     }
 
-//    public boolean delete (ParticipantDTO p) {
-//        return false;
-//    }
+    public boolean delete (ParticipantDTO p) {
+        if(!participantRepository.existsById(p.id)){
+            return false;
+        }
+        participantRepository.deleteById(p.id);
+        return true;
+    }
 
     //TAG
     public Tag get(TagDTO t){
@@ -153,7 +162,11 @@ public class DTOtoEntity {
         return tag;
     }
 
-//    public boolean delete (TagDTO t) {
-//        return false;
-//    }
+    public boolean delete (TagDTO t) {
+        if(!tagRepository.existsById(t.id)){
+            return false;
+        }
+        tagRepository.deleteById(t.id);
+        return true;
+    }
 }
