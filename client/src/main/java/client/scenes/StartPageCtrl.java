@@ -80,8 +80,7 @@ public class StartPageCtrl {
         for (UUID uuid : data.getRecentUUIDs()) {
             Hyperlink eventLink = new Hyperlink(serverUtils.getEvent(uuid).getName());
             eventLink.setOnAction(event -> {
-                UUID current = data.getCurrentUUID();
-                if (current!=data.getRecentUUIDs().get(0)) {
+                if (uuid!=data.getRecentUUIDs().get(0)) {
                     data.setCurrentUUID(uuid);
                     updateCurrentEventsVBox(data);
                 }
