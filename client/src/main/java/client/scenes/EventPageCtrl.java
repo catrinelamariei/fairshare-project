@@ -20,7 +20,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -393,6 +392,12 @@ public class EventPageCtrl implements Initializable {
         // update the button
         settleButton.setText("Refresh debts");
 
+    }
+
+    public static void printParticipantsSplit(Set<ParticipantDTO> participants){
+        for(ParticipantDTO participant : participants){
+            System.out.println(participant);
+        }
     }
 
 }
