@@ -7,6 +7,8 @@ import javafx.util.Pair;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 
@@ -32,8 +34,9 @@ public class DebtGraph extends DirectedWeightedPseudograph<ParticipantDTO, Defau
         // (since they're splitting equally)
         for (TransactionDTO t : event.transactions) {
             // assign remainder to a random unlucky participant :)
-            double equalSplitAmount = t.amount.doubleValue() / t.participants.size();
-            double remainder = t.amount.doubleValue() % t.participants.size();
+            double equalSplitAmount = t.amount.divide(BigDecimal.valueOf
+                (t.participants.size()), 2, RoundingMode.FLOOR).doubleValue();
+            double remainder = t.amount.doubleValue() - t.participants.size()*equalSplitAmount;
             List<ParticipantDTO> tempList = new ArrayList<>(t.participants);
             ParticipantDTO unluckyParticipant =
                 tempList.get(new Random().nextInt(t.participants.size()));
