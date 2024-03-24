@@ -42,7 +42,7 @@ public class EventController {
         if (!repo.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        Set<Tag> tags = repo.findById(id).get().getTags();
+        Set<Tag> tags = repo.getReferenceById(id).getTags();
         Set<TagDTO> tagDTOs = new HashSet<>();
         for (Tag tag : tags) {
             tagDTOs.add(new TagDTO(tag));

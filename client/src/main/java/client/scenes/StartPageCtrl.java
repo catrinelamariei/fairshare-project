@@ -54,7 +54,6 @@ public class StartPageCtrl {
 
         newEvent.clear();
         UserData.getInstance().setCurrentUUID(e.getId());
-        UserData.getInstance().getRecentUUIDs().add(e.getId());
         //confirmation dialog
         MainCtrl.inform(text + " event created!");
         mainCtrl.showEventPage();

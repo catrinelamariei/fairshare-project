@@ -83,8 +83,8 @@ public class DTOtoEntity {
         transaction.date = t.date;
         transaction.currencyCode = t.currencyCode;
         transaction.amount = t.amount;
-        transaction.subject = t.subject;
         transaction.author = get(t.author);
+        transaction.subject = t.subject;
         //TODO check if this is correct, not sure if we have to clear the sets
         transaction.participants.clear();
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
@@ -95,7 +95,11 @@ public class DTOtoEntity {
     }
 
     public boolean delete (TransactionDTO t) {
-        return false;
+        if(!transactionRepository.existsById(t.id)){
+            return false;
+        }
+        transactionRepository.deleteById(t.id);
+        return true;
     }
 
     //PARTICIPANT
@@ -115,18 +119,23 @@ public class DTOtoEntity {
         return participant;
     }
     public Participant update(ParticipantDTO p) {
-        Participant participant = participantRepository.findById(p.getId()).get();
+        Participant participant = participantRepository.getReferenceById(p.id);
         p.firstName = participant.firstName;
         p.lastName = participant.lastName;
         p.email = participant.email;
         p.iban = participant.iban;
+        p.bic = participant.bic;
 
         participantRepository.save(participant);
         return participant;
     }
 
     public boolean delete (ParticipantDTO p) {
-        return false;
+        if(!participantRepository.existsById(p.id)){
+            return false;
+        }
+        participantRepository.deleteById(p.id);
+        return true;
     }
 
     //TAG
@@ -146,10 +155,18 @@ public class DTOtoEntity {
         return tag;
     }
     public Tag update(TagDTO t) {
-        return null;
+        Tag tag = tagRepository.getReferenceById(t.id);
+        tag.name = t.name;
+        tag.color = t.color;
+        tagRepository.save(tag);
+        return tag;
     }
 
     public boolean delete (TagDTO t) {
-        return false;
+        if(!tagRepository.existsById(t.id)){
+            return false;
+        }
+        tagRepository.deleteById(t.id);
+        return true;
     }
 }
