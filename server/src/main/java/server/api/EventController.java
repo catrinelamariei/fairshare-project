@@ -1,9 +1,7 @@
 package server.api;
 
 import commons.DTOs.EventDTO;
-//import commons.DTOs.MultipleEventsDTO;
 import commons.DTOs.TagDTO;
-//import commons.Event;
 import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import server.database.EventRepository;
 
 import java.util.*;
 
-//import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
