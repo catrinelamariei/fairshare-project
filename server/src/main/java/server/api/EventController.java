@@ -65,7 +65,7 @@ public class EventController {
     // TODO: manage dependencies
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<EventDTO> deleteEvent(@PathVariable("id") UUID id) {
+    public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();
