@@ -17,6 +17,7 @@ public class ParticipantDTO {
 
     public ParticipantDTO() {}
 
+
     public ParticipantDTO(Participant participant){
         this.id = participant.getId();
         this.firstName = participant.getFirstName();
@@ -122,4 +123,8 @@ public class ParticipantDTO {
         this.bic = bic;
     }
 
+    @Override
+    public String toString() {
+        return firstName + ' ' + lastName;
+    }
 }
