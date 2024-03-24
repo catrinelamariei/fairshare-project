@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.UserData;
+import client.scenes.javaFXClasses.DebtGraph;
 import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.scenes.javaFXClasses.TransactionNode;
