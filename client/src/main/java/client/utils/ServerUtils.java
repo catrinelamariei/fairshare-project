@@ -26,7 +26,6 @@ import jakarta.ws.rs.WebApplicationException;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.Response;
 
 import java.util.Collection;
 import java.util.UUID;
