@@ -3,8 +3,8 @@ package client.scenes;
 import client.MainCtrl;
 import client.UserData;
 import client.scenes.javaFXClasses.ParticipantNode;
-import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -19,27 +19,25 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.util.Duration;
 
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-
-import javafx.util.Duration;
-
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 
 public class EventPageCtrl implements Initializable {
@@ -96,6 +94,8 @@ public class EventPageCtrl implements Initializable {
     // invite code logic
     @FXML
     private Button copyButton;
+    @FXML
+    private VBox recentEventsVBox;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {

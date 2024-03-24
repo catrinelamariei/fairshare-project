@@ -22,7 +22,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         var startPage = FXML.load(StartPageCtrl.class, "client", "scenes", "StartPage.fxml");
-        var mainPage = FXML.load(StartPageCtrl.class, "client", "scenes", "StartPage.fxml");
+        var mainPage = startPage;
         var eventPage = FXML.load(EventPageCtrl.class, "client", "scenes", "EventPage.fxml");
         var adminPage = FXML.load(AdminPageCtrl.class, "client", "scenes", "AdminPage.fxml");
         var privCheckPage = FXML.load(PrivCheckPageCtrl.class, "client",
