@@ -26,6 +26,7 @@ import jakarta.ws.rs.WebApplicationException;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Response;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -60,8 +61,13 @@ public class ServerUtils {
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
 
-    public boolean deleteEvent(UUID id) throws WebApplicationException {
-        return false;
+    public void deleteEvent(UUID id) throws WebApplicationException {
+        ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL())
+                .path("api/event/" + id)
+                .request()
+                .delete();
+
     }
 
     @SuppressWarnings("unchecked")

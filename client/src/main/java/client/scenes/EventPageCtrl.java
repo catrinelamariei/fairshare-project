@@ -47,6 +47,9 @@ import java.util.regex.Pattern;
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    //delete event
+    @FXML
+    private Button deleteEventButton;
 
     //transaction attributes and buttons
     @FXML
@@ -147,8 +150,6 @@ public class EventPageCtrl implements Initializable {
                             })
                             .toArray(CheckBox[]::new)
             );
-            //c1f05a35-1407-4ba1-ada3-0692649256b8
-
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
                 UserData.getInstance().getCurrentUUID(), e);
@@ -356,6 +357,20 @@ public class EventPageCtrl implements Initializable {
         Pattern pattern = Pattern.compile(regexPattern);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    public void onDeleteEvent() {
+        try {
+            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+            UUID eventId = event.getId();
+            server.deleteEvent(eventId);
+            mainCtrl.showStartPage();
+
+        } catch (WebApplicationException e) {
+            System.err.println("Error deleting event: " + e.getMessage());
+        }
+        //ea8ddca2-0712-4f4a-8410-fe712ab8b86a
+        //dd9101e0-5bd1-4df7-bc8c-26d894cb3c71
     }
 }
 
