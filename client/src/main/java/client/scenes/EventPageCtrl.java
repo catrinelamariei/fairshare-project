@@ -217,7 +217,6 @@ public class EventPageCtrl implements Initializable {
         participants.getPanes().add(participantNode);
     }
 
-<<<<<<< client/src/main/java/client/scenes/EventPageCtrl.java
     public void toggle(){
         System.out.println("test");
     }
@@ -231,10 +230,6 @@ public class EventPageCtrl implements Initializable {
         String currency = (String) currencyCodeInput.getValue();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
-=======
-
->>>>>>> client/src/main/java/client/scenes/EventPageCtrl.java
-
 
         try {
             if(name==null || transactionAmountString==null || currency==null || localDate==null){
