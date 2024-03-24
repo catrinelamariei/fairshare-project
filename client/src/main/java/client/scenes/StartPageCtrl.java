@@ -64,11 +64,15 @@ public class StartPageCtrl {
     public void onJoinEvent(){
         String text = joinedEvent.getText();
         if (text != null && !text.isEmpty()) {
-            System.out.println(text + " Event joined");
-            UserData data = UserData.getInstance();
-            data.setCurrentUUID(UUID.fromString(text));
-            joinedEvent.clear();
-            eventPage();
+            try{
+                UserData data = UserData.getInstance();
+                data.setCurrentUUID(UUID.fromString(text));
+                joinedEvent.clear();
+                eventPage();
+            }catch(IllegalArgumentException ex){
+                MainCtrl.alert("Event not found. Please enter a valid event code.");
+            }
+
         } else {
             // Display an error message if the input is invalid
             Alert alert = new Alert(Alert.AlertType.ERROR);
