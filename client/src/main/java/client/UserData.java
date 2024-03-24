@@ -7,7 +7,7 @@ import java.util.UUID;
 public final class UserData {
 
     private String token;
-    private UUID currentUUID;
+    private UUID currentUUID=UUID.randomUUID();
 
     private Set<UUID> recentUUIDs = new HashSet<>();
 
