@@ -90,6 +90,8 @@ public class EventPageCtrl implements Initializable {
     private TextField email;
     @FXML
     private TextField iban;
+    @FXML
+    private TextField bic;
 
     // invite code logic
     @FXML
@@ -215,10 +217,16 @@ public class EventPageCtrl implements Initializable {
         participants.getPanes().add(participantNode);
     }
 
+    public void toggle(){
+        System.out.println("test");
+    }
 
+    /**
+     * This method is NOT done.
+     */
     public void onCreateTransaction(){
-        String name = transactionName.getText();
-        String transactionAmountString = transactionAmount.getText();
+        String name = transactionName.getText().trim();
+        String transactionAmountString = transactionAmount.getText().trim();
         String currency = (String) currencyCodeInput.getValue();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
@@ -312,18 +320,20 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void onAddParticipant() {
-        String fName = firstName.getText();
-        String lName = lastName.getText();
-        String mail = email.getText();
-        String ibanText = iban.getText();
+        String fName = firstName.getText().trim();
+        String lName = lastName.getText().trim();
+        String mail = email.getText().trim();
+        String ibanText = iban.getText().trim();
+        String bicText = bic.getText().trim();
         ParticipantDTO participantDTO;
 
         try {
-            if (fName.isEmpty() || lName.isEmpty()|| mail.isEmpty()||ibanText.isEmpty()) {
+            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()
+                    || ibanText.isEmpty() || bicText.isEmpty()) {
                 throw new IllegalArgumentException();
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
-                fName, lName, mail, ibanText, ""); // TODO: replace empty string with bic
+                fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
             participants.getPanes().add(new ParticipantNode(participantDTO));
         } catch (IllegalArgumentException e) {
@@ -337,6 +347,7 @@ public class EventPageCtrl implements Initializable {
         lastName.clear();
         email.clear();
         iban.clear();
+        bic.clear();
     }
 
     public static void printParticipantsSplit(Set<ParticipantDTO> participants){
