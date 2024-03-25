@@ -271,8 +271,7 @@ public class EventPageCtrl implements Initializable {
         printParticipantsSplit(participants);
 
         // TODO: this should be taken from user input
-        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
-                UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
+        Set<TagDTO> tags = new HashSet<>();
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
