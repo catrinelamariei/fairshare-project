@@ -46,8 +46,7 @@ public class TagController {
     //todo fix name of method
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity updateTag(@PathVariable("id") UUID id) {
-        if(id==null) return ResponseEntity.badRequest().build();
+    public ResponseEntity deleteTag(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         repo.deleteById(id);
         return ResponseEntity.ok().build();

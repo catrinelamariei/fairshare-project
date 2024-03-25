@@ -114,6 +114,9 @@ public class ServerUtils {
         return null;
     }
 
+    //create a gatParticipants method
+    // //- returns a list of all participants from the event
+
     public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
             .target(UserData.getInstance().getServerURL()).path("api/participants/")
@@ -169,4 +172,6 @@ public class ServerUtils {
     public void putJSON(String json, UUID id) throws WebApplicationException {
 
     }
+
+
 }

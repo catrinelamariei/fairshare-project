@@ -35,6 +35,7 @@ public class MainCtrl {
                            Pair<TransactionPageCtrl, Parent> transactionPage) {
 
         this.primaryStage = primaryStage;
+        this.primaryStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
 
         this.startPageCtrl = startPage.getKey();
         this.startPage = new Scene(startPage.getValue());
