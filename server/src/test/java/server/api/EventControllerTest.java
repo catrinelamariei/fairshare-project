@@ -119,7 +119,7 @@ public class EventControllerTest {
     @Test
     public void getEventTagsById() {
         when(repo.existsById(event.id)).thenReturn(true);
-        when(repo.findById(event.id)).thenReturn(java.util.Optional.of(event));
+        when(repo.getReferenceById(event.id)).thenReturn(event);
         ResponseEntity<Set<TagDTO>> response = controller.getEventTagsById(event.id);
         assertEquals(Collections.emptySet(), response.getBody());
 

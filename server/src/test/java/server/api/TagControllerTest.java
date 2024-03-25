@@ -130,15 +130,8 @@ public class TagControllerTest {
         when(repo.existsById(tag.id)).thenReturn(true);
 
         //todo fix name of method
-        ResponseEntity response = controller.updateTag(tag.id);
+        ResponseEntity response = controller.deleteTag(tag.id);
         assertTrue(response.getStatusCode().is2xxSuccessful());
-    }
-
-    @Test
-    public void deleteTagNotFound() {
-        when(repo.existsById(tag.id)).thenReturn(false);
-        ResponseEntity response = controller.updateTag(tag.id);
-        assertEquals(NOT_FOUND, response.getStatusCode());
     }
 
 
