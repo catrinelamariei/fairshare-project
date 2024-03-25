@@ -162,7 +162,7 @@ Event event = new Event("event");
         ParticipantDTO participantDTO = new ParticipantDTO(participant);
         participantDTO.firstName = "new name";
         participant.firstName = "new name";
-        when(participantRepository.findById(participantDTO.getId())).thenReturn(java.util.Optional.of(participant));
+        when(participantRepository.getReferenceById(participantDTO.getId())).thenReturn(participant);
         when(participantRepository.save(participant)).thenReturn(participant);
         assertEquals(participant, d2e.update(participantDTO));
     }
