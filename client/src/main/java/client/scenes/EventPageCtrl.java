@@ -40,11 +40,20 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    //delete event
+    @FXML
+    private Button deleteEventButton;
+
+    //event header
+    @FXML
+    private Text eventTitle;
 
     //transaction attributes and buttons
     @FXML
@@ -128,6 +137,9 @@ public class EventPageCtrl implements Initializable {
         try {
             EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
+            //update name
+            eventTitle.setText(event.name);
+
             //load transactions
             transactions.getChildren().clear();
             transactions.getChildren().addAll(event.transactions.stream().map(TransactionNode::new)
@@ -142,17 +154,8 @@ public class EventPageCtrl implements Initializable {
             authorInput.setItems(FXCollections.observableArrayList(event.participants));
 
             //checkboxes for participants
-            vboxParticipantsTransaction.getChildren().clear();
-            vboxParticipantsTransaction.getChildren().addAll(
-                    authorInput.getItems().stream()
-                            .map(participant -> {
-                                CheckBox checkBox = new CheckBox(participant.toString());
-                                checkBox.setUserData(participant);
-                                return checkBox;
-                            })
-                            .toArray(CheckBox[]::new)
-            );
-            //c1f05a35-1407-4ba1-ada3-0692649256b8
+            vboxParticipantsTransaction.getChildren().setAll(event.participants.stream()
+                .map(EventPageCtrl::participantCheckbox).toList());
 
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
@@ -160,11 +163,17 @@ public class EventPageCtrl implements Initializable {
         }
     }
 
+    private static CheckBox participantCheckbox(ParticipantDTO participant) {
+        CheckBox checkBox = new CheckBox(participant.toString());
+        checkBox.setUserData(participant);
+        return checkBox;
+    }
+
     public void gotoHome() {
         mainCtrl.showStartPage();
     }
     public void gotoAdminLogin() {
-        mainCtrl.showAdminCheckPage();
+        mainCtrl.showAdminPage();
     }
 
     public void copyInviteCode() {
@@ -332,14 +341,27 @@ public class EventPageCtrl implements Initializable {
         ParticipantDTO participantDTO;
 
         try {
-            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()
-                    || ibanText.isEmpty() || bicText.isEmpty()) {
+            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()) {
                 throw new IllegalArgumentException();
+            }
+            if (!isValidEmail(mail)) {
+                MainCtrl.alert("Please enter a valid email address");
+                return;
+            }
+            if(bicText.isEmpty()){
+                bicText="-";
+            }
+            if(ibanText.isEmpty()){
+                ibanText="-";
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
                 fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
+
+            //updating event page
             participants.getPanes().add(new ParticipantNode(participantDTO));
+            authorInput.getItems().add(participantDTO);
+            vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
             return;
@@ -408,6 +430,29 @@ public class EventPageCtrl implements Initializable {
             System.out.println(participant);
         }
     }
+    private boolean isValidEmail(String email) {
+        // Regex pattern to match email address
+        String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 
+    public void onDeleteEvent() {
+        try {
+//            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+//            UUID eventId = event.getId();
+//            server.deleteEvent(eventId);
+//            mainCtrl.showStartPage();
+            UUID currentUUID = UserData.getInstance().getCurrentUUID();
+            server.deleteEvent(currentUUID);
+            mainCtrl.showStartPage();
+
+        } catch (WebApplicationException e) {
+            System.err.println("Error deleting event: " + e.getMessage());
+        }
+        //ea8ddca2-0712-4f4a-8410-fe712ab8b86a
+        //dd9101e0-5bd1-4df7-bc8c-26d894cb3c71
+    }
 }
 
