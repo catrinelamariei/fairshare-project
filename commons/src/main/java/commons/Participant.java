@@ -132,4 +132,15 @@ public class Participant {
     }
 
 
+    public void addTransaction(Transaction transaction) {
+        participatedTransactions.add(transaction);
+    }
+
+    public Set<Transaction> getParticipatedTransactions() {
+        return participatedTransactions;
+    }
+
+    public Set<Transaction> getPaidTransaction() {
+        return paidTransactions;
+    }
 }
