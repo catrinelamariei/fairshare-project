@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.TransactionRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -57,18 +58,28 @@ public class TransactionController {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
-        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
-        Transaction transaction = repo.getReferenceById(id);
-
-        for (Participant participant : transaction.getParticipants()) {
-            participant.participatedTransactions.remove(transaction);
+        Optional<Transaction> optionalTransaction = repo.findById(id);
+        if (optionalTransaction.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+        Transaction transaction = optionalTransaction.get();
 
+        // Remove transaction from associated tags
         for (Tag tag : transaction.getTags()) {
-            tag.transactions.remove(transaction);
+            //todo
+            //tag.getTransactions().remove(transaction);
         }
+
+        // Remove transaction from associated participants
+        for (Participant participant : transaction.getParticipants()) {
+            participant.getParticipatedTransactions().remove(transaction);
+        }
+
+        transaction.author.getPaidTransaction().remove(transaction);
+
         // Delete the transaction
         repo.delete(transaction);
+
         return ResponseEntity.ok(new TransactionDTO(transaction));
     }
 }
