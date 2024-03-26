@@ -173,7 +173,7 @@ public class EventPageCtrl implements Initializable {
         mainCtrl.showStartPage();
     }
     public void gotoAdminLogin() {
-        mainCtrl.showAdminCheckPage();
+        mainCtrl.showAdminPage();
     }
 
     public void copyInviteCode() {

@@ -111,6 +111,6 @@ public class StartPageCtrl {
     }
 
     public void adminPage() {
-        mainCtrl.showAdminCheckPage();
+        mainCtrl.showAdminPage();
     }
 }
