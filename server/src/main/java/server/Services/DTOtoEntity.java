@@ -148,7 +148,7 @@ public class DTOtoEntity {
         //create & save tag
         Tag tag = new Tag(t);
         tag.event = eventRepository.getReferenceById(t.eventId);
-        tagRepository.save(tag);
+        tag = tagRepository.save(tag);
 
         //update event
         tag.event.addTag(tag);
