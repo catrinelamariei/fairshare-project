@@ -6,22 +6,34 @@ import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.Authentication.Authenticator;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @RestController
 @RequestMapping("/api/event")
-public class EventController {
+public class EventController implements WebMvcConfigurer {
     private final EventRepository repo;
     private final DTOtoEntity d2e;
     public EventController(EventRepository repo, DTOtoEntity dtoToEntity) {
         this.repo = repo;
         this.d2e = dtoToEntity;
     }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new Authenticator()).addPathPatterns("/api/events/");
+    }
+
+    @GetMapping(path = {"", "/"})
+    public ResponseEntity<Collection<EventDTO>> getAllEvents(){
+        return ResponseEntity.ok(repo.findAll().stream().map(EventDTO::new).toList());
+    }
+
 
 //    @Transactional
     @PostMapping(path = {"" , "/"})

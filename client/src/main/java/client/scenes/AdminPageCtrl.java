@@ -10,9 +10,7 @@ import javafx.scene.control.Accordion;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.Collection;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 public class AdminPageCtrl {
     private final ServerUtils server;
@@ -38,7 +36,13 @@ public class AdminPageCtrl {
     public void load() {
         //get all events and insert into accordion
         Collection<EventDTO> events = server.getAllEvents();
-        eventAccordion.getPanes().addAll(events.stream().map(EventNode::new).toList());
+
+        List<EventNode> list = new ArrayList<>();
+        for (EventDTO event : events) {
+            EventNode eventNode = new EventNode(event);
+            list.add(eventNode);
+        }
+        eventAccordion.getPanes().addAll(list);
     }
 
     public void homePage() {

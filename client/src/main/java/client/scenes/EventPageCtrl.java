@@ -2,9 +2,11 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.UserData;
+import client.scenes.javaFXClasses.DebtGraph;
+import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
-import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -19,27 +21,27 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
+import javafx.util.Duration;
+import javafx.util.Pair;
 
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-
-import javafx.util.Duration;
-
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,6 +103,11 @@ public class EventPageCtrl implements Initializable {
     // invite code logic
     @FXML
     private Button copyButton;
+
+    @FXML
+    private VBox debts;
+    @FXML
+    private Button settleButton;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -362,6 +369,55 @@ public class EventPageCtrl implements Initializable {
         bic.clear();
     }
 
+    public void debtSimplification() {
+
+        debts.getChildren().clear();
+
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+        DebtGraph graph = new DebtGraph(event);
+        PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
+        PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
+
+        // end if no debts to simplify
+        if (positive.isEmpty()) {
+            debts.getChildren().add(new Text("No debts to simplify"));
+            return;
+        }
+
+        // display debts if there are debts to simplify
+        while (!positive.isEmpty() && !negative.isEmpty()) {
+
+            Pair<ParticipantDTO, Double> pos = positive.poll();
+            Pair<ParticipantDTO, Double> neg = negative.poll();
+
+            ParticipantDTO creditor = pos.getKey();
+            ParticipantDTO debtor = neg.getKey();
+            Double credit = pos.getValue();
+            Double debt = neg.getValue();
+            double settlementAmount = Math.min(credit, Math.abs(debt));
+
+            // deal with currency later
+            DebtNode debtNode = new DebtNode(debtor, creditor, "eur", settlementAmount);
+            debts.getChildren().add(debtNode);
+            // Update debts
+            credit -= settlementAmount;
+            debt += settlementAmount;
+
+            // Reinsert participants into priority queues if they still have non-zero debt
+            if (debt < 0) {
+                negative.offer(new Pair<>(debtor, debt));
+            }
+            if (credit > 0) {
+                positive.offer(new Pair<>(creditor, credit));
+            }
+        }
+
+        // update the button
+        settleButton.setText("Refresh debts");
+
+    }
+
     public static void printParticipantsSplit(Set<ParticipantDTO> participants){
         for(ParticipantDTO participant : participants){
             System.out.println(participant);
@@ -369,7 +425,7 @@ public class EventPageCtrl implements Initializable {
     }
     private boolean isValidEmail(String email) {
         // Regex pattern to match email address
-        String regexPattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.com$";
+        String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regexPattern);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
