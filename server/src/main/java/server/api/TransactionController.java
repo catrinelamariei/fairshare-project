@@ -77,9 +77,14 @@ public class TransactionController {
 
         transaction.author.getPaidTransaction().remove(transaction);
 
+        transaction.author = null;
+        transaction.participants.clear();
+
         // Delete the transaction
         repo.delete(transaction);
 
-        return ResponseEntity.ok(new TransactionDTO(transaction));
+
+        //todo
+        return ResponseEntity.ok().build();
     }
 }
