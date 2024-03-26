@@ -156,6 +156,11 @@ public class EventPageCtrl implements Initializable {
                             })
                             .toArray(CheckBox[]::new)
             );
+
+            // debts
+            debts.getPanes().clear();
+            settleButton.setText("Settle debts");
+
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
                 UserData.getInstance().getCurrentUUID(), e);
