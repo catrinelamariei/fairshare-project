@@ -138,7 +138,7 @@ public class TransactionControllerTest {
         when(repo.getReferenceById(transaction.id)).thenReturn(transaction);
         ResponseEntity<TransactionDTO> response = controller.deleteTransactionById(transaction.id);
         assertEquals(transactionDTO, response.getBody());
-        verify(repo).deleteById(transaction.id);
+        verify(repo).delete(transaction);
     }
 
     @Test
