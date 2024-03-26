@@ -8,10 +8,13 @@ import commons.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
+
+import static javafx.collections.FXCollections.observableArrayList;
 
 public class AdminPageCtrl implements Initializable {
     private final ServerUtils server;
@@ -27,6 +30,8 @@ public class AdminPageCtrl implements Initializable {
     private ChoiceBox<EventDTO.EventComparator> comparatorList;
     @FXML
     private Button ascDescButton;
+    @FXML
+    private HBox sortingContainer;
 
     @Inject
     public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -36,9 +41,10 @@ public class AdminPageCtrl implements Initializable {
 
     //run on startup
     public void initialize(URL location, ResourceBundle resources) {
-        comparatorList.getItems().addAll(EventDTO.EventComparator.values());
+        comparatorList.setItems(observableArrayList(EventDTO.EventComparator.values()));
         comparatorList.setValue(EventDTO.EventComparator.name);
-        comparatorList.valueProperty().addListener(((observableValue, oldVal, newVal) -> reSort()));
+        comparatorList.valueProperty().addListener(((ov, oldVal, newVal) -> reSort()));
+        overviewTab.selectedProperty().addListener(((ov, oldVal, newVal) -> toggleTab(newVal)));
     }
 
     /**
@@ -84,6 +90,13 @@ public class AdminPageCtrl implements Initializable {
         ascending = !ascending;
         ascDescButton.setText(ascending ? "Ascending" : "Descending");
         reSort();
+    }
+
+    /**
+     * toggle extra sort-fields when closing/opening overview tab
+     */
+    private void toggleTab(boolean opened) {
+        sortingContainer.setManaged(opened);
     }
 
     //JSON

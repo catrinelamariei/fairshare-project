@@ -226,15 +226,28 @@
                                     <HBox alignment="CENTER" prefHeight="25.0">
                                        <children>
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Overview" />
-                                          <ChoiceBox fx:id="comparatorList" prefHeight="25.0" prefWidth="93.0">
-                                             <opaqueInsets>
-                                                <Insets />
-                                             </opaqueInsets>
-                                             <HBox.margin>
-                                                <Insets left="5.0" right="5.0" />
-                                             </HBox.margin>
-                                          </ChoiceBox>
-                                          <Button fx:id="ascDescButton" mnemonicParsing="false" onAction="#toggleAscDesc" prefWidth="80.0" text="Ascending" />
+                                          <HBox fx:id="sortingContainer" alignment="CENTER">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="sort on">
+                                                   <HBox.margin>
+                                                      <Insets left="5.0" />
+                                                   </HBox.margin>
+                                                </Text>
+                                                <ChoiceBox fx:id="comparatorList" prefWidth="70.0">
+                                                   <opaqueInsets>
+                                                      <Insets />
+                                                   </opaqueInsets>
+                                                   <HBox.margin>
+                                                      <Insets left="5.0" />
+                                                   </HBox.margin>
+                                                </ChoiceBox>
+                                                <Button fx:id="ascDescButton" mnemonicParsing="false" onAction="#toggleAscDesc" prefWidth="80.0" text="Ascending">
+                                                   <HBox.margin>
+                                                      <Insets left="5.0" />
+                                                   </HBox.margin>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                        </children>
                                     </HBox>
                                  </graphic>

@@ -3,7 +3,6 @@ package commons.DTOs;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import commons.Event;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.*;
 
@@ -43,8 +42,8 @@ public class EventDTO {
 
     @JsonIgnore
     public Date getLastActivity() {
-        // TODO: implement this
-        throw new NotImplementedException();
+        if (transactions.isEmpty()) return date; //no transactions -> return creation date
+        return transactions.stream().map(TransactionDTO::getDate).max(Date::compareTo).get();
     }
 
     public boolean validate() {
