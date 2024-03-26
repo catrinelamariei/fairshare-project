@@ -42,21 +42,31 @@ public class PrivCheckPageCtrl {
     }
 
     public void login() {
-        String response = postRequest(password.getText());
+        String passwordText = password.getText();
+        if(passwordText!=null && !passwordText.isEmpty()){
+            String response = postRequest(password.getText());
 
-        if(!response.equals("Invalid password")) {
-            UserData data = UserData.getInstance();
-            data.setToken(response);
-            System.out.println("1. token: " + response);
-            adminPage();
+            if(!response.equals("Invalid password")) {
+                UserData data = UserData.getInstance();
+                data.setToken(response);
+                System.out.println("1. token: " + response);
+                adminPage();
+            }else{
+                text.setStyle("-fx-text-fill: red;");
+                text.setText("Wrong code");
+            }
         }else{
-            text.setStyle("-fx-text-fill: red;");
-            text.setText("Wrong code");
+            mainCtrl.alert("Please provide a password");
         }
+
     }
 
     public void adminPage(){
         mainCtrl.showAdminPage();
+    }
+
+    public void goToHome(){
+        mainCtrl.showStartPage();
     }
 
 

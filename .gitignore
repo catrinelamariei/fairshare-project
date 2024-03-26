@@ -1,5 +1,6 @@
 HELP.md
 commit_msg.md
+config.json
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

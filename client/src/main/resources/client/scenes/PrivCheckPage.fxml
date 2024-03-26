@@ -24,4 +24,5 @@
          <Font size="26.0" />
       </font>
    </Button>
+   <Button layoutX="685.0" layoutY="14.0" mnemonicParsing="false" onAction="#goToHome" text="Home" />
 </AnchorPane>
