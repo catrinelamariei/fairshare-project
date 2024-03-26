@@ -54,13 +54,12 @@ public class StartPageCtrl {
 
         newEvent.clear();
         UserData.getInstance().setCurrentUUID(e.getId());
-        UserData.getInstance().getRecentUUIDs().add(e.getId());
         //confirmation dialog
         MainCtrl.inform(text + " event created!");
         mainCtrl.showEventPage();
     }
 
-    //this method still needs work done
+    //TODO: this method still needs work done
     //because it doesn't do anything after you press join
     public void onJoinEvent(){
         String text = joinedEvent.getText();

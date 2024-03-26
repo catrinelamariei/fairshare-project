@@ -32,18 +32,18 @@ public class TransactionNode extends HBox {
         Text date = new Text(formatter.format(ts.date));
 
         //main body
-        Text desc = new Text(String.format("%s payed %.2f%s for %s",
-            ts.author.firstName, ts.amount, ts.currencyCode, ts.subject));
+        Text desc = new Text(String.format("%s paid %.2f%s for %s",
+            ts.author.firstName.trim(), ts.amount, ts.currencyCode, ts.subject));
         desc.getStyleClass().add("desc"); //set css class to .desc
 
-        Text particants = new Text("(" +
+        Text participants = new Text("(" +
             ts.participants.stream()
-                .map(p -> p.firstName)
+                .map(p -> p.firstName.trim())
                 .collect(Collectors.joining(", "))
             + ")"); //concatenate with ", " in between each name
-        particants.getStyleClass().add("participantText"); //set css class to .participants
+        participants.getStyleClass().add("participantText"); //set css class to .participants
 
-        VBox body = new VBox(desc, particants);
+        VBox body = new VBox(desc, participants);
 
         // Delete Button
         Button deleteTransactionButton = new Button("Delete");

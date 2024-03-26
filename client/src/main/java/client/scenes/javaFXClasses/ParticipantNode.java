@@ -59,7 +59,7 @@ public class ParticipantNode extends TitledPane {
         nameField = new TextField(participant.getFullName());
         emailField = new TextField(participant.email);
         ibanField = new TextField(participant.iban);
-        bicField = new TextField("???");
+        bicField = new TextField(participant.bic);
         //apply style
         List.of(nameField, emailField, ibanField, bicField)
                 .forEach(tf -> {

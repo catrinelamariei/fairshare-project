@@ -2,9 +2,11 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.UserData;
+import client.scenes.javaFXClasses.DebtGraph;
+import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
-import client.utils.ServerUtils;
 import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -19,27 +21,27 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
+import javafx.util.Duration;
+import javafx.util.Pair;
 
 import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-
-import javafx.util.Duration;
-
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 
 public class EventPageCtrl implements Initializable {
@@ -90,10 +92,17 @@ public class EventPageCtrl implements Initializable {
     private TextField email;
     @FXML
     private TextField iban;
+    @FXML
+    private TextField bic;
 
     // invite code logic
     @FXML
     private Button copyButton;
+
+    @FXML
+    private VBox debts;
+    @FXML
+    private Button settleButton;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -215,10 +224,16 @@ public class EventPageCtrl implements Initializable {
         participants.getPanes().add(participantNode);
     }
 
+    public void toggle(){
+        System.out.println("test");
+    }
 
+    /**
+     * This method is NOT done.
+     */
     public void onCreateTransaction(){
-        String name = transactionName.getText();
-        String transactionAmountString = transactionAmount.getText();
+        String name = transactionName.getText().trim();
+        String transactionAmountString = transactionAmount.getText().trim();
         String currency = (String) currencyCodeInput.getValue();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
@@ -312,18 +327,20 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void onAddParticipant() {
-        String fName = firstName.getText();
-        String lName = lastName.getText();
-        String mail = email.getText();
-        String ibanText = iban.getText();
+        String fName = firstName.getText().trim();
+        String lName = lastName.getText().trim();
+        String mail = email.getText().trim();
+        String ibanText = iban.getText().trim();
+        String bicText = bic.getText().trim();
         ParticipantDTO participantDTO;
 
         try {
-            if (fName.isEmpty() || lName.isEmpty()|| mail.isEmpty()||ibanText.isEmpty()) {
+            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()
+                    || ibanText.isEmpty() || bicText.isEmpty()) {
                 throw new IllegalArgumentException();
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
-                fName, lName, mail, ibanText, ""); // TODO: replace empty string with bic
+                fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
             participants.getPanes().add(new ParticipantNode(participantDTO));
         } catch (IllegalArgumentException e) {
@@ -337,6 +354,56 @@ public class EventPageCtrl implements Initializable {
         lastName.clear();
         email.clear();
         iban.clear();
+        bic.clear();
+    }
+
+    public void debtSimplification() {
+
+        debts.getChildren().clear();
+
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+        DebtGraph graph = new DebtGraph(event);
+        PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
+        PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
+
+        // end if no debts to simplify
+        if (positive.isEmpty()) {
+            debts.getChildren().add(new Text("No debts to simplify"));
+            return;
+        }
+
+        // display debts if there are debts to simplify
+        while (!positive.isEmpty() && !negative.isEmpty()) {
+
+            Pair<ParticipantDTO, Double> pos = positive.poll();
+            Pair<ParticipantDTO, Double> neg = negative.poll();
+
+            ParticipantDTO creditor = pos.getKey();
+            ParticipantDTO debtor = neg.getKey();
+            Double credit = pos.getValue();
+            Double debt = neg.getValue();
+            double settlementAmount = Math.min(credit, Math.abs(debt));
+
+            // deal with currency later
+            DebtNode debtNode = new DebtNode(debtor, creditor, "eur", settlementAmount);
+            debts.getChildren().add(debtNode);
+            // Update debts
+            credit -= settlementAmount;
+            debt += settlementAmount;
+
+            // Reinsert participants into priority queues if they still have non-zero debt
+            if (debt < 0) {
+                negative.offer(new Pair<>(debtor, debt));
+            }
+            if (credit > 0) {
+                positive.offer(new Pair<>(creditor, credit));
+            }
+        }
+
+        // update the button
+        settleButton.setText("Refresh debts");
+
     }
 
     public static void printParticipantsSplit(Set<ParticipantDTO> participants){
@@ -344,5 +411,6 @@ public class EventPageCtrl implements Initializable {
             System.out.println(participant);
         }
     }
+
 }
 
