@@ -24,7 +24,7 @@
                   </Button>
                   <HBox>
                      <children>
-                        <MenuButton mnemonicParsing="false" style="-fx-background-color: gray;" text="New Year Party">
+                        <MenuButton mnemonicParsing="false" style="-fx-background-color: grey;" text="New Year Party">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#gotoAdminLogin" text="Admin Panel" />
                           </items>
@@ -32,7 +32,7 @@
                               <Insets left="5.0" />
                            </HBox.margin>
                         </MenuButton>
-                        <Button mnemonicParsing="false" style="-fx-background-color: gray;" text="x">
+                        <Button mnemonicParsing="false" style="-fx-background-color: grey;" text="x">
                            <HBox.margin>
                               <Insets left="-5.0" />
                            </HBox.margin>
@@ -232,6 +232,31 @@
                                     </AnchorPane>
                                  </content></Tab>
                               <Tab text="Queries" />
+                              <Tab text="Debts">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                      </content>
+                                    </ScrollPane>
+                                 </content>
+                                 <content>
+                                    <ScrollPane fx:id="debts_sp" prefHeight="200.0" prefWidth="200.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="283.0" prefWidth="783.0">
+                                             <children>
+                                                <VBox fx:id="debts" layoutX="6.0" layoutY="58.0" prefHeight="207.0" prefWidth="754.0" />
+                                                <Button fx:id="settleButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#debtSimplification" text="Settle Debts">
+                                                   <font>
+                                                      <Font size="15.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
                           </tabs>
                         </TabPane>
                      </content>
