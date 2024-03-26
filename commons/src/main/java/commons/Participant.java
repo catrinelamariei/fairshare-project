@@ -39,7 +39,7 @@ public class Participant {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     public Set<Transaction> paidTransactions;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "participants")
     public Set<Transaction> participatedTransactions;
 
     @SuppressWarnings("unused")

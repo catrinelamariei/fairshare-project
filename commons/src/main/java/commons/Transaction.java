@@ -31,7 +31,7 @@ public class Transaction {
     @ManyToOne
     public Event event;
 
-    @ManyToMany(mappedBy = "participatedTransactions", cascade = CascadeType.REMOVE)
+    @ManyToMany(cascade = CascadeType.REMOVE)
     public Set<Participant> participants;
 
     @ManyToMany

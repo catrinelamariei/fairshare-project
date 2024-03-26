@@ -69,7 +69,7 @@ public class DTOtoEntity {
         transaction.event = eventRepository.getReferenceById(t.eventId);
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
-        if(t.tags != null || !t.tags.isEmpty()) {
+        if(t.tags != null || !t.tags.isEmpty()) { // TODO: look into this .isempty()
             transaction.tags.addAll(t.tags.stream().map(this::get).toList());
         }
         transaction = transactionRepository.save(transaction);
