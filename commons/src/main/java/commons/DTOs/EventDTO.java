@@ -1,5 +1,7 @@
 package commons.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import commons.Event;
 
 import java.util.*;
@@ -36,6 +38,12 @@ public class EventDTO {
         this.date = new Date();
         this.participants = new HashSet<>();
         this.transactions = new HashSet<>();
+    }
+
+    @JsonIgnore
+    public Date getLastActivity() {
+        if (transactions.isEmpty()) return date; //no transactions -> return creation date
+        return transactions.stream().map(TransactionDTO::getDate).max(Date::compareTo).get();
     }
 
     public boolean validate() {
@@ -84,5 +92,17 @@ public class EventDTO {
     public int hashCode() {
         return Objects.hash(getId(), getName(), getTags(), getDate(),
                 getParticipants(), getTransactions());
+    }
+    @JsonIgnoreType
+    public enum EventComparator {
+        name(Comparator.comparing(EventDTO::getName, String.CASE_INSENSITIVE_ORDER)),
+        date(Comparator.comparing(EventDTO::getDate)),
+        activity(Comparator.comparing(EventDTO::getLastActivity));
+
+        public final Comparator<EventDTO> cmp;
+
+        EventComparator(Comparator<EventDTO> cmp) {
+            this.cmp = cmp;
+        }
     }
 }

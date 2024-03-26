@@ -29,7 +29,7 @@ public class Tag {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     public Color color;
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.REMOVE)
     public Set<Transaction> transactions;
 
     public enum Color {
