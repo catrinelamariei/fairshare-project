@@ -26,7 +26,7 @@ public final class UserData {
 
     private UserData() {}
 
-    public UserData load() {
+    private UserData load() {
         try {
             this.update(objectMapper.readValue(new File(configFileName), UserData.class));
         } catch (JsonProcessingException e) {
