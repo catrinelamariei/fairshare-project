@@ -27,7 +27,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -103,7 +102,7 @@ public class EventPageCtrl implements Initializable {
     private Button copyButton;
 
     @FXML
-    private VBox debts;
+    private Accordion debts;
     @FXML
     private Button settleButton;
 
@@ -368,7 +367,7 @@ public class EventPageCtrl implements Initializable {
 
     public void debtSimplification() {
 
-        debts.getChildren().clear();
+        debts.getPanes().clear();
 
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
@@ -378,7 +377,11 @@ public class EventPageCtrl implements Initializable {
 
         // end if no debts to simplify
         if (positive.isEmpty()) {
-            debts.getChildren().add(new Text("No debts to simplify"));
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("No debts to simplify!");
+            alert.showAndWait();
             return;
         }
 
@@ -396,7 +399,7 @@ public class EventPageCtrl implements Initializable {
 
             // deal with currency later
             DebtNode debtNode = new DebtNode(debtor, creditor, "eur", settlementAmount);
-            debts.getChildren().add(debtNode);
+            debts.getPanes().add(debtNode);
             // Update debts
             credit -= settlementAmount;
             debt += settlementAmount;

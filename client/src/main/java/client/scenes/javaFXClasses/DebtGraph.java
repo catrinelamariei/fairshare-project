@@ -34,8 +34,10 @@ public class DebtGraph extends DirectedWeightedPseudograph<ParticipantDTO, Defau
         // (since they're splitting equally)
         for (TransactionDTO t : event.transactions) {
             // assign remainder to a random unlucky participant :)
-            double equalSplitAmount = t.amount.divide(BigDecimal.valueOf
-                (t.participants.size()), 2, RoundingMode.FLOOR).doubleValue();
+            double equalSplitAmount = t.amount
+                .divide(BigDecimal
+                .valueOf(t.participants.size()), 2, RoundingMode.FLOOR)
+                .doubleValue();
             double remainder = t.amount.doubleValue() - t.participants.size()*equalSplitAmount;
             List<ParticipantDTO> tempList = new ArrayList<>(t.participants);
             ParticipantDTO unluckyParticipant =
