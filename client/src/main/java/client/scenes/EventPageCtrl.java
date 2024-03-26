@@ -433,9 +433,12 @@ public class EventPageCtrl implements Initializable {
 
     public void onDeleteEvent() {
         try {
-            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
-            UUID eventId = event.getId();
-            server.deleteEvent(eventId);
+//            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+//            UUID eventId = event.getId();
+//            server.deleteEvent(eventId);
+//            mainCtrl.showStartPage();
+            UUID currentUUID = UserData.getInstance().getCurrentUUID();
+            server.deleteEvent(currentUUID);
             mainCtrl.showStartPage();
 
         } catch (WebApplicationException e) {
