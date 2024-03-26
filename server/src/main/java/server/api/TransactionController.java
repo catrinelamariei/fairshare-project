@@ -1,5 +1,7 @@
 package server.api;
 import commons.DTOs.TransactionDTO;
+import commons.Participant;
+import commons.Tag;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +59,16 @@ public class TransactionController {
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         Transaction transaction = repo.getReferenceById(id);
-        repo.deleteById(id);
+
+        for (Participant participant : transaction.getParticipants()) {
+            participant.participatedTransactions.remove(transaction);
+        }
+
+        for (Tag tag : transaction.getTags()) {
+            tag.transactions.remove(transaction);
+        }
+        // Delete the transaction
+        repo.delete(transaction);
         return ResponseEntity.ok(new TransactionDTO(transaction));
     }
 }

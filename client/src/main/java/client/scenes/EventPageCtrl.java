@@ -11,7 +11,6 @@ import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Tag.Color;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -40,7 +39,6 @@ import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.*;
 
 
@@ -271,8 +269,7 @@ public class EventPageCtrl implements Initializable {
         printParticipantsSplit(participants);
 
         // TODO: this should be taken from user input
-        Set<TagDTO> tags = new HashSet<>(List.of(server.postTag(new TagDTO(null,
-                UserData.getInstance().getCurrentUUID(), "newTag", Color.BLUE))));
+        Set<TagDTO> tags = new HashSet<>();
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
