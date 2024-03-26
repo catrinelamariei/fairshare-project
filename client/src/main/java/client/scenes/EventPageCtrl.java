@@ -94,8 +94,6 @@ public class EventPageCtrl implements Initializable {
     // invite code logic
     @FXML
     private Button copyButton;
-    @FXML
-    private VBox recentEventsVBox;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {

@@ -37,9 +37,7 @@ public class StartPageCtrl {
     }
 
     public void initialize() {
-        recentEventsVBox.getChildren().clear();
         UserData data = UserData.getInstance();
-        data.load();
         updateCurrentEventsVBox(data);
 
     }
@@ -49,10 +47,8 @@ public class StartPageCtrl {
         for (UUID uuid : data.getRecentUUIDs()) {
             Hyperlink eventLink = new Hyperlink(serverUtils.getEvent(uuid).getName());
             eventLink.setOnAction(event -> {
-                if (uuid!=data.getRecentUUIDs().peek()) {
-                    data.setCurrentUUID(uuid);
-                    updateCurrentEventsVBox(data);
-                }
+                data.setCurrentUUID(uuid);
+                updateCurrentEventsVBox(data);
                 eventPage();
             });
             recentEventsVBox.getChildren().add(eventLink);
