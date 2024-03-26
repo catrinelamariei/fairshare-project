@@ -51,6 +51,10 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button deleteEventButton;
 
+    //event header
+    @FXML
+    private Text eventTitle;
+
     //transaction attributes and buttons
     @FXML
     private TextField transactionName;
@@ -133,6 +137,9 @@ public class EventPageCtrl implements Initializable {
         try {
             EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
+            //update name
+            eventTitle.setText(event.name);
+
             //load transactions
             transactions.getChildren().clear();
             transactions.getChildren().addAll(event.transactions.stream().map(TransactionNode::new)
@@ -147,20 +154,19 @@ public class EventPageCtrl implements Initializable {
             authorInput.setItems(FXCollections.observableArrayList(event.participants));
 
             //checkboxes for participants
-            vboxParticipantsTransaction.getChildren().clear();
-            vboxParticipantsTransaction.getChildren().addAll(
-                    authorInput.getItems().stream()
-                            .map(participant -> {
-                                CheckBox checkBox = new CheckBox(participant.toString());
-                                checkBox.setUserData(participant);
-                                return checkBox;
-                            })
-                            .toArray(CheckBox[]::new)
-            );
+            vboxParticipantsTransaction.getChildren().setAll(event.participants.stream()
+                .map(EventPageCtrl::participantCheckbox).toList());
+
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
                 UserData.getInstance().getCurrentUUID(), e);
         }
+    }
+
+    private static CheckBox participantCheckbox(ParticipantDTO participant) {
+        CheckBox checkBox = new CheckBox(participant.toString());
+        checkBox.setUserData(participant);
+        return checkBox;
     }
 
     public void gotoHome() {
@@ -351,7 +357,11 @@ public class EventPageCtrl implements Initializable {
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
                 fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
+
+            //updating event page
             participants.getPanes().add(new ParticipantNode(participantDTO));
+            authorInput.getItems().add(participantDTO);
+            vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
             return;

@@ -70,7 +70,7 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" cache="true" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="New Year Party" textAlignment="CENTER" wrappingWidth="343.6849365234375" HBox.hgrow="NEVER">
+                  <Text fx:id="eventTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="eventTitle" textAlignment="CENTER" HBox.hgrow="SOMETIMES">
                      <font>
                         <Font name="System Bold" size="36.0" />
                      </font>
