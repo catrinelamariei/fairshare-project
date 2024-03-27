@@ -1,7 +1,5 @@
 package server.api;
 import commons.DTOs.TransactionDTO;
-import commons.Participant;
-import commons.Tag;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.TransactionRepository;
 
-import java.util.Optional;
 import java.util.UUID;
 
 
