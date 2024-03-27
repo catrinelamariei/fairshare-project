@@ -58,33 +58,9 @@ public class TransactionController {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
-        Optional<Transaction> optionalTransaction = repo.findById(id);
-        if (optionalTransaction.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Transaction transaction = optionalTransaction.get();
-
-        // Remove transaction from associated tags
-        for (Tag tag : transaction.getTags()) {
-            //todo
-            //tag.getTransactions().remove(transaction);
-        }
-
-        // Remove transaction from associated participants
-        for (Participant participant : transaction.getParticipants()) {
-            participant.getParticipatedTransactions().remove(transaction);
-        }
-
-        transaction.author.getPaidTransaction().remove(transaction);
-
-        transaction.author = null;
-        transaction.participants.clear();
-
-        // Delete the transaction
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        Transaction transaction = repo.getReferenceById(id);
         repo.delete(transaction);
-
-
-        //todo
         return ResponseEntity.ok().build();
     }
 }

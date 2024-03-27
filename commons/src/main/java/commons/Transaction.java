@@ -26,7 +26,7 @@ public class Transaction {
     @ManyToOne
     public Event event;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany()
     public Set<Participant> participants;
 
     @ManyToMany
