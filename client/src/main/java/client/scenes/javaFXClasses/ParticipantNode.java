@@ -53,7 +53,7 @@ public class ParticipantNode extends TitledPane {
      * @param participant data to be used/displayed
      */
     public ParticipantNode(ParticipantDTO participant) {
-        super(participant.getFirstName().trim() + " " + participant.getLastName(), null);
+        super(participant.getFullName(), null);
         this.getStyleClass().add("participants"); //set CSS class
         this.id = participant.id;
 
