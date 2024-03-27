@@ -14,11 +14,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.util.Pair;
 
 import javax.inject.Inject;
 import java.util.Optional;
 import java.util.UUID;
+
+import static client.UserData.Pair;
 
 public class StartPageCtrl {
     private ServerUtils serverUtils;
@@ -43,7 +44,7 @@ public class StartPageCtrl {
 
     public void initialize() {
         //event links
-        recentEventsVBox.getChildren().removeAll(UserData.getInstance().getRecentUUIDs()
+        recentEventsVBox.getChildren().setAll(UserData.getInstance().getRecentUUIDs()
             .stream().map(EventHyperlink::new).toList());
     }
 

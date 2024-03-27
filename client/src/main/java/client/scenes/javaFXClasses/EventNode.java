@@ -16,11 +16,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
-import javafx.util.Pair;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
+
+import static client.UserData.Pair;
 public class EventNode extends TitledPane {
     private final Pair<UUID, String> idNamePair; // for UserData
     private final MainCtrl mainCtrl;

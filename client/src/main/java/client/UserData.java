@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.layout.VBox;
-import javafx.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -105,5 +104,36 @@ public final class UserData {
 
     public void setServerURL(String serverURL) {
         this.serverURL = serverURL;
+    }
+
+    /**
+     * custom pair class because the javafx.util.pair class is NOT deserializable
+     * @param <K> key
+     * @param <V> value
+     */
+    public static class Pair<K,V> {
+        private K key;
+        private V value;
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        public Pair(@JsonProperty("key") K key, @JsonProperty("value") V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public K getKey() {
+            return key;
+        }
+
+        public void setKey(K key) {
+            this.key = key;
+        }
+
+        public V getValue() {
+            return value;
+        }
+
+        public void setValue(V value) {
+            this.value = value;
+        }
     }
 }
