@@ -144,7 +144,7 @@ public class StartPageCtrl {
                 });
             } catch (NotFoundException e) {
                 this.pair = new Pair<>(p.getKey(), p.getValue());
-                this.setStyle("-fx-strikethrough: true");
+                this.getStyleClass().add("dissabledHyperlink");
                 this.setDisable(true); //cant be clicked on
             }
             this.setText(this.pair.getValue());
