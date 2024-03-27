@@ -1,9 +1,15 @@
 package client;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +24,7 @@ public final class UserData {
 
     //INCLUDED IN JSON
     private String token;
-    private ArrayDeque<UUID> recentUUIDs = new ArrayDeque<>();
+    private ArrayDeque<Pair<UUID, String>> recentUUIDs = new ArrayDeque<>();
     private String serverURL = "http://localhost:8080/";
 
     //NOT INCLUDED IN JSON
@@ -73,22 +79,23 @@ public final class UserData {
         return this.token;
     }
 
-    public ArrayDeque<UUID> getRecentUUIDs() {
+    public ArrayDeque<Pair<UUID, String>> getRecentUUIDs() {
         return recentUUIDs;
     }
 
-    public void setRecentUUIDs(ArrayDeque<UUID> recentUUIDs) {
+    public void setRecentUUIDs(
+        ArrayDeque<Pair<UUID, String>> recentUUIDs) {
         this.recentUUIDs = recentUUIDs;
     }
 
     @JsonIgnore
     public UUID getCurrentUUID() {
-        return recentUUIDs.peekFirst();
+        return recentUUIDs.peekFirst().getKey();
     }
 
-    public void setCurrentUUID(UUID currentUUID) {
-        recentUUIDs.remove(currentUUID); //remove if present
-        recentUUIDs.addFirst(currentUUID); //(re-)insert at front
+    public void setCurrentUUID(Pair<UUID, String> pair) {
+        recentUUIDs.removeIf(p -> p.getKey().equals(pair.getKey())); //remove if present
+        recentUUIDs.addFirst(pair); //(re-)insert at front
         save(); //save to filesystem
     }
 
