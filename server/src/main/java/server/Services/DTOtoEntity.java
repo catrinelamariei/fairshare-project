@@ -69,6 +69,10 @@ public class DTOtoEntity {
         transaction.event = eventRepository.getReferenceById(t.eventId);
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
+        for (ParticipantDTO p : t.participants) {
+            Participant participant = participantRepository.getReferenceById(p.id);
+            participant.addTransaction(transaction);
+        }
         if(t.tags != null || !t.tags.isEmpty()) {
             transaction.tags.addAll(t.tags.stream().map(this::get).toList());
         }
@@ -148,7 +152,7 @@ public class DTOtoEntity {
         //create & save tag
         Tag tag = new Tag(t);
         tag.event = eventRepository.getReferenceById(t.eventId);
-        tagRepository.save(tag);
+        tag = tagRepository.save(tag);
 
         //update event
         tag.event.addTag(tag);

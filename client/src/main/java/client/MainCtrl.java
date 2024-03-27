@@ -68,6 +68,11 @@ public class MainCtrl {
     }
 
     public void showAdminPage() {
+        if (UserData.getInstance().getToken() == null) {
+            showAdminCheckPage(); //if no key is present, obtain one
+            return;
+        }
+
         primaryStage.setTitle("<EventName>: admin panel");
         adminPageCtrl.load();
         primaryStage.setScene(adminPage);

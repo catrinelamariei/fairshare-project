@@ -24,6 +24,7 @@ public class EventController implements WebMvcConfigurer {
         this.repo = repo;
         this.d2e = dtoToEntity;
     }
+    // TODO: move this, also check path url because it doesn't match
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new Authenticator()).addPathPatterns("/api/events/");

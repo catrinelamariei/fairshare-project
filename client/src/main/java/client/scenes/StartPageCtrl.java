@@ -1,10 +1,8 @@
 package client.scenes;
+
 import client.MainCtrl;
 import client.UserData;
 import client.utils.ServerUtils;
-
-import javax.inject.Inject;
-
 import commons.DTOs.EventDTO;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
@@ -12,6 +10,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+
+import javax.inject.Inject;
 import java.util.UUID;
 
 public class StartPageCtrl {
@@ -26,17 +27,34 @@ public class StartPageCtrl {
     @FXML
     private TextField joinedEvent;
     @FXML
-    private Hyperlink eventA;
-    @FXML
-    private Hyperlink eventB;
-    @FXML
-    private Hyperlink eventC;
+    private VBox recentEventsVBox;
+
 
     @Inject
     public StartPageCtrl(ServerUtils serverUtils, MainCtrl mainCtrl) {
         this.serverUtils = serverUtils;
         this.mainCtrl = mainCtrl;
     }
+
+    public void initialize() {
+        UserData data = UserData.getInstance();
+        updateCurrentEventsVBox(data);
+
+    }
+
+    public void updateCurrentEventsVBox(UserData data) {
+        recentEventsVBox.getChildren().clear();
+        for (UUID uuid : data.getRecentUUIDs()) {
+            Hyperlink eventLink = new Hyperlink(serverUtils.getEvent(uuid).getName());
+            eventLink.setOnAction(event -> {
+                data.setCurrentUUID(uuid);
+                updateCurrentEventsVBox(data);
+                eventPage();
+            });
+            recentEventsVBox.getChildren().add(eventLink);
+        }
+    }
+
     public void onCreateEvent() {
         String text = newEvent.getText();
         EventDTO e;
@@ -53,22 +71,30 @@ public class StartPageCtrl {
         }
 
         newEvent.clear();
-        UserData.getInstance().setCurrentUUID(e.getId());
+        UserData data = UserData.getInstance();
+        data.setCurrentUUID(e.getId());
+        updateCurrentEventsVBox(data);
         //confirmation dialog
         MainCtrl.inform(text + " event created!");
         mainCtrl.showEventPage();
     }
 
-    //TODO: this method still needs work done
-    //because it doesn't do anything after you press join
-    public void onJoinEvent(){
+    public void onJoinEvent() {
         String text = joinedEvent.getText();
         if (text != null && !text.isEmpty()) {
-            System.out.println(text + " Event joined");
-            UserData data = UserData.getInstance();
-            data.setCurrentUUID(UUID.fromString(text));
-            joinedEvent.clear();
-            eventPage();
+            try{
+                System.out.println(text + " Event joined");
+
+                UserData data = UserData.getInstance();
+                data.setCurrentUUID(UUID.fromString(text));
+                updateCurrentEventsVBox(data);
+
+                joinedEvent.clear();
+                eventPage();
+            }catch(IllegalArgumentException ex){
+                MainCtrl.alert("Event not found. Please enter a valid event code.");
+            }
+
         } else {
             // Display an error message if the input is invalid
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -79,14 +105,12 @@ public class StartPageCtrl {
         }
     }
 
-    public void onViewEvent(){
-        System.out.println("Redirecting to ");
-    }
 
     public void eventPage() {
         mainCtrl.showEventPage();
     }
+
     public void adminPage() {
-        mainCtrl.showAdminCheckPage();
+        mainCtrl.showAdminPage();
     }
 }
