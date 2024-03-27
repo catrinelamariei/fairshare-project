@@ -47,6 +47,8 @@ import java.util.regex.Pattern;
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private EventDTO eventDTO;
+
     //delete event
     @FXML
     private Button deleteEventButton;
@@ -135,26 +137,26 @@ public class EventPageCtrl implements Initializable {
         System.out.println("loading EventPage");
 
         try {
-            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+            eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
             //update name
-            eventTitle.setText(event.name);
+            eventTitle.setText(eventDTO.name);
 
             //load transactions
             transactions.getChildren().clear();
-            transactions.getChildren().addAll(event.transactions.stream().map(TransactionNode::new)
+            transactions.getChildren().addAll(eventDTO.transactions.stream().map(TransactionNode::new)
                 .toList());
 
             //load participants
             participants.getPanes().clear();
-            participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
+            participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
                 .toList());
 
             //choice box author transaction
-            authorInput.setItems(FXCollections.observableArrayList(event.participants));
+            authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
 
             //checkboxes for participants
-            vboxParticipantsTransaction.getChildren().setAll(event.participants.stream()
+            vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
                 .map(EventPageCtrl::participantCheckbox).toList());
             //c1f05a35-1407-4ba1-ada3-0692649256b8
 
@@ -378,12 +380,8 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void debtSimplification() {
-
         debts.getChildren().clear();
-
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
-
-        DebtGraph graph = new DebtGraph(event);
+        DebtGraph graph = new DebtGraph(eventDTO);
         PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
         PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 

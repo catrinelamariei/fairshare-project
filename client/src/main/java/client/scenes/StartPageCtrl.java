@@ -48,7 +48,8 @@ public class StartPageCtrl {
             Hyperlink eventLink = new Hyperlink(serverUtils.getEvent(uuid).getName());
             eventLink.setOnAction(event -> {
                 data.setCurrentUUID(uuid);
-                updateCurrentEventsVBox(data);
+                recentEventsVBox.getChildren().remove(eventLink);
+                recentEventsVBox.getChildren().add(0, eventLink);
                 eventPage();
             });
             recentEventsVBox.getChildren().add(eventLink);
