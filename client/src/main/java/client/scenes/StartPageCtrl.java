@@ -39,7 +39,6 @@ public class StartPageCtrl {
     public void initialize() {
         UserData data = UserData.getInstance();
         updateCurrentEventsVBox(data);
-
     }
 
     public void updateCurrentEventsVBox(UserData data) {
@@ -84,6 +83,10 @@ public class StartPageCtrl {
         String text = joinedEvent.getText();
         if (text != null && !text.isEmpty()) {
             try{
+                // fetch event to make sure event exists
+                // when setting current UUID we pass (id, name) which involves calling getevent
+                // if event is not present we throw error, otherwise we save pair
+
                 System.out.println(text + " Event joined");
 
                 UserData data = UserData.getInstance();

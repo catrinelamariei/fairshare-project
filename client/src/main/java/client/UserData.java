@@ -3,6 +3,7 @@ package client;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,15 +13,16 @@ import java.util.UUID;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
 public final class UserData {
-    private final static String configFileName = "config.json";
-
     // All values in here are default values and will be overwritten at startup if a
-    // config file is found when the program terminates, all values are stored in the config file
+    // config file is found. The file regularly gets persisted.
+
+    //INCLUDED IN JSON
     private String token;
-
     private ArrayDeque<UUID> recentUUIDs = new ArrayDeque<>();
-
     private String serverURL = "http://localhost:8080/";
+
+    //NOT INCLUDED IN JSON
+    private final static String configFileName = "config.json";
     private final static ObjectMapper objectMapper = new ObjectMapper().enable(INDENT_OUTPUT);
     private final static UserData INSTANCE = new UserData().load();
 
