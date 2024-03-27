@@ -55,10 +55,6 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Text eventTitle;
 
-    //event header
-    @FXML
-    private Text eventTitle;
-
     //transaction attributes and buttons
     @FXML
     private TextField transactionName;
