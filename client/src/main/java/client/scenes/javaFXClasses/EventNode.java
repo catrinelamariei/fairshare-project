@@ -20,8 +20,10 @@ import javafx.scene.text.Text;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
+
+import static client.UserData.Pair;
 public class EventNode extends TitledPane {
-    private final UUID id;
+    private final Pair<UUID, String> idNamePair; // for UserData
     private final MainCtrl mainCtrl;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private TextField idField, dateField, participantField, transactionField, balanceField;
@@ -29,9 +31,9 @@ public class EventNode extends TitledPane {
     /**
      * create eventnode but without any actual data
      */
-    private EventNode(UUID id, MainCtrl mainCtrl) {
+    private EventNode(Pair<UUID, String> pair, MainCtrl mainCtrl) {
         super();
-        this.id = id; //necessary for field to be final
+        this.idNamePair = pair; //necessary for field to be final
         this.mainCtrl = mainCtrl;
         this.setAnimated(false);
 
@@ -98,7 +100,7 @@ public class EventNode extends TitledPane {
      * @param event data source
      */
     public EventNode(EventDTO event, MainCtrl mainCtrl) {
-        this(event.id, mainCtrl);
+        this(new Pair<>(event.getId(), event.getName()), mainCtrl);
 
         this.setText(event.name);
         idField.setText(event.id.toString());
@@ -110,12 +112,12 @@ public class EventNode extends TitledPane {
 
     //buttons
     private void join(ActionEvent actionEvent) {
-        UserData.getInstance().setCurrentUUID(id);
+        UserData.getInstance().setCurrentUUID(idNamePair);
         mainCtrl.showEventPage();
     }
 
     private void delete(ActionEvent actionEvent) {
         ((Accordion) this.getParent()).getPanes().remove(this);
-        (new ServerUtils()).deleteEvent(id);
+        (new ServerUtils()).deleteEvent(idNamePair.getKey());
     }
 }

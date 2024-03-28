@@ -1,0 +1,3 @@
+.dissabledHyperlink .text {
+    -fx-strikethrough: true;
+}

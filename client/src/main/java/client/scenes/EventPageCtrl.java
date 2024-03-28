@@ -144,8 +144,8 @@ public class EventPageCtrl implements Initializable {
 
             //load transactions
             transactions.getChildren().clear();
-            transactions.getChildren().addAll(eventDTO.transactions.stream().map(TransactionNode::new)
-                .toList());
+            transactions.getChildren().addAll(eventDTO.transactions.stream()
+                .map(TransactionNode::new).toList());
 
             //load participants
             participants.getPanes().clear();
