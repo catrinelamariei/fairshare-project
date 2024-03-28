@@ -4,6 +4,8 @@ import client.MainCtrl;
 import client.UserData;
 import client.utils.ServerUtils;
 import javafx.scene.control.PasswordField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -29,7 +31,15 @@ public class PrivCheckPageCtrl {
         text = new Text();
     }
 
-    public void initialize(URL location, ResourceBundle resources) {}
+    public void initialize(URL location, ResourceBundle resources) {
+        password.setOnKeyPressed(this::handleEnterPressed);
+    }
+
+    public void handleEnterPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            login();
+        }
+    }
 
     public void login() {
         String passwordText = password.getText();
