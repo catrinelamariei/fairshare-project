@@ -1,6 +1,12 @@
 package client.scenes.javaFXClasses;
 
+import client.utils.ServerUtils;
+import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
+import commons.DTOs.TagDTO;
+import commons.DTOs.TransactionDTO;
+import commons.Tag;
+import jakarta.ws.rs.WebApplicationException;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TitledPane;
@@ -10,10 +16,17 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
+
 public class DebtNode extends TitledPane {
 
     public DebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
-                    String currencyCode, double amount) {
+                    String currencyCode, double amount,
+                    EventDTO event, ServerUtils server) {
 
         super(String.format("%s gives %.2f%s to %s",
             debtor.getFullName(), amount,
@@ -24,9 +37,20 @@ public class DebtNode extends TitledPane {
         boolean availability = !creditor.iban.equals("-") || !creditor.bic.equals("-");
 
         Button receivedButton = new Button("Mark as received");
+
+        // a button that creates a transaction for the debt repayment
+        // if the event already has a tag "debt", it will be used
+        // otherwise a new tag will be created
+        receivedButton.setOnAction(e -> {
+            receivedButton.setText("Unmark as received");
+            debtToTransaction(debtor, creditor, currencyCode, amount, event, server);
+        });
+
+
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox container;
+        // display bank info if available
         if (availability) {
             Text info = new Text("Bank information is available");
             Text iban = new Text("IBAN:" + creditor.iban);
@@ -41,6 +65,36 @@ public class DebtNode extends TitledPane {
         Insets insets = new Insets(10.0d);
         container.getChildren().forEach(n -> container.setMargin(n, insets));
         this.setContent(container);
+    }
+
+    private static void debtToTransaction(ParticipantDTO debtor, ParticipantDTO creditor,
+                                  String currencyCode, double amount, EventDTO event,
+                                  ServerUtils server) {
+        TagDTO debtTag;
+        Optional<TagDTO> optionalDebtTag = event.tags
+            .stream()
+            .filter(tag -> tag.name.equals("debt"))
+            .findFirst();
+        if (optionalDebtTag.isEmpty()) {
+            debtTag = new TagDTO(null, event.id, "debt", Tag.Color.ORANGE);
+            try {
+                server.postTag(debtTag);
+            } catch (WebApplicationException err) {
+                System.err.println("Error creating tag for debt: " + err.getMessage());
+                return;
+            }
+        } else {
+            debtTag = optionalDebtTag.get();
+        }
+        TransactionDTO ts = new TransactionDTO(null, event.id, new Date(), currencyCode,
+            BigDecimal.valueOf(amount *2), debtor, new HashSet<>(Arrays.asList(debtor, creditor)),
+            new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
+        try {
+            server.postTransaction(ts);
+        } catch (WebApplicationException err) {
+            System.err.println("Error creating transaction from debt: " + err.getMessage());
+            err.printStackTrace();
+        }
     }
 
 }

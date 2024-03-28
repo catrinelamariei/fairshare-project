@@ -403,7 +403,8 @@ public class EventPageCtrl implements Initializable {
             double settlementAmount = Math.min(credit, Math.abs(debt));
 
             // deal with currency later
-            DebtNode debtNode = new DebtNode(debtor, creditor, "eur", settlementAmount);
+            DebtNode debtNode = new DebtNode(debtor, creditor, "eur",
+                settlementAmount, event, server);
             debts.getPanes().add(debtNode);
             // Update debts
             credit -= settlementAmount;
