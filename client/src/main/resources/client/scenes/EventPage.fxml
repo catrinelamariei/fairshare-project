@@ -153,66 +153,96 @@
                                     </ScrollPane>
                                  </content>
                             </Tab>
-                            <Tab style="-fx-background-color: FAF7F0;" text="Add Expense">
+                            <Tab fx:id="addExpenseTab" style="-fx-background-color: FAF7F0;" text="Add Expense">
                                  <content>
-                                    <AnchorPane style="-fx-background-color: FAF7F0;">
+                                    <VBox>
                                        <children>
-                                          <Button fx:id="add" alignment="CENTER" contentDisplay="CENTER" layoutX="330.0" layoutY="375.0" mnemonicParsing="false" onAction="#onCreateTransaction" text="Add Transaction">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font></Button>
-                                          <DatePicker fx:id="transactionDate" layoutX="106.0" layoutY="275.0" style="-fx-border-color: #98A8F8;" />
-                                          <Text layoutX="106.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction date">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font></Text>
-                                          <Text layoutX="272.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Currency">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font></Text>
-                                          <Text layoutX="107.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amount">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font></Text>
-                                          <Text layoutX="110.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction name" wrappingWidth="107.4000015258789">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font></Text>
-                                          <TextField fx:id="transactionName" layoutX="108.0" layoutY="65.0" style="-fx-border-color: #98A8F8;" />
-                                          <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" style="-fx-border-color: #98A8F8;" />
-                                          <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
-                                          <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
-                                          <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Who payed?">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font>
-                                          </Text>
-                                          <Text layoutX="450.0" layoutY="258.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense type">
-                                             <font>
-                                                <Font size="13.0" />
-                                             </font>
-                                          </Text>
-                                          <TextField fx:id="tagsInput" layoutX="450.0" layoutY="275.0" style="-fx-border-color: #98A8F8;" />
-                                          <VBox fx:id="root" layoutX="450.0" layoutY="27.0" prefHeight="200.0" prefWidth="100.0">
+                                          <AnchorPane style="-fx-background-color: FAF7F0;">
                                              <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to split the transaction?">
+                                                <DatePicker fx:id="transactionDate" layoutX="106.0" layoutY="275.0" style="-fx-border-color: #98A8F8;" />
+                                                <Text layoutX="106.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction date">
                                                    <font>
                                                       <Font size="13.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" />
-                                                <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="Equally between everyone" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.800048828125" />
-                                                <RadioButton fx:id="customSplit" mnemonicParsing="false" text="Only some people" />
-                                                <ScrollPane fx:id="participantsScrollPane" prefHeight="108.0" prefWidth="148.0" style="-fx-border-color: #98A8F8;">
-                                                   <content>
-                                                      <VBox fx:id="vboxParticipantsTransaction" prefHeight="130.0" prefWidth="226.0" style="-fx-border-color: #98A8F8;" />
-                                                   </content>
-                                                </ScrollPane>
+                                                <Text layoutX="272.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Currency">
+                                                   <font>
+                                                      <Font size="13.0" />
+                                                   </font>
+                                                </Text>
+                                                <Text layoutX="107.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amount">
+                                                   <font>
+                                                      <Font size="13.0" />
+                                                   </font>
+                                                </Text>
+                                                <Text layoutX="110.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction name" wrappingWidth="107.4000015258789">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Text>
+                                                <TextField fx:id="transactionName" layoutX="108.0" layoutY="65.0" style="-fx-border-color: #98A8F8;" />
+                                                <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" style="-fx-border-color: #98A8F8;" />
+                                                <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
+                                                <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
+                                                <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Who payed?">
+                                                   <font>
+                                                      <Font size="13.0" />
+                                                   </font>
+                                                </Text>
+                                                <Text layoutX="450.0" layoutY="258.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense type">
+                                                   <font>
+                                                      <Font size="13.0" />
+                                                   </font>
+                                                </Text>
+                                                <TextField fx:id="tagsInput" layoutX="450.0" layoutY="275.0" style="-fx-border-color: #98A8F8;" />
+                                                <VBox fx:id="root" layoutX="450.0" layoutY="27.0" prefHeight="200.0" prefWidth="100.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to split the transaction?">
+                                                         <font>
+                                                            <Font size="13.0" />
+                                                         </font>
+                                                      </Text>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" />
+                                                      <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="Equally between everyone" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.800048828125" />
+                                                      <RadioButton fx:id="customSplit" mnemonicParsing="false" text="Only some people" />
+                                                      <ScrollPane fx:id="participantsScrollPane" prefHeight="108.0" prefWidth="148.0" style="-fx-border-color: #98A8F8;">
+                                                         <content>
+                                                            <VBox fx:id="vboxParticipantsTransaction" prefHeight="130.0" prefWidth="226.0" style="-fx-border-color: #98A8F8;" />
+                                                         </content>
+                                                      </ScrollPane>
+                                                   </children>
+                                                </VBox>
                                              </children>
-                                          </VBox>
+                                          </AnchorPane>
+                                          <HBox alignment="CENTER">
+                                             <children>
+                                                <Button fx:id="add" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateTransaction" prefWidth="81.0" text="Submit">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                   </HBox.margin>
+                                                </Button>
+                                                <Button fx:id="add1" alignment="CENTER" contentDisplay="CENTER" layoutX="339.0" layoutY="30.0" mnemonicParsing="false" onAction="#onCreateTransaction" prefWidth="81.0" text="Cancel">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                   <HBox.margin>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                   </HBox.margin>
+                                                </Button>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
                                        </children>
-                                    </AnchorPane>
+                                    </VBox>
                                  </content></Tab>
                               <Tab style="-fx-background-color: FAF7F0;" text="Queries" />
                               <Tab style="-fx-background-color: FAF7F0;" text="Debts">

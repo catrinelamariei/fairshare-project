@@ -59,6 +59,8 @@ public class EventPageCtrl implements Initializable {
 
     //transaction attributes and buttons
     @FXML
+    private Tab addExpenseTab;
+    @FXML
     private TextField transactionName;
     @FXML
     private ChoiceBox<ParticipantDTO> authorInput;
@@ -82,8 +84,10 @@ public class EventPageCtrl implements Initializable {
     private ScrollPane participantsScrollPane;
     @FXML
     private TextField tagsInput;
-
-    @FXML private Button add;
+    @FXML
+    private Button addTransaction;
+    @FXML
+    private Button cancelTransaction;
     @FXML
     private VBox transactions;
     private ToggleGroup toggleGroup;
@@ -145,7 +149,7 @@ public class EventPageCtrl implements Initializable {
             //load transactions
             transactions.getChildren().clear();
             transactions.getChildren().addAll(eventDTO.transactions.stream()
-                .map(TransactionNode::new).toList());
+                .map(ts -> new TransactionNode(ts, this)).toList());
 
             //load participants
             participants.getPanes().clear();
@@ -288,11 +292,15 @@ public class EventPageCtrl implements Initializable {
                 date, currency, amount, author, participants, tags, name);
         try {
             ts = server.postTransaction(ts);
-            transactions.getChildren().add(new TransactionNode(ts));
+            transactions.getChildren().add(new TransactionNode(ts, this));
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
 
+        clearTransaction();
+    }
+
+    private void clearTransaction() {
         transactionName.clear();
         transactionAmount.clear();
         authorInput.setValue(null);
@@ -452,6 +460,12 @@ public class EventPageCtrl implements Initializable {
         }
         //ea8ddca2-0712-4f4a-8410-fe712ab8b86a
         //dd9101e0-5bd1-4df7-bc8c-26d894cb3c71
+    }
+
+    public void enableEditing() {
+    }
+
+    public void fillTransaction(TransactionDTO transaction) {
     }
 }
 
