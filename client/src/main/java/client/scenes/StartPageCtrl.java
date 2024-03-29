@@ -104,6 +104,9 @@ public class StartPageCtrl {
                 eventPage();
             }catch(NotFoundException e){
                 MainCtrl.alert("Event not found: no event found with said UUID");
+            } catch (IllegalArgumentException e) {
+                MainCtrl.alert(String.format(
+                        "The following is not a properly structured invite code\n[%s]", text));
             }
 
         } else {
