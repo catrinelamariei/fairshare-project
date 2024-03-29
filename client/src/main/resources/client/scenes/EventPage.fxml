@@ -132,7 +132,7 @@
                                  <content>
                                     <AnchorPane prefHeight="449.0" prefWidth="778.0" style="-fx-background-color: FAF7F0;">
                                        <children>
-                                          <Button fx:id="add" alignment="CENTER" contentDisplay="CENTER" layoutX="330.0" layoutY="375.0" mnemonicParsing="false" onAction="#onCreateTransaction" text="Add Transaction">
+                                          <Button fx:id="add" alignment="CENTER" contentDisplay="CENTER" layoutX="454.0" layoutY="373.0" mnemonicParsing="false" onAction="#onCreateTransaction" prefHeight="29.0" prefWidth="167.0" text="Add Transaction" textFill="#0ca140">
                                              <font>
                                                 <Font size="14.0" />
                                              </font></Button>
@@ -187,6 +187,11 @@
                                           </VBox>
                                           <ComboBox fx:id="tagsInput" editable="true" layoutX="450.0" layoutY="276.0" prefWidth="150.0" />
                                           <Button fx:id="addTagButton" layoutX="622.0" layoutY="276.0" mnemonicParsing="false" text="add tag" />
+                                          <Button alignment="CENTER" contentDisplay="CENTER" layoutX="635.0" layoutY="373.0" mnemonicParsing="false" onAction="#clearTransactionFields" text="Abort" textFill="RED">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Button>
                                        </children>
                                     </AnchorPane>
                                  </content></Tab>

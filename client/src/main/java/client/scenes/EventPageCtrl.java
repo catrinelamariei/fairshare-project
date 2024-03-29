@@ -306,6 +306,11 @@ public class EventPageCtrl implements Initializable {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
 
+        clearTransactionFields();
+    }
+
+    @FXML
+    private void clearTransactionFields() {
         transactionName.clear();
         transactionAmount.clear();
         authorInput.setValue(null);
@@ -313,6 +318,7 @@ public class EventPageCtrl implements Initializable {
         customSplit.setSelected(false);
         currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
+        tagsInput.getEditor().clear();
         tags.clear();
         for (Node node : vboxParticipantsTransaction.getChildren()) {
             if (node instanceof CheckBox) {
