@@ -11,6 +11,7 @@ import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
+import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -75,7 +76,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private ScrollPane participantsScrollPane;
     @FXML
-    private TextField tagsInput;
+    private ComboBox tagsInput;
 
     @FXML private Button add;
     @FXML
@@ -106,6 +107,11 @@ public class EventPageCtrl implements Initializable {
     private VBox debts;
     @FXML
     private Button settleButton;
+    @FXML
+    private Button addTagButton;
+
+
+    Set<TagDTO> tags = new HashSet<>();
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -157,6 +163,33 @@ public class EventPageCtrl implements Initializable {
                             })
                             .toArray(CheckBox[]::new)
             );
+
+            //tags
+            tagsInput.getItems().addAll(event.tags.stream().map(TagDTO::getName).toList());
+
+            addTagButton.setOnAction(e -> {
+                String input = tagsInput.getEditor().getText();
+                if (input == null || input.isEmpty()) {
+                    MainCtrl.alert("Please enter a tag name " +
+                        "or choose a tag from the dropdown menu");
+                    return;
+                }
+                TagDTO matchingTag = findTag(input);
+                if (matchingTag!=null) {
+                    // User selected an existing tag
+                    tags.add(findTag(input));
+                } else {
+                    // User input a new tag
+                    // TODO: allow user to customise tag color
+                    TagDTO tag = new TagDTO(null, UserData.getInstance().getCurrentUUID(),
+                        input, Tag.Color.BLUE);
+                    tag = server.postTag(tag);
+                    tags.add(tag);
+                    tagsInput.getItems().add(tag.getName());
+                }
+                tagsInput.getEditor().clear();
+            });
+
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
                 UserData.getInstance().getCurrentUUID(), e);
@@ -229,50 +262,39 @@ public class EventPageCtrl implements Initializable {
         System.out.println("test");
     }
 
-    /**
-     * This method is NOT done.
-     */
+
     public void onCreateTransaction(){
         String name = transactionName.getText().trim();
         String transactionAmountString = transactionAmount.getText().trim();
         String currency = (String) currencyCodeInput.getValue();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
-
-        try {
-            if(name==null || transactionAmountString==null || currency==null || localDate==null){
-                throw new IllegalArgumentException();
-            }
-            amount = new BigDecimal(transactionAmountString);
-        } catch (NumberFormatException e) {
-            MainCtrl.alert("Please enter a number for the Amount field");
-            return;
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid transaction information");
-            return;
-        }
-
         ParticipantDTO author = authorInput.getValue();
+        //radio buttons
+        Set<ParticipantDTO> participants;
+        RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
+
+
+        boolean participantIsSelected = vboxParticipantsTransaction.getChildren()
+            .stream()
+            .map(item -> (CheckBox) item)
+            .filter(item -> item.isSelected())
+            .filter(item -> !item.getText().equals(author.toString()))
+            .findAny().isPresent();
+        amount = isValidAmount(transactionAmountString);
+
+        if (!infoIsValid(name, author, amount, currency, localDate, selectedRadioButton,
+            participantIsSelected)) return;
+
+        participants = getTransactionParticipants(selectedRadioButton);
 
         //join codes for some example transactions
         //c1f05a35-1407-4ba1-ada3-0692649256b8
         //57392209-155d-47fb-9460-3fd3ebca7853
 
-        //radio buttons
-        Set<ParticipantDTO> participants = new HashSet<>();
 
-        RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
-        if(selectedRadioButton!=null){
-            participants = getTransactionParticipants(selectedRadioButton);
-        }else{
-            MainCtrl.alert("Please chose how to split the transaction!");
-            return;
-        }
 
-        printParticipantsSplit(participants);
 
-        // TODO: this should be taken from user input
-        Set<TagDTO> tags = new HashSet<>();
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
@@ -291,12 +313,63 @@ public class EventPageCtrl implements Initializable {
         customSplit.setSelected(false);
         currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
+        tags.clear();
         for (Node node : vboxParticipantsTransaction.getChildren()) {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
                 checkBox.setSelected(false);
             }
         }
+    }
+
+    private TagDTO findTag(String input) {
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        for (TagDTO tag : event.tags) {
+            if (tag.getName().equals(input)) {
+                return tag;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("checkstyle:CyclomaticComplexity")
+    private boolean infoIsValid(String name, ParticipantDTO author, BigDecimal amount,
+                                String currency, LocalDate localDate,
+                                RadioButton selectedRadioButton,
+                                boolean participantIsSelected) {
+        if (name == null || name.isEmpty()) {
+            MainCtrl.alert("Please enter a description");
+            return false;
+        } else if (author == null) {
+            MainCtrl.alert("Please select a payer");
+            return false;
+        }  else if (amount == null) {
+            MainCtrl.alert("Please enter a number for the Amount field");
+            return false;
+        } else if (currency == null || currency.isEmpty()) {
+            MainCtrl.alert("Please choose a currency code");
+            return false;
+        } else if (localDate ==null) {
+            MainCtrl.alert("Date cannot be empty");
+            return false;
+        } else if(selectedRadioButton ==null){
+            MainCtrl.alert("Please chose how to split the transaction!");
+            return false;
+        } else if (customSplit.isSelected() && !participantIsSelected) {
+            MainCtrl.alert("Select at least 1 participant that isn't the author");
+            return false;
+        }
+        return true;
+    }
+
+    private static BigDecimal isValidAmount(String transactionAmountString) {
+        BigDecimal amount;
+        try {
+            amount = new BigDecimal(transactionAmountString);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        return amount;
     }
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {

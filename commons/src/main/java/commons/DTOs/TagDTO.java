@@ -31,6 +31,10 @@ public class TagDTO {
         return !(name == null || name.isEmpty() || color == null || eventId == null);
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
