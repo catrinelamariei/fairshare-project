@@ -31,7 +31,7 @@ public class TransactionDTO {
                 .collect(Collectors.toSet());
         this.tags = transaction.getTags().stream().map(TagDTO::new).collect(Collectors.toSet());
         this.eventId = transaction.getEvent().getId();
-        this.subject = transaction.subject;
+        this.subject = transaction.getSubject();
     }
 
     public TransactionDTO(UUID id, UUID eventId, Date date, String currencyCode, BigDecimal amount,

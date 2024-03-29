@@ -101,7 +101,10 @@ public class ServerUtils {
     }
 
     public TransactionDTO putTransaction(TransactionDTO ts) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/transaction")
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
 
     /**

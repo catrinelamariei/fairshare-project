@@ -71,7 +71,7 @@ public class TransactionNode extends HBox {
         // TODO: implement this
         System.out.println("Start editing transaction");
 
-        eventPageCtrl.enableEditing();
+        eventPageCtrl.enableEditing(this);
         eventPageCtrl.fillTransaction((new ServerUtils()).getTransaction(id));
     }
 
