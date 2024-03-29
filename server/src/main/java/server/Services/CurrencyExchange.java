@@ -24,14 +24,13 @@ public class CurrencyExchange {
     public Rate getRate(String currencyFrom, String currencyTo,Date date)
             throws IOException, InterruptedException {
 
-        Rate r = currencies.stream()
+        Optional<Rate> r = currencies.stream()
                 .filter(rate -> rate.currencyFrom.equals(currencyFrom) &&
                         rate.currencyTo.equals(currencyTo) &&
-                        isSameDay(rate.date, new Date())
+                        isSameDay(rate.date, date)
                 )
-                .findFirst()
-                .orElse(null);
-        if (r == null) {
+                .findFirst();
+        if (r.isEmpty()) {
             //fetch from API
             //add to currencies
 
@@ -54,11 +53,13 @@ public class CurrencyExchange {
             String rate = parts[3].split(":")[2];
             rate = rate.substring(0, rate.length() - 2);
 
-            r = new Rate(currencyFrom, currencyTo, Double.parseDouble(rate), date);
-            currencies.add(r);
+            Rate result = new Rate(currencyFrom, currencyTo, Double.parseDouble(rate), date);
+            currencies.add(result);
+            return result;
+
 
         }
-        return r;
+        return r.get();
     }
 
 

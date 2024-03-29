@@ -1,5 +1,8 @@
 package commons.Currency;
 
+import org.apache.commons.lang3.time.DateUtils;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -30,10 +33,15 @@ public class Rate {
 
     @Override
     public int hashCode() {
-        return Objects.hash(currencyFrom, currencyTo, rate, date);
+        return Objects.hash(currencyFrom, currencyTo, rate,
+                DateUtils.truncate(date, Calendar.DAY_OF_MONTH));
     }
 
     public Object getDate() {
         return date;
+    }
+
+    public double getRate() {
+        return rate;
     }
 }
