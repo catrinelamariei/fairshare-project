@@ -93,7 +93,8 @@ public class DTOtoEntity {
         transaction.setAmount(t.amount);
         transaction.setAuthor(get(t.author));
         transaction.setSubject(t.subject);
-        transaction.setParticipants(t.participants.stream().map(this::get).collect(Collectors.toSet()));
+        transaction.setParticipants(t.participants.stream().map(this::get)
+                .collect(Collectors.toSet()));
         transaction.setTags(t.tags.stream().map(this::get).collect(Collectors.toSet()));
 
         return transactionRepository.save(transaction);
