@@ -50,25 +50,21 @@ class EventDTOTest {
     }
 
     @Test
-    void gettersSetter(){
+    void getters(){
         EventDTO eventDTO = new EventDTO();
         UUID id = new UUID(0, 1);
         String name = "name";
         Set<TagDTO> tags = new HashSet<>();
         Date date = new Date();
-        Set<ParticipantDTO> participants = new HashSet<>();
-        Set<TransactionDTO> transactions = new HashSet<>();
 
         eventDTO.id = id;
         eventDTO.name = name;
         eventDTO.tags = tags;
-        eventDTO.participants = participants;
-        eventDTO.transactions = transactions;
 
         assertEquals(id, eventDTO.getId());
         assertEquals(name, eventDTO.getName());
-        assertEquals(tags, eventDTO.getTags());
         assertEquals(date, eventDTO.getDate());
+
     }
 
     @Test

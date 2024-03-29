@@ -5,6 +5,7 @@ import commons.Event;
 import commons.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import server.Services.DTOtoEntity;
 import server.database.TagRepository;
@@ -131,7 +132,7 @@ public class TagControllerTest {
 
         //todo fix name of method
         ResponseEntity response = controller.deleteTag(tag.id);
-        assertTrue(response.getStatusCode().is2xxSuccessful());
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
 

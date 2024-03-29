@@ -5,6 +5,7 @@ import commons.Event;
 import commons.Participant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
@@ -163,7 +164,7 @@ public class ParticipantControllerTest {
         when(repo.existsById(participant.id)).thenReturn(true);
         ResponseEntity response = controller.deleteParticipant(participant.id);
         verify(repo).deleteById(participant.id);
-        assertEquals(response.getStatusCode(), ResponseEntity.ok().build().getStatusCode());
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
     @Test
@@ -175,7 +176,6 @@ public class ParticipantControllerTest {
 
     @Test
     public void deleteParticipantBadRequest() {
-        when(repo.existsById(participant.id)).thenReturn(true);
         ResponseEntity response = controller.deleteParticipant(null);
         assertEquals(response.getStatusCode(), BAD_REQUEST);
     }

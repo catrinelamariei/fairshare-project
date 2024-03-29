@@ -81,11 +81,6 @@ public class EventControllerTest {
         response = controller.updateEvent(null, null);
         assertEquals(ResponseEntity.badRequest().build(), response);
 
-        eventDTO.id = null;
-        response = controller.updateEvent(event.id, eventDTO);
-        assertEquals(ResponseEntity.badRequest().build(), response);
-
-        eventDTO.id = event.id;
         eventDTO.name = null;
         response = controller.updateEvent(event.id, eventDTO);
         assertEquals(ResponseEntity.badRequest().build(), response);

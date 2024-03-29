@@ -67,7 +67,7 @@ public class EventController implements WebMvcConfigurer {
     @PutMapping("/{id}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") UUID id,
                                                 @RequestBody EventDTO eventDTO) {
-        if (id == null || eventDTO == null || eventDTO.id == null || !eventDTO.validate())
+        if (id == null || eventDTO == null  || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         eventDTO.id = id;
