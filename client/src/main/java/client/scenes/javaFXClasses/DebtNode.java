@@ -43,7 +43,7 @@ public class DebtNode extends TitledPane {
         // if the event already has a tag "debt", it will be used
         // otherwise a new tag will be created
         receivedButton.setOnAction(e -> {
-            receivedButton.setText("Unmark as received");
+            ctrl.debts.getPanes().remove(this);
             debtToTransaction(debtor, creditor, currencyCode, amount, event, server, ctrl);
         });
 

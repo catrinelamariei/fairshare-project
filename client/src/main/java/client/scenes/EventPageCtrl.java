@@ -109,7 +109,7 @@ public class EventPageCtrl implements Initializable {
     private Button copyButton;
 
     @FXML
-    private Accordion debts;
+    public Accordion debts;
     @FXML
     private Button settleButton;
 
