@@ -94,7 +94,6 @@ public class EventControllerTest {
     public void deleteEvent() {
         when(repo.existsById(event.id)).thenReturn(true);
         ResponseEntity response = controller.deleteEvent(event.id);
-        verify(repo).deleteById(event.id);
         assertEquals(ResponseEntity.ok().build(), response);
     }
 

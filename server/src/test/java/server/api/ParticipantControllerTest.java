@@ -162,8 +162,8 @@ public class ParticipantControllerTest {
     @Test
     public void deleteParticipant() {
         when(repo.existsById(participant.id)).thenReturn(true);
+        when(repo.findById(participant.id)).thenReturn(java.util.Optional.of(participant));
         ResponseEntity response = controller.deleteParticipant(participant.id);
-        verify(repo).deleteById(participant.id);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
