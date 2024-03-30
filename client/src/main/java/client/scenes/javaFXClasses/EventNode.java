@@ -1,9 +1,13 @@
 package client.scenes.javaFXClasses;
 
+import client.MainCtrl;
+import client.UserData;
+import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -16,17 +20,21 @@ import javafx.scene.text.Text;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
+
+import static client.UserData.Pair;
 public class EventNode extends TitledPane {
-    private final UUID id;
+    private final Pair<UUID, String> idNamePair; // for UserData
+    private final MainCtrl mainCtrl;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private TextField idField, dateField, participantField, transactionField, balanceField;
 
     /**
      * create eventnode but without any actual data
      */
-    private EventNode(UUID id) {
+    private EventNode(Pair<UUID, String> pair, MainCtrl mainCtrl) {
         super();
-        this.id = id; //necessary for field to be final
+        this.idNamePair = pair; //necessary for field to be final
+        this.mainCtrl = mainCtrl;
         this.setAnimated(false);
 
         //text
@@ -91,8 +99,8 @@ public class EventNode extends TitledPane {
      * create eventnode from data
      * @param event data source
      */
-    public EventNode(EventDTO event) {
-        this(event.id);
+    public EventNode(EventDTO event, MainCtrl mainCtrl) {
+        this(new Pair<>(event.getId(), event.getName()), mainCtrl);
 
         this.setText(event.name);
         idField.setText(event.id.toString());
@@ -104,10 +112,17 @@ public class EventNode extends TitledPane {
 
     //buttons
     private void join(ActionEvent actionEvent) {
-        // TODO: implement this
+        UserData.getInstance().setCurrentUUID(idNamePair);
+        mainCtrl.showEventPage();
     }
 
     private void delete(ActionEvent actionEvent) {
-        // TODO: implement this
+        ((Accordion) this.getParent()).getPanes().remove(this);
+        (new ServerUtils()).deleteEvent(idNamePair.getKey());
+
+        // TODO: put these lines into service
+        mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
+        UserData.getInstance().getRecentUUIDs()
+                .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
     }
 }

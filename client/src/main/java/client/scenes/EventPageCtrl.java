@@ -46,9 +46,15 @@ import java.util.regex.Pattern;
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private EventDTO eventDTO;
+
     //delete event
     @FXML
     private Button deleteEventButton;
+
+    //event header
+    @FXML
+    private Text eventTitle;
 
     //transaction attributes and buttons
     @FXML
@@ -67,7 +73,7 @@ public class EventPageCtrl implements Initializable {
     private RadioButton equalSplit;
     @FXML
     private RadioButton customSplit;
-//    @FXML
+    //    @FXML
 //    private Checkbox checkboxParticipant;
     @FXML
     private VBox vboxParticipantsTransaction;
@@ -76,11 +82,11 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TextField tagsInput;
 
-    @FXML private Button add;
+    @FXML
+    private Button add;
     @FXML
     private VBox transactions;
     private ToggleGroup toggleGroup;
-
 
 
     // participant attributes and buttons
@@ -126,57 +132,56 @@ public class EventPageCtrl implements Initializable {
         vboxParticipantsTransaction.getChildren().clear();
 
     }
-    public void load() {
+
+    public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
 
-        try {
-            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-            //load transactions
-            transactions.getChildren().clear();
-            transactions.getChildren().addAll(event.transactions.stream().map(TransactionNode::new)
-                .toList());
+        //update name
+        eventTitle.setText(eventDTO.name);
 
-            //load participants
-            participants.getPanes().clear();
-            participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
-                .toList());
+        //load transactions
+        transactions.getChildren().clear();
+        transactions.getChildren().addAll(eventDTO.transactions.stream()
+            .map(TransactionNode::new).toList());
 
-            //choice box author transaction
-            authorInput.setItems(FXCollections.observableArrayList(event.participants));
+        //load participants
+        participants.getPanes().clear();
+        participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
+            .toList());
 
-            //checkboxes for participants
-            vboxParticipantsTransaction.getChildren().clear();
-            vboxParticipantsTransaction.getChildren().addAll(
-                    authorInput.getItems().stream()
-                            .map(participant -> {
-                                CheckBox checkBox = new CheckBox(participant.toString());
-                                checkBox.setUserData(participant);
-                                return checkBox;
-                            })
-                            .toArray(CheckBox[]::new)
-            );
+        //choice box author transaction
+        authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
 
-            // debts
-            debts.getPanes().clear();
-            settleButton.setText("Settle debts");
+        //checkboxes for participants
+        vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
+            .map(EventPageCtrl::participantCheckbox).toList());
+        //c1f05a35-1407-4ba1-ada3-0692649256b8
 
-        } catch (WebApplicationException e) {
-            System.err.printf("Error while fetching EVENT<%s>: %s%n",
-                UserData.getInstance().getCurrentUUID(), e);
-        }
+        //checkboxes for participants
+        vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
+            .map(EventPageCtrl::participantCheckbox).toList());
+        //c1f05a35-1407-4ba1-ada3-0692649256b8
+    }
+
+    private static CheckBox participantCheckbox(ParticipantDTO participant) {
+        CheckBox checkBox = new CheckBox(participant.toString());
+        checkBox.setUserData(participant);
+        return checkBox;
     }
 
     public void gotoHome() {
         mainCtrl.showStartPage();
     }
+
     public void gotoAdminLogin() {
-        mainCtrl.showAdminCheckPage();
+        mainCtrl.showAdminPage();
     }
 
     public void copyInviteCode() {
 
-        if(UserData.getInstance().getCurrentUUID() == null) {
+        if (UserData.getInstance().getCurrentUUID() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -190,7 +195,7 @@ public class EventPageCtrl implements Initializable {
         //get invite code (String)
         //copy data to clipboard
         StringSelection content = new StringSelection(
-                UserData.getInstance().getCurrentUUID().toString());
+            UserData.getInstance().getCurrentUUID().toString());
         clipboard.setContents(content, null);
 
 
@@ -199,8 +204,8 @@ public class EventPageCtrl implements Initializable {
         label.setStyle("-fx-font-size: 14px;"); // Set label font size
         StackPane stackPane = new StackPane(label);
         stackPane.setStyle(
-                "-fx-background-color: white; -fx-border-color: black;" +
-                        " -fx-border-width: 1px; -fx-padding: 2px");
+            "-fx-background-color: white; -fx-border-color: black;" +
+                " -fx-border-width: 1px; -fx-padding: 2px");
 
 
         Popup popup = new Popup();
@@ -215,7 +220,7 @@ public class EventPageCtrl implements Initializable {
 
         final double popupDurationSeconds = 1.5;
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(popupDurationSeconds),
-                e -> popup.hide()));
+            e -> popup.hide()));
         timeline.setCycleCount(1);
         timeline.play();
     }
@@ -225,18 +230,18 @@ public class EventPageCtrl implements Initializable {
      */
     public void participantNodeAddTest() {
         ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(null, null,
-                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"));
+            "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"));
         participants.getPanes().add(participantNode);
     }
 
-    public void toggle(){
+    public void toggle() {
         System.out.println("test");
     }
 
     /**
      * This method is NOT done.
      */
-    public void onCreateTransaction(){
+    public void onCreateTransaction() {
         String name = transactionName.getText().trim();
         String transactionAmountString = transactionAmount.getText().trim();
         String currency = (String) currencyCodeInput.getValue();
@@ -244,7 +249,8 @@ public class EventPageCtrl implements Initializable {
         BigDecimal amount;
 
         try {
-            if(name==null || transactionAmountString==null || currency==null || localDate==null){
+            if (name == null || transactionAmountString == null || currency == null ||
+                localDate == null) {
                 throw new IllegalArgumentException();
             }
             amount = new BigDecimal(transactionAmountString);
@@ -266,9 +272,9 @@ public class EventPageCtrl implements Initializable {
         Set<ParticipantDTO> participants = new HashSet<>();
 
         RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
-        if(selectedRadioButton!=null){
+        if (selectedRadioButton != null) {
             participants = getTransactionParticipants(selectedRadioButton);
-        }else{
+        } else {
             MainCtrl.alert("Please chose how to split the transaction!");
             return;
         }
@@ -280,7 +286,7 @@ public class EventPageCtrl implements Initializable {
 
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
-                date, currency, amount, author, participants, tags, name);
+            date, currency, amount, author, participants, tags, name);
         try {
             ts = server.postTransaction(ts);
             transactions.getChildren().add(new TransactionNode(ts));
@@ -346,16 +352,20 @@ public class EventPageCtrl implements Initializable {
                 MainCtrl.alert("Please enter a valid email address");
                 return;
             }
-            if(bicText.isEmpty()){
-                bicText="-";
+            if (bicText.isEmpty()) {
+                bicText = "-";
             }
-            if(ibanText.isEmpty()){
-                ibanText="-";
+            if (ibanText.isEmpty()) {
+                ibanText = "-";
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
                 fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
+
+            //updating event page
             participants.getPanes().add(new ParticipantNode(participantDTO));
+            authorInput.getItems().add(participantDTO);
+            vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
             return;
@@ -376,7 +386,7 @@ public class EventPageCtrl implements Initializable {
 
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        DebtGraph graph = new DebtGraph(event);
+        DebtGraph graph = new DebtGraph(eventDTO);
         PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
         PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
@@ -424,11 +434,12 @@ public class EventPageCtrl implements Initializable {
 
     }
 
-    public static void printParticipantsSplit(Set<ParticipantDTO> participants){
-        for(ParticipantDTO participant : participants){
+    public static void printParticipantsSplit(Set<ParticipantDTO> participants) {
+        for (ParticipantDTO participant : participants) {
             System.out.println(participant);
         }
     }
+
     private boolean isValidEmail(String email) {
         // Regex pattern to match email address
         String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -444,9 +455,13 @@ public class EventPageCtrl implements Initializable {
 //            server.deleteEvent(eventId);
 //            mainCtrl.showStartPage();
             UUID currentUUID = UserData.getInstance().getCurrentUUID();
-            server.deleteEvent(currentUUID);
-            mainCtrl.showStartPage();
 
+            server.deleteEvent(currentUUID);
+            UserData.getInstance().getRecentUUIDs().removeIf(p -> p.getKey().equals(currentUUID));
+            mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+
+            mainCtrl.showStartPage();
+            MainCtrl.alert("Event deleted!");
         } catch (WebApplicationException e) {
             System.err.println("Error deleting event: " + e.getMessage());
         }

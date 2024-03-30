@@ -4,6 +4,7 @@ import commons.Transaction;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class TransactionDTO {
     public boolean validate() {
         return !(eventId == null || date == null || currencyCode == null || amount == null ||
             author == null || participants == null || tags == null || subject == null ||
-            currencyCode.isEmpty() || subject.isEmpty());
+            currencyCode.isEmpty() || subject.isEmpty() || amount.compareTo(BigDecimal.ZERO) <= 0);
     }
 
     public UUID getId() {
@@ -124,5 +125,27 @@ public class TransactionDTO {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TransactionDTO that = (TransactionDTO) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getEventId(), that.getEventId()) &&
+                Objects.equals(getDate(), that.getDate()) &&
+                Objects.equals(getCurrencyCode(), that.getCurrencyCode()) &&
+                Objects.equals(getAmount(), that.getAmount()) &&
+                Objects.equals(getAuthor(), that.getAuthor()) &&
+                Objects.equals(getParticipants(), that.getParticipants()) &&
+                Objects.equals(getTags(), that.getTags()) &&
+                Objects.equals(getSubject(), that.getSubject());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getEventId(), getDate(), getCurrencyCode(),
+                getAmount(), getAuthor(), getParticipants(), getTags(), getSubject());
     }
 }

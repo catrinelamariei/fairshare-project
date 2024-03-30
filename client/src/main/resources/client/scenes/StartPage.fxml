@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<AnchorPane maxWidth="800.0" minWidth="800.0" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: CDFCF6;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartPageCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" stylesheets="@/client/scenes/stylesheets/StartPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.StartPageCtrl">
+
    <children>
       <Button fx:id="joinButton" layoutX="313.0" layoutY="318.0" mnemonicParsing="false" onAction="#onJoinEvent" prefHeight="42.0" prefWidth="80.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Join">
          <font>
