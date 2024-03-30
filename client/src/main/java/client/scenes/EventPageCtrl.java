@@ -303,6 +303,11 @@ public class EventPageCtrl implements Initializable {
         }
 
         clearTransactionFields();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Transaction created");
+        alert.setHeaderText(null);
+        alert.setContentText("Transaction created successfully");
+        alert.showAndWait();
     }
 
     @FXML
