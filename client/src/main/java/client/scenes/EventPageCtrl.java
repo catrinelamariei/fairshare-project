@@ -11,7 +11,6 @@ import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
-import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -26,8 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
@@ -76,11 +74,13 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private ScrollPane participantsScrollPane;
     @FXML
-    private ComboBox tagsInput;
+    private ChoiceBox tagsInput;
 
     @FXML private Button add;
     @FXML
     private VBox transactions;
+    @FXML
+    private VBox tagsVBox;
     private ToggleGroup toggleGroup;
 
 
@@ -168,26 +168,26 @@ public class EventPageCtrl implements Initializable {
             tagsInput.getItems().addAll(event.tags.stream().map(TagDTO::getName).toList());
 
             addTagButton.setOnAction(e -> {
-                String input = tagsInput.getEditor().getText();
+                String input = (String) tagsInput.getValue();
                 if (input == null || input.isEmpty()) {
-                    MainCtrl.alert("Please enter a tag name " +
-                        "or choose a tag from the dropdown menu");
+                    MainCtrl.alert("Please choose a tag from the dropdown menu");
                     return;
                 }
-                TagDTO matchingTag = findTag(input);
-                if (matchingTag!=null) {
-                    // User selected an existing tag
-                    tags.add(findTag(input));
-                } else {
-                    // User input a new tag
-                    // TODO: allow user to customise tag color
-                    TagDTO tag = new TagDTO(null, UserData.getInstance().getCurrentUUID(),
-                        input, Tag.Color.BLUE);
-                    tag = server.postTag(tag);
-                    tags.add(tag);
-                    tagsInput.getItems().add(tag.getName());
-                }
-                tagsInput.getEditor().clear();
+                tags.add(findTag(input));
+                tagsInput.setValue(null);
+
+                HBox tagBox = new HBox();
+                Button deleteTag = new Button("X");
+                deleteTag.setOnAction(e2 -> {
+                    tags.remove(findTag(input));
+                    tagsVBox.getChildren().remove(tagBox);
+                });
+                Pane spacer = new Pane();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                tagBox.getChildren().add(new Text(input));
+                tagBox.getChildren().add(spacer);
+                tagBox.getChildren().add(deleteTag);
+                tagsVBox.getChildren().add(tagBox);
             });
 
         } catch (WebApplicationException e) {
@@ -292,10 +292,6 @@ public class EventPageCtrl implements Initializable {
         //c1f05a35-1407-4ba1-ada3-0692649256b8
         //57392209-155d-47fb-9460-3fd3ebca7853
 
-
-
-
-
         Date date = java.sql.Date.valueOf(localDate);
         TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
                 date, currency, amount, author, participants, tags, name);
@@ -318,8 +314,9 @@ public class EventPageCtrl implements Initializable {
         customSplit.setSelected(false);
         currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
-        tagsInput.getEditor().clear();
+        tagsInput.setValue(null);
         tags.clear();
+        tagsVBox.getChildren().clear();
         for (Node node : vboxParticipantsTransaction.getChildren()) {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
