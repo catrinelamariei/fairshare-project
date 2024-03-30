@@ -119,5 +119,10 @@ public class EventNode extends TitledPane {
     private void delete(ActionEvent actionEvent) {
         ((Accordion) this.getParent()).getPanes().remove(this);
         (new ServerUtils()).deleteEvent(idNamePair.getKey());
+
+        // TODO: put these lines into service
+        mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
+        UserData.getInstance().getRecentUUIDs()
+                .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
     }
 }

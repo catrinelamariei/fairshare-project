@@ -1,6 +1,7 @@
 package client;
 
 import client.scenes.*;
+import jakarta.ws.rs.NotFoundException;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -11,7 +12,7 @@ public class MainCtrl {
 
     private Stage primaryStage;
 
-    private StartPageCtrl startPageCtrl;
+    public StartPageCtrl startPageCtrl; //this needs to be fixed -> need to start using services
     private Scene startPage;
 
     private EventPageCtrl eventPageCtrl;
@@ -62,9 +63,13 @@ public class MainCtrl {
     }
 
     public void showEventPage() {
-        primaryStage.setTitle("event");
-        eventPageCtrl.load(); //INITIALIZE eventPage with data
-        primaryStage.setScene(eventPage);
+        try {
+            eventPageCtrl.load(); //INITIALIZE eventPage with data
+            primaryStage.setScene(eventPage);
+            primaryStage.setTitle("event");
+        } catch (NotFoundException e) {
+            MainCtrl.alert("404 - EVENT NOT FOUND!");
+        }
     }
 
     public void showAdminPage() {

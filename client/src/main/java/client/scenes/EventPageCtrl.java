@@ -142,37 +142,31 @@ public class EventPageCtrl implements Initializable {
         vboxParticipantsTransaction.getChildren().clear();
 
     }
-    public void load() {
+    public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
 
-        try {
-            eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+        eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-            //update name
-            eventTitle.setText(eventDTO.name);
+        //update name
+        eventTitle.setText(eventDTO.name);
 
-            //load transactions
-            transactions.getChildren().clear();
-            transactions.getChildren().addAll(eventDTO.transactions.stream()
-                .map(ts -> new TransactionNode(ts, this)).toList());
+        //load transactions
+        transactions.getChildren().clear();
+        transactions.getChildren().addAll(eventDTO.transactions.stream()
+            .map(ts -> new TransactionNode(ts, this)).toList());
 
-            //load participants
-            participants.getPanes().clear();
-            participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
-                .toList());
+        //load participants
+        participants.getPanes().clear();
+        participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
+            .toList());
 
-            //choice box author transaction
-            authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
+        //choice box author transaction
+        authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
 
-            //checkboxes for participants
-            vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
-                .map(EventPageCtrl::participantCheckbox).toList());
-            //c1f05a35-1407-4ba1-ada3-0692649256b8
-
-        } catch (WebApplicationException e) {
-            System.err.printf("Error while fetching EVENT<%s>: %s%n",
-                UserData.getInstance().getCurrentUUID(), e);
-        }
+        //checkboxes for participants
+        vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
+            .map(EventPageCtrl::participantCheckbox).toList());
+        //c1f05a35-1407-4ba1-ada3-0692649256b8
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -464,9 +458,13 @@ public class EventPageCtrl implements Initializable {
 //            server.deleteEvent(eventId);
 //            mainCtrl.showStartPage();
             UUID currentUUID = UserData.getInstance().getCurrentUUID();
-            server.deleteEvent(currentUUID);
-            mainCtrl.showStartPage();
 
+            server.deleteEvent(currentUUID);
+            UserData.getInstance().getRecentUUIDs().removeIf(p -> p.getKey().equals(currentUUID));
+            mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+
+            mainCtrl.showStartPage();
+            MainCtrl.alert("Event deleted!");
         } catch (WebApplicationException e) {
             System.err.println("Error deleting event: " + e.getMessage());
         }

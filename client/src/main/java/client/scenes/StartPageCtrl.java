@@ -90,6 +90,11 @@ public class StartPageCtrl {
         }
     }
 
+    public void deleteRecentEvent(UUID id) {
+        recentEventsVBox.getChildren()
+                .removeIf(ehl -> ((EventHyperlink) ehl).pair.getKey().equals(id));
+    }
+
     public void onJoinEvent() {
         String text = joinedEvent.getText();
         if (text != null && !text.isEmpty()) {
