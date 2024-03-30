@@ -53,6 +53,7 @@ public class ParticipantController {
     @Transactional
    @DeleteMapping("/{id}")
    public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
+        if(id==null) return ResponseEntity.badRequest().build();
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         Optional<Participant> p = repo.findById(id);
         Participant participant = p.get();

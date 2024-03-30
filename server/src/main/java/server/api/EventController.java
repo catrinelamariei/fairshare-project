@@ -69,7 +69,7 @@ public class EventController implements WebMvcConfigurer {
     @PutMapping("/{id}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") UUID id,
                                                 @RequestBody EventDTO eventDTO) {
-        if (id == null || eventDTO == null || !eventDTO.validate())
+        if (id == null || eventDTO == null  || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         eventDTO.id = id;
@@ -80,6 +80,7 @@ public class EventController implements WebMvcConfigurer {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {
+        if(id==null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         Event e = repo.getReferenceById(id);
         repo.delete(e);
