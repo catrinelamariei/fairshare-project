@@ -86,7 +86,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button add;
     @FXML
-    private VBox transactions;
+    public VBox transactions;
     private ToggleGroup toggleGroup;
 
 
@@ -387,7 +387,7 @@ public class EventPageCtrl implements Initializable {
 
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        DebtGraph graph = new DebtGraph(eventDTO);
+        DebtGraph graph = new DebtGraph(event);
         PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
         PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
@@ -415,7 +415,7 @@ public class EventPageCtrl implements Initializable {
 
             // deal with currency later
             DebtNode debtNode = new DebtNode(debtor, creditor, "eur",
-                settlementAmount, event, server);
+                settlementAmount, event, server, this);
             debts.getPanes().add(debtNode);
             // Update debts
             credit -= settlementAmount;

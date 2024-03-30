@@ -1,5 +1,6 @@
 package client.scenes.javaFXClasses;
 
+import client.scenes.EventPageCtrl;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
@@ -26,7 +27,7 @@ public class DebtNode extends TitledPane {
 
     public DebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
                     String currencyCode, double amount,
-                    EventDTO event, ServerUtils server) {
+                    EventDTO event, ServerUtils server, EventPageCtrl ctrl) {
 
         super(String.format("%s gives %.2f%s to %s",
             debtor.getFullName(), amount,
@@ -43,7 +44,7 @@ public class DebtNode extends TitledPane {
         // otherwise a new tag will be created
         receivedButton.setOnAction(e -> {
             receivedButton.setText("Unmark as received");
-            debtToTransaction(debtor, creditor, currencyCode, amount, event, server);
+            debtToTransaction(debtor, creditor, currencyCode, amount, event, server, ctrl);
         });
 
 
@@ -69,7 +70,7 @@ public class DebtNode extends TitledPane {
 
     private static void debtToTransaction(ParticipantDTO debtor, ParticipantDTO creditor,
                                   String currencyCode, double amount, EventDTO event,
-                                  ServerUtils server) {
+                                  ServerUtils server, EventPageCtrl ctrl) {
         TagDTO debtTag;
         Optional<TagDTO> optionalDebtTag = event.tags
             .stream()
@@ -90,7 +91,8 @@ public class DebtNode extends TitledPane {
             BigDecimal.valueOf(amount *2), debtor, new HashSet<>(Arrays.asList(debtor, creditor)),
             new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
         try {
-            server.postTransaction(ts);
+            ts = server.postTransaction(ts);
+            ctrl.transactions.getChildren().add(new TransactionNode(ts));
         } catch (WebApplicationException err) {
             System.err.println("Error creating transaction from debt: " + err.getMessage());
             err.printStackTrace();
