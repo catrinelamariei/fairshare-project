@@ -1,12 +1,15 @@
 package server.api;
 
 import commons.DTOs.ParticipantDTO;
+import commons.Participant;
+import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -50,8 +53,16 @@ public class ParticipantController {
     @Transactional
    @DeleteMapping("/{id}")
    public ResponseEntity deleteParticipant(@PathVariable ("id") UUID id) {
+        if(id==null) return ResponseEntity.badRequest().build();
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
-        repo.deleteById(id);
+        Optional<Participant> p = repo.findById(id);
+        Participant participant = p.get();
+        for (Transaction t: participant.getParticipatedTransactions()) {
+            t.getParticipants().remove(participant);
+        }
+        participant.getParticipatedTransactions().clear();
+        //participant.getEvent().getParticipants().remove(p);
+        repo.delete(participant);
         return ResponseEntity.ok().build();
     }
 

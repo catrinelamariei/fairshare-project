@@ -2,18 +2,21 @@ package server.api;
 
 import commons.DTOs.EventDTO;
 import commons.DTOs.TagDTO;
+import commons.Event;
 import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import server.Authentication.Authenticator;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
-import java.util.*;
-
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/event")
@@ -24,6 +27,7 @@ public class EventController implements WebMvcConfigurer {
         this.repo = repo;
         this.d2e = dtoToEntity;
     }
+    // TODO: move this, also check path url because it doesn't match
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new Authenticator()).addPathPatterns("/api/events/");
@@ -67,7 +71,7 @@ public class EventController implements WebMvcConfigurer {
     @PutMapping("/{id}")
     public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") UUID id,
                                                 @RequestBody EventDTO eventDTO) {
-        if (id == null || eventDTO == null || !eventDTO.validate())
+        if (id == null || eventDTO == null  || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         eventDTO.id = id;
@@ -78,8 +82,10 @@ public class EventController implements WebMvcConfigurer {
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {
+        if(id==null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
-        repo.deleteById(id);
+        Event e = repo.getReferenceById(id);
+        repo.delete(e);
         return ResponseEntity.ok().build();
     }
 

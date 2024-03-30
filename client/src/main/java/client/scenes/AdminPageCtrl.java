@@ -7,7 +7,10 @@ import commons.DTOs.EventDTO;
 import commons.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.HBox;
 
 import javax.inject.Inject;
@@ -60,12 +63,11 @@ public class AdminPageCtrl implements Initializable {
 
         List<EventNode> list = new ArrayList<>();
         for (EventDTO event : events) {
-            EventNode eventNode = new EventNode(event);
+            EventNode eventNode = new EventNode(event, mainCtrl);
             list.add(eventNode);
         }
 
-        eventAccordion.getPanes().clear();
-        eventAccordion.getPanes().addAll(list);
+        eventAccordion.getPanes().setAll(list);
     }
 
     public void homePage() {
@@ -76,7 +78,7 @@ public class AdminPageCtrl implements Initializable {
     public void generateEventTest() {
         Event event = new Event("TestEvent");
         event.id = new UUID(0, 0);
-        eventAccordion.getPanes().add(new EventNode(new EventDTO(event)));
+        eventAccordion.getPanes().add(new EventNode(new EventDTO(event), mainCtrl));
     }
 
     //EVENT-ordering

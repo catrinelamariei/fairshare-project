@@ -19,13 +19,15 @@ public class ParticipantNode extends TitledPane {
     private final UUID id; //to address participant contained in this node
 
     //create text (shared among all ParticipantNodes)
-    static Text nameText = new Text("name");
+    static Text fNameText = new Text("First Name");
+    static Text lNameText = new Text("Last Name");
     static Text emailText = new Text("Email");
     static Text ibanText = new Text("IBAN");
     static Text bicText = new Text("BIC");
 
     //text-fields are Participant dependant (on data)
-    TextField nameField;
+    TextField fNameField;
+    TextField lNameField;
     TextField emailField;
     TextField ibanField;
     TextField bicField;
@@ -42,7 +44,7 @@ public class ParticipantNode extends TitledPane {
      */
     public static void init() {
         //apply style to all text
-        List.of(nameText, emailText, ibanText, bicText)
+        List.of(fNameText, lNameText, emailText, ibanText, bicText)
                 .forEach(t -> t.setStyle(textStyle));
     }
 
@@ -56,12 +58,13 @@ public class ParticipantNode extends TitledPane {
         this.id = participant.id;
 
         //create text-field
-        nameField = new TextField(participant.getFullName());
+        fNameField = new TextField(participant.firstName);
+        lNameField = new TextField(participant.lastName);
         emailField = new TextField(participant.email);
         ibanField = new TextField(participant.iban);
         bicField = new TextField(participant.bic);
         //apply style
-        List.of(nameField, emailField, ibanField, bicField)
+        List.of(fNameField, lNameField, emailField, ibanField, bicField)
                 .forEach(tf -> {
                     tf.setStyle(textFieldStyle);
                     tf.setEditable(false);
@@ -69,14 +72,17 @@ public class ParticipantNode extends TitledPane {
 
         //create table
         GridPane gridPane = new GridPane();
-        gridPane.add(nameText, 0, 0);
-        gridPane.add(emailText, 0, 1);
-        gridPane.add(ibanText, 0, 2);
-        gridPane.add(bicText, 0, 3);
-        gridPane.add(nameField, 1, 0);
-        gridPane.add(emailField, 1, 1);
-        gridPane.add(ibanField, 1, 2);
-        gridPane.add(bicField, 1, 3);
+        gridPane.add(fNameText, 0, 0);
+        gridPane.add(lNameText, 0, 1);
+        gridPane.add(emailText, 0, 2);
+        gridPane.add(ibanText, 0, 3);
+        gridPane.add(bicText, 0, 4);
+
+        gridPane.add(fNameField, 1, 0);
+        gridPane.add(lNameField, 1, 1);
+        gridPane.add(emailField, 1, 2);
+        gridPane.add(ibanField, 1, 3);
+        gridPane.add(bicField, 1, 4);
 
         //set insets
         Insets insets = new Insets(10.0d);

@@ -46,9 +46,15 @@ import java.util.regex.Pattern;
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private EventDTO eventDTO;
+
     //delete event
     @FXML
     private Button deleteEventButton;
+
+    //event header
+    @FXML
+    private Text eventTitle;
 
     //transaction attributes and buttons
     @FXML
@@ -131,65 +137,62 @@ public class EventPageCtrl implements Initializable {
         vboxParticipantsTransaction.getChildren().clear();
 
     }
-    public void load() {
+    public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
 
-        try {
-            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-            //load transactions
-            transactions.getChildren().clear();
-            transactions.getChildren().addAll(event.transactions.stream().map(TransactionNode::new)
-                .toList());
+        //update name
+        eventTitle.setText(eventDTO.name);
 
-            //load participants
-            participants.getPanes().clear();
-            participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
-                .toList());
+        //load transactions
+        transactions.getChildren().clear();
+        transactions.getChildren().addAll(eventDTO.transactions.stream()
+            .map(TransactionNode::new).toList());
 
-            //choice box author transaction
-            authorInput.setItems(FXCollections.observableArrayList(event.participants));
+        //load participants
+        participants.getPanes().clear();
+        participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
+            .toList());
 
-            //checkboxes for participants
-            vboxParticipantsTransaction.getChildren().clear();
-            vboxParticipantsTransaction.getChildren().addAll(
-                    authorInput.getItems().stream()
-                            .map(participant -> {
-                                CheckBox checkBox = new CheckBox(participant.toString());
-                                checkBox.setUserData(participant);
-                                return checkBox;
-                            })
-                            .toArray(CheckBox[]::new)
-            );
+        //choice box author transaction
+        authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
 
-            //tags
-            tagsInput.getItems().addAll(event.tags.stream().map(TagDTO::getName).toList());
+        //checkboxes for participants
+        vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
+            .map(EventPageCtrl::participantCheckbox).toList());
+        //c1f05a35-1407-4ba1-ada3-0692649256b8
 
-            //splitting interactivity
-            equalSplit.setOnAction(e -> {
-                vboxParticipantsTransaction.getChildren().forEach(node -> {
-                    if (node instanceof CheckBox) {
-                        CheckBox checkBox = (CheckBox) node;
-                        checkBox.setDisable(true);
-                        checkBox.setSelected(false);
-                    }
-                });
+        //tags
+        tagsInput.getItems().addAll(eventDTO.tags.stream().map(TagDTO::getName).toList());
+
+        //splitting interactivity
+        equalSplit.setOnAction(e -> {
+            vboxParticipantsTransaction.getChildren().forEach(node -> {
+                if (node instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) node;
+                    checkBox.setDisable(true);
+                    checkBox.setSelected(false);
+                }
             });
-            customSplit.setOnAction(e -> {
-                vboxParticipantsTransaction.getChildren().forEach(node -> {
-                    if (node instanceof CheckBox) {
-                        CheckBox checkBox = (CheckBox) node;
-                        checkBox.setDisable(false);
-                        checkBox.setSelected(false);
-                    }
-                });
+        });
+        customSplit.setOnAction(e -> {
+            vboxParticipantsTransaction.getChildren().forEach(node -> {
+                if (node instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) node;
+                    checkBox.setDisable(false);
+                    checkBox.setSelected(false);
+                }
             });
-
-        } catch (WebApplicationException e) {
-            System.err.printf("Error while fetching EVENT<%s>: %s%n",
-                UserData.getInstance().getCurrentUUID(), e);
-        }
+        });
     }
+
+    private static CheckBox participantCheckbox(ParticipantDTO participant) {
+        CheckBox checkBox = new CheckBox(participant.toString());
+        checkBox.setUserData(participant);
+        return checkBox;
+    }
+
 
     @FXML
     private void addTag() {
@@ -219,7 +222,7 @@ public class EventPageCtrl implements Initializable {
         mainCtrl.showStartPage();
     }
     public void gotoAdminLogin() {
-        mainCtrl.showAdminCheckPage();
+        mainCtrl.showAdminPage();
     }
 
     public void copyInviteCode() {
@@ -462,7 +465,11 @@ public class EventPageCtrl implements Initializable {
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
                 fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
+
+            //updating event page
             participants.getPanes().add(new ParticipantNode(participantDTO));
+            authorInput.getItems().add(participantDTO);
+            vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
             return;
@@ -478,12 +485,8 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void debtSimplification() {
-
         debts.getChildren().clear();
-
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
-
-        DebtGraph graph = new DebtGraph(event);
+        DebtGraph graph = new DebtGraph(eventDTO);
         PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
         PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
@@ -546,9 +549,13 @@ public class EventPageCtrl implements Initializable {
 //            server.deleteEvent(eventId);
 //            mainCtrl.showStartPage();
             UUID currentUUID = UserData.getInstance().getCurrentUUID();
-            server.deleteEvent(currentUUID);
-            mainCtrl.showStartPage();
 
+            server.deleteEvent(currentUUID);
+            UserData.getInstance().getRecentUUIDs().removeIf(p -> p.getKey().equals(currentUUID));
+            mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+
+            mainCtrl.showStartPage();
+            MainCtrl.alert("Event deleted!");
         } catch (WebApplicationException e) {
             System.err.println("Error deleting event: " + e.getMessage());
         }
