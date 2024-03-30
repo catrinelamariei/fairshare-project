@@ -27,6 +27,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -148,7 +149,7 @@ public class EventPageCtrl implements Initializable {
 
         //load participants
         participants.getPanes().clear();
-        participants.getPanes().addAll(event.participants.stream().map(ParticipantNode::new)
+        participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
             .toList());
 
         //choice box author transaction
