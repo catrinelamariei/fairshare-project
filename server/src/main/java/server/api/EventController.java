@@ -2,6 +2,7 @@ package server.api;
 
 import commons.DTOs.EventDTO;
 import commons.DTOs.TagDTO;
+import commons.Event;
 import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +81,8 @@ public class EventController implements WebMvcConfigurer {
     @DeleteMapping("/{id}")
     public ResponseEntity deleteEvent(@PathVariable("id") UUID id) {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
-        repo.deleteById(id);
+        Event e = repo.getReferenceById(id);
+        repo.delete(e);
         return ResponseEntity.ok().build();
     }
 

@@ -64,8 +64,7 @@ public class AdminPageCtrl implements Initializable {
             list.add(eventNode);
         }
 
-        eventAccordion.getPanes().clear();
-        eventAccordion.getPanes().addAll(list);
+        eventAccordion.getPanes().setAll(list);
     }
 
     public void homePage() {
