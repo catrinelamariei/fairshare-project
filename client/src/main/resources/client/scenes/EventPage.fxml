@@ -185,7 +185,7 @@
                                                 </ScrollPane>
                                              </children>
                                           </VBox>
-                                          <Button fx:id="addTagButton" layoutX="633.0" layoutY="257.0" mnemonicParsing="false" text="add tag" />
+                                          <Button fx:id="addTagButton" layoutX="633.0" layoutY="257.0" mnemonicParsing="false" onAction="#addTag" text="add tag" />
                                           <Button alignment="CENTER" contentDisplay="CENTER" layoutX="635.0" layoutY="414.0" mnemonicParsing="false" onAction="#clearTransactionFields" text="Abort" textFill="RED">
                                              <font>
                                                 <Font size="14.0" />

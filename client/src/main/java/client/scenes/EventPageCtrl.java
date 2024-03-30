@@ -107,8 +107,6 @@ public class EventPageCtrl implements Initializable {
     private VBox debts;
     @FXML
     private Button settleButton;
-    @FXML
-    private Button addTagButton;
 
 
     Set<TagDTO> tags = new HashSet<>();
@@ -167,33 +165,54 @@ public class EventPageCtrl implements Initializable {
             //tags
             tagsInput.getItems().addAll(event.tags.stream().map(TagDTO::getName).toList());
 
-            addTagButton.setOnAction(e -> {
-                String input = (String) tagsInput.getValue();
-                if (input == null || input.isEmpty()) {
-                    MainCtrl.alert("Please choose a tag from the dropdown menu");
-                    return;
-                }
-                tags.add(findTag(input));
-                tagsInput.setValue(null);
-
-                HBox tagBox = new HBox();
-                Button deleteTag = new Button("X");
-                deleteTag.setOnAction(e2 -> {
-                    tags.remove(findTag(input));
-                    tagsVBox.getChildren().remove(tagBox);
+            //splitting interactivity
+            equalSplit.setOnAction(e -> {
+                vboxParticipantsTransaction.getChildren().forEach(node -> {
+                    if (node instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) node;
+                        checkBox.setDisable(true);
+                        checkBox.setSelected(false);
+                    }
                 });
-                Pane spacer = new Pane();
-                HBox.setHgrow(spacer, Priority.ALWAYS);
-                tagBox.getChildren().add(new Text(input));
-                tagBox.getChildren().add(spacer);
-                tagBox.getChildren().add(deleteTag);
-                tagsVBox.getChildren().add(tagBox);
+            });
+            customSplit.setOnAction(e -> {
+                vboxParticipantsTransaction.getChildren().forEach(node -> {
+                    if (node instanceof CheckBox) {
+                        CheckBox checkBox = (CheckBox) node;
+                        checkBox.setDisable(false);
+                        checkBox.setSelected(false);
+                    }
+                });
             });
 
         } catch (WebApplicationException e) {
             System.err.printf("Error while fetching EVENT<%s>: %s%n",
                 UserData.getInstance().getCurrentUUID(), e);
         }
+    }
+
+    @FXML
+    private void addTag() {
+        String input = (String) tagsInput.getValue();
+        if (input == null || input.isEmpty()) {
+            MainCtrl.alert("Please choose a tag from the dropdown menu");
+            return;
+        }
+        tags.add(findTag(input));
+        tagsInput.setValue(null);
+
+        HBox tagBox = new HBox();
+        Button deleteTag = new Button("X");
+        deleteTag.setOnAction(e2 -> {
+            tags.remove(findTag(input));
+            tagsVBox.getChildren().remove(tagBox);
+        });
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        tagBox.getChildren().add(new Text(input));
+        tagBox.getChildren().add(spacer);
+        tagBox.getChildren().add(deleteTag);
+        tagsVBox.getChildren().add(tagBox);
     }
 
     public void gotoHome() {
@@ -282,9 +301,15 @@ public class EventPageCtrl implements Initializable {
             .filter(item -> !item.getText().equals(author.toString()))
             .findAny().isPresent();
         amount = isValidAmount(transactionAmountString);
+        boolean authorIsSelected = vboxParticipantsTransaction.getChildren()
+            .stream()
+            .map(item -> (CheckBox) item)
+            .filter(item -> item.isSelected())
+            .filter(item -> item.getText().equals(author.toString()))
+            .findAny().isPresent();
 
         if (!infoIsValid(name, author, amount, currency, localDate, selectedRadioButton,
-            participantIsSelected)) return;
+            participantIsSelected, authorIsSelected)) return;
 
         participants = getTransactionParticipants(selectedRadioButton);
 
@@ -344,7 +369,7 @@ public class EventPageCtrl implements Initializable {
     private boolean infoIsValid(String name, ParticipantDTO author, BigDecimal amount,
                                 String currency, LocalDate localDate,
                                 RadioButton selectedRadioButton,
-                                boolean participantIsSelected) {
+                                boolean participantIsSelected, boolean authorIsSelected) {
         if (name == null || name.isEmpty()) {
             MainCtrl.alert("Please enter a description");
             return false;
@@ -363,9 +388,14 @@ public class EventPageCtrl implements Initializable {
         } else if(selectedRadioButton ==null){
             MainCtrl.alert("Please chose how to split the transaction!");
             return false;
-        } else if (customSplit.isSelected() && !participantIsSelected) {
-            MainCtrl.alert("Select at least 1 participant that isn't the author");
-            return false;
+        } else if (customSplit.isSelected()) {
+            if (!participantIsSelected) {
+                MainCtrl.alert("Select at least 1 participant that isn't the author");
+                return false;
+            } else if (!authorIsSelected) {
+                MainCtrl.alert("Select the author as a participant");
+                return false;
+            }
         }
         return true;
     }
