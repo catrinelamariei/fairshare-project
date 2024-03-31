@@ -84,7 +84,12 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TextField tagsInput;
 
-    @FXML private Button add;
+    @FXML
+    private Button add;
+
+    @FXML
+    private Button editSaveParticipantButton;
+
     @FXML
     private VBox transactions;
     private ToggleGroup toggleGroup;
@@ -229,6 +234,9 @@ public class EventPageCtrl implements Initializable {
         participants.getPanes().add(participantNode);
     }
 
+    //when editSaveParticipantButton is pressed:
+    //has to send data to the server
+    // also database
     public void onEditParticipant() {
         for (TitledPane pane : participants.getPanes()) {
             if (pane instanceof ParticipantNode) {
@@ -236,6 +244,7 @@ public class EventPageCtrl implements Initializable {
             }
         }
     }
+
 
 
         /**
