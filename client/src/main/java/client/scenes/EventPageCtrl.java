@@ -53,6 +53,10 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button deleteEventButton;
 
+    //delete event
+    @FXML
+    private Button editButton;
+
     //event header
     @FXML
     private Text eventTitle;
@@ -450,6 +454,26 @@ public class EventPageCtrl implements Initializable {
         }
         //ea8ddca2-0712-4f4a-8410-fe712ab8b86a
         //dd9101e0-5bd1-4df7-bc8c-26d894cb3c71
+    }
+
+    public void onEditEvent() {
+        TextInputDialog dialog = new TextInputDialog(eventDTO.name);
+        dialog.setTitle("Edit Event Name");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Enter the new event name:");
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(newEventName -> {
+            eventDTO.name = newEventName;
+            //eventTitle.setText(newEventName);
+            try {
+                server.putEvent(eventDTO);
+                eventTitle.setText(newEventName);
+            } catch (WebApplicationException e) {
+                System.err.println("Error updating event name: " + e.getMessage());
+            }
+        });
     }
 }
 

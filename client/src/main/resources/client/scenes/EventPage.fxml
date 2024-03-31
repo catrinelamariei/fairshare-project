@@ -56,7 +56,10 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </Text>
-                  <Pane style="-fx-background-color: CDFCF6;" HBox.hgrow="ALWAYS" />
+                  <Pane style="-fx-background-color: CDFCF6;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="editButton" layoutX="-5.0" layoutY="27.0" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="25.0" prefWidth="39.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Edit" />
+                     </children></Pane>
                   <VBox alignment="CENTER">
                      <children>
                   
