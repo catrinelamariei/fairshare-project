@@ -113,6 +113,11 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button settleButton;
 
+    @FXML
+    private ChoiceBox payerFilter;
+    @FXML
+    private ChoiceBox participantFilter;
+
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
@@ -158,6 +163,18 @@ public class EventPageCtrl implements Initializable {
         vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
             .map(EventPageCtrl::participantCheckbox).toList());
         //c1f05a35-1407-4ba1-ada3-0692649256b8
+
+        //choiceboxes for transaction filter
+        payerFilter.getItems().clear();
+        participantFilter.getItems().clear();
+        payerFilter.getItems().add("All");
+        participantFilter.getItems().add("All");
+        for (ParticipantDTO p : eventDTO.participants) {
+            payerFilter.getItems().add(p.getFullName());
+            participantFilter.getItems().add(p.getFullName());
+        }
+        payerFilter.setValue("All");
+        participantFilter.setValue("All");
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -282,7 +299,14 @@ public class EventPageCtrl implements Initializable {
                 date, currency, amount, author, participants, tags, name);
         try {
             ts = server.postTransaction(ts);
-            transactions.getChildren().add(new TransactionNode(ts));
+            String selectedPayer = (String) payerFilter.getValue();
+            String selectedParticipant = (String) participantFilter.getValue();
+            if ((selectedPayer.equals("All")
+                || selectedPayer.equals(author.getFullName()))
+                && (selectedParticipant.equals("All") ||
+                participants.stream().anyMatch(p -> p.getFullName().equals(selectedParticipant)))) {
+                transactions.getChildren().add(new TransactionNode(ts));
+            }
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
@@ -359,6 +383,8 @@ public class EventPageCtrl implements Initializable {
             participants.getPanes().add(new ParticipantNode(participantDTO));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
+            payerFilter.getItems().add(participantDTO.getFullName());
+            participantFilter.getItems().add(participantDTO.getFullName());
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
             return;
@@ -450,6 +476,27 @@ public class EventPageCtrl implements Initializable {
         }
         //ea8ddca2-0712-4f4a-8410-fe712ab8b86a
         //dd9101e0-5bd1-4df7-bc8c-26d894cb3c71
+    }
+
+    @FXML
+    public void filterTransactions() {
+        String selectedPayer = (String) payerFilter.getValue();
+        String selectedParticipant = (String) participantFilter.getValue();
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+
+        transactions.getChildren().setAll(
+            event.transactions
+                .stream()
+                .filter(ts -> selectedPayer.equals("All")
+                    || ts.author.getFullName().equals(selectedPayer))
+                .filter(ts -> selectedParticipant.equals("All") ||
+                    ts.participants.stream()
+                        .anyMatch(p -> p.getFullName().equals(selectedParticipant)))
+                .map(TransactionNode::new)
+                .toList());
+
+
     }
 }
 

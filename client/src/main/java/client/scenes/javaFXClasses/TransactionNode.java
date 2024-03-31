@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 public class TransactionNode extends HBox {
     public UUID id;
+    public TransactionDTO ts;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
@@ -27,6 +28,8 @@ public class TransactionNode extends HBox {
      */
     public TransactionNode(TransactionDTO ts) {
         super(); //initialize HBox part
+
+        this.ts = ts;
 
         //date
         Text date = new Text(formatter.format(ts.date));
