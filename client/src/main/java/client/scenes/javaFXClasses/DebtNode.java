@@ -25,6 +25,8 @@ import java.util.Optional;
 
 public class DebtNode extends TitledPane {
 
+    public ParticipantDTO creditor;
+
     public DebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
                     String currencyCode, double amount,
                     EventDTO event, ServerUtils server, EventPageCtrl ctrl) {
@@ -33,6 +35,7 @@ public class DebtNode extends TitledPane {
             debtor.getFullName(), amount,
             currencyCode, creditor.getFullName()), null);
 
+        this.creditor = creditor;
 
 
         boolean availability = !creditor.iban.equals("-") || !creditor.bic.equals("-");

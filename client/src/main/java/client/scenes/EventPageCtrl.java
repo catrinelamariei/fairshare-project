@@ -112,6 +112,9 @@ public class EventPageCtrl implements Initializable {
     public Accordion debts;
     @FXML
     private Button settleButton;
+    @FXML
+    private ChoiceBox creditorFilter;
+
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -158,12 +161,22 @@ public class EventPageCtrl implements Initializable {
         //checkboxes for participants
         vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
             .map(EventPageCtrl::participantCheckbox).toList());
-        //c1f05a35-1407-4ba1-ada3-0692649256b8
 
         //checkboxes for participants
         vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
             .map(EventPageCtrl::participantCheckbox).toList());
-        //c1f05a35-1407-4ba1-ada3-0692649256b8
+
+        //choiceboxes for debt filter
+        creditorFilter.getItems().clear();
+        creditorFilter.getItems().add("All");
+        for (ParticipantDTO participant : eventDTO.participants) {
+            creditorFilter.getItems().add(participant.getFullName());
+        }
+        creditorFilter.setValue("All");
+
+        // debt
+        debts.getPanes().clear();
+        settleButton.setText("Settle debts");
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -381,6 +394,7 @@ public class EventPageCtrl implements Initializable {
         bic.clear();
     }
 
+    @FXML
     public void debtSimplification() {
 
         debts.getPanes().clear();
@@ -432,7 +446,22 @@ public class EventPageCtrl implements Initializable {
 
         // update the button
         settleButton.setText("Refresh debts");
+        filterDebts();
 
+    }
+
+
+    public void filterDebts() {
+        String selectedCreditor = (String) creditorFilter.getValue();
+        // remove other debtNodes if a creditor is selected
+        if (!selectedCreditor.equals("All")) {
+            debts.getPanes().forEach(debtNode -> {
+                DebtNode node = (DebtNode) debtNode;
+                if (!node.creditor.getFullName().equals(selectedCreditor)) {
+                    debts.getPanes().remove(node);
+                }
+            });
+        }
     }
 
     public static void printParticipantsSplit(Set<ParticipantDTO> participants) {
