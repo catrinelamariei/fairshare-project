@@ -15,21 +15,20 @@
  */
 package client.utils;
 
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import client.UserData;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
 import jakarta.ws.rs.WebApplicationException;
-
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 
 import java.util.Collection;
 import java.util.UUID;
+
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
     //events
@@ -101,7 +100,10 @@ public class ServerUtils {
     }
 
     public TransactionDTO putTransaction(TransactionDTO ts) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/transaction")
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
 
     /**
