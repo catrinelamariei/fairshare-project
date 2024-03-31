@@ -126,11 +126,11 @@ public class DTOtoEntity {
     }
     public Participant update(ParticipantDTO p) {
         Participant participant = participantRepository.getReferenceById(p.id);
-        p.setFirstName(p.firstName);
-        p.setLastName(p.lastName);
-        p.setEmail(p.email);
-        p.setIban(p.iban);
-        p.setBic(p.bic);
+        participant.setFirstName(p.firstName);
+        participant.setLastName(p.lastName);
+        participant.setEmail(p.email);
+        participant.setIban(p.iban);
+        participant.setBic(p.bic);
 
         participantRepository.save(participant);
         return participant;
