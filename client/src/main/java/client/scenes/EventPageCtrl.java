@@ -380,6 +380,7 @@ public class EventPageCtrl implements Initializable {
             participants.getPanes().add(new ParticipantNode(participantDTO));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
+            creditorFilter.getItems().add(participantDTO.getFullName());
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
             return;
@@ -454,14 +455,16 @@ public class EventPageCtrl implements Initializable {
     public void filterDebts() {
         String selectedCreditor = (String) creditorFilter.getValue();
         // remove other debtNodes if a creditor is selected
+        Set<TitledPane> toRemove = new HashSet<>();
         if (!selectedCreditor.equals("All")) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
                 if (!node.creditor.getFullName().equals(selectedCreditor)) {
-                    debts.getPanes().remove(node);
+                    toRemove.add(node);
                 }
             });
         }
+        debts.getPanes().removeAll(toRemove);
     }
 
     public static void printParticipantsSplit(Set<ParticipantDTO> participants) {
