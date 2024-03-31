@@ -28,6 +28,7 @@ public class MainCtrl {
 
 
 
+
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
                            Pair<AdminPageCtrl, Parent> adminPage,
@@ -109,4 +110,6 @@ public class MainCtrl {
         alert.setContentText(msg);
         alert.showAndWait();
     }
+
+
 }

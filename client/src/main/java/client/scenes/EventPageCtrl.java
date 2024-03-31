@@ -117,6 +117,18 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button settleButton;
 
+    @FXML
+    private TabPane participantTabPane;
+
+    @FXML
+    private TabPane expenseTabPane;
+
+    @FXML
+    private Tab overviewExpenses;
+
+    @FXML
+    private Tab overviewParticipants;
+
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
@@ -261,10 +273,6 @@ public class EventPageCtrl implements Initializable {
 
         ParticipantDTO author = authorInput.getValue();
 
-        //join codes for some example transactions
-        //c1f05a35-1407-4ba1-ada3-0692649256b8
-        //57392209-155d-47fb-9460-3fd3ebca7853
-
         //radio buttons
         Set<ParticipantDTO> participants = new HashSet<>();
 
@@ -287,6 +295,7 @@ public class EventPageCtrl implements Initializable {
         try {
             ts = server.postTransaction(ts);
             transactions.getChildren().add(new TransactionNode(ts));
+            showOverviewTransactions();
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
@@ -363,6 +372,7 @@ public class EventPageCtrl implements Initializable {
             participants.getPanes().add(new ParticipantNode(participantDTO));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
+            showOverviewParticipants();
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
             return;
@@ -474,6 +484,14 @@ public class EventPageCtrl implements Initializable {
                 System.err.println("Error updating event name: " + e.getMessage());
             }
         });
+    }
+
+    public void showOverviewParticipants() {
+        participantTabPane.getSelectionModel().select(overviewParticipants);
+    }
+
+    public void showOverviewTransactions() {
+        expenseTabPane.getSelectionModel().select(overviewExpenses);
     }
 }
 
