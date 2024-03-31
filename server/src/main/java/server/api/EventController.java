@@ -6,6 +6,9 @@ import commons.Event;
 import commons.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import server.Authentication.Authenticator;
 import server.Services.DTOtoEntity;
@@ -87,4 +90,31 @@ public class EventController implements WebMvcConfigurer {
         return ResponseEntity.ok().build();
     }
 
+    @MessageMapping("/createEvent")
+    @SendTo("/topic/events")
+    @Transactional
+    public EventDTO createEventWS(EventDTO eventDTO) {
+        if (eventDTO == null || !eventDTO.validate()) return null;
+        return new EventDTO(d2e.create(eventDTO));
+    }
+
+    @MessageMapping("/updateEvent/{id}")
+    @SendTo("/topic/events")
+    @Transactional
+    public EventDTO updateEventWS(@DestinationVariable("id") UUID id, EventDTO eventDTO) {
+        if (id == null || eventDTO == null || !eventDTO.validate()) return null;
+        if (!repo.existsById(id)) return null;
+        eventDTO.id = id;
+        return new EventDTO(d2e.update(eventDTO));
+    }
+
+    @MessageMapping("/deleteEvent/{id}")
+    @SendTo("/topic/events")
+    @Transactional
+    public UUID deleteEventWS(@DestinationVariable("id") UUID id) {
+        if (!repo.existsById(id)) return null;
+        Event e = repo.getReferenceById(id);
+        repo.delete(e);
+        return id;
+    }
 }
