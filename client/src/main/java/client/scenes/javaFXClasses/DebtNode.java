@@ -52,17 +52,19 @@ public class DebtNode extends TitledPane {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox container;
         // display bank info if available
+        Text email = new Text("Email: " + creditor.email);
+        VBox vbox;
         if (availability) {
             Text info = new Text("Bank information is available");
             Text iban = new Text("IBAN:" + creditor.iban);
             Text bic = new Text("BIC: " + creditor.bic);
-            VBox vbox = new VBox(info, iban, bic);
-            container = new HBox(vbox, spacer, receivedButton);
+            vbox = new VBox(info, email, iban, bic);
+
         } else {
             Text info = new Text("Bank information is unavailable");
-            container = new HBox(info, spacer, receivedButton);
-
+            vbox = new VBox(info, email);
         }
+        container = new HBox(vbox, spacer, receivedButton);
         Insets insets = new Insets(10.0d);
         container.getChildren().forEach(n -> container.setMargin(n, insets));
         this.setContent(container);
