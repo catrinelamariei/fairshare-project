@@ -136,6 +136,10 @@ public class ServerUtils {
     }
 
     public void deleteParticipant(UUID id) throws WebApplicationException {
+        ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/participants/" + id)
+                .request()
+                .delete(); // Send DELETE request
 
     }
 
