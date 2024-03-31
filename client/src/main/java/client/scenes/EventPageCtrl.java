@@ -259,7 +259,9 @@ public class EventPageCtrl implements Initializable {
         BigDecimal amount;
 
         ParticipantDTO author = authorInput.getValue();
-        Boolean invalidInput = checkInput(name, transactionAmountString, currency, localDate, author);
+        Boolean invalidInput = checkInput(name, transactionAmountString,
+                currency, localDate, author);
+
         if(invalidInput)
             return;
 
