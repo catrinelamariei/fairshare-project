@@ -16,6 +16,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -228,13 +229,18 @@ public class EventPageCtrl implements Initializable {
         participants.getPanes().add(participantNode);
     }
 
-    public void toggle(){
-        System.out.println("test");
+    public void onEditParticipant() {
+        for (TitledPane pane : participants.getPanes()) {
+            if (pane instanceof ParticipantNode) {
+                ((ParticipantNode) pane).editParticipant(new ActionEvent());
+            }
+        }
     }
 
-    /**
-     * This method is NOT done.
-     */
+
+        /**
+         * This method is NOT done.
+         */
     public void onCreateTransaction(){
         String name = transactionName.getText().trim();
         String transactionAmountString = transactionAmount.getText().trim();

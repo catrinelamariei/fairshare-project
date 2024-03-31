@@ -95,8 +95,8 @@ public class ParticipantNode extends TitledPane {
         gridPane.getColumnConstraints().addAll(col0, col1);
 
         //create button
-        toggleEditButton = new Button("toggle edit");
-        toggleEditButton.setOnAction(this::toggleEdit);
+        toggleEditButton = new Button("Edit");
+        toggleEditButton.setOnAction(this::editParticipant);
         toggleEditButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
         //create pane
@@ -113,7 +113,15 @@ public class ParticipantNode extends TitledPane {
      * makes the textFields editable
      * maybe a submit/cancel button appears?
      */
-    private void toggleEdit(ActionEvent actionEvent) {
-        System.out.println("Started Editing");
+    public void editParticipant(ActionEvent actionEvent) {
+        System.out.println("editParticipant method called");
+        boolean isEditable = !fNameField.isEditable();
+        fNameField.setEditable(isEditable);
+        lNameField.setEditable(isEditable);
+        emailField.setEditable(isEditable);
+        ibanField.setEditable(isEditable);
+        bicField.setEditable(isEditable);
+        toggleEditButton.setText(isEditable ? "Save" : "Edit");
     }
+
 }
