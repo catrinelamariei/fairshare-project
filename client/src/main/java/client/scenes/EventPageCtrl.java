@@ -80,7 +80,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private ScrollPane participantsScrollPane;
     @FXML
-    private ChoiceBox tagsInput;
+    private ChoiceBox<TagDTO> tagsInput;
 
     @FXML private Button add;
     @FXML
@@ -136,6 +136,25 @@ public class EventPageCtrl implements Initializable {
         participantsScrollPane.setContent(vboxParticipantsTransaction);
         vboxParticipantsTransaction.getChildren().clear();
 
+        //splitting interactivity
+        equalSplit.setOnAction(e -> {
+            vboxParticipantsTransaction.getChildren().forEach(node -> {
+                if (node instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) node;
+                    checkBox.setDisable(true);
+                    checkBox.setSelected(true);
+                }
+            });
+        });
+        customSplit.setOnAction(e -> {
+            vboxParticipantsTransaction.getChildren().forEach(node -> {
+                if (node instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) node;
+                    checkBox.setDisable(false);
+                    checkBox.setSelected(false);
+                }
+            });
+        });
     }
     public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
@@ -164,27 +183,8 @@ public class EventPageCtrl implements Initializable {
         //c1f05a35-1407-4ba1-ada3-0692649256b8
 
         //tags
-        tagsInput.getItems().addAll(eventDTO.tags.stream().map(TagDTO::getName).toList());
+        tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
 
-        //splitting interactivity
-        equalSplit.setOnAction(e -> {
-            vboxParticipantsTransaction.getChildren().forEach(node -> {
-                if (node instanceof CheckBox) {
-                    CheckBox checkBox = (CheckBox) node;
-                    checkBox.setDisable(true);
-                    checkBox.setSelected(false);
-                }
-            });
-        });
-        customSplit.setOnAction(e -> {
-            vboxParticipantsTransaction.getChildren().forEach(node -> {
-                if (node instanceof CheckBox) {
-                    CheckBox checkBox = (CheckBox) node;
-                    checkBox.setDisable(false);
-                    checkBox.setSelected(false);
-                }
-            });
-        });
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -196,26 +196,26 @@ public class EventPageCtrl implements Initializable {
 
     @FXML
     private void addTag() {
-        String input = (String) tagsInput.getValue();
-        if (input == null || input.isEmpty()) {
+        TagDTO input = tagsInput.getValue();
+        if (input == null) {
             MainCtrl.alert("Please choose a tag from the dropdown menu");
             return;
         }
-        tags.add(findTag(input));
         tagsInput.setValue(null);
 
         HBox tagBox = new HBox();
         Button deleteTag = new Button("X");
         deleteTag.setOnAction(e2 -> {
-            tags.remove(findTag(input));
+            tags.remove(input);
             tagsVBox.getChildren().remove(tagBox);
         });
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        tagBox.getChildren().add(new Text(input));
+        tagBox.getChildren().add(new Text(input.getName()));
         tagBox.getChildren().add(spacer);
         tagBox.getChildren().add(deleteTag);
         tagsVBox.getChildren().add(tagBox);
+        tags.add(input);
     }
 
     public void gotoHome() {
@@ -271,14 +271,6 @@ public class EventPageCtrl implements Initializable {
         timeline.play();
     }
 
-    /**
-     * placeholder test method for testing the node generator
-     */
-    public void participantNodeAddTest() {
-        ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(null, null,
-                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"));
-        participants.getPanes().add(participantNode);
-    }
 
     public void toggle(){
         System.out.println("test");
@@ -331,11 +323,7 @@ public class EventPageCtrl implements Initializable {
         }
 
         clearTransactionFields();
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Transaction created");
-        alert.setHeaderText(null);
-        alert.setContentText("Transaction created successfully");
-        alert.showAndWait();
+        MainCtrl.inform("Transaction created successfully");
     }
 
     @FXML
@@ -358,15 +346,6 @@ public class EventPageCtrl implements Initializable {
         }
     }
 
-    private TagDTO findTag(String input) {
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
-        for (TagDTO tag : event.tags) {
-            if (tag.getName().equals(input)) {
-                return tag;
-            }
-        }
-        return null;
-    }
 
     @SuppressWarnings("checkstyle:CyclomaticComplexity")
     private boolean infoIsValid(String name, ParticipantDTO author, BigDecimal amount,
@@ -375,32 +354,26 @@ public class EventPageCtrl implements Initializable {
                                 boolean participantIsSelected, boolean authorIsSelected) {
         if (name == null || name.isEmpty()) {
             MainCtrl.alert("Please enter a description");
-            return false;
         } else if (author == null) {
             MainCtrl.alert("Please select a payer");
-            return false;
         }  else if (amount == null) {
-            MainCtrl.alert("Please enter a number for the Amount field");
-            return false;
+            MainCtrl.alert("Please enter a valid amount");
         } else if (currency == null || currency.isEmpty()) {
             MainCtrl.alert("Please choose a currency code");
-            return false;
         } else if (localDate ==null) {
             MainCtrl.alert("Date cannot be empty");
-            return false;
         } else if(selectedRadioButton ==null){
             MainCtrl.alert("Please chose how to split the transaction!");
-            return false;
         } else if (customSplit.isSelected()) {
             if (!participantIsSelected) {
                 MainCtrl.alert("Select at least 1 participant that isn't the author");
-                return false;
             } else if (!authorIsSelected) {
                 MainCtrl.alert("Select the author as a participant");
-                return false;
             }
+        } else {
+            return true;
         }
-        return true;
+        return false;
     }
 
     private static BigDecimal isValidAmount(String transactionAmountString) {

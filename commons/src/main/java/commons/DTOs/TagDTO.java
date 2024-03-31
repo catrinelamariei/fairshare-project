@@ -48,4 +48,8 @@ public class TagDTO {
     public int hashCode() {
         return Objects.hash(id, eventId, name, color);
     }
+
+    public String toString() {
+        return name;
+    }
 }
