@@ -258,21 +258,17 @@ public class EventPageCtrl implements Initializable {
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
 
+        ParticipantDTO author = authorInput.getValue();
+        Boolean invalidInput = checkInput(name, transactionAmountString, currency, localDate, author);
+        if(invalidInput)
+            return;
+
         try {
-            if(name==null || transactionAmountString==null || currency==null || localDate==null){
-                throw new IllegalArgumentException();
-            }
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             MainCtrl.alert("Please enter a number for the Amount field");
             return;
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid transaction information");
-            return;
         }
-
-        ParticipantDTO author = authorInput.getValue();
-
         //radio buttons
         Set<ParticipantDTO> participants = new HashSet<>();
 
@@ -315,6 +311,32 @@ public class EventPageCtrl implements Initializable {
         }
     }
 
+    private boolean checkInput(String name, String transactionAmountString, String currency,
+                            LocalDate localDate, ParticipantDTO author) {
+        if(name==null || name.isEmpty()){
+            MainCtrl.alert("Please enter the name of the expense");
+            return true;
+        }
+        if(author==null){
+            MainCtrl.alert("Please chose the author of the transaction");
+            return true;
+        }
+        if(transactionAmountString==null || transactionAmountString.isEmpty()){
+            MainCtrl.alert("Please enter the amount of the expense");
+            return true;
+        }
+        if(currency==null){
+            MainCtrl.alert("Please enter the currency of the expense");
+            return true;
+        }
+        if(localDate==null){
+            MainCtrl.alert("Please enter the date of the expense");
+            return true;
+        }
+
+        return false;
+    }
+
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
         Set<ParticipantDTO> participants = new HashSet<>();
         if (selectedRadioButton == equalSplit) {
@@ -351,10 +373,15 @@ public class EventPageCtrl implements Initializable {
         ParticipantDTO participantDTO;
 
         try {
-            if (fName.isEmpty() || lName.isEmpty() || mail.isEmpty()) {
-                throw new IllegalArgumentException();
+            if(fName.isEmpty()){
+                MainCtrl.alert("Please enter the first name");
+                return;
             }
-            if (!isValidEmail(mail)) {
+            if(lName.isEmpty()){
+                MainCtrl.alert("Please enter the last name");
+                return;
+            }
+            if (mail.isEmpty() || !isValidEmail(mail)) {
                 MainCtrl.alert("Please enter a valid email address");
                 return;
             }
@@ -373,9 +400,6 @@ public class EventPageCtrl implements Initializable {
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
             showOverviewParticipants();
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
-            return;
         } catch (WebApplicationException e) {
             System.err.println("Error adding participant: " + e.getMessage());
         }
