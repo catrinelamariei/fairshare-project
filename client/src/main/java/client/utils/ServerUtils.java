@@ -129,16 +129,16 @@ public class ServerUtils {
 
     public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/participants/")
-            .request(APPLICATION_JSON)
-            .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
+                .target(UserData.getInstance().getServerURL()).path("api/participants/")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public ParticipantDTO putParticipant(ParticipantDTO p) throws WebApplicationException {
-        ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/participants/")
-            .request(APPLICATION_JSON)
-            .put(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/participants/")
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public void deleteParticipant(UUID id) throws WebApplicationException {
