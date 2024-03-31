@@ -200,6 +200,9 @@ public class EventPageCtrl implements Initializable {
         if (input == null) {
             MainCtrl.alert("Please choose a tag from the dropdown menu");
             return;
+        } else if (tags.contains(input)) {
+            MainCtrl.alert("Tag already added");
+            return;
         }
         tagsInput.setValue(null);
 
