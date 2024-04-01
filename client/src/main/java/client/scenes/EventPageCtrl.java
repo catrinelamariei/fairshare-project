@@ -99,7 +99,6 @@ public class EventPageCtrl implements Initializable {
     private TransactionNode transactionEditTarget;
 
 
-
     // participant attributes and buttons
     @FXML
     private Accordion participants;
@@ -343,7 +342,6 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-
     public void clearTransaction() {
         transactionName.clear();
         transactionAmount.clear();
@@ -390,7 +388,7 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Please choose a currency code");
         } else if (localDate ==null) {
             MainCtrl.alert("Date cannot be empty");
-        } else if(selectedRadioButton ==null){
+        } else if (selectedRadioButton ==null){
             MainCtrl.alert("Please chose how to split the transaction!");
         } else if (customSplit.isSelected()) {
             if (!participantIsSelected) {
@@ -605,7 +603,7 @@ public class EventPageCtrl implements Initializable {
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);
     }
-}
+
 
     public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant){
         if(newParticipant == null){
