@@ -16,7 +16,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -86,10 +85,7 @@ public class EventPageCtrl implements Initializable {
 
     @FXML
     private Button add;
-
-    @FXML
-    private Button editSaveParticipantButton;
-
+    
     @FXML
     private VBox transactions;
     private ToggleGroup toggleGroup;
@@ -154,8 +150,8 @@ public class EventPageCtrl implements Initializable {
 
         //load participants
         participants.getPanes().clear();
-        participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
-            .toList());
+        participants.getPanes().addAll(eventDTO.participants.stream()
+                        .map(p -> new ParticipantNode(p, this)).toList());
 
         //choice box author transaction
         authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
@@ -228,24 +224,11 @@ public class EventPageCtrl implements Initializable {
     /**
      * placeholder test method for testing the node generator
      */
-    public void participantNodeAddTest() {
-        ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(null, null,
-                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"));
-        participants.getPanes().add(participantNode);
-    }
-
-    //when editSaveParticipantButton is pressed:
-    //has to send data to the server
-    // also database
-    public void onEditParticipant() {
-        for (TitledPane pane : participants.getPanes()) {
-            if (pane instanceof ParticipantNode) {
-                ((ParticipantNode) pane).editParticipant(new ActionEvent());
-            }
-        }
-    }
-
-
+//    public void participantNodeAddTest() {
+//        ParticipantNode participantNode = new ParticipantNode(new ParticipantDTO(null, null,
+//                "Max", "Well", "Max.Well@outlook.com", "FR50 1234 5678 9", "KREDBEBB"), this);
+//        participants.getPanes().add(participantNode);
+//    }
 
         /**
          * This method is NOT done.
@@ -371,7 +354,7 @@ public class EventPageCtrl implements Initializable {
             participantDTO = server.postParticipant(participantDTO);
 
             //updating event page
-            participants.getPanes().add(new ParticipantNode(participantDTO));
+            participants.getPanes().add(new ParticipantNode(participantDTO, this));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
         } catch (IllegalArgumentException e) {
@@ -466,5 +449,36 @@ public class EventPageCtrl implements Initializable {
         //ea8ddca2-0712-4f4a-8410-fe712ab8b86a
         //dd9101e0-5bd1-4df7-bc8c-26d894cb3c71
     }
-}
 
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant){
+        if(newParticipant == null){
+            return;
+        }
+
+        try {
+            if (newParticipant.getFirstName().isEmpty() || newParticipant.getLastName().isEmpty()
+                    || newParticipant.getEmail().isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+            if (!isValidEmail(newParticipant.getEmail())) {
+                MainCtrl.alert("Please enter a valid email address");
+                return;
+            }
+            if(newParticipant.getBic().isEmpty()){
+                newParticipant.setBic("-");
+            }
+            if(newParticipant.getIban().isEmpty()){
+                newParticipant.setIban("-");
+            }
+            participants.getPanes().remove(oldNode);
+            participants.getPanes().add(new ParticipantNode(newParticipant, this));
+            // TODO: fix updating participant in server (getting HTTP 405 response)
+            server.putParticipant(newParticipant);
+
+        } catch (IllegalArgumentException e) {
+            MainCtrl.alert("Please enter valid participant data");
+        } catch (WebApplicationException e) {
+            System.err.println("Error updating participant: " + e.getMessage());
+        }
+    }
+}

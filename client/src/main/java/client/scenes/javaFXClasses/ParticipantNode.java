@@ -1,5 +1,7 @@
 package client.scenes.javaFXClasses;
 
+import client.UserData;
+import client.scenes.EventPageCtrl;
 import commons.DTOs.ParticipantDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -17,7 +19,7 @@ import java.util.UUID;
 
 public class ParticipantNode extends TitledPane {
     private final UUID id; //to address participant contained in this node
-
+    private final EventPageCtrl eventPageCtrl;
     //create text (shared among all ParticipantNodes)
     static Text fNameText = new Text("First Name");
     static Text lNameText = new Text("Last Name");
@@ -31,7 +33,7 @@ public class ParticipantNode extends TitledPane {
     TextField emailField;
     TextField ibanField;
     TextField bicField;
-    Button toggleEditButton;
+    Button editSaveButton;
 
     //css styling managed through java
     private static final String textStyle = "-fx-font: bold 20 \"System\"; ";
@@ -52,10 +54,11 @@ public class ParticipantNode extends TitledPane {
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
      * @param participant data to be used/displayed
      */
-    public ParticipantNode(ParticipantDTO participant) {
+    public ParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl) {
         super(participant.getFullName(), null);
         this.getStyleClass().add("participants"); //set CSS class
         this.id = participant.id;
+        this.eventPageCtrl = eventPageCtrl;
 
         //create text-field
         fNameField = new TextField(participant.firstName);
@@ -95,12 +98,12 @@ public class ParticipantNode extends TitledPane {
         gridPane.getColumnConstraints().addAll(col0, col1);
 
         //create button
-        toggleEditButton = new Button("Edit");
-        toggleEditButton.setOnAction(this::editParticipant);
-        toggleEditButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
+        editSaveButton = new Button("Edit");
+        editSaveButton.setOnAction(this::editParticipantFields);
+        editSaveButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
         //create pane
-        TilePane filler = new TilePane(toggleEditButton);
+        TilePane filler = new TilePane(editSaveButton);
         filler.setAlignment(Pos.CENTER); //child in center
         filler.resize(0d, 0d); //it should shrink
 
@@ -113,7 +116,7 @@ public class ParticipantNode extends TitledPane {
      * makes the textFields editable
      * maybe a submit/cancel button appears?
      */
-    public void editParticipant(ActionEvent actionEvent) {
+    public void editParticipantFields(ActionEvent actionEvent) {
         System.out.println("editParticipant method called");
         boolean isEditable = !fNameField.isEditable();
         fNameField.setEditable(isEditable);
@@ -121,7 +124,23 @@ public class ParticipantNode extends TitledPane {
         emailField.setEditable(isEditable);
         ibanField.setEditable(isEditable);
         bicField.setEditable(isEditable);
-        toggleEditButton.setText(isEditable ? "Save" : "Edit");
+
+        if(editSaveButton.getText().equals("Save")) {
+            ParticipantDTO p = getUpdatedParticipantData();
+            eventPageCtrl.updateParticipant(this, p);
+        }
+        editSaveButton.setText(isEditable ? "Save" : "Edit");
+    }
+
+    public ParticipantDTO getUpdatedParticipantData(){
+        String updatedFirstName = fNameField.getText().trim();
+        String updatedLastName = lNameField.getText().trim();
+        String updatedEmail = emailField.getText().trim();
+        String updatedIban = ibanField.getText().trim();
+        String updatedBic = bicField.getText().trim();
+        UUID eventId = UserData.getInstance().getCurrentUUID();
+        return new ParticipantDTO(id, eventId, updatedFirstName,
+                updatedLastName, updatedEmail, updatedIban, updatedBic);
     }
 
 }
