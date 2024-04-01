@@ -7,19 +7,19 @@
 <?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="324.0" prefWidth="751.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.PrivCheckPageCtrl">
-    <Button alignment="CENTER" layoutX="20.0" layoutY="182.0" mnemonicParsing="false" onAction="#requestCodeGeneration" prefHeight="66.0" prefWidth="286.0" text="Generate Code">
+    <Button alignment="CENTER" layoutX="20.0" layoutY="182.0" mnemonicParsing="false" onAction="#requestCodeGeneration" prefHeight="66.0" prefWidth="286.0" text="%button_generate_code">
       <font>
          <Font size="26.0" />
       </font></Button>
-    <PasswordField fx:id="password" layoutX="322.0" layoutY="182.0" prefHeight="66.0" prefWidth="286.0" promptText="Password">
+    <PasswordField fx:id="password" layoutX="322.0" layoutY="182.0" prefHeight="66.0" prefWidth="286.0" promptText="%password_prompt">
       <font>
          <Font size="30.0" />
       </font></PasswordField>
-    <Text fx:id="text" layoutX="14.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Please enter the code to login">
+    <Text fx:id="text" layoutX="14.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%text_please_enter_code">
       <font>
          <Font size="39.0" />
       </font></Text>
-   <Button alignment="CENTER" layoutX="622.0" layoutY="182.0" mnemonicParsing="false" onAction="#login" prefHeight="66.0" prefWidth="105.0" text="Login">
+   <Button alignment="CENTER" layoutX="622.0" layoutY="182.0" mnemonicParsing="false" onAction="#login" prefHeight="66.0" prefWidth="105.0" text="%button_login">
       <font>
          <Font size="26.0" />
       </font>
