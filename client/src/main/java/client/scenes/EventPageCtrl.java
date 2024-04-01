@@ -470,8 +470,9 @@ public class EventPageCtrl implements Initializable {
             if(newParticipant.getIban().isEmpty()){
                 newParticipant.setIban("-");
             }
-            participants.getPanes().remove(oldNode);
-            participants.getPanes().add(new ParticipantNode(newParticipant, this));
+
+            int nodeIndex = participants.getPanes().indexOf(oldNode);
+            participants.getPanes().set(nodeIndex, new ParticipantNode(newParticipant, this));
             // TODO: fix updating participant in server (getting HTTP 405 response)
             server.putParticipant(newParticipant);
 

@@ -49,6 +49,12 @@ public class ParticipantController {
         return ResponseEntity.ok(new ParticipantDTO(d2e.update(p)));
     }
 
+    @Transactional
+    @PutMapping("")
+    public ResponseEntity<ParticipantDTO> updateParticipant(@RequestBody ParticipantDTO p) {
+        return updateParticipant(p.id, p);
+    }
+
     // TODO: manage dependencies
     @Transactional
    @DeleteMapping("/{id}")
