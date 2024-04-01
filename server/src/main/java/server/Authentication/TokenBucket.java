@@ -20,7 +20,7 @@ public class TokenBucket {
         return tokens.getAndUpdate(current -> current > 0 ? current - 1 : 0) > 0;
     }
 
-    private synchronized void refill() {
+    public synchronized void refill() {
         long now = System.currentTimeMillis();
         long elapsedTime = Math.max(0, now - lastRefillTimestamp);
         long tokensToAdd = elapsedTime * capacity / refillTimeMs;
@@ -28,5 +28,9 @@ public class TokenBucket {
             tokens.set(Math.min(capacity, tokens.get() + tokensToAdd));
             lastRefillTimestamp = now;
         }
+    }
+
+    public synchronized long getLastRefillTimestamp() {
+        return lastRefillTimestamp;
     }
 }
