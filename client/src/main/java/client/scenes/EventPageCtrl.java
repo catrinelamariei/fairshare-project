@@ -473,7 +473,6 @@ public class EventPageCtrl implements Initializable {
 
             int nodeIndex = participants.getPanes().indexOf(oldNode);
             participants.getPanes().set(nodeIndex, new ParticipantNode(newParticipant, this));
-            // TODO: fix updating participant in server (getting HTTP 405 response)
             server.putParticipant(newParticipant);
 
         } catch (IllegalArgumentException e) {
