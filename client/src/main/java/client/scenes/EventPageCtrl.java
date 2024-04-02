@@ -7,6 +7,9 @@ import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.scenes.javaFXClasses.TransactionNode;
 import client.utils.ServerUtils;
+import client.utils.UndoService;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -32,7 +35,6 @@ import javafx.stage.Popup;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
-import javax.inject.Inject;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -49,6 +51,7 @@ public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private EventDTO eventDTO;
+    private final UndoService undoService;
 
     //delete event
     @FXML
@@ -127,9 +130,14 @@ public class EventPageCtrl implements Initializable {
     Set<TagDTO> tags = new HashSet<>();
 
     @Inject
-    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoServiceFactory usf) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.undoService = usf.create(this, server);
+    }
+
+    public interface UndoServiceFactory {
+        UndoService create(EventPageCtrl epc, ServerUtils server);
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -194,7 +202,7 @@ public class EventPageCtrl implements Initializable {
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
 
-        clearUndoActions();
+        // TODO: CLEAR UNDO
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -304,7 +312,7 @@ public class EventPageCtrl implements Initializable {
             ts = server.postTransaction(ts);
             TransactionNode tsNode = new TransactionNode(ts, this, server);
             transactions.getChildren().add(tsNode);
-            undoActions.push(() -> {tsNode.deleteTransaction(null); undoActions.pop();});
+            // TODO: UNDO
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
             return null;
@@ -624,28 +632,10 @@ public class EventPageCtrl implements Initializable {
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
 
-        undoActions.push(() -> {
-            transactionEditTarget = updatedTSNode;
-            updateTransaction(old);
-            undoActions.pop(); //remove new undo action
-        });
+        //TODO UNDO
 
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);
-    }
-
-    //server-transaction action interceptor
-    public Stack<Runnable> undoActions = new Stack<>();
-    public void undo() {
-        try {
-            undoActions.pop().run();
-        } catch (EmptyStackException e) {
-            System.err.println("No action to be undone");
-        }
-    }
-
-    private void clearUndoActions() {
-        undoActions.clear();
     }
 }
 

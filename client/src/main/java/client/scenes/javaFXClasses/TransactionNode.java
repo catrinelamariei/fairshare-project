@@ -88,11 +88,9 @@ public class TransactionNode extends HBox {
             ((Pane) this.getParent()).getChildren().remove(this); //remove this node from parent
             TransactionDTO old = server.getTransaction(id);
             server.deleteTransaction(id);
-            eventPageCtrl.undoActions.push(() -> {
-                eventPageCtrl.createTransaction(old);
-                // TODO: when we recreate a transaction the id changes, causing previous update undo actions to become invalid
-                eventPageCtrl.undoActions.pop(); //to remove new undo action
-            });
+
+            // TODO: UNDO
+            // TODO: when we recreate a transaction the id changes, causing previous update undo actions to become invalid
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());
         } catch (Exception e) {

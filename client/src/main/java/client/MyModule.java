@@ -20,9 +20,11 @@ import client.scenes.EventPageCtrl;
 import client.scenes.PrivCheckPageCtrl;
 import client.scenes.StartPageCtrl;
 import client.utils.ServerUtils;
+import client.utils.UndoService;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class MyModule implements Module {
 
@@ -35,5 +37,8 @@ public class MyModule implements Module {
         binder.bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
         binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
         binder.bind(ServerUtils.class).in(Scopes.SINGLETON);
+        binder.bind(UndoService.class).in(Scopes.SINGLETON);
+        binder.install(new FactoryModuleBuilder()
+            .build(EventPageCtrl.UndoServiceFactory.class));
     }
 }
