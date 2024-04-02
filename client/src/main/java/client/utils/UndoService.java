@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import commons.DTOs.TransactionDTO;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -77,8 +79,14 @@ public class UndoService {
     }
 
     private void undoUpdate(TransactionDTO t) {
-        server.putTransaction(t);
-        // TODO: frontend
+        ObservableList<Node> children = eventPageCtrl.transactions.getChildren();
+
+        t = server.putTransaction(t);
+        UUID id = t.id;
+
+        int index = children.indexOf(children.stream().map(TransactionNode.class::cast)
+                        .filter(node -> node.id.equals(id)).findAny().get());
+        children.set(index, new TransactionNode(t, eventPageCtrl, server));
     }
 
     /**
