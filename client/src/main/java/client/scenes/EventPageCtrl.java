@@ -410,7 +410,7 @@ public class EventPageCtrl implements Initializable {
                 MainCtrl.alert("Select at least 1 participant that isn't the author");
             } else if (!authorIsSelected) {
                 MainCtrl.alert("Select the author as a participant");
-            }
+            } else return true; //otherwise all customsplit end here and return false
         } else {
             return true;
         }
@@ -603,6 +603,11 @@ public class EventPageCtrl implements Initializable {
 
     public void submitEditTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
+
+        updateTransaction(ts);
+    }
+
+    private void updateTransaction(TransactionDTO ts) {
         if (ts == null) return;
         if (transactionEditTarget == null) {
             MainCtrl.alert("ERROR: no transaction target set");
@@ -611,9 +616,16 @@ public class EventPageCtrl implements Initializable {
 
         //updating DB and local list
         ts.id = transactionEditTarget.id;
+        TransactionDTO old = server.getTransaction(ts.id);
         TransactionNode updatedTSNode = new TransactionNode(server.putTransaction(ts), this, server);
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
+
+        undoActions.push(() -> {
+            transactionEditTarget = updatedTSNode;
+            updateTransaction(old);
+            undoActions.pop(); //remove new undo action
+        });
 
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);
