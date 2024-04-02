@@ -50,7 +50,6 @@ public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private EventDTO eventDTO;
-    private Injector injector;
 
     //delete event
     @FXML
@@ -129,10 +128,9 @@ public class EventPageCtrl implements Initializable {
     Set<TagDTO> tags = new HashSet<>();
 
     @Inject
-    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, Injector injector) {
+    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.injector = injector;
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -197,7 +195,7 @@ public class EventPageCtrl implements Initializable {
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
 
-        server.clearUndoActions();
+        clearUndoActions();
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -296,11 +294,16 @@ public class EventPageCtrl implements Initializable {
     public void onCreateTransaction(ActionEvent event){
         TransactionDTO ts = readTransactionFields();
 
+        createTransaction(ts);
+    }
+
+    private void createTransaction(TransactionDTO ts) {
         if (ts == null) return;
 
         try {
-            ts = server.postTransaction(ts);
-            transactions.getChildren().add(new TransactionNode(ts, this, server));
+            TransactionNode tsNode = new TransactionNode(server.postTransaction(ts), this, server);
+            transactions.getChildren().add(tsNode);
+            undoActions.push(() -> tsNode.deleteTransaction(null));
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
@@ -614,6 +617,20 @@ public class EventPageCtrl implements Initializable {
 
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);
+    }
+
+    //server-transaction action interceptor
+    private Stack<Runnable> undoActions = new Stack<>();
+    public void undo() {
+        try {
+            undoActions.pop().run();
+        } catch (EmptyStackException e) {
+            System.err.println("No action to be undone");
+        }
+    }
+
+    private void clearUndoActions() {
+        undoActions.clear();
     }
 }
 
