@@ -50,7 +50,7 @@ public class ParticipantController {
     }
 
     @Transactional
-    @PutMapping("")
+    @PutMapping({"","/"})
     public ResponseEntity<ParticipantDTO> updateParticipant(@RequestBody ParticipantDTO p) {
         return updateParticipant(p.id, p);
     }

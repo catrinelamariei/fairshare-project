@@ -138,7 +138,7 @@ public class ServerUtils {
 
     public ParticipantDTO putParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/participants")
+                .target(UserData.getInstance().getServerURL()).path("api/participants/")
                 .request(APPLICATION_JSON)
                 .put(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
