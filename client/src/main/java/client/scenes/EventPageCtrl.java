@@ -99,7 +99,6 @@ public class EventPageCtrl implements Initializable {
     private TransactionNode transactionEditTarget;
 
 
-
     // participant attributes and buttons
     @FXML
     private Accordion participants;
@@ -180,8 +179,8 @@ public class EventPageCtrl implements Initializable {
 
         //load participants
         participants.getPanes().clear();
-        participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
-            .toList());
+        participants.getPanes().addAll(eventDTO.participants.stream()
+                        .map(p -> new ParticipantNode(p, this)).toList());
 
         //choice box author transaction
         authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
@@ -283,12 +282,6 @@ public class EventPageCtrl implements Initializable {
         timeline.play();
     }
 
-
-    public void toggle(){
-        System.out.println("test");
-    }
-
-
     public void onCreateTransaction(ActionEvent event){
         TransactionDTO ts = readTransactionFields();
 
@@ -349,7 +342,6 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-
     public void clearTransaction() {
         transactionName.clear();
         transactionAmount.clear();
@@ -396,7 +388,7 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Please choose a currency code");
         } else if (localDate ==null) {
             MainCtrl.alert("Date cannot be empty");
-        } else if(selectedRadioButton ==null){
+        } else if (selectedRadioButton ==null){
             MainCtrl.alert("Please chose how to split the transaction!");
         } else if (customSplit.isSelected()) {
             if (!participantIsSelected) {
@@ -474,7 +466,7 @@ public class EventPageCtrl implements Initializable {
             participantDTO = server.postParticipant(participantDTO);
 
             //updating event page
-            participants.getPanes().add(new ParticipantNode(participantDTO));
+            participants.getPanes().add(new ParticipantNode(participantDTO, this));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
         } catch (IllegalArgumentException e) {
@@ -611,5 +603,38 @@ public class EventPageCtrl implements Initializable {
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);
     }
-}
 
+
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant){
+        if(newParticipant == null){
+            return;
+        }
+
+        try {
+            if (newParticipant.getFirstName().isEmpty() || newParticipant.getLastName().isEmpty()
+                    || newParticipant.getEmail().isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+            if (!isValidEmail(newParticipant.getEmail())) {
+                MainCtrl.alert("Please enter a valid email address");
+                return;
+            }
+            if(newParticipant.getBic().isEmpty()){
+                newParticipant.setBic("-");
+            }
+            if(newParticipant.getIban().isEmpty()){
+                newParticipant.setIban("-");
+            }
+
+            int nodeIndex = participants.getPanes().indexOf(oldNode);
+            participants.getPanes().set(nodeIndex, new ParticipantNode(newParticipant, this));
+            server.putParticipant(newParticipant);
+            load();
+
+        } catch (IllegalArgumentException e) {
+            MainCtrl.alert("Please enter valid participant data");
+        } catch (WebApplicationException e) {
+            System.err.println("Error updating participant: " + e.getMessage());
+        }
+    }
+}
