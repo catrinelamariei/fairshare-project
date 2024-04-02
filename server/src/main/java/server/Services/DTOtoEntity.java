@@ -126,11 +126,11 @@ public class DTOtoEntity {
     }
     public Participant update(ParticipantDTO p) {
         Participant participant = participantRepository.getReferenceById(p.id);
-        p.firstName = participant.firstName;
-        p.lastName = participant.lastName;
-        p.email = participant.email;
-        p.iban = participant.iban;
-        p.bic = participant.bic;
+        participant.setFirstName(p.firstName);
+        participant.setLastName(p.lastName);
+        participant.setEmail(p.email);
+        participant.setIban(p.iban);
+        participant.setBic(p.bic);
 
         participantRepository.save(participant);
         return participant;
@@ -162,8 +162,8 @@ public class DTOtoEntity {
     }
     public Tag update(TagDTO t) {
         Tag tag = tagRepository.getReferenceById(t.id);
-        tag.name = t.name;
-        tag.color = t.color;
+        tag.setName(t.name);
+        tag.setColor(t.color);
         tagRepository.save(tag);
         return tag;
     }

@@ -357,7 +357,7 @@
                                                             </GridPane>
                                                             <TilePane alignment="CENTER" prefHeight="241.0" prefWidth="390.0" style="-fx-background-color: FAF7F0;" HBox.hgrow="ALWAYS">
                                                                <children>
-                                                                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#toggle" prefHeight="35.0" prefWidth="106.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Toggle Edit">
+                                                                  <Button fx:id="editSaveParticipantButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="106.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Toggle Edit">
                                                                      <font>
                                                                         <Font size="14.0" />
                                                                      </font>
