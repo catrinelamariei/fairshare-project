@@ -2,7 +2,6 @@ package client.scenes.javaFXClasses;
 
 import client.scenes.EventPageCtrl;
 import client.utils.ServerUtils;
-import com.google.inject.Inject;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;

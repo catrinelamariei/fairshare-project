@@ -7,7 +7,6 @@ import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.scenes.javaFXClasses.TransactionNode;
 import client.utils.ServerUtils;
-import com.google.inject.Injector;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -617,7 +616,8 @@ public class EventPageCtrl implements Initializable {
         //updating DB and local list
         ts.id = transactionEditTarget.id;
         TransactionDTO old = server.getTransaction(ts.id);
-        TransactionNode updatedTSNode = new TransactionNode(server.putTransaction(ts), this, server);
+        TransactionNode updatedTSNode = new TransactionNode(server.putTransaction(ts), this,
+            server);
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
 

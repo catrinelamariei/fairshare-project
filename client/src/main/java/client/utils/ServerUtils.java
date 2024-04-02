@@ -16,8 +16,6 @@
 package client.utils;
 
 import client.UserData;
-import client.scenes.EventPageCtrl;
-import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -28,8 +26,6 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 
 import java.util.Collection;
-import java.util.EmptyStackException;
-import java.util.Stack;
 import java.util.UUID;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
