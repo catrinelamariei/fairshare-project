@@ -31,6 +31,10 @@ public class TagDTO {
         return !(name == null || name.isEmpty() || color == null || eventId == null);
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -43,5 +47,9 @@ public class TagDTO {
     @Override
     public int hashCode() {
         return Objects.hash(id, eventId, name, color);
+    }
+
+    public String toString() {
+        return name;
     }
 }
