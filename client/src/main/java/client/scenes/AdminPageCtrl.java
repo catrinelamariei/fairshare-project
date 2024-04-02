@@ -3,6 +3,7 @@ package client.scenes;
 import client.MainCtrl;
 import client.scenes.javaFXClasses.EventNode;
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
 import javafx.fxml.FXML;
@@ -13,7 +14,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.HBox;
 
-import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
 

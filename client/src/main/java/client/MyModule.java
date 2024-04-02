@@ -35,9 +35,7 @@ public class MyModule implements Module {
         binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
         binder.bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
         binder.bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
         binder.bind(ServerUtils.class).in(Scopes.SINGLETON);
-        binder.bind(UndoService.class).in(Scopes.SINGLETON);
         binder.install(new FactoryModuleBuilder()
             .build(EventPageCtrl.UndoServiceFactory.class));
     }

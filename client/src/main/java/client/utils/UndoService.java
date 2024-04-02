@@ -16,14 +16,14 @@ public class UndoService {
     private final Stack<Runnable> undoActions = new Stack<>();
 
     // to actually do actions
-    private final EventPageCtrl eventPageCtrl;
-    private final ServerUtils server;
-
-    @Inject
-    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server) {
-        this.eventPageCtrl = eventPageCtrl;
-        this.server = server;
-    }
+//    private final EventPageCtrl eventPageCtrl;
+//    private final ServerUtils server;
+//
+//    @Inject
+//    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server) {
+//        this.eventPageCtrl = eventPageCtrl;
+//        this.server = server;
+//    }
 
     /**
      * adds an action that can be undone later
