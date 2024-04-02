@@ -4,7 +4,6 @@ import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.TransactionNode;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
 import commons.DTOs.TransactionDTO;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -37,7 +36,7 @@ public class UndoService {
      * @param action type of action executed
      * @param oldTS old transaction (in case of CREATE the new transaction)
      */
-    public void addAction(tsAction action, TransactionDTO oldTS) {
+    public void addAction(TsAction action, TransactionDTO oldTS) {
         if (oldTS == null) throw new IllegalArgumentException();
 
         oldTSList.add(oldTS);
@@ -90,21 +89,27 @@ public class UndoService {
     }
 
     /**
-     * when we recreate a transaction the id changes, causing previous update undo actions to become invalid
+     * when we recreate a transaction the id changes,
+     * causing previous update undo actions to become invalid
      */
     private void undoDelete(TransactionDTO t) {
+        ObservableList<Node> children = eventPageCtrl.transactions.getChildren();
+
         UUID oldID = t.id;
-        UUID newID = server.postTransaction(t).id;
+        t = server.postTransaction(t);
+        UUID newID = t.id; //because otherwise lambda unhappy
         oldTSList.stream()
             .filter(oldTS -> oldTS.id.equals(oldID))
             .forEach(oldTS -> oldTS.id = newID);
-        // TODO: frontend
+
+
+        children.add(new TransactionNode(t, eventPageCtrl, server));
     }
 
     /**
      * class to easily choose what actions was performed
      */
-    public static enum tsAction{
+    public static enum TsAction {
         CREATE,
         UPDATE,
         DELETE;

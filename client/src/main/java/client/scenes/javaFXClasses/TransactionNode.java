@@ -88,7 +88,7 @@ public class TransactionNode extends HBox {
         try {
             ((Pane) this.getParent()).getChildren().remove(this); //remove this node from parent
             TransactionDTO old = server.getTransaction(id);
-            eventPageCtrl.undoService.addAction(UndoService.tsAction.DELETE, old);
+            eventPageCtrl.undoService.addAction(UndoService.TsAction.DELETE, old);
             server.deleteTransaction(id);
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());

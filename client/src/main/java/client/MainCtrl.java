@@ -2,8 +2,6 @@ package client;
 
 import client.scenes.*;
 import client.utils.EventPageKeyEventHandler;
-import client.utils.PrivCheckPageKeyEventHandler;
-import com.google.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

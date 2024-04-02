@@ -6,11 +6,9 @@ import client.scenes.javaFXClasses.DebtGraph;
 import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.scenes.javaFXClasses.TransactionNode;
-import client.utils.EventPageKeyEventHandler;
 import client.utils.ServerUtils;
 import client.utils.UndoService;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -47,7 +45,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static client.utils.UndoService.tsAction.*;
+import static client.utils.UndoService.TsAction.*;
 
 
 public class EventPageCtrl implements Initializable {
@@ -205,7 +203,7 @@ public class EventPageCtrl implements Initializable {
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
 
-        // TODO: CLEAR UNDO
+        undoService.clear();
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -316,7 +314,6 @@ public class EventPageCtrl implements Initializable {
             undoService.addAction(CREATE, ts);
             TransactionNode tsNode = new TransactionNode(ts, this, server);
             transactions.getChildren().add(tsNode);
-            // TODO: UNDO
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
             return null;
@@ -636,8 +633,6 @@ public class EventPageCtrl implements Initializable {
             server);
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
-
-        //TODO UNDO
 
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);

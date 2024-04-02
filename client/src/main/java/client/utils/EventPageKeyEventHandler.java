@@ -1,7 +1,5 @@
 package client.utils;
 
-import client.scenes.EventPageCtrl;
-import com.google.inject.Inject;
 import javafx.scene.input.KeyEvent;
 
 public class EventPageKeyEventHandler implements GeneralKeyEventHandler{
