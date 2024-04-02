@@ -293,22 +293,25 @@ public class EventPageCtrl implements Initializable {
     public void onCreateTransaction(ActionEvent event){
         TransactionDTO ts = readTransactionFields();
 
-        createTransaction(ts);
+        if (createTransaction(ts) != null)
+            MainCtrl.inform("Transaction created successfully");
     }
 
-    public void createTransaction(TransactionDTO ts) {
-        if (ts == null) return;
+    public TransactionDTO createTransaction(TransactionDTO ts) {
+        if (ts == null) return null;
 
         try {
-            TransactionNode tsNode = new TransactionNode(server.postTransaction(ts), this, server);
+            ts = server.postTransaction(ts);
+            TransactionNode tsNode = new TransactionNode(ts, this, server);
             transactions.getChildren().add(tsNode);
             undoActions.push(() -> {tsNode.deleteTransaction(null); undoActions.pop();});
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
+            return null;
         }
 
         clearTransaction();
-        MainCtrl.inform("Transaction created successfully");
+        return ts;
     }
 
     private TransactionDTO readTransactionFields() {

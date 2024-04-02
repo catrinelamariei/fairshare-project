@@ -90,6 +90,7 @@ public class TransactionNode extends HBox {
             server.deleteTransaction(id);
             eventPageCtrl.undoActions.push(() -> {
                 eventPageCtrl.createTransaction(old);
+                // TODO: when we recreate a transaction the id changes, causing previous update undo actions to become invalid
                 eventPageCtrl.undoActions.pop(); //to remove new undo action
             });
         } catch (IllegalArgumentException e) {
