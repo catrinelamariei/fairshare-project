@@ -16,6 +16,8 @@
 package client.utils;
 
 import client.UserData;
+import client.scenes.EventPageCtrl;
+import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -26,11 +28,26 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 
 import java.util.Collection;
+import java.util.EmptyStackException;
+import java.util.Stack;
 import java.util.UUID;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
+    private final Stack<Runnable> undoActions = new Stack<>();
+    public void undo() {
+        try {
+            undoActions.pop().run();
+        } catch (EmptyStackException e) {
+            System.err.println("Nothing to undo");
+        }
+    }
+
+    public void clearUndoActions() {
+        undoActions.clear();
+    }
+
     //events
     //I think there is a problem with this method
     public EventDTO getEvent(UUID id) throws WebApplicationException {
@@ -93,13 +110,19 @@ public class ServerUtils {
      * @return the transaction that was added
      */
     public TransactionDTO postTransaction(TransactionDTO ts) throws WebApplicationException {
-        return ClientBuilder.newClient() //
+        TransactionDTO out =  ClientBuilder.newClient() //
                 .target(UserData.getInstance().getServerURL()).path("api/transaction") //
                 .request(APPLICATION_JSON) //
                 .post(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
+
+        undoActions.push(() -> deleteTransaction(out.id));
+        return out;
     }
 
     public TransactionDTO putTransaction(TransactionDTO ts) throws WebApplicationException {
+        TransactionDTO old = getTransaction(ts.id);
+        undoActions.push(() -> putTransaction(old));
+
         return ClientBuilder.newClient()
                 .target(UserData.getInstance().getServerURL()).path("api/transaction")
                 .request(APPLICATION_JSON)
@@ -112,6 +135,9 @@ public class ServerUtils {
      * @throws WebApplicationException HTTP error respose (e.g. 404 - not found)
      */
     public void deleteTransaction(UUID id) throws WebApplicationException {
+        TransactionDTO old = getTransaction(id);
+        undoActions.push(() -> postTransaction(old));
+
         ClientBuilder.newClient()
                 .target(UserData.getInstance().getServerURL()).path("api/transaction/" + id)
                 .request()

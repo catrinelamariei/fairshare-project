@@ -7,6 +7,7 @@ import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.scenes.javaFXClasses.TransactionNode;
 import client.utils.ServerUtils;
+import com.google.inject.Injector;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -49,6 +50,7 @@ public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private EventDTO eventDTO;
+    private Injector injector;
 
     //delete event
     @FXML
@@ -127,9 +129,10 @@ public class EventPageCtrl implements Initializable {
     Set<TagDTO> tags = new HashSet<>();
 
     @Inject
-    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, Injector injector) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.injector = injector;
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -176,7 +179,7 @@ public class EventPageCtrl implements Initializable {
         //load transactions
         transactions.getChildren().clear();
         transactions.getChildren().addAll(eventDTO.transactions.stream()
-            .map(ts -> new TransactionNode(ts, this)).toList());
+            .map(ts -> new TransactionNode(ts, this, server)).toList());
 
         //load participants
         participants.getPanes().clear();
@@ -194,6 +197,7 @@ public class EventPageCtrl implements Initializable {
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
 
+        server.clearUndoActions();
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -296,7 +300,7 @@ public class EventPageCtrl implements Initializable {
 
         try {
             ts = server.postTransaction(ts);
-            transactions.getChildren().add(new TransactionNode(ts, this));
+            transactions.getChildren().add(new TransactionNode(ts, this, server));
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
@@ -604,7 +608,7 @@ public class EventPageCtrl implements Initializable {
 
         //updating DB and local list
         ts.id = transactionEditTarget.id;
-        TransactionNode updatedTSNode = new TransactionNode(server.putTransaction(ts), this);
+        TransactionNode updatedTSNode = new TransactionNode(server.putTransaction(ts), this, server);
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
 

@@ -2,6 +2,7 @@ package client.scenes.javaFXClasses;
 
 import client.scenes.EventPageCtrl;
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -22,14 +23,17 @@ public class TransactionNode extends HBox {
     private final EventPageCtrl eventPageCtrl;
     public UUID id;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    //@Inject -> TODO: this should be looked into but for now I cannot get this working
+    private ServerUtils server;
 
     /**
      * Create a javFX node representing a transaction
      * @param ts transaction to be displayed (data source)
      */
-    public TransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl) {
+    public TransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl, ServerUtils server) {
         super(); //initialize HBox part
         this.eventPageCtrl = eventPageCtrl;
+        this.server = server;
 
         //date
         Text date = new Text(formatter.format(ts.date));
@@ -72,7 +76,7 @@ public class TransactionNode extends HBox {
         System.out.println("Start editing transaction");
 
         eventPageCtrl.enableEditing(this);
-        eventPageCtrl.fillTransaction((new ServerUtils()).getTransaction(id));
+        eventPageCtrl.fillTransaction(server.getTransaction(id));
     }
 
     public void deleteTransaction(ActionEvent event) {
@@ -83,7 +87,7 @@ public class TransactionNode extends HBox {
 
         try {
             ((Pane) this.getParent()).getChildren().remove(this); //remove this node from parent
-            (new ServerUtils()).deleteTransaction(id); // TODO: should use singleton
+            server.deleteTransaction(id);
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());
         } catch (Exception e) {

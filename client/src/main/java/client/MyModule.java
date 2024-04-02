@@ -20,6 +20,9 @@ import client.scenes.EventPageCtrl;
 import client.MainCtrl;
 import client.scenes.PrivCheckPageCtrl;
 import client.scenes.StartPageCtrl;
+import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.EventPageKeyEventHandler;
+import client.utils.ServerUtils;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
@@ -33,6 +36,8 @@ public class MyModule implements Module {
         binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
         binder.bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
         binder.bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
-
+        binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(ServerUtils.class).in(Scopes.SINGLETON);
+        binder.bind(EventPageKeyEventHandler.class).in(Scopes.SINGLETON);
     }
 }

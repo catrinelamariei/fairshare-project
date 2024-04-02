@@ -1,10 +1,15 @@
 package client;
 
 import client.scenes.*;
+import client.utils.EventPageKeyEventHandler;
+import com.google.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -26,6 +31,9 @@ public class MainCtrl {
     private TransactionPageCtrl transactionPageCtrl;
     private Scene transactionPage;
 
+    //keyhandling
+    @Inject
+    private EventPageKeyEventHandler eventPageKeyEventHandler;
 
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
@@ -43,6 +51,8 @@ public class MainCtrl {
 
         this.eventPageCtrl = eventPage.getKey();
         this.eventPage = new Scene(eventPage.getValue());
+
+        this.eventPage.setOnKeyPressed(eventPageKeyEventHandler);
 
         this.privCheckPageCtrl = privCheckPage.getKey();
         this.privCheckPage = new Scene(privCheckPage.getValue());
