@@ -629,6 +629,7 @@ public class EventPageCtrl implements Initializable {
             int nodeIndex = participants.getPanes().indexOf(oldNode);
             participants.getPanes().set(nodeIndex, new ParticipantNode(newParticipant, this));
             server.putParticipant(newParticipant);
+            load();
 
         } catch (IllegalArgumentException e) {
             MainCtrl.alert("Please enter valid participant data");
