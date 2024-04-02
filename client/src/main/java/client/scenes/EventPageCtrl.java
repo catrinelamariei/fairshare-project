@@ -297,13 +297,13 @@ public class EventPageCtrl implements Initializable {
         createTransaction(ts);
     }
 
-    private void createTransaction(TransactionDTO ts) {
+    public void createTransaction(TransactionDTO ts) {
         if (ts == null) return;
 
         try {
             TransactionNode tsNode = new TransactionNode(server.postTransaction(ts), this, server);
             transactions.getChildren().add(tsNode);
-            undoActions.push(() -> tsNode.deleteTransaction(null));
+            undoActions.push(() -> {tsNode.deleteTransaction(null); undoActions.pop();});
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
@@ -620,7 +620,7 @@ public class EventPageCtrl implements Initializable {
     }
 
     //server-transaction action interceptor
-    private Stack<Runnable> undoActions = new Stack<>();
+    public Stack<Runnable> undoActions = new Stack<>();
     public void undo() {
         try {
             undoActions.pop().run();
