@@ -2,6 +2,7 @@ package client.scenes.javaFXClasses;
 
 import client.scenes.EventPageCtrl;
 import client.utils.ServerUtils;
+import client.utils.UndoService;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -87,10 +88,8 @@ public class TransactionNode extends HBox {
         try {
             ((Pane) this.getParent()).getChildren().remove(this); //remove this node from parent
             TransactionDTO old = server.getTransaction(id);
+            eventPageCtrl.undoService.addAction(UndoService.tsAction.DELETE, old);
             server.deleteTransaction(id);
-
-            // TODO: UNDO
-            // TODO: when we recreate a transaction the id changes, causing previous update undo actions to become invalid
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());
         } catch (Exception e) {

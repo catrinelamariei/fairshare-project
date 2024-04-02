@@ -47,6 +47,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static client.utils.UndoService.tsAction.*;
+
 
 public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
@@ -96,7 +98,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button cancelTransaction;
     @FXML
-    private VBox transactions;
+    public VBox transactions;
     @FXML
     private VBox tagsVBox;
     private ToggleGroup toggleGroup;
@@ -311,6 +313,7 @@ public class EventPageCtrl implements Initializable {
 
         try {
             ts = server.postTransaction(ts);
+            undoService.addAction(CREATE, ts);
             TransactionNode tsNode = new TransactionNode(ts, this, server);
             transactions.getChildren().add(tsNode);
             // TODO: UNDO
@@ -628,6 +631,7 @@ public class EventPageCtrl implements Initializable {
         //updating DB and local list
         ts.id = transactionEditTarget.id;
         TransactionDTO old = server.getTransaction(ts.id);
+        undoService.addAction(UPDATE, old);
         TransactionNode updatedTSNode = new TransactionNode(server.putTransaction(ts), this,
             server);
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);

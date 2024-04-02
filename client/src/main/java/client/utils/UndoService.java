@@ -1,18 +1,21 @@
 package client.utils;
 
 import client.scenes.EventPageCtrl;
+import client.scenes.javaFXClasses.TransactionNode;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import commons.DTOs.TransactionDTO;
+import javafx.scene.layout.VBox;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class UndoService {
     // to access and edit old transactions (like UUID) from outside the runnable scopes
+    // we never get from this, we only update ids in this
+    // we never remove because we might remove references used multiple times,
+    // and I am not about to start managing references/pointers in java
     public List<TransactionDTO> oldTSList = new ArrayList<>();
     private final Stack<Runnable> undoActions = new Stack<>();
 
@@ -21,7 +24,8 @@ public class UndoService {
     private final ServerUtils server;
 
     @Inject
-    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server) {
+    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server,
+                       @Autowired VBox transactions) {
         this.eventPageCtrl = eventPageCtrl;
         this.server = server;
     }
@@ -64,17 +68,29 @@ public class UndoService {
     }
 
     //private specific handlers
+
     private void undoCreate(TransactionDTO t) {
-        oldTSList.remove(t);
-
+        server.deleteTransaction(t.id);
+        eventPageCtrl.transactions.getChildren().removeAll(
+            eventPageCtrl.transactions.getChildren().stream()
+                .filter(node -> ((TransactionNode) node).id.equals(t.id)).toList());
     }
+
     private void undoUpdate(TransactionDTO t) {
-        oldTSList.remove(t);
-
+        server.putTransaction(t);
+        // TODO: frontend
     }
-    private void undoDelete(TransactionDTO t) {
-        oldTSList.remove(t);
 
+    /**
+     * when we recreate a transaction the id changes, causing previous update undo actions to become invalid
+     */
+    private void undoDelete(TransactionDTO t) {
+        UUID oldID = t.id;
+        UUID newID = server.postTransaction(t).id;
+        oldTSList.stream()
+            .filter(oldTS -> oldTS.id.equals(oldID))
+            .forEach(oldTS -> oldTS.id = newID);
+        // TODO: frontend
     }
 
     /**
