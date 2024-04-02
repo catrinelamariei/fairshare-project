@@ -15,20 +15,20 @@
  */
 package client.utils;
 
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import client.UserData;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
 import jakarta.ws.rs.WebApplicationException;
-
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
 
 import java.util.Collection;
 import java.util.UUID;
+
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
     //events
@@ -60,18 +60,24 @@ public class ServerUtils {
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
 
-    public boolean deleteEvent(UUID id) throws WebApplicationException {
-        return false;
+    public void deleteEvent(UUID id) throws WebApplicationException {
+        ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL())
+                .path("api/event/" + id)
+                .request()
+                .delete();
+
     }
 
     @SuppressWarnings("unchecked")
     public Collection<EventDTO> getAllEvents() throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("event")
-            .request(APPLICATION_JSON)
-            .header("Authorization", "Bearer " + UserData.getInstance().getToken())
-            .get(Collection.class);
+                .target(UserData.getInstance().getServerURL()).path("api/event")
+                .request(APPLICATION_JSON)
+                .header("Authorization", "Bearer " + UserData.getInstance().getToken())
+                .get(new GenericType<Collection<EventDTO>>() {});
     }
+
 
     //transactions
     public TransactionDTO getTransaction(UUID id) throws WebApplicationException {
@@ -94,7 +100,10 @@ public class ServerUtils {
     }
 
     public TransactionDTO putTransaction(TransactionDTO ts) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/transaction")
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
 
     /**

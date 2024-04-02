@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 import static com.google.inject.Guice.createInjector;
 
+
 public class Main extends Application {
 
     private static final Injector INJECTOR = createInjector(new MyModule());

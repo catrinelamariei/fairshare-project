@@ -2,15 +2,10 @@ package commons;
 
 import commons.DTOs.TransactionDTO;
 import jakarta.persistence.*;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -31,10 +26,10 @@ public class Transaction {
     @ManyToOne
     public Event event;
 
-    @ManyToMany(cascade = CascadeType.DETACH)
+    @ManyToMany()
     public Set<Participant> participants;
 
-    @ManyToMany(cascade = CascadeType.DETACH)
+    @ManyToMany
     public Set<Tag> tags;
 
     @Column(nullable = false)
@@ -96,6 +91,10 @@ public class Transaction {
         return tags;
     }
 
+    public String getSubject() {
+        return subject;
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }
@@ -115,14 +114,36 @@ public class Transaction {
         return event;
     }
 
+    public void setAuthor(Participant author) {
+        this.author = author;
+    }
+
+    public void setParticipants(Set<Participant> participants) {
+        this.participants = participants;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Transaction other = (Transaction) obj;
+        return Objects.equals(id, other.id) &&
+                Objects.equals(date, other.date) &&
+                Objects.equals(currencyCode, other.currencyCode) &&
+                Objects.equals(amount, other.amount);
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return Objects.hash(id, date, currencyCode, amount);
     }
 
     @Override

@@ -1,18 +1,23 @@
 package client.scenes;
+
 import client.MainCtrl;
 import client.UserData;
 import client.utils.ServerUtils;
-
-import javax.inject.Inject;
-
 import commons.DTOs.EventDTO;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+
+import javax.inject.Inject;
+import java.util.Optional;
 import java.util.UUID;
+
+import static client.UserData.Pair;
 
 public class StartPageCtrl {
     private ServerUtils serverUtils;
@@ -26,17 +31,23 @@ public class StartPageCtrl {
     @FXML
     private TextField joinedEvent;
     @FXML
-    private Hyperlink eventA;
-    @FXML
-    private Hyperlink eventB;
-    @FXML
-    private Hyperlink eventC;
+    private VBox recentEventsVBox;
+
 
     @Inject
     public StartPageCtrl(ServerUtils serverUtils, MainCtrl mainCtrl) {
         this.serverUtils = serverUtils;
         this.mainCtrl = mainCtrl;
     }
+
+    public void initialize() {
+        //event links
+        recentEventsVBox.getChildren().setAll(UserData.getInstance().getRecentUUIDs()
+            .stream().map(EventHyperlink::new).toList());
+    }
+
+
+
     public void onCreateEvent() {
         String text = newEvent.getText();
         EventDTO e;
@@ -53,40 +64,96 @@ public class StartPageCtrl {
         }
 
         newEvent.clear();
-        UserData.getInstance().setCurrentUUID(e.getId());
+
+        //add to hyperlinks
+        Pair<UUID, String> pair = new Pair<>(e.getId(), e.getName());
+        setCurrentEvent(pair);
+
         //confirmation dialog
         MainCtrl.inform(text + " event created!");
         mainCtrl.showEventPage();
     }
 
-    //this method still needs work done
-    //because it doesn't do anything after you press join
-    public void onJoinEvent(){
-        String text = joinedEvent.getText();
-        if (text != null && !text.isEmpty()) {
-            System.out.println(text + " Event joined");
-            UserData data = UserData.getInstance();
-            data.setCurrentUUID(UUID.fromString(text));
-            joinedEvent.clear();
-            eventPage();
-        } else {
-            // Display an error message if the input is invalid
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Please enter a valid event name.");
-            alert.showAndWait();
+    /**
+     * sets the current event to specified id and adds it to the top of recentEventsVBox
+     * @param pair pair of ID (of event) and name (local stored to use if event is deleted)
+     */
+    private void setCurrentEvent(Pair<UUID, String> pair) {
+        UserData.getInstance().setCurrentUUID(pair);
+        Optional<Node> hyperlinkMatch = recentEventsVBox.getChildren().stream()
+            .filter(ehl -> ((EventHyperlink) ehl).pair.getKey().equals(pair.getKey())).findFirst();
+        if (hyperlinkMatch.isPresent()) { //hyperlink already present? move to top
+            recentEventsVBox.getChildren().remove(hyperlinkMatch.get());
+            recentEventsVBox.getChildren().add(0, hyperlinkMatch.get());
+        } else {//create new at top
+            recentEventsVBox.getChildren().add(0, new EventHyperlink(pair));
         }
     }
 
-    public void onViewEvent(){
-        System.out.println("Redirecting to ");
+    public void deleteRecentEvent(UUID id) {
+        recentEventsVBox.getChildren()
+                .removeIf(ehl -> ((EventHyperlink) ehl).pair.getKey().equals(id));
     }
+
+    public void onJoinEvent() {
+        String text = joinedEvent.getText();
+        if (text != null && !text.isEmpty()) {
+            try{
+                EventHyperlink ehl = new EventHyperlink(new Pair<>(UUID.fromString(text), ""));
+                if (ehl.isDisable()) throw new NotFoundException(); //event was not found
+
+                joinedEvent.clear();
+                System.out.println(ehl.pair.getValue() + " Event joined");
+                recentEventsVBox.getChildren().add(ehl);
+                UserData.getInstance().setCurrentUUID(ehl.pair);
+                eventPage();
+            }catch(NotFoundException e){
+                MainCtrl.alert("Event not found: no event found with said UUID");
+            } catch (IllegalArgumentException e) {
+                MainCtrl.alert(String.format(
+                        "The following is not a properly structured invite code\n[%s]", text));
+            }
+
+        } else {
+            // Display an error message if the input is invalid
+            MainCtrl.alert("Event not found: code was empty or null");
+        }
+    }
+
 
     public void eventPage() {
         mainCtrl.showEventPage();
     }
+
     public void adminPage() {
-        mainCtrl.showAdminCheckPage();
+        mainCtrl.showAdminPage();
+    }
+
+    private class EventHyperlink extends Hyperlink {
+        public Pair<UUID, String> pair;
+
+        /**
+         * creates a hyperlink from pair, gets the name from the server,
+         * if the event is not found, it is replaced with a strikethrough
+         * hyperlink with the original name
+         * @param p with eventID and original name
+         */
+        private EventHyperlink(Pair<UUID, String> p) {
+            super();
+            try {
+                this.pair = new Pair<>(p.getKey(), serverUtils.getEvent(p.getKey()).getName());
+                this.setOnAction(event -> {
+                    UserData.getInstance().setCurrentUUID(this.pair);
+                    recentEventsVBox.getChildren().remove(this);
+                    recentEventsVBox.getChildren().add(0, this);
+                    eventPage();
+                });
+            } catch (NotFoundException e) {
+                this.pair = new Pair<>(p.getKey(), p.getValue());
+                this.getStyleClass().add("dissabledHyperlink");
+                this.setDisable(true); //cant be clicked on
+            }
+            this.setText(this.pair.getValue());
+        }
     }
 }

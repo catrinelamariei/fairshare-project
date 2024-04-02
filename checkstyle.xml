@@ -23,6 +23,7 @@
 
 
 <module name="Checker">
+    <module name="SuppressWarningsFilter"/>
 
     <property name="fileExtensions" value="java"/>
     <module name="BeforeExecutionExclusionFileFilter">
@@ -30,6 +31,7 @@
     </module>
 
     <module name="TreeWalker">
+        <module name="SuppressWarningsHolder"/>
         <module name="MethodLength">
             <property name="severity" value="warning"/>
             <property name="tokens" value="METHOD_DEF, CTOR_DEF, COMPACT_CTOR_DEF"/>

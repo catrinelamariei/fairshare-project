@@ -2,15 +2,14 @@ package commons;
 
 import commons.DTOs.ParticipantDTO;
 import jakarta.persistence.*;
-
-import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 @Entity
 public class Participant {
@@ -118,12 +117,26 @@ public class Participant {
 
     @Override
     public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Participant)) {
+            return false;
+        }
+        Participant other = (Participant) obj;
+        return Objects.equals(id, other.id) &&
+                Objects.equals(firstName, other.firstName) &&
+                Objects.equals(lastName, other.lastName) &&
+                Objects.equals(email, other.email) &&
+                Objects.equals(iban, other.iban) &&
+                Objects.equals(bic, other.bic);
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+
+        return Objects.hash(id, firstName, lastName, email, iban, bic);
     }
 
     @Override
@@ -132,4 +145,15 @@ public class Participant {
     }
 
 
+    public void addTransaction(Transaction transaction) {
+        participatedTransactions.add(transaction);
+    }
+
+    public Set<Transaction> getParticipatedTransactions() {
+        return participatedTransactions;
+    }
+
+    public Set<Transaction> getPaidTransaction() {
+        return paidTransactions;
+    }
 }

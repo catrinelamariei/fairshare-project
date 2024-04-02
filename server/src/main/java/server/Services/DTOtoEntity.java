@@ -14,6 +14,8 @@ import server.database.ParticipantRepository;
 import server.database.TagRepository;
 import server.database.TransactionRepository;
 
+import java.util.stream.Collectors;
+
 @Service //singleton bean managed by Spring
 public class DTOtoEntity {
     private final EventRepository eventRepository;
@@ -69,7 +71,13 @@ public class DTOtoEntity {
         transaction.event = eventRepository.getReferenceById(t.eventId);
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
-        transaction.tags.addAll(t.tags.stream().map(this::get).toList());
+        for (ParticipantDTO p : t.participants) {
+            Participant participant = participantRepository.getReferenceById(p.id);
+            participant.addTransaction(transaction);
+        }
+        if(t.tags != null || !t.tags.isEmpty()) {
+            transaction.tags.addAll(t.tags.stream().map(this::get).toList());
+        }
         transaction = transactionRepository.save(transaction);
 
         //update event
@@ -80,18 +88,16 @@ public class DTOtoEntity {
     }
     public Transaction update(TransactionDTO t) {
         Transaction transaction = transactionRepository.getReferenceById(t.id);
-        transaction.date = t.date;
-        transaction.currencyCode = t.currencyCode;
-        transaction.amount = t.amount;
-        transaction.author = get(t.author);
-        transaction.subject = t.subject;
-        //TODO check if this is correct, not sure if we have to clear the sets
-        transaction.participants.clear();
-        transaction.participants.addAll(t.participants.stream().map(this::get).toList());
-        transaction.tags.clear();
-        transaction.tags.addAll(t.tags.stream().map(this::get).toList());
-        transactionRepository.save(transaction);
-        return transaction;
+        transaction.setDate(t.date);
+        transaction.setCurrencyCode(t.currencyCode);
+        transaction.setAmount(t.amount);
+        transaction.setAuthor(get(t.author));
+        transaction.setSubject(t.subject);
+        transaction.setParticipants(t.participants.stream().map(this::get)
+                .collect(Collectors.toSet()));
+        transaction.setTags(t.tags.stream().map(this::get).collect(Collectors.toSet()));
+
+        return transactionRepository.save(transaction);
     }
 
     public boolean delete (TransactionDTO t) {
@@ -146,7 +152,7 @@ public class DTOtoEntity {
         //create & save tag
         Tag tag = new Tag(t);
         tag.event = eventRepository.getReferenceById(t.eventId);
-        tagRepository.save(tag);
+        tag = tagRepository.save(tag);
 
         //update event
         tag.event.addTag(tag);

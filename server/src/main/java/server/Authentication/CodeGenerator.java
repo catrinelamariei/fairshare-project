@@ -3,7 +3,13 @@ package server.Authentication;
 import java.security.SecureRandom;
 
 public class CodeGenerator {
-    public static String generateRandomString(int length) {
+    public static String generateRandomString(){
+        return generateRandomString(6);
+    }
+    public static String generateRandomString(int length){
+        if (length<0){
+            throw new IllegalArgumentException();
+        }
         String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         SecureRandom secureRandom = new SecureRandom();
         StringBuilder stringBuilder = new StringBuilder(length);

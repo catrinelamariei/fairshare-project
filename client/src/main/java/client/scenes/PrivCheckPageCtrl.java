@@ -4,6 +4,8 @@ import client.MainCtrl;
 import client.UserData;
 import client.utils.ServerUtils;
 import javafx.scene.control.PasswordField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -29,24 +31,42 @@ public class PrivCheckPageCtrl {
         text = new Text();
     }
 
-    public void initialize(URL location, ResourceBundle resources) {}
+    public void initialize(URL location, ResourceBundle resources) {
+        password.setOnKeyPressed(this::handleEnterPressed);
+    }
+
+    public void handleEnterPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            login();
+        }
+    }
 
     public void login() {
-        String response = postRequest(password.getText());
+        String passwordText = password.getText();
+        if(passwordText!=null && !passwordText.isEmpty()){
+            String response = postRequest(password.getText());
 
-        if(!response.equals("Invalid password")) {
-            UserData data = UserData.getInstance();
-            data.setToken(response);
-            System.out.println("1. token: " + response);
-            adminPage();
+            if(!response.equals("Invalid password")) {
+                UserData data = UserData.getInstance();
+                data.setToken(response);
+                System.out.println("1. token: " + response);
+                adminPage();
+            }else{
+                text.setStyle("-fx-text-fill: red;");
+                text.setText("Wrong code");
+            }
         }else{
-            text.setStyle("-fx-text-fill: red;");
-            text.setText("Wrong code");
+            mainCtrl.alert("Please provide a password");
         }
+
     }
 
     public void adminPage(){
         mainCtrl.showAdminPage();
+    }
+
+    public void goToHome(){
+        mainCtrl.showStartPage();
     }
 
 

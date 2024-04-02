@@ -1,5 +1,6 @@
 package client.scenes.javaFXClasses;
 
+import client.scenes.EventPageCtrl;
 import client.utils.ServerUtils;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TransactionNode extends HBox {
+    private final EventPageCtrl eventPageCtrl;
     public UUID id;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -25,25 +27,26 @@ public class TransactionNode extends HBox {
      * Create a javFX node representing a transaction
      * @param ts transaction to be displayed (data source)
      */
-    public TransactionNode(TransactionDTO ts) {
+    public TransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl) {
         super(); //initialize HBox part
+        this.eventPageCtrl = eventPageCtrl;
 
         //date
         Text date = new Text(formatter.format(ts.date));
 
         //main body
-        Text desc = new Text(String.format("%s payed %.2f%s for %s",
-            ts.author.firstName, ts.amount, ts.currencyCode, ts.subject));
+        Text desc = new Text(String.format("%s paid %.2f%s for %s",
+            ts.author.firstName.trim(), ts.amount, ts.currencyCode, ts.subject));
         desc.getStyleClass().add("desc"); //set css class to .desc
 
-        Text particants = new Text("(" +
+        Text participants = new Text("(" +
             ts.participants.stream()
-                .map(p -> p.firstName)
+                .map(p -> p.firstName.trim())
                 .collect(Collectors.joining(", "))
             + ")"); //concatenate with ", " in between each name
-        particants.getStyleClass().add("participantText"); //set css class to .participants
+        participants.getStyleClass().add("participantText"); //set css class to .participants
 
-        VBox body = new VBox(desc, particants);
+        VBox body = new VBox(desc, participants);
 
         // Delete Button
         Button deleteTransactionButton = new Button("Delete");
@@ -67,6 +70,9 @@ public class TransactionNode extends HBox {
     public void editTransaction (ActionEvent event) {
         // TODO: implement this
         System.out.println("Start editing transaction");
+
+        eventPageCtrl.enableEditing(this);
+        eventPageCtrl.fillTransaction((new ServerUtils()).getTransaction(id));
     }
 
     public void deleteTransaction(ActionEvent event) {

@@ -1,11 +1,10 @@
 package commons.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import commons.Event;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class EventDTO {
     public UUID id;
@@ -41,6 +40,12 @@ public class EventDTO {
         this.transactions = new HashSet<>();
     }
 
+    @JsonIgnore
+    public Date getLastActivity() {
+        if (transactions.isEmpty()) return date; //no transactions -> return creation date
+        return transactions.stream().map(TransactionDTO::getDate).max(Date::compareTo).get();
+    }
+
     public boolean validate() {
         return !(this.name == null || this.name.isEmpty() || this.tags == null || this.date == null
             || this.participants == null || this.transactions == null);
@@ -68,5 +73,36 @@ public class EventDTO {
 
     public Set<TransactionDTO> getTransactions() {
         return transactions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventDTO eventDTO = (EventDTO) o;
+        return Objects.equals(getId(), eventDTO.getId()) &&
+                Objects.equals(getName(), eventDTO.getName()) &&
+                Objects.equals(getTags(), eventDTO.getTags()) &&
+                Objects.equals(getDate(), eventDTO.getDate()) &&
+                Objects.equals(getParticipants(), eventDTO.getParticipants()) &&
+                Objects.equals(getTransactions(), eventDTO.getTransactions());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getTags(), getDate(),
+                getParticipants(), getTransactions());
+    }
+    @JsonIgnoreType
+    public enum EventComparator {
+        name(Comparator.comparing(EventDTO::getName, String.CASE_INSENSITIVE_ORDER)),
+        date(Comparator.comparing(EventDTO::getDate)),
+        activity(Comparator.comparing(EventDTO::getLastActivity));
+
+        public final Comparator<EventDTO> cmp;
+
+        EventComparator(Comparator<EventDTO> cmp) {
+            this.cmp = cmp;
+        }
     }
 }
