@@ -121,6 +121,10 @@ public class EventPageCtrl implements Initializable {
     private VBox debts;
     @FXML
     private Button settleButton;
+    @FXML
+    private Text totalExpenses;
+    @FXML
+    private Button statsButton;
 
 
     Set<TagDTO> tags = new HashSet<>();
@@ -192,6 +196,18 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
+
+        //total expenses: display sum of amounts of transactions except
+        // those with the tag "debt"
+        updateTotalExpenses();
+
+
+        // generate statistics button
+        statsButton.setText("Generate statistics");
+        statsButton.setOnAction(e -> {
+            statsButton.setText("Refresh statistics");
+            updateTotalExpenses();
+        });
 
     }
 
@@ -296,6 +312,18 @@ public class EventPageCtrl implements Initializable {
 
         clearTransaction();
         MainCtrl.inform("Transaction created successfully");
+    }
+
+    private void updateTotalExpenses() {
+        EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+        totalExpenses.setText(String.valueOf(e.transactions.stream()
+                .filter(
+                        ts -> ts.tags
+                                .stream()
+                                .map(tag -> tag.getName())
+                                .noneMatch(tag -> tag.equals("debt")))
+                .mapToDouble(ts -> ts.getAmount().doubleValue())
+                .sum()));
     }
 
     private TransactionDTO readTransactionFields() {
