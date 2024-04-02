@@ -6,6 +6,7 @@ import client.scenes.javaFXClasses.DebtGraph;
 import client.scenes.javaFXClasses.DebtNode;
 import client.scenes.javaFXClasses.ParticipantNode;
 import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.EventPageKeyEventHandler;
 import client.utils.ServerUtils;
 import client.utils.UndoService;
 import com.google.inject.Inject;
@@ -51,7 +52,7 @@ public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private EventDTO eventDTO;
-    private final UndoService undoService;
+    public final UndoService undoService;
 
     //delete event
     @FXML
@@ -136,7 +137,7 @@ public class EventPageCtrl implements Initializable {
         this.undoService = usf.create(this, server);
     }
 
-    public interface UndoServiceFactory {
+    public interface UndoServiceFactory{
         UndoService create(EventPageCtrl epc, ServerUtils server);
     }
 

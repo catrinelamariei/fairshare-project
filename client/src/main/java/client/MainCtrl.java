@@ -19,7 +19,7 @@ public class MainCtrl {
     private Scene startPage;
 
     private EventPageCtrl eventPageCtrl;
-    private Scene eventPage;
+    public Scene eventPage;
 
     private AdminPageCtrl adminPageCtrl;
     private Scene adminPage;
@@ -28,10 +28,6 @@ public class MainCtrl {
     private Scene privCheckPage;
     private TransactionPageCtrl transactionPageCtrl;
     private Scene transactionPage;
-
-    //keyhandling
-    @Inject private EventPageKeyEventHandler eventPageKeyEventHandler;
-    @Inject private PrivCheckPageKeyEventHandler privCheckPageKeyEventHandler;
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
@@ -48,11 +44,10 @@ public class MainCtrl {
 
         this.eventPageCtrl = eventPage.getKey();
         this.eventPage = new Scene(eventPage.getValue());
-        this.eventPage.setOnKeyPressed(eventPageKeyEventHandler);
+        this.eventPage.setOnKeyPressed(new EventPageKeyEventHandler(eventPageCtrl.undoService));
 
         this.privCheckPageCtrl = privCheckPage.getKey();
         this.privCheckPage = new Scene(privCheckPage.getValue());
-        this.privCheckPage.setOnKeyPressed(privCheckPageKeyEventHandler);
 
         this.adminPageCtrl = adminPage.getKey();
         this.adminPage = new Scene(adminPage.getValue());

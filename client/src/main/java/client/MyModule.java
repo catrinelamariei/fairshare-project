@@ -19,24 +19,26 @@ import client.scenes.AdminPageCtrl;
 import client.scenes.EventPageCtrl;
 import client.scenes.PrivCheckPageCtrl;
 import client.scenes.StartPageCtrl;
+import client.utils.EventPageKeyEventHandler;
 import client.utils.ServerUtils;
 import client.utils.UndoService;
+import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
-public class MyModule implements Module {
+public class MyModule extends AbstractModule {
 
     @Override
-    public void configure(Binder binder) {
-        binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(StartPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(ServerUtils.class).in(Scopes.SINGLETON);
-        binder.install(new FactoryModuleBuilder()
+    public void configure() {
+        bind(MainCtrl.class).in(Scopes.SINGLETON);
+        bind(StartPageCtrl.class).in(Scopes.SINGLETON);
+        bind(EventPageCtrl.class).in(Scopes.SINGLETON);
+        bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
+        bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
+        bind(ServerUtils.class).in(Scopes.SINGLETON);
+        install(new FactoryModuleBuilder()
             .build(EventPageCtrl.UndoServiceFactory.class));
     }
 }

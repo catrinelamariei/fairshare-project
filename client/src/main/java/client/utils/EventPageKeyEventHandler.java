@@ -9,7 +9,6 @@ public class EventPageKeyEventHandler implements GeneralKeyEventHandler{
     //dependant on current state of EventPage
     public Runnable submitAction = () -> System.err.println("No action set");
 
-    @Inject
     public EventPageKeyEventHandler(UndoService undoService) {
         this.undoService = undoService;
     }
