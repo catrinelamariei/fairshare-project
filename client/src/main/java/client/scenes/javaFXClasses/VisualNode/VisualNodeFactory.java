@@ -9,19 +9,21 @@ import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TransactionDTO;
 
 public class VisualNodeFactory implements NodeFactory {
     private final MainCtrl mainCtrl;
-    private final EventPageCtrl eventPageCtrl;
+    private final Provider<EventPageCtrl> epcProvider; //break cyclic dependency
     private final ServerUtils server;
 
     @Inject
-    public VisualNodeFactory(MainCtrl mainCtrl, EventPageCtrl eventPageCtrl, ServerUtils server) {
+    public VisualNodeFactory(MainCtrl mainCtrl, Provider<EventPageCtrl> epcProvider,
+                             ServerUtils server) {
         this.mainCtrl = mainCtrl;
-        this.eventPageCtrl = eventPageCtrl;
+        this.epcProvider = epcProvider;
         this.server = server;
     }
 
@@ -43,6 +45,6 @@ public class VisualNodeFactory implements NodeFactory {
 
     @Override
     public TransactionNode createTransactionNode(TransactionDTO t) {
-        return new VisualTransactionNode(t, eventPageCtrl, server);
+        return new VisualTransactionNode(t, epcProvider.get(), server);
     }
 }

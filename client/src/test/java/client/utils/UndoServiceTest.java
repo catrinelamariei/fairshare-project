@@ -3,7 +3,7 @@ package client.utils;
 import client.MainCtrl;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.PojoNodeFactory;
-import client.scenes.javaFXClasses.VisualNode.TransactionNode;
+import client.scenes.javaFXClasses.NodeFactory;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
@@ -28,6 +28,7 @@ public class UndoServiceTest {
     //services
     private EventPageCtrl eventPageCtrl;
     private ServerUtils server;
+    private NodeFactory nodeFactory;
     private UndoService undoService;
 
     //objects
@@ -41,8 +42,8 @@ public class UndoServiceTest {
         this.eventPageCtrl = mock(EventPageCtrl.class);
         this.eventPageCtrl.transactions = mock(VBox.class);
         this.server = mock(ServerUtils.class);
-        this.undoService = new UndoService(eventPageCtrl, server,
-                new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server));
+        this.nodeFactory = new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server);
+        this.undoService = new UndoService(eventPageCtrl, server, nodeFactory);
 
 
         //objects
@@ -110,7 +111,7 @@ public class UndoServiceTest {
     public void undoCreateTest() {
         doNothing().when(server).deleteTransaction(ts1.id);
 
-        children.add(new TransactionNode(ts1, eventPageCtrl, server)); // TODO use factory
+        children.add(nodeFactory.createTransactionNode(ts1)); // TODO use factory
         undoService.addAction(CREATE, ts1);
         undoService.undo();
 

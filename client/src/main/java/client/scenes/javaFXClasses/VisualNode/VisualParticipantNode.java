@@ -38,21 +38,16 @@ public class VisualParticipantNode extends ParticipantNode {
             "-fx-min-width: 300; ";
 
     /**
-     * initializes styling on shared/static nodes
-     */
-    public static void init() {
-        //apply style to all text
-        List.of(fNameText, lNameText, emailText, ibanText, bicText)
-                .forEach(t -> t.setStyle(textStyle));
-    }
-
-    /**
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
      * @param participant data to be used/displayed
      */
     protected VisualParticipantNode(ParticipantDTO participant) {
         super(participant.id, participant.getFullName());
         this.getStyleClass().add("participants"); //set CSS class
+
+        //apply style to all text
+        List.of(fNameText, lNameText, emailText, ibanText, bicText)
+                .forEach(t -> t.setStyle(textStyle));
 
         //create text-field
         fNameField = new TextField(participant.firstName);

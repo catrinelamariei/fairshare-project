@@ -23,7 +23,9 @@ import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
 import client.utils.ServerUtils;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class MyModule extends AbstractModule {
@@ -32,12 +34,13 @@ public class MyModule extends AbstractModule {
     public void configure() {
         bind(MainCtrl.class).in(Scopes.SINGLETON);
         bind(StartPageCtrl.class).in(Scopes.SINGLETON);
+        bind(NodeFactory.class).to(VisualNodeFactory.class).in(Scopes.SINGLETON);
         bind(EventPageCtrl.class).in(Scopes.SINGLETON);
         bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
         bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
         bind(ServerUtils.class).in(Scopes.SINGLETON);
-        bind(NodeFactory.class).to(VisualNodeFactory.class).in(Scopes.SINGLETON);
         install(new FactoryModuleBuilder()
             .build(EventPageCtrl.UndoServiceFactory.class));
+        binder().disableCircularProxies();
     }
 }

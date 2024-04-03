@@ -2,13 +2,14 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.UserData;
+import client.scenes.javaFXClasses.DataNode.DebtNode;
+import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.DebtGraph;
-import client.scenes.javaFXClasses.VisualNode.DebtNode;
-import client.scenes.javaFXClasses.VisualNode.ParticipantNode;
-import client.scenes.javaFXClasses.VisualNode.TransactionNode;
 import client.utils.ServerUtils;
 import client.utils.UndoService;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -47,12 +48,15 @@ import java.util.regex.Pattern;
 
 import static client.utils.UndoService.TsAction.*;
 
-
+@Singleton //for provider
 public class EventPageCtrl implements Initializable {
+    //Services
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private EventDTO eventDTO;
+    private final NodeFactory nodeFactory;
     public final UndoService undoService;
+
+    private EventDTO eventDTO;
 
     //delete event
     @FXML
@@ -127,14 +131,16 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button settleButton;
 
-
     Set<TagDTO> tags = new HashSet<>();
 
+
     @Inject
-    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoServiceFactory usf) {
+    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoServiceFactory usf,
+                         NodeFactory nodeFactory) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.undoService = usf.create(this, server);
+        this.nodeFactory = nodeFactory;
     }
 
     public interface UndoServiceFactory{
@@ -142,7 +148,6 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void initialize(URL location, ResourceBundle resources) {
-        ParticipantNode.init(); //<cascade> do some styling
         currencyCodeInput.getItems().addAll("EUR", "USD", "CHF");
         //radio buttons
         toggleGroup = new ToggleGroup();
@@ -185,12 +190,12 @@ public class EventPageCtrl implements Initializable {
         //load transactions
         transactions.getChildren().clear();
         transactions.getChildren().addAll(eventDTO.transactions.stream()
-            .map(ts -> new TransactionNode(ts, this, server)).toList());
+            .map(nodeFactory::createTransactionNode).toList());
 
         //load participants
         participants.getPanes().clear();
-        participants.getPanes().addAll(eventDTO.participants.stream().map(ParticipantNode::new)
-            .toList());
+        participants.getPanes().addAll(eventDTO.participants.stream()
+                .map(nodeFactory::createParticipantNode).toList());
 
         //choice box author transaction
         authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
@@ -312,7 +317,7 @@ public class EventPageCtrl implements Initializable {
         try {
             ts = server.postTransaction(ts);
             undoService.addAction(CREATE, ts);
-            TransactionNode tsNode = new TransactionNode(ts, this, server);
+            TransactionNode tsNode = nodeFactory.createTransactionNode(ts);
             transactions.getChildren().add(tsNode);
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
@@ -492,7 +497,7 @@ public class EventPageCtrl implements Initializable {
             participantDTO = server.postParticipant(participantDTO);
 
             //updating event page
-            participants.getPanes().add(new ParticipantNode(participantDTO));
+            participants.getPanes().add(nodeFactory.createParticipantNode(participantDTO));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
         } catch (IllegalArgumentException e) {
@@ -534,7 +539,8 @@ public class EventPageCtrl implements Initializable {
             double settlementAmount = Math.min(credit, Math.abs(debt));
 
             // deal with currency later
-            DebtNode debtNode = new DebtNode(debtor, creditor, "eur", settlementAmount);
+            DebtNode debtNode = nodeFactory.createDebtNode(debtor, creditor, "eur",
+                    settlementAmount);
             debts.getChildren().add(debtNode);
             // Update debts
             credit -= settlementAmount;
@@ -629,8 +635,8 @@ public class EventPageCtrl implements Initializable {
         ts.id = transactionEditTarget.id;
         TransactionDTO old = server.getTransaction(ts.id);
         undoService.addAction(UPDATE, old);
-        TransactionNode updatedTSNode = new TransactionNode(server.putTransaction(ts), this,
-            server);
+        TransactionNode updatedTSNode = nodeFactory
+                .createTransactionNode(server.putTransaction(ts));
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
 

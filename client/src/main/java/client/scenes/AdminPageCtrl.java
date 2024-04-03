@@ -1,7 +1,8 @@
 package client.scenes;
 
 import client.MainCtrl;
-import client.scenes.javaFXClasses.VisualNode.EventNode;
+import client.scenes.javaFXClasses.DataNode.EventNode;
+import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
@@ -22,6 +23,7 @@ import static javafx.collections.FXCollections.observableArrayList;
 public class AdminPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private final NodeFactory nodeFactory;
     private boolean ascending = true;
 
     //overview management
@@ -37,9 +39,10 @@ public class AdminPageCtrl implements Initializable {
     private HBox sortingContainer;
 
     @Inject
-    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl, NodeFactory nodeFactory) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.nodeFactory = nodeFactory;
     }
 
     //run on startup
@@ -61,13 +64,8 @@ public class AdminPageCtrl implements Initializable {
         ArrayList<EventDTO> events = new ArrayList<>(server.getAllEvents()); //get all events
         events.sort(cmp); //sort
 
-        List<EventNode> list = new ArrayList<>();
-        for (EventDTO event : events) {
-            EventNode eventNode = new EventNode(event, mainCtrl);
-            list.add(eventNode);
-        }
-
-        eventAccordion.getPanes().setAll(list);
+        eventAccordion.getPanes().setAll(events.stream()
+                .map(nodeFactory::createEventNode).toList());
     }
 
     public void homePage() {
@@ -78,7 +76,7 @@ public class AdminPageCtrl implements Initializable {
     public void generateEventTest() {
         Event event = new Event("TestEvent");
         event.id = new UUID(0, 0);
-        eventAccordion.getPanes().add(new EventNode(new EventDTO(event), mainCtrl));
+        eventAccordion.getPanes().add(nodeFactory.createEventNode(new EventDTO(event)));
     }
 
     //EVENT-ordering
