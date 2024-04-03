@@ -43,3 +43,4 @@ out/
 ### VS Code ###
 .vscode/
 /server/src/main/resources/rates/
+/client/src/main/resources/client/rates/
