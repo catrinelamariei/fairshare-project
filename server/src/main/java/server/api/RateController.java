@@ -1,0 +1,35 @@
+package server.api;
+
+import commons.Currency.Rate;
+import commons.Currency.RateDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import server.Services.CurrencyExchange;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@RestController
+@RequestMapping("/api/rate")
+public class RateController {
+
+    CurrencyExchange currencyExchange;
+    public RateController(CurrencyExchange currencyExchange){
+        this.currencyExchange = currencyExchange;
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<RateDTO> getRate(@RequestBody RateDTO r) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+            Date parsedDate = dateFormat.parse(r.date);
+            Rate result = currencyExchange.getRate(r.currencyFrom, r.currencyTo, parsedDate);
+            RateDTO resultDTO = new RateDTO(
+                    result.currencyFrom, result.currencyTo, result.rate, result.date);
+            return ResponseEntity.ok(resultDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+}

@@ -40,9 +40,7 @@ public class CurrencyExchange {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strDate = dateFormat.format(date);
 
-            String url = "https://api.frankfurter.app/" + strDate
-                    + "?from=" + currencyFrom
-                    + "&to=" + currencyTo;
+            String url = FrankfurterAPI.getURL(currencyFrom, currencyTo, strDate);
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -52,11 +50,9 @@ public class CurrencyExchange {
                     .uri(URI.create(url))
                     .build(), HttpResponse.BodyHandlers.ofString());
 
-            String[] parts = response.body().split(",");
-            String rate = parts[3].split(":")[2];
-            rate = rate.substring(0, rate.length() - 2);
+            Double rate = FrankfurterAPI.getRate(response);
 
-            Rate result = new Rate(currencyFrom, currencyTo, Double.parseDouble(rate), date);
+            Rate result = new Rate(currencyFrom, currencyTo, rate, date);
             currencies.add(result);
             return result;
 
