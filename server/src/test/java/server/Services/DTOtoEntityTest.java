@@ -102,7 +102,7 @@ class DTOtoEntityTest {
         event.id = new UUID(0, 1);
         Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
         participant.id = new UUID(0, 2);
-        Transaction transaction = new Transaction(event, new Date(), "usd", new BigDecimal(100), participant, "Subject");
+        Transaction transaction = new Transaction(event, new Date(), "EUR", new BigDecimal(100), participant, "Subject");
         transaction.id = new UUID(0, 2);
         TransactionDTO transactionDTO = new TransactionDTO(transaction);
         when(eventRepository.getReferenceById(transactionDTO.eventId)).thenReturn(event);
