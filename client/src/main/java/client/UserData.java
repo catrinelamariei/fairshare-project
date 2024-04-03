@@ -22,11 +22,12 @@ public final class UserData {
     private ArrayDeque<Pair<UUID, String>> recentUUIDs = new ArrayDeque<>();
     private String serverURL = "http://localhost:8080/";
 
+    private String preferredCurrency = "EUR";
+
     //NOT INCLUDED IN JSON
     private final static String configFileName = "config.json";
     private final static ObjectMapper objectMapper = new ObjectMapper().enable(INDENT_OUTPUT);
     private final static UserData INSTANCE = new UserData().load();
-    private static String prefferedCurrency = "EUR";
 
     private UserData() {}
 
@@ -60,6 +61,7 @@ public final class UserData {
         this.token = userData.token;
         this.recentUUIDs = userData.recentUUIDs;
         this.serverURL = userData.serverURL;
+        this.preferredCurrency = userData.preferredCurrency;
     }
 
     @JsonIgnore
@@ -101,6 +103,14 @@ public final class UserData {
 
     public void setServerURL(String serverURL) {
         this.serverURL = serverURL;
+    }
+
+    public String getCurrencyCode() {
+        return preferredCurrency;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.preferredCurrency = currencyCode;
     }
 
     /**

@@ -1,7 +1,10 @@
 package client.scenes.javaFXClasses;
 
+import client.UserData;
 import client.scenes.EventPageCtrl;
+import client.utils.RateUtils;
 import client.utils.ServerUtils;
+import commons.Currency.RateDTO;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -14,6 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,8 +39,13 @@ public class TransactionNode extends HBox {
         Text date = new Text(formatter.format(ts.date));
 
         //main body
+        RateDTO rate = RateUtils.getRate(ts.currencyCode,
+                UserData.getInstance().getCurrencyCode(), ts.date);
+        BigDecimal amountInPreferred = ts.amount.multiply(BigDecimal.valueOf(rate.rate));
+
         Text desc = new Text(String.format("%s paid %.2f%s for %s",
-            ts.author.firstName.trim(), ts.amount, ts.currencyCode, ts.subject));
+            ts.author.firstName.trim(), amountInPreferred,
+                UserData.getInstance().getCurrencyCode(), ts.subject));
         desc.getStyleClass().add("desc"); //set css class to .desc
 
         Text participants = new Text("(" +

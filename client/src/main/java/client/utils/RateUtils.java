@@ -12,12 +12,13 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class RateUtils {
 
-    public RateDTO getRate(String from, String to, Date date) throws WebApplicationException {
+    public static RateDTO getRate(String from, String to,
+                                  Date date) throws WebApplicationException {
 
         if(from.equals(to))
             return new RateDTO(from, to, 1.0, date);
         RateDTO rate;
-        rate = new RateDTO("from", to,0.0, date);
+        rate = new RateDTO("EUR", to,0.0, date);
         return ClientBuilder.newClient()
                 .target(UserData.getInstance().getServerURL()).path("api/rate/")
                 .request(APPLICATION_JSON)
