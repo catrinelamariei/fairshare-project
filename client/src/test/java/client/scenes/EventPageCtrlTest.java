@@ -7,8 +7,12 @@ import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
@@ -21,13 +25,25 @@ import static org.mockito.Mockito.when;
 
 public class EventPageCtrlTest {
 
+    @Mock
+    private ServerUtils server;
+
+    @Mock
+    private MainCtrl mainCtrl;
+
+    @Mock
+    private UserDataInterface userData;
+
+    @InjectMocks
+    private EventPageCtrl eventPageCtrl;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     public void testUpdateTotalExpenses() {
-        ServerUtils server = Mockito.mock(ServerUtils.class);
-        MainCtrl mainCtrl = Mockito.mock(MainCtrl.class);
-        EventPageCtrl eventPageCtrl = new EventPageCtrl(server, mainCtrl);
-        UserDataInterface userData = Mockito.mock(UserDataInterface.class);
         EventDTO eventDTO = Mockito.mock(EventDTO.class);
         UUID mockId = UUID.randomUUID(); // Generate a random UUID for testing
         TransactionDTO transactionDTO = Mockito.mock(TransactionDTO.class);
@@ -43,9 +59,7 @@ public class EventPageCtrlTest {
         when(tagDTO.getName()).thenReturn("tagname");
         when(transactionDTO.getAmount()).thenReturn(BigDecimal.valueOf(100.0));
 
-
         eventPageCtrl.updateTotalExpenses();
-
 
         assertEquals("100.0", eventPageCtrl.totalExpenses.getText());
     }
