@@ -162,10 +162,6 @@ public class EventPageCtrl implements Initializable {
         vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
             .map(EventPageCtrl::participantCheckbox).toList());
 
-        //checkboxes for participants
-        vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
-            .map(EventPageCtrl::participantCheckbox).toList());
-
         //choiceboxes for debt filter
         creditorFilter.getItems().clear();
         creditorFilter.getItems().add("All");
@@ -408,11 +404,7 @@ public class EventPageCtrl implements Initializable {
 
         // end if no debts to simplify
         if (positive.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information");
-            alert.setHeaderText(null);
-            alert.setContentText("No debts to simplify!");
-            alert.showAndWait();
+            MainCtrl.inform("No debts to simplify!");
             return;
         }
 

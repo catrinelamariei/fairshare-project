@@ -32,13 +32,10 @@ public class DebtNode extends TitledPane {
                     EventDTO event, ServerUtils server, EventPageCtrl ctrl) {
 
         super(String.format("%s gives %.2f%s to %s",
-            debtor.getFullName(), amount,
-            currencyCode, creditor.getFullName()), null);
+                debtor.getFullName(), amount,
+                currencyCode, creditor.getFullName()), null);
 
         this.creditor = creditor;
-
-
-        boolean availability = !creditor.iban.equals("-") || !creditor.bic.equals("-");
 
         Button receivedButton = new Button("Mark as received");
 
@@ -57,12 +54,17 @@ public class DebtNode extends TitledPane {
         // display bank info if available
         Text email = new Text("Email: " + creditor.email);
         VBox vbox;
-        if (availability) {
-            Text info = new Text("Bank information is available");
+        if (!creditor.iban.equals("-") && !creditor.bic.equals("-")) {
             Text iban = new Text("IBAN:" + creditor.iban);
+            Text info = new Text("Bank information is available");
             Text bic = new Text("BIC: " + creditor.bic);
             vbox = new VBox(info, email, iban, bic);
-
+        } else if (!creditor.iban.equals("-") && creditor.bic.equals("-")) {
+            Text info = new Text("IBAN is available");
+            vbox = new VBox(info, email, new Text("IBAN: " + creditor.iban));
+        } else if (creditor.iban.equals("-") && !creditor.bic.equals("-")) {
+            Text info = new Text("BIC is available");
+            vbox = new VBox(info, email, new Text("BIC: " + creditor.bic));
         } else {
             Text info = new Text("Bank information is unavailable");
             vbox = new VBox(info, email);
@@ -74,13 +76,13 @@ public class DebtNode extends TitledPane {
     }
 
     private static void debtToTransaction(ParticipantDTO debtor, ParticipantDTO creditor,
-                                  String currencyCode, double amount, EventDTO event,
-                                  ServerUtils server, EventPageCtrl ctrl) {
+                                          String currencyCode, double amount, EventDTO event,
+                                          ServerUtils server, EventPageCtrl ctrl) {
         TagDTO debtTag;
         Optional<TagDTO> optionalDebtTag = event.tags
-            .stream()
-            .filter(tag -> tag.name.equals("debt"))
-            .findFirst();
+                .stream()
+                .filter(tag -> tag.name.equals("debt"))
+                .findFirst();
         if (optionalDebtTag.isEmpty()) {
             debtTag = new TagDTO(null, event.id, "debt", Tag.Color.ORANGE);
             try {
@@ -93,8 +95,8 @@ public class DebtNode extends TitledPane {
             debtTag = optionalDebtTag.get();
         }
         TransactionDTO ts = new TransactionDTO(null, event.id, new Date(), currencyCode,
-            BigDecimal.valueOf(amount *2), debtor, new HashSet<>(Arrays.asList(debtor, creditor)),
-            new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
+                BigDecimal.valueOf(amount), debtor, new HashSet<>(Arrays.asList(creditor)),
+                new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
         try {
             ts = server.postTransaction(ts);
             ctrl.transactions.getChildren().add(new TransactionNode(ts));
