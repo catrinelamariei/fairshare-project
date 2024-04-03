@@ -28,7 +28,17 @@ public class RateController {
                     result.currencyFrom, result.currencyTo, result.rate, result.date);
             return ResponseEntity.ok(resultDTO);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            try {
+                //read from file and return
+                Rate result = currencyExchange
+                        .getRateFromFile(r.currencyFrom, r.currencyTo, r.date);
+                RateDTO resultDTO = new RateDTO(
+                        result.currencyFrom, result.currencyTo, result.rate, result.date);
+                return ResponseEntity.ok(resultDTO);
+            } catch (Exception ex) {
+                return ResponseEntity.badRequest().build();
+            }
+
         }
 
     }

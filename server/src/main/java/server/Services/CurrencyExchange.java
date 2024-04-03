@@ -3,6 +3,9 @@ package server.Services;
 import commons.Currency.Rate;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -10,11 +13,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CurrencyExchange {
@@ -54,6 +55,15 @@ public class CurrencyExchange {
 
             Rate result = new Rate(currencyFrom, currencyTo, rate, date);
             currencies.add(result);
+            String fileName =  "server/src/main/resources/rates/"
+                    +currencyFrom+ "_to_"+currencyTo+".txt";
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                writer.write(rate.toString());
+                writer.close();
+            } catch (IOException e) {
+                System.out.println("Cannot write to rates folder");
+            }
             return result;
 
 
@@ -76,4 +86,33 @@ public class CurrencyExchange {
     }
 
 
+    public Rate getRateFromFile(String currencyFrom, String currencyTo, String date)
+            throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        Date parsedDate = dateFormat.parse(date);
+        String fileName =  "server/src/main/resources/rates/"
+                +currencyFrom+ "_to_"+currencyTo+".txt";
+        File file = new File(fileName);
+        if(!file.exists()){
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                writer.write("1.0");
+                writer.close();
+                return new Rate(currencyFrom, currencyTo, 1.0, parsedDate);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        try {
+            Scanner scanner = new Scanner(file);
+            String rate = scanner.nextLine();
+            scanner.close();
+            return new Rate(currencyFrom, currencyTo, Double.parseDouble(rate), parsedDate);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
