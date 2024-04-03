@@ -1,5 +1,6 @@
 package client.scenes.javaFXClasses;
 
+import client.scenes.EventPageCtrl;
 import client.utils.ServerUtils;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TransactionNode extends HBox {
+    private final EventPageCtrl eventPageCtrl;
     public UUID id;
     public TransactionDTO ts;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -26,8 +28,9 @@ public class TransactionNode extends HBox {
      * Create a javFX node representing a transaction
      * @param ts transaction to be displayed (data source)
      */
-    public TransactionNode(TransactionDTO ts) {
+    public TransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl) {
         super(); //initialize HBox part
+        this.eventPageCtrl = eventPageCtrl;
 
         this.ts = ts;
 
@@ -70,6 +73,9 @@ public class TransactionNode extends HBox {
     public void editTransaction (ActionEvent event) {
         // TODO: implement this
         System.out.println("Start editing transaction");
+
+        eventPageCtrl.enableEditing(this);
+        eventPageCtrl.fillTransaction((new ServerUtils()).getTransaction(id));
     }
 
     public void deleteTransaction(ActionEvent event) {
