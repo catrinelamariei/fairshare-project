@@ -27,6 +27,7 @@ public class EventNode extends TitledPane {
     private final MainCtrl mainCtrl;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private TextField idField, dateField, participantField, transactionField, balanceField;
+    private Text invitationCodeText;
 
     /**
      * create eventnode but without any actual data
