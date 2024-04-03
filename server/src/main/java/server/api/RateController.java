@@ -18,7 +18,7 @@ public class RateController {
         this.currencyExchange = currencyExchange;
     }
 
-    @GetMapping("/")
+    @PostMapping("/")
     public ResponseEntity<RateDTO> getRate(@RequestBody RateDTO r) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");

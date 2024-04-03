@@ -26,6 +26,7 @@ public final class UserData {
     private final static String configFileName = "config.json";
     private final static ObjectMapper objectMapper = new ObjectMapper().enable(INDENT_OUTPUT);
     private final static UserData INSTANCE = new UserData().load();
+    private static String prefferedCurrency = "EUR";
 
     private UserData() {}
 

@@ -14,6 +14,7 @@ import server.database.ParticipantRepository;
 import server.database.TagRepository;
 import server.database.TransactionRepository;
 
+import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 @Service //singleton bean managed by Spring
@@ -22,15 +23,18 @@ public class DTOtoEntity {
     private final TransactionRepository transactionRepository;
     private final TagRepository tagRepository;
     private final ParticipantRepository participantRepository;
+    private CurrencyExchange currencyExchange;
 
     public DTOtoEntity(EventRepository eventRepository,
                        TransactionRepository transactionRepository,
                        TagRepository tagRepository,
-                       ParticipantRepository participantRepository){
+                       ParticipantRepository participantRepository,
+                       CurrencyExchange currencyExchange){
         this.eventRepository = eventRepository;
         this.transactionRepository = transactionRepository;
         this.tagRepository = tagRepository;
         this.participantRepository = participantRepository;
+        this.currencyExchange = currencyExchange;
     }
 
     // TODO: add  [404 - NOT FOUND EXCEPTION] support
@@ -66,6 +70,19 @@ public class DTOtoEntity {
         return transactionRepository.getReferenceById(t.id);
     }
     public Transaction create(TransactionDTO t){
+        BigDecimal amount = t.amount;
+        if(!t.currencyCode.equals("EUR")){
+            //convert to EUR
+            try {
+                amount = amount.multiply(new BigDecimal(
+                        currencyExchange.getRate(t.currencyCode, "EUR", t.date).rate));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        t.amount = amount;
+        t.currencyCode = "EUR";
         //create & save transactionEntity
         Transaction transaction = new Transaction(t);
         transaction.event = eventRepository.getReferenceById(t.eventId);
@@ -87,6 +104,19 @@ public class DTOtoEntity {
         return transaction;
     }
     public Transaction update(TransactionDTO t) {
+        BigDecimal amount = t.amount;
+        if(!t.currencyCode.equals("EUR")){
+            //convert to EUR
+            try {
+                amount = amount.multiply(new BigDecimal(
+                        currencyExchange.getRate(t.currencyCode, "EUR", t.date).rate));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        t.amount = amount;
+        t.currencyCode = "EUR";
         Transaction transaction = transactionRepository.getReferenceById(t.id);
         transaction.setDate(t.date);
         transaction.setCurrencyCode(t.currencyCode);

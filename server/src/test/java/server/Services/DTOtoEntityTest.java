@@ -20,7 +20,7 @@ class DTOtoEntityTest {
     EventRepository eventRepository;
     TransactionRepository transactionRepository;
     ParticipantRepository participantRepository;
-
+    private CurrencyExchange currencyExchange;
 
 
     @BeforeEach
@@ -29,7 +29,9 @@ class DTOtoEntityTest {
         eventRepository = mock(EventRepository.class);
         transactionRepository = mock(TransactionRepository.class);
         participantRepository = mock(ParticipantRepository.class);
-        d2e = new DTOtoEntity(eventRepository, transactionRepository, tagRepository, participantRepository);
+        currencyExchange = mock(CurrencyExchange.class);
+        d2e = new DTOtoEntity(eventRepository, transactionRepository, tagRepository, participantRepository,
+                currencyExchange);
     }
 
 
