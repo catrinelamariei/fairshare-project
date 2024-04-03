@@ -1,12 +1,11 @@
 package client.scenes;
 
-import client.MainCtrl;
 import client.UserData;
-import client.UserDataInterface;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
+import javafx.scene.text.Text;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,12 +27,6 @@ public class EventPageCtrlTest {
     @Mock
     private ServerUtils server;
 
-    @Mock
-    private MainCtrl mainCtrl;
-
-    @Mock
-    private UserDataInterface userData;
-
     @InjectMocks
     private EventPageCtrl eventPageCtrl;
 
@@ -50,17 +43,37 @@ public class EventPageCtrlTest {
         TagDTO tagDTO = Mockito.mock(TagDTO.class);
         ArrayDeque<UserData.Pair<UUID, String>> deque = new ArrayDeque<>();
         deque.add(new UserData.Pair<>(mockId, "Mock Event"));
+        eventPageCtrl.totalExpenses = new Text();
 
         when(server.getEvent(mockId)).thenReturn(eventDTO);
-        when(userData.getCurrentUUID()).thenReturn(mockId);
-        when(userData.getRecentUUIDs()).thenReturn(deque);
         when(eventDTO.getTransactions()).thenReturn(new HashSet<>(Arrays.asList(transactionDTO)));
         when(transactionDTO.getTags()).thenReturn(new HashSet<>(Arrays.asList(tagDTO)));
         when(tagDTO.getName()).thenReturn("tagname");
         when(transactionDTO.getAmount()).thenReturn(BigDecimal.valueOf(100.0));
-
+        UserData.getInstance().setRecentUUIDs(deque);
         eventPageCtrl.updateTotalExpenses();
 
         assertEquals("100.0", eventPageCtrl.totalExpenses.getText());
+    }
+
+    @Test
+    public void testNoUpdatesForDebts() {
+        EventDTO eventDTO = Mockito.mock(EventDTO.class);
+        UUID mockId = UUID.randomUUID(); // Generate a random UUID for testing
+        TransactionDTO transactionDTO = Mockito.mock(TransactionDTO.class);
+        TagDTO tagDTO = Mockito.mock(TagDTO.class);
+        ArrayDeque<UserData.Pair<UUID, String>> deque = new ArrayDeque<>();
+        deque.add(new UserData.Pair<>(mockId, "Mock Event"));
+        eventPageCtrl.totalExpenses = new Text();
+
+        when(server.getEvent(mockId)).thenReturn(eventDTO);
+        when(eventDTO.getTransactions()).thenReturn(new HashSet<>(Arrays.asList(transactionDTO)));
+        when(transactionDTO.getTags()).thenReturn(new HashSet<>(Arrays.asList(tagDTO)));
+        when(tagDTO.getName()).thenReturn("debt");
+        when(transactionDTO.getAmount()).thenReturn(BigDecimal.valueOf(100.0));
+        UserData.getInstance().setRecentUUIDs(deque);
+        eventPageCtrl.updateTotalExpenses();
+
+        assertEquals("0.0", eventPageCtrl.totalExpenses.getText());
     }
 }

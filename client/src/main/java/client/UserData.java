@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
-public final class UserData implements UserDataInterface{
+public final class UserData{
     // All values in here are default values and will be overwritten at startup if a
     // config file is found. The file regularly gets persisted.
 

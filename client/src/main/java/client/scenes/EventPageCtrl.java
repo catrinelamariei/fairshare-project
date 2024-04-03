@@ -316,12 +316,12 @@ public class EventPageCtrl implements Initializable {
 
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
-        getTotalExpenses().setText(String.valueOf(e.transactions.stream()
+        getTotalExpenses().setText(String.valueOf(e.getTransactions().stream()
                 .filter(
-                        ts -> ts.tags
+                        ts -> ts.getTags()
                                 .stream()
                                 .map(tag -> tag.getName())
-                                .noneMatch(tag -> tag.equals("debt")))
+                                .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
                 .sum()));
     }
