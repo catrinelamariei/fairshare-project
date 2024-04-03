@@ -377,7 +377,8 @@ public class EventPageCtrl implements Initializable {
             if ((selectedPayer.equals("All")
                     || selectedPayer.equals(author.getFullName()))
                     && (selectedParticipant.equals("All") ||
-                    participants.stream().anyMatch(p -> p.getFullName().equals(selectedParticipant)))) {
+                    participants.stream().anyMatch(p ->
+                            p.getFullName().equals(selectedParticipant)))) {
                 transactions.getChildren().add(new TransactionNode(ts, this));
             }
         } catch (WebApplicationException e) {
