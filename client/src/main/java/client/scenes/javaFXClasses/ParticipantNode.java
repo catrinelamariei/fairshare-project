@@ -1,11 +1,14 @@
 package client.scenes.javaFXClasses;
 
+import client.utils.ServerUtils;
 import client.UserData;
 import client.scenes.EventPageCtrl;
 import commons.DTOs.ParticipantDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -34,6 +37,7 @@ public class ParticipantNode extends TitledPane {
     TextField ibanField;
     TextField bicField;
     Button editSaveButton;
+    Button deleteButton;
 
     //css styling managed through java
     private static final String textStyle = "-fx-font: bold 20 \"System\"; ";
@@ -103,12 +107,26 @@ public class ParticipantNode extends TitledPane {
         editSaveButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
         //create pane
-        TilePane filler = new TilePane(editSaveButton);
-        filler.setAlignment(Pos.CENTER); //child in center
-        filler.resize(0d, 0d); //it should shrink
+        TilePane toggleButtonPane = new TilePane(editSaveButton);
+        toggleButtonPane.setAlignment(Pos.CENTER); //child in center
+        toggleButtonPane.resize(0d, 0d); //it should shrink
+
+        //delete button
+        deleteButton = new Button("Delete");
+        deleteButton.setOnAction(this::deleteParticipant);
+        deleteButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
+        // Add delete button to the layout
+        TilePane deleteButtonPane = new TilePane(deleteButton);
+        deleteButtonPane.setAlignment(Pos.CENTER);
+        deleteButtonPane.resize(0d, 0d); // It should shrink
+
+        //vbox with the buttons
+        VBox buttons = new VBox(10);//toggleButtonPane, deleteButtonPane);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.getChildren().addAll(toggleButtonPane, deleteButtonPane);
 
         //create HBox, set child
-        HBox container = new HBox(gridPane, filler);
+        HBox container = new HBox(gridPane, buttons);
         this.setContent(container);
     }
 
@@ -132,6 +150,30 @@ public class ParticipantNode extends TitledPane {
         editSaveButton.setText(isEditable ? "Save" : "Edit");
     }
 
+    private void deleteParticipant(ActionEvent actionEvent) {
+        if(id==null){
+            System.err.println("Error: TransactionNode ID is null.");
+            return;
+        }
+        try {
+            // Delete participant from the server
+            ServerUtils serverUtils = new ServerUtils();
+            serverUtils.deleteParticipant(id);
+
+            // Remove the participant from the UI
+            Node parent = this.getParent();
+            if (parent instanceof Accordion) {
+                Accordion accordion = (Accordion) parent;
+                accordion.getPanes().remove(this);
+            }
+
+            System.out.println("Participant deleted successfully.");
+        } catch (Exception e) {
+            System.err.println("Error deleting participant: " + e.getMessage());
+        }
+
+    }
+
     public ParticipantDTO getUpdatedParticipantData(){
         String updatedFirstName = fNameField.getText().trim();
         String updatedLastName = lNameField.getText().trim();
@@ -142,5 +184,4 @@ public class ParticipantNode extends TitledPane {
         return new ParticipantDTO(id, eventId, updatedFirstName,
                 updatedLastName, updatedEmail, updatedIban, updatedBic);
     }
-
 }
