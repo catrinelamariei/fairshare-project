@@ -645,29 +645,28 @@ public class EventPageCtrl implements Initializable {
     public void showOverviewTransactions() {
         expenseTabPane.getSelectionModel().select(overviewExpenses);
     }
-        public void enableEditing(TransactionNode tsn) {
-            transactionEditTarget = tsn;
-            addExpenseTab.setText("Edit Expense");
-            addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
-            submitTransaction.setOnAction(this::submitEditTransaction);
-        }
+    public void enableEditing(TransactionNode tsn) {
+        transactionEditTarget = tsn;
+        addExpenseTab.setText("Edit Expense");
+        addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
+        submitTransaction.setOnAction(this::submitEditTransaction);
+    }
 
-        public void fillTransaction(TransactionDTO transaction) {
-            this.transactionName.setText(transaction.getSubject());
-            this.transactionAmount.setText(transaction.getAmount().toString());
-            this.currencyCodeInput.setValue(transaction.getCurrencyCode());
-            this.transactionDate.setValue(transaction.getDate().toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDate());
-            this.authorInput.setValue(transaction.getAuthor());
-            this.toggleGroup.selectToggle(customSplit);
+    public void fillTransaction(TransactionDTO transaction) {
+        this.transactionName.setText(transaction.getSubject());
+        this.transactionAmount.setText(transaction.getAmount().toString());
+        this.currencyCodeInput.setValue(transaction.getCurrencyCode());
+        this.transactionDate.setValue(transaction.getDate().toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate());
+        this.authorInput.setValue(transaction.getAuthor());
+        this.toggleGroup.selectToggle(customSplit);
 
             //select checkboxes of participants
-            vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
-                    .map(CheckBox.class::cast)
-                    .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
-                    .forEach(cb -> cb.setSelected(true));
-
-        }
+        vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
+                .map(CheckBox.class::cast)
+                .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
+                .forEach(cb -> cb.setSelected(true));
+    }
     public void submitEditTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
         if (ts == null) return;
