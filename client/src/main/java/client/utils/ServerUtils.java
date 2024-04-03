@@ -53,9 +53,9 @@ public class ServerUtils {
     }
 
     public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
-        System.out.println("am intrat");
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("/api/event/"+eventDTO.getId())
+            .target(UserData.getInstance().getServerURL())
+                .path("/api/event/"+eventDTO.getId())
             .request(APPLICATION_JSON)
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }

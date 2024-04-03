@@ -1,4 +1,4 @@
-package client.scenes.javaFXClasses;
+package client.scenes.javaFXClasses.VisualNode;
 
 import client.UserData;
 import client.scenes.EventPageCtrl;
@@ -11,7 +11,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -19,21 +18,18 @@ import javafx.scene.text.Text;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class TransactionNode extends HBox {
-    private final EventPageCtrl eventPageCtrl;
-    public UUID id;
+public class VisualTransactionNode extends TransactionNode {
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Create a javFX node representing a transaction
      * @param ts transaction to be displayed (data source)
      */
-    public TransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl) {
-        super(); //initialize HBox part
-        this.eventPageCtrl = eventPageCtrl;
+    protected VisualTransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl,
+                                    ServerUtils server) {
+        super(eventPageCtrl, server, ts.id);
 
         //date
         Text date = new Text(formatter.format(ts.date));
@@ -69,7 +65,6 @@ public class TransactionNode extends HBox {
 
         //assembling it all
         this.getChildren().addAll(date, body, btn, deleteTransactionButton); //add all nodes to HBox
-        this.id = ts.id; //so we can reference it (e.g. for updating)
         this.getStyleClass().add("transaction"); //css class .transaction
         this.setHgrow(body, Priority.ALWAYS); //manage HBox.Hgrow -> make it expand
         Insets insets = new Insets(10.0d);
@@ -81,7 +76,7 @@ public class TransactionNode extends HBox {
         System.out.println("Start editing transaction");
 
         eventPageCtrl.enableEditing(this);
-        eventPageCtrl.fillTransaction((new ServerUtils()).getTransaction(id));
+        eventPageCtrl.fillTransaction(server.getTransaction(id));
     }
 
     public void deleteTransaction(ActionEvent event) {
@@ -92,7 +87,9 @@ public class TransactionNode extends HBox {
 
         try {
             ((Pane) this.getParent()).getChildren().remove(this); //remove this node from parent
-            (new ServerUtils()).deleteTransaction(id); // TODO: should use singleton
+            TransactionDTO old = server.getTransaction(id);
+            eventPageCtrl.undoService.addAction(UndoService.TsAction.DELETE, old);
+            server.deleteTransaction(id);
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());
         } catch (Exception e) {

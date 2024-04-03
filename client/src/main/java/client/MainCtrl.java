@@ -1,6 +1,7 @@
 package client;
 
 import client.scenes.*;
+import client.utils.EventPageKeyEventHandler;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,17 +17,16 @@ public class MainCtrl {
     private Scene startPage;
 
     private EventPageCtrl eventPageCtrl;
-    private Scene eventPage;
+    public Scene eventPage;
 
     private AdminPageCtrl adminPageCtrl;
     private Scene adminPage;
 
     private PrivCheckPageCtrl privCheckPageCtrl;
     private Scene privCheckPage;
+
     private TransactionPageCtrl transactionPageCtrl;
     private Scene transactionPage;
-
-
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
@@ -43,6 +43,7 @@ public class MainCtrl {
 
         this.eventPageCtrl = eventPage.getKey();
         this.eventPage = new Scene(eventPage.getValue());
+        this.eventPage.setOnKeyPressed(new EventPageKeyEventHandler(eventPageCtrl.undoService));
 
         this.privCheckPageCtrl = privCheckPage.getKey();
         this.privCheckPage = new Scene(privCheckPage.getValue());
@@ -109,4 +110,6 @@ public class MainCtrl {
         alert.setContentText(msg);
         alert.showAndWait();
     }
+
+
 }

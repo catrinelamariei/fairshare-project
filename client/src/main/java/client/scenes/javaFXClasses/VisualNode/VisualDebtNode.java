@@ -1,5 +1,6 @@
-package client.scenes.javaFXClasses;
+package client.scenes.javaFXClasses.VisualNode;
 
+import client.scenes.javaFXClasses.DataNode.DebtNode;
 import commons.DTOs.ParticipantDTO;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -8,9 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Text;
 
-public class DebtNode extends HBox {
-
-    public DebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
+public class VisualDebtNode extends DebtNode {
+    protected VisualDebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
                     String currencyCode, double amount) {
         super(); //initialize HBox part
 
