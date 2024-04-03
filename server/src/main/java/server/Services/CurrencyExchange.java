@@ -7,6 +7,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +25,12 @@ public class CurrencyExchange {
     }
 
     public Rate getRate(String currencyFrom, String currencyTo,Date date) {
+
+        try {
+            Files.createDirectories(Paths.get("server/src/main/resources/rates/"));
+        } catch (IOException e) {
+            System.err.println("Cannot create directories: " + e);
+        }
 
         Optional<Rate> r = currencies.stream()
                 .filter(rate -> rate.currencyFrom.equals(currencyFrom) &&

@@ -7,6 +7,8 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -23,6 +25,12 @@ public class RateUtils {
 
         RateDTO rate;
         rate = new RateDTO("EUR", to,0.0, date);
+
+        try {
+            Files.createDirectories(Paths.get("client/src/main/resources/client/rates"));
+        } catch (IOException e) {
+            System.err.println("Cannot create directories: " + e);
+        }
         String filePath = "client/src/main/resources/client/rates/"
                 + from + to + rate.date + ".txt";
         File file = new File(filePath);
