@@ -14,6 +14,8 @@ import server.database.ParticipantRepository;
 import server.database.TagRepository;
 import server.database.TransactionRepository;
 
+import java.util.stream.Collectors;
+
 @Service //singleton bean managed by Spring
 public class DTOtoEntity {
     private final EventRepository eventRepository;
@@ -86,18 +88,16 @@ public class DTOtoEntity {
     }
     public Transaction update(TransactionDTO t) {
         Transaction transaction = transactionRepository.getReferenceById(t.id);
-        transaction.date = t.date;
-        transaction.currencyCode = t.currencyCode;
-        transaction.amount = t.amount;
-        transaction.author = get(t.author);
-        transaction.subject = t.subject;
-        //TODO check if this is correct, not sure if we have to clear the sets
-        transaction.participants.clear();
-        transaction.participants.addAll(t.participants.stream().map(this::get).toList());
-        transaction.tags.clear();
-        transaction.tags.addAll(t.tags.stream().map(this::get).toList());
-        transactionRepository.save(transaction);
-        return transaction;
+        transaction.setDate(t.date);
+        transaction.setCurrencyCode(t.currencyCode);
+        transaction.setAmount(t.amount);
+        transaction.setAuthor(get(t.author));
+        transaction.setSubject(t.subject);
+        transaction.setParticipants(t.participants.stream().map(this::get)
+                .collect(Collectors.toSet()));
+        transaction.setTags(t.tags.stream().map(this::get).collect(Collectors.toSet()));
+
+        return transactionRepository.save(transaction);
     }
 
     public boolean delete (TransactionDTO t) {
@@ -126,11 +126,11 @@ public class DTOtoEntity {
     }
     public Participant update(ParticipantDTO p) {
         Participant participant = participantRepository.getReferenceById(p.id);
-        p.firstName = participant.firstName;
-        p.lastName = participant.lastName;
-        p.email = participant.email;
-        p.iban = participant.iban;
-        p.bic = participant.bic;
+        participant.setFirstName(p.firstName);
+        participant.setLastName(p.lastName);
+        participant.setEmail(p.email);
+        participant.setIban(p.iban);
+        participant.setBic(p.bic);
 
         participantRepository.save(participant);
         return participant;
@@ -162,8 +162,8 @@ public class DTOtoEntity {
     }
     public Tag update(TagDTO t) {
         Tag tag = tagRepository.getReferenceById(t.id);
-        tag.name = t.name;
-        tag.color = t.color;
+        tag.setName(t.name);
+        tag.setColor(t.color);
         tagRepository.save(tag);
         return tag;
     }

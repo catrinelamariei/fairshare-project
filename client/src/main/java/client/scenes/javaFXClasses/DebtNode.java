@@ -99,7 +99,7 @@ public class DebtNode extends TitledPane {
                 new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
         try {
             ts = server.postTransaction(ts);
-            ctrl.transactions.getChildren().add(new TransactionNode(ts));
+            ctrl.transactions.getChildren().add(new TransactionNode(ts, ctrl));
         } catch (WebApplicationException err) {
             System.err.println("Error creating transaction from debt: " + err.getMessage());
             err.printStackTrace();
