@@ -122,7 +122,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private Button settleButton;
     @FXML
-    private Text totalExpenses;
+    Text totalExpenses;
     @FXML
     private Button statsButton;
 
@@ -196,10 +196,6 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
-
-        //total expenses: display sum of amounts of transactions except
-        // those with the tag "debt"
-        updateTotalExpenses();
 
 
         // generate statistics button
@@ -314,9 +310,13 @@ public class EventPageCtrl implements Initializable {
         MainCtrl.inform("Transaction created successfully");
     }
 
-    private void updateTotalExpenses() {
+    public Text getTotalExpenses() {
+        return totalExpenses;
+    }
+
+    public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
-        totalExpenses.setText(String.valueOf(e.transactions.stream()
+        getTotalExpenses().setText(String.valueOf(e.transactions.stream()
                 .filter(
                         ts -> ts.tags
                                 .stream()
