@@ -5,6 +5,7 @@ import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.PojoNodeFactory;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.scenes.javaFXClasses.NodeFactory;
+import com.google.inject.Provider;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
@@ -45,7 +46,7 @@ public class UndoServiceTest {
         this.eventPageCtrl.transactions = mock(VBox.class);
         this.server = mock(ServerUtils.class);
         this.nodeFactory = spy (new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server));
-        this.undoService = new UndoService(eventPageCtrl, server, nodeFactory);
+        this.undoService = new UndoService(new TestProvider<>(eventPageCtrl), server, nodeFactory);
 
 
         //objects
@@ -68,8 +69,7 @@ public class UndoServiceTest {
 
 
         //mocking
-        when(eventPageCtrl.transactions.getChildren())
-            .thenReturn(children);
+        when(eventPageCtrl.transactions.getChildren()).thenReturn(children);
     }
 
     //Test doesn't do much, just checks all cases are covered
@@ -167,5 +167,17 @@ public class UndoServiceTest {
 
         assertEquals(((TransactionNode) children.getFirst()).id, ts3.id);
         assertEquals(ts1.id, ts3.id);
+    }
+
+    private class TestProvider<T> implements Provider<T> {
+        private final T val;
+
+        protected TestProvider(T val) {
+            this.val = val;
+        }
+        @Override
+        public T get() {
+            return val;
+        }
     }
 }

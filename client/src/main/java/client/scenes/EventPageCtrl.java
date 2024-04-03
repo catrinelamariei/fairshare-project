@@ -54,7 +54,7 @@ public class EventPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
-    public final UndoService undoService;
+    public final UndoService undoService; //should be made private using factory injection
 
     private EventDTO eventDTO;
 
@@ -135,16 +135,12 @@ public class EventPageCtrl implements Initializable {
 
 
     @Inject
-    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoServiceFactory usf,
+    public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
                          NodeFactory nodeFactory) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        this.undoService = usf.create(this, server);
+        this.undoService = undoService;
         this.nodeFactory = nodeFactory;
-    }
-
-    public interface UndoServiceFactory{
-        UndoService create(EventPageCtrl epc, ServerUtils server);
     }
 
     public void initialize(URL location, ResourceBundle resources) {

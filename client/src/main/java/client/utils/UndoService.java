@@ -4,7 +4,7 @@ import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.scenes.javaFXClasses.NodeFactory;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.Provider;
 import commons.DTOs.TransactionDTO;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -12,7 +12,7 @@ import javafx.scene.Node;
 import java.util.*;
 
 public class UndoService {// services
-    private final EventPageCtrl eventPageCtrl;
+    private final Provider<EventPageCtrl> epcProvider;
     private final ServerUtils server;
     private final NodeFactory nodeFactory;
 
@@ -24,9 +24,9 @@ public class UndoService {// services
     private final Stack<Runnable> undoActions = new Stack<>();
 
     @Inject
-    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server,
+    public UndoService(Provider<EventPageCtrl> epcProvider, ServerUtils server,
                        NodeFactory nodeFactory) {
-        this.eventPageCtrl = eventPageCtrl;
+        this.epcProvider = epcProvider;
         this.server = server;
         this.nodeFactory = nodeFactory;
     }
@@ -74,7 +74,7 @@ public class UndoService {// services
     //private specific handlers
 
     private void undoCreate(TransactionDTO t) {
-        ObservableList<Node> children = eventPageCtrl.transactions.getChildren();
+        ObservableList<Node> children = epcProvider.get().transactions.getChildren();
 
         server.deleteTransaction(t.id);
 
@@ -83,7 +83,7 @@ public class UndoService {// services
     }
 
     private void undoUpdate(TransactionDTO t) {
-        ObservableList<Node> children = eventPageCtrl.transactions.getChildren();
+        ObservableList<Node> children = epcProvider.get().transactions.getChildren();
 
         t = server.putTransaction(t);
         UUID id = t.id;
@@ -98,7 +98,7 @@ public class UndoService {// services
      * causing previous update undo actions to become invalid
      */
     private void undoDelete(TransactionDTO t) {
-        ObservableList<Node> children = eventPageCtrl.transactions.getChildren();
+        ObservableList<Node> children = epcProvider.get().transactions.getChildren();
 
         UUID oldID = t.id;
         t = server.postTransaction(t);

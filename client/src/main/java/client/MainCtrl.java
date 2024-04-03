@@ -24,6 +24,7 @@ public class MainCtrl {
 
     private PrivCheckPageCtrl privCheckPageCtrl;
     private Scene privCheckPage;
+
     private TransactionPageCtrl transactionPageCtrl;
     private Scene transactionPage;
 

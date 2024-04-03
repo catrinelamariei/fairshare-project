@@ -22,9 +22,9 @@ import client.scenes.StartPageCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
 import client.utils.ServerUtils;
+import client.utils.UndoService;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class MyModule extends AbstractModule {
 
@@ -37,8 +37,7 @@ public class MyModule extends AbstractModule {
         bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
         bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
         bind(ServerUtils.class).in(Scopes.SINGLETON);
-        install(new FactoryModuleBuilder()
-            .build(EventPageCtrl.UndoServiceFactory.class));
+        bind(UndoService.class).in(Scopes.SINGLETON);
         binder().disableCircularProxies();
     }
 }
