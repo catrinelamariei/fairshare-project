@@ -7,10 +7,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,13 +15,14 @@ import java.util.*;
 @Service
 public class CurrencyExchange {
     private Set<Rate> currencies = new HashSet<>();
+    private final FrankfurterAPI api;
 
-    public CurrencyExchange() {
+    public CurrencyExchange(FrankfurterAPI api) {
+        this.api = api;
 
     }
 
-    public Rate getRate(String currencyFrom, String currencyTo,Date date)
-            throws IOException, InterruptedException {
+    public Rate getRate(String currencyFrom, String currencyTo,Date date) {
 
         Optional<Rate> r = currencies.stream()
                 .filter(rate -> rate.currencyFrom.equals(currencyFrom) &&
@@ -40,14 +37,11 @@ public class CurrencyExchange {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strDate = dateFormat.format(date);
 
-            String url = FrankfurterAPI.getURL(currencyFrom, currencyTo, strDate);
+            String url = api.getURL(currencyFrom, currencyTo, strDate);
 
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .build(), HttpResponse.BodyHandlers.ofString());
 
-            Double rate = FrankfurterAPI.getRate(response);
+
+            Double rate = api.getRate(url);
 
             Rate result = new Rate(currencyFrom, currencyTo, rate, date);
             currencies.add(result);
