@@ -83,7 +83,7 @@ public class EventPageCtrl implements Initializable {
     private RadioButton equalSplit;
     @FXML
     private RadioButton customSplit;
-//    @FXML
+    //    @FXML
 //    private Checkbox checkboxParticipant;
     @FXML
     private VBox vboxParticipantsTransaction;
@@ -192,19 +192,19 @@ public class EventPageCtrl implements Initializable {
         //load transactions
         transactions.getChildren().clear();
         transactions.getChildren().addAll(eventDTO.transactions.stream()
-            .map(ts -> new TransactionNode(ts, this)).toList());
+                .map(ts -> new TransactionNode(ts, this)).toList());
 
         //load participants
         participants.getPanes().clear();
         participants.getPanes().addAll(eventDTO.participants.stream()
-                        .map(p -> new ParticipantNode(p, this)).toList());
+                .map(p -> new ParticipantNode(p, this)).toList());
 
         //choice box author transaction
         authorInput.setItems(FXCollections.observableArrayList(eventDTO.participants));
 
         //checkboxes for participants
         vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
-            .map(EventPageCtrl::participantCheckbox).toList());
+                .map(EventPageCtrl::participantCheckbox).toList());
 
         //choiceboxes for debt filter
         creditorFilter.getItems().clear();
@@ -282,7 +282,7 @@ public class EventPageCtrl implements Initializable {
         //get invite code (String)
         //copy data to clipboard
         StringSelection content = new StringSelection(
-            UserData.getInstance().getCurrentUUID().toString());
+                UserData.getInstance().getCurrentUUID().toString());
         clipboard.setContents(content, null);
 
 
@@ -291,8 +291,8 @@ public class EventPageCtrl implements Initializable {
         label.setStyle("-fx-font-size: 14px;"); // Set label font size
         StackPane stackPane = new StackPane(label);
         stackPane.setStyle(
-            "-fx-background-color: white; -fx-border-color: black;" +
-                " -fx-border-width: 1px; -fx-padding: 2px");
+                "-fx-background-color: white; -fx-border-color: black;" +
+                        " -fx-border-width: 1px; -fx-padding: 2px");
 
 
         Popup popup = new Popup();
@@ -307,12 +307,12 @@ public class EventPageCtrl implements Initializable {
 
         final double popupDurationSeconds = 1.5;
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(popupDurationSeconds),
-            e -> popup.hide()));
+                e -> popup.hide()));
         timeline.setCycleCount(1);
         timeline.play();
     }
 
-    public void onCreateTransaction(ActionEvent event){
+    public void onCreateTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
 
         if (ts == null) return;
@@ -320,11 +320,11 @@ public class EventPageCtrl implements Initializable {
         try {
             ts = server.postTransaction(ts);
             transactions.getChildren().add(new TransactionNode(ts, this));
-            } catch (WebApplicationException e) {
+        } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
         }
 
-        clearTransaction() ;
+        clearTransaction();
         MainCtrl.inform("Transaction created successfully");
     }
 
@@ -356,7 +356,7 @@ public class EventPageCtrl implements Initializable {
                 .filter(item -> item.getText().equals(author.toString()))
                 .findAny().isPresent();
 
-        if (!infoIsValid(name, author, amount, currency, localDate,selectedRadioButton ,
+        if (!infoIsValid(name, author, amount, currency, localDate, selectedRadioButton,
                 participantIsSelected, authorIsSelected))
             return null;
 
@@ -365,7 +365,7 @@ public class EventPageCtrl implements Initializable {
 
         Date date = java.sql.Date.valueOf(localDate);
         return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
-            date, currency, amount, author, participants, tags, name);
+                date, currency, amount, author, participants, tags, name);
     }
 
     public void clearTransaction() {
@@ -408,13 +408,13 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Please enter a description");
         } else if (author == null) {
             MainCtrl.alert("Please select a payer");
-        }  else if (amount == null) {
+        } else if (amount == null) {
             MainCtrl.alert("Please enter a valid amount");
         } else if (currency == null || currency.isEmpty()) {
             MainCtrl.alert("Please choose a currency code");
-        } else if (localDate ==null) {
+        } else if (localDate == null) {
             MainCtrl.alert("Date cannot be empty");
-        } else if (selectedRadioButton ==null){
+        } else if (selectedRadioButton == null) {
             MainCtrl.alert("Please chose how to split the transaction!");
         } else if (customSplit.isSelected()) {
             if (!participantIsSelected) {
@@ -439,24 +439,24 @@ public class EventPageCtrl implements Initializable {
     }
 
     private boolean checkInput(String name, String transactionAmountString, String currency,
-                            LocalDate localDate, ParticipantDTO author) {
-        if(name==null || name.isEmpty()){
+                               LocalDate localDate, ParticipantDTO author) {
+        if (name == null || name.isEmpty()) {
             MainCtrl.alert("Please enter the name of the expense");
             return true;
         }
-        if(author==null){
+        if (author == null) {
             MainCtrl.alert("Please chose the author of the transaction");
             return true;
         }
-        if(transactionAmountString==null || transactionAmountString.isEmpty()){
+        if (transactionAmountString == null || transactionAmountString.isEmpty()) {
             MainCtrl.alert("Please enter the amount of the expense");
             return true;
         }
-        if(currency==null){
+        if (currency == null) {
             MainCtrl.alert("Please enter the currency of the expense");
             return true;
         }
-        if(localDate==null){
+        if (localDate == null) {
             MainCtrl.alert("Please enter the date of the expense");
             return true;
         }
@@ -500,11 +500,11 @@ public class EventPageCtrl implements Initializable {
         ParticipantDTO participantDTO;
 
         try {
-            if(fName.isEmpty()){
+            if (fName.isEmpty()) {
                 MainCtrl.alert("Please enter the first name");
                 return;
             }
-            if(lName.isEmpty()){
+            if (lName.isEmpty()) {
                 MainCtrl.alert("Please enter the last name");
                 return;
             }
@@ -519,7 +519,7 @@ public class EventPageCtrl implements Initializable {
                 ibanText = "-";
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
-                fName, lName, mail, ibanText, bicText);
+                    fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
 
             //updating event page
@@ -573,7 +573,7 @@ public class EventPageCtrl implements Initializable {
 
             // deal with currency later
             DebtNode debtNode = new DebtNode(debtor, creditor, "eur",
-                settlementAmount, event, server, this);
+                    settlementAmount, event, server, this);
             debts.getPanes().add(debtNode);
             // Update debts
             credit -= settlementAmount;
@@ -672,6 +672,7 @@ public class EventPageCtrl implements Initializable {
     public void showOverviewTransactions() {
         expenseTabPane.getSelectionModel().select(overviewExpenses);
     }
+
     public void enableEditing(TransactionNode tsn) {
         transactionEditTarget = tsn;
         addExpenseTab.setText("Edit Expense");
@@ -688,12 +689,13 @@ public class EventPageCtrl implements Initializable {
         this.authorInput.setValue(transaction.getAuthor());
         this.toggleGroup.selectToggle(customSplit);
 
-            //select checkboxes of participants
+        //select checkboxes of participants
         vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
                 .map(CheckBox.class::cast)
                 .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
                 .forEach(cb -> cb.setSelected(true));
     }
+
     public void submitEditTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
         if (ts == null) return;
@@ -713,8 +715,8 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant){
-        if(newParticipant == null){
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant) {
+        if (newParticipant == null) {
             return;
         }
 
@@ -727,10 +729,10 @@ public class EventPageCtrl implements Initializable {
                 MainCtrl.alert("Please enter a valid email address");
                 return;
             }
-            if(newParticipant.getBic().isEmpty()){
+            if (newParticipant.getBic().isEmpty()) {
                 newParticipant.setBic("-");
             }
-            if(newParticipant.getIban().isEmpty()){
+            if (newParticipant.getIban().isEmpty()) {
                 newParticipant.setIban("-");
             }
 
