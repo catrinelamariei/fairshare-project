@@ -3,6 +3,7 @@ package client.utils;
 import client.MainCtrl;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.PojoNodeFactory;
+import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.scenes.javaFXClasses.NodeFactory;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
@@ -34,6 +35,7 @@ public class UndoServiceTest {
     //objects
     private TransactionDTO ts1;
     private TransactionDTO ts2;
+    private TransactionDTO ts3;
     private ObservableList<Node> children;
 
     @BeforeEach
@@ -42,21 +44,25 @@ public class UndoServiceTest {
         this.eventPageCtrl = mock(EventPageCtrl.class);
         this.eventPageCtrl.transactions = mock(VBox.class);
         this.server = mock(ServerUtils.class);
-        this.nodeFactory = new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server);
+        this.nodeFactory = spy (new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server));
         this.undoService = new UndoService(eventPageCtrl, server, nodeFactory);
 
 
         //objects
-        ParticipantDTO p = new ParticipantDTO(new UUID(0,2), new UUID(0,0),
+        ParticipantDTO p = new ParticipantDTO(new UUID(0,1), new UUID(0,0),
             "Max", "Well", "mw@me.com", "-", "-");
 
-        ts1 = new TransactionDTO(new UUID(0, 1), new UUID(0,0), new Date(), "eur",
+        ts1 = new TransactionDTO(new UUID(0, 2), new UUID(0,0), new Date(), "eur",
             new BigDecimal("19.99"), p, new HashSet<ParticipantDTO>(List.of(p)),
             new HashSet<TagDTO>(List.of(new TagDTO())), "Burger");
 
-        ts2 = new TransactionDTO(new UUID(0, 1), new UUID(0,0), new Date(), "eur",
+        ts2 = new TransactionDTO(new UUID(0, 2), new UUID(0,0), new Date(), "eur",
             new BigDecimal("29.99"), p, new HashSet<ParticipantDTO>(List.of(p)),
             new HashSet<TagDTO>(List.of(new TagDTO())), "Burger");
+
+        ts3 = new TransactionDTO(new UUID(0, 3), new UUID(0,0), new Date(), "eur",
+                new BigDecimal("29.99"), p, new HashSet<ParticipantDTO>(List.of(p)),
+                new HashSet<TagDTO>(List.of(new TagDTO())), "Burger");
 
         children = FXCollections.observableArrayList();
 
@@ -64,8 +70,6 @@ public class UndoServiceTest {
         //mocking
         when(eventPageCtrl.transactions.getChildren())
             .thenReturn(children);
-
-        //will be replaced using factory pattern
     }
 
     //Test doesn't do much, just checks all cases are covered
@@ -104,7 +108,8 @@ public class UndoServiceTest {
     //see if constructor is actually being mocked
     @Test
     public void transactionNodeCreateTest() throws Exception {
-        // TODO: make factory and use that
+        TransactionNode tsn = nodeFactory.createTransactionNode(ts1);
+        assertEquals(tsn.id, ts1.id);
     }
 
     @Test
@@ -122,19 +127,45 @@ public class UndoServiceTest {
 
     @Test
     public void undoUpdateTest() {
-        doNothing().when(server).putTransaction(ts1);
+        when(server.putTransaction(ts1)).thenReturn(ts1);
 
+        children.add(nodeFactory.createTransactionNode(ts2)); //contains updated ts
         undoService.addAction(UPDATE, ts1);
         undoService.undo();
 
+        verify(server).putTransaction(ts1);
+        verify(nodeFactory).createTransactionNode(ts1);
     }
 
     @Test
     public void undoDeleteTest() {
-        doNothing().when(server).postTransaction(ts1);
+        when(server.postTransaction(ts1)).thenReturn(ts2); //new uuid
 
         undoService.addAction(DELETE, ts1);
         undoService.undo();
 
+        verify(server).postTransaction(ts1);
+        assertEquals(((TransactionNode) children.getFirst()).id, ts2.id);
+    }
+
+    /**
+     * this test checks if the ids update after a new UUID is returned
+     * from the server so that older undo actions remain valid.
+     * This test fails if the ID is not updated causing a .get() on empty optional
+     * which will throw NoSuchElementException
+     */
+    @Test
+    public void undoUpdateDeleteTest() {
+        when(server.postTransaction(ts2)).thenReturn(ts3); //new UUID
+        when(server.putTransaction(ts1)).thenReturn(ts3); //ts1's UUID will have been changed
+
+        undoService.addAction(UPDATE, ts1); //old ts
+        undoService.addAction(DELETE, ts2); //deleted new ts
+
+        undoService.undo(); //restore ts2
+        undoService.undo(); //revert ts2 to ts1 (with new id)
+
+        assertEquals(((TransactionNode) children.getFirst()).id, ts3.id);
+        assertEquals(ts1.id, ts3.id);
     }
 }

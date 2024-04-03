@@ -1,6 +1,5 @@
 package client.scenes.javaFXClasses.DataNode;
 
-import commons.DTOs.ParticipantDTO;
 import javafx.scene.control.TitledPane;
 
 import java.util.UUID;

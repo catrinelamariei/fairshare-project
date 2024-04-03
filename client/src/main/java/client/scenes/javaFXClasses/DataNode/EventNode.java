@@ -1,6 +1,5 @@
 package client.scenes.javaFXClasses.DataNode;
 
-import client.UserData;
 import javafx.scene.control.TitledPane;
 import client.MainCtrl;
 

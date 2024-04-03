@@ -25,7 +25,8 @@ public class VisualTransactionNode extends TransactionNode {
      * Create a javFX node representing a transaction
      * @param ts transaction to be displayed (data source)
      */
-    protected VisualTransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl, ServerUtils server) {
+    protected VisualTransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl,
+                                    ServerUtils server) {
         super(eventPageCtrl, server, ts.id);
 
         //date
