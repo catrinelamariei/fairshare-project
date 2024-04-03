@@ -71,6 +71,12 @@ public class TransactionNode extends HBox {
         this.getChildren().forEach(n -> this.setMargin(n, insets)); //make all children spaced out
     }
 
+    //for testing purposed, might be good to replace this with interface in future
+    protected TransactionNode() {
+        this.eventPageCtrl = null;
+        this.server = null;
+    }
+
     public void editTransaction (ActionEvent event) {
         // TODO: implement this
         System.out.println("Start editing transaction");

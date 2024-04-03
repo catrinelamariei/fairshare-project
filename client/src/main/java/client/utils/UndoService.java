@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 
 import java.util.*;
 
@@ -17,7 +18,7 @@ public class UndoService {
     // we never get from this, we only update ids in this
     // we never remove because we might remove references used multiple times,
     // and I am not about to start managing references/pointers in java
-    public List<TransactionDTO> oldTSList = new ArrayList<>();
+    private final List<TransactionDTO> oldTSList = new ArrayList<>();
     private final Stack<Runnable> undoActions = new Stack<>();
 
     // to actually do actions
@@ -25,8 +26,7 @@ public class UndoService {
     private final ServerUtils server;
 
     @Inject
-    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server,
-                       @Autowired VBox transactions) {
+    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server) {
         this.eventPageCtrl = eventPageCtrl;
         this.server = server;
     }
@@ -37,13 +37,13 @@ public class UndoService {
      * @param oldTS old transaction (in case of CREATE the new transaction)
      */
     public void addAction(TsAction action, TransactionDTO oldTS) {
-        if (oldTS == null) throw new IllegalArgumentException();
+        if (action == null || oldTS == null) throw new IllegalArgumentException();
 
         oldTSList.add(oldTS);
         Runnable newAction = switch (action) {
             case CREATE -> () -> undoCreate(oldTS);
-            case UPDATE -> (() -> undoUpdate(oldTS));
-            case DELETE -> (() -> undoDelete(oldTS));
+            case UPDATE -> () -> undoUpdate(oldTS);
+            case DELETE -> () -> undoDelete(oldTS);
         };
         undoActions.push(newAction);
     }
@@ -51,12 +51,15 @@ public class UndoService {
     /**
      * undoes the last added action if present
      * otherwise prints error msg
+     * @return true if successful, otherwise false
      */
-    public void undo() {
+    public boolean undo() {
         try {
             undoActions.pop().run();
+            return true;
         } catch (EmptyStackException e) {
             System.err.println("nothing to undo");
+            return false;
         }
     }
 
@@ -71,10 +74,12 @@ public class UndoService {
     //private specific handlers
 
     private void undoCreate(TransactionDTO t) {
+        ObservableList<Node> children = eventPageCtrl.transactions.getChildren();
+
         server.deleteTransaction(t.id);
-        eventPageCtrl.transactions.getChildren().removeAll(
-            eventPageCtrl.transactions.getChildren().stream()
-                .filter(node -> ((TransactionNode) node).id.equals(t.id)).toList());
+
+        children.removeAll(children.stream()
+            .filter(node -> ((TransactionNode) node).id.equals(t.id)).toList());
     }
 
     private void undoUpdate(TransactionDTO t) {
@@ -102,7 +107,6 @@ public class UndoService {
             .filter(oldTS -> oldTS.id.equals(oldID))
             .forEach(oldTS -> oldTS.id = newID);
 
-
         children.add(new TransactionNode(t, eventPageCtrl, server));
     }
 
@@ -113,5 +117,9 @@ public class UndoService {
         CREATE,
         UPDATE,
         DELETE;
+    }
+
+    public void testNew() {
+        new TransactionNode(null, null, null);
     }
 }
