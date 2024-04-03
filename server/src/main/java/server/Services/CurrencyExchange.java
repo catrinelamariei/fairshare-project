@@ -7,7 +7,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -19,9 +18,9 @@ import java.util.*;
 
 @Service
 public class CurrencyExchange {
-    private Set<Rate> currencies = new HashSet<Rate>();
+    private Set<Rate> currencies = new HashSet<>();
 
-    public CurrencyExchange() throws MalformedURLException {
+    public CurrencyExchange() {
 
     }
 
@@ -44,9 +43,6 @@ public class CurrencyExchange {
             String url = FrankfurterAPI.getURL(currencyFrom, currencyTo, strDate);
 
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .build();
             HttpResponse<String> response = client.send(HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .build(), HttpResponse.BodyHandlers.ofString());
