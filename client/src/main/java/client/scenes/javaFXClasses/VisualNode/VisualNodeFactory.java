@@ -40,7 +40,7 @@ public class VisualNodeFactory implements NodeFactory {
 
     @Override
     public ParticipantNode createParticipantNode(ParticipantDTO p) {
-        return new VisualParticipantNode(p);
+        return new VisualParticipantNode(p, epcProvider.get());
     }
 
     @Override

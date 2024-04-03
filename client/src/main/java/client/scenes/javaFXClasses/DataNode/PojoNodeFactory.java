@@ -33,7 +33,7 @@ public class PojoNodeFactory implements NodeFactory {
 
     @Override
     public ParticipantNode createParticipantNode(ParticipantDTO p) {
-        return new ParticipantNode(p.id, p.getFullName());
+        return new ParticipantNode(p.id, p.getFullName(), eventPageCtrl);
     }
 
     @Override

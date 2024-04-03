@@ -24,6 +24,7 @@ import static client.UserData.Pair;
 public class VisualEventNode extends EventNode {
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private TextField idField, dateField, participantField, transactionField, balanceField;
+    private Text invitationCodeText;
 
     /**
      * create eventnode but without any actual data
