@@ -1,7 +1,9 @@
 package client.utils;
 
+import client.MainCtrl;
 import client.scenes.EventPageCtrl;
-import client.scenes.javaFXClasses.TransactionNode;
+import client.scenes.javaFXClasses.DataNode.PojoNodeFactory;
+import client.scenes.javaFXClasses.VisualNode.TransactionNode;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
@@ -39,7 +41,8 @@ public class UndoServiceTest {
         this.eventPageCtrl = mock(EventPageCtrl.class);
         this.eventPageCtrl.transactions = mock(VBox.class);
         this.server = mock(ServerUtils.class);
-        this.undoService = new UndoService(eventPageCtrl, server);
+        this.undoService = new UndoService(eventPageCtrl, server,
+                new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server));
 
 
         //objects

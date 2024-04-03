@@ -1,19 +1,21 @@
 package client.utils;
 
 import client.scenes.EventPageCtrl;
-import client.scenes.javaFXClasses.TransactionNode;
+import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.scenes.javaFXClasses.NodeFactory;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import commons.DTOs.TransactionDTO;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.layout.VBox;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 
 import java.util.*;
 
-public class UndoService {
+public class UndoService {// services
+    private final EventPageCtrl eventPageCtrl;
+    private final ServerUtils server;
+    private final NodeFactory nodeFactory;
+
     // to access and edit old transactions (like UUID) from outside the runnable scopes
     // we never get from this, we only update ids in this
     // we never remove because we might remove references used multiple times,
@@ -21,14 +23,12 @@ public class UndoService {
     private final List<TransactionDTO> oldTSList = new ArrayList<>();
     private final Stack<Runnable> undoActions = new Stack<>();
 
-    // to actually do actions
-    private final EventPageCtrl eventPageCtrl;
-    private final ServerUtils server;
-
     @Inject
-    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server) {
+    public UndoService(@Assisted EventPageCtrl eventPageCtrl, @Assisted ServerUtils server,
+                       NodeFactory nodeFactory) {
         this.eventPageCtrl = eventPageCtrl;
         this.server = server;
+        this.nodeFactory = nodeFactory;
     }
 
     /**
@@ -90,7 +90,7 @@ public class UndoService {
 
         int index = children.indexOf(children.stream().map(TransactionNode.class::cast)
                         .filter(node -> node.id.equals(id)).findAny().get());
-        children.set(index, new TransactionNode(t, eventPageCtrl, server));
+        children.set(index, nodeFactory.createTransactionNode(t));
     }
 
     /**
@@ -107,7 +107,7 @@ public class UndoService {
             .filter(oldTS -> oldTS.id.equals(oldID))
             .forEach(oldTS -> oldTS.id = newID);
 
-        children.add(new TransactionNode(t, eventPageCtrl, server));
+        children.add(nodeFactory.createTransactionNode(t));
     }
 
     /**
@@ -117,9 +117,5 @@ public class UndoService {
         CREATE,
         UPDATE,
         DELETE;
-    }
-
-    public void testNew() {
-        new TransactionNode(null, null, null);
     }
 }

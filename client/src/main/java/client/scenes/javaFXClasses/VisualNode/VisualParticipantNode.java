@@ -1,22 +1,20 @@
-package client.scenes.javaFXClasses;
+package client.scenes.javaFXClasses.VisualNode;
 
+import client.scenes.javaFXClasses.DataNode.ParticipantNode;
 import commons.DTOs.ParticipantDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.util.List;
-import java.util.UUID;
 
-public class ParticipantNode extends TitledPane {
-    private final UUID id; //to address participant contained in this node
+public class VisualParticipantNode extends ParticipantNode {
 
     //create text (shared among all ParticipantNodes)
     static Text fNameText = new Text("First Name");
@@ -52,10 +50,9 @@ public class ParticipantNode extends TitledPane {
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
      * @param participant data to be used/displayed
      */
-    public ParticipantNode(ParticipantDTO participant) {
-        super(participant.getFullName(), null);
+    protected VisualParticipantNode(ParticipantDTO participant) {
+        super(participant.id, participant.getFullName());
         this.getStyleClass().add("participants"); //set CSS class
-        this.id = participant.id;
 
         //create text-field
         fNameField = new TextField(participant.firstName);

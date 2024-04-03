@@ -1,4 +1,4 @@
-package client.scenes.javaFXClasses;
+package client.utils;
 
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;

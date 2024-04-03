@@ -1,7 +1,7 @@
 package client.scenes;
 
 import client.MainCtrl;
-import client.scenes.javaFXClasses.EventNode;
+import client.scenes.javaFXClasses.VisualNode.EventNode;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;

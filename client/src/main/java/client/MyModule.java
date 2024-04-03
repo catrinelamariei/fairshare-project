@@ -19,6 +19,8 @@ import client.scenes.AdminPageCtrl;
 import client.scenes.EventPageCtrl;
 import client.scenes.PrivCheckPageCtrl;
 import client.scenes.StartPageCtrl;
+import client.scenes.javaFXClasses.NodeFactory;
+import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
 import client.utils.ServerUtils;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -34,6 +36,7 @@ public class MyModule extends AbstractModule {
         bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
         bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
         bind(ServerUtils.class).in(Scopes.SINGLETON);
+        bind(NodeFactory.class).to(VisualNodeFactory.class).in(Scopes.SINGLETON);
         install(new FactoryModuleBuilder()
             .build(EventPageCtrl.UndoServiceFactory.class));
     }

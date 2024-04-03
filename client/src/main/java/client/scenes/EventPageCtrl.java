@@ -2,10 +2,10 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.UserData;
-import client.scenes.javaFXClasses.DebtGraph;
-import client.scenes.javaFXClasses.DebtNode;
-import client.scenes.javaFXClasses.ParticipantNode;
-import client.scenes.javaFXClasses.TransactionNode;
+import client.utils.DebtGraph;
+import client.scenes.javaFXClasses.VisualNode.DebtNode;
+import client.scenes.javaFXClasses.VisualNode.ParticipantNode;
+import client.scenes.javaFXClasses.VisualNode.TransactionNode;
 import client.utils.ServerUtils;
 import client.utils.UndoService;
 import com.google.inject.Inject;
