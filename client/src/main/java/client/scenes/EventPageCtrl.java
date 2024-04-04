@@ -1,28 +1,16 @@
 package client.scenes;
 
-import client.MainCtrl;
-import client.UserData;
-import client.scenes.javaFXClasses.DataNode.DebtNode;
-import client.scenes.javaFXClasses.DataNode.ParticipantNode;
-import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.*;
+import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.DebtGraph;
-import client.utils.ServerUtils;
-import client.utils.UndoService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
+import client.utils.*;
+import com.google.inject.*;
+import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.animation.*;
+import javafx.collections.*;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.*;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -34,22 +22,18 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
-import javafx.util.Pair;
+import javafx.util.*;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 import java.util.stream.Collectors;
 
-import static client.utils.UndoService.TsAction.CREATE;
-import static client.utils.UndoService.TsAction.UPDATE;
+import static client.utils.UndoService.TsAction.*;
 
 @Singleton //for provider
 public class EventPageCtrl implements Initializable {
@@ -151,9 +135,9 @@ public class EventPageCtrl implements Initializable {
     Set<TagDTO> tags = new HashSet<>();
 
     @FXML
-    private ChoiceBox payerFilter;
+    private ChoiceBox<String> payerFilter;
     @FXML
-    private ChoiceBox participantFilter;
+    private ChoiceBox<String> participantFilter;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
@@ -573,9 +557,6 @@ public class EventPageCtrl implements Initializable {
             payerFilter.getItems().add(participantDTO.getFullName());
             participantFilter.getItems().add(participantDTO.getFullName());
             showOverviewParticipants();
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
-            return;
         } catch (WebApplicationException e) {
             System.err.println("Error adding participant: " + e.getMessage());
         }
@@ -709,7 +690,6 @@ public class EventPageCtrl implements Initializable {
         String selectedParticipant = (String) participantFilter.getValue();
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        var temp = transactions.getChildren();
 
         transactions.getChildren().setAll(
                 event.transactions
@@ -721,8 +701,6 @@ public class EventPageCtrl implements Initializable {
                                         .anyMatch(p -> p.getFullName().equals(selectedParticipant)))
                         .map(t -> nodeFactory.createTransactionNode(t))
                         .collect(Collectors.toList()));
-
-        System.out.println(temp.equals(transactions.getChildren()));
 
     }
 
