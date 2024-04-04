@@ -201,7 +201,13 @@ public class ServerUtils {
 
     }
 
-    private StompSession session = connect("ws://localhost:8080/websocket") ;
+    private String getWebSocketURL() {
+        String url = UserData.getInstance().getServerURL();
+        url = url.replaceFirst("http", "ws");
+        url = url + "/websocket";
+        return url;
+    }
+    private StompSession session = connect(getWebSocketURL()) ;
     private StompSession connect (String url) {
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
@@ -211,9 +217,10 @@ public class ServerUtils {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (ExecutionException e){
-            throw new RuntimeException(e);
+            System.out.println("Error connecting to websocket");
+            System.out.println(e.getMessage());
         }
-        throw new IllegalStateException();
+        return null;
     }
     public void register(String dest, Consumer<EventDTO> consumer) {
         session.subscribe(dest, new StompFrameHandler() {
