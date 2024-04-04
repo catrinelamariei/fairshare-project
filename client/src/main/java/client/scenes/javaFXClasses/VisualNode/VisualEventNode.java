@@ -1,4 +1,4 @@
-package client.scenes.javaFXClasses;
+package client.scenes.javaFXClasses.VisualNode;
 
 import client.MainCtrl;
 import client.UserData;
@@ -11,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -21,7 +20,6 @@ import javafx.scene.text.Text;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static client.UserData.Pair;
 public class VisualEventNode extends EventNode {
@@ -97,7 +95,7 @@ public class VisualEventNode extends EventNode {
      * create eventnode from data
      * @param event data source
      */
-    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl) {
+    public VisualEventNode(EventDTO event, MainCtrl mainCtrl) {
         super(mainCtrl, new Pair<>(event.getId(), event.getName()));
         this.initialize();
 
@@ -128,7 +126,7 @@ public class VisualEventNode extends EventNode {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EventNode eventNode)) return false;
+        if (!(o instanceof VisualEventNode eventNode)) return false;
         return Objects.equals(idNamePair.getKey(), eventNode.idNamePair.getKey());
     }
 

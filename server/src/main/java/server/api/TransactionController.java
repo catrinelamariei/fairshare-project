@@ -78,9 +78,12 @@ public class TransactionController {
         if(id==null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         Transaction transaction = repo.getReferenceById(id);
+
+        TransactionDTO transactionDTO = new TransactionDTO(transaction);
         repo.delete(transaction);
+
         if(messagingTemplate != null) {
-            messagingTemplate.convertAndSend("/topic/events", new EventDTO(transaction.event));
+            messagingTemplate.convertAndSend("/topic/events", transactionDTO.getEventId());
         }
         return ResponseEntity.ok().build();
     }

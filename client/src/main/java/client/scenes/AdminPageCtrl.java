@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
+import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
@@ -17,6 +18,7 @@ import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -52,27 +54,42 @@ public class AdminPageCtrl implements Initializable {
         comparatorList.valueProperty().addListener(((ov, oldVal, newVal) -> reSort()));
         overviewTab.selectedProperty().addListener(((ov, oldVal, newVal) -> toggleTab(newVal)));
 
-        server.register("/topic/events",q -> {
+        server.register("/topic/events", (Consumer<EventDTO>) q -> {
             System.out.println("Received event update");
 
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    eventAccordion.getPanes().remove(new EventNode(q, mainCtrl));
-                    eventAccordion.getPanes().add(new EventNode(q, mainCtrl));
+                    eventAccordion.getPanes().remove(new VisualEventNode(q, mainCtrl));
+                    eventAccordion.getPanes().add(new VisualEventNode(q, mainCtrl));
                 }
             });
 
 
         });
 
-        server.register("/topic/deletedEvent",q -> {
+        server.register("/topic/events", (Consumer<UUID>) q -> {
+            System.out.println("Received event update");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    EventDTO event = server.getEvent(q);
+                    eventAccordion.getPanes().remove(new VisualEventNode(event, mainCtrl));
+                    eventAccordion.getPanes().add(new VisualEventNode(event, mainCtrl));
+                }
+            });
+
+
+        },null);
+
+        server.register("/topic/deletedEvent", (Consumer<EventDTO>) q -> {
             System.out.println("Received event delete");
 
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    eventAccordion.getPanes().remove(new EventNode(q, mainCtrl));
+                    eventAccordion.getPanes().remove(new VisualEventNode(q, mainCtrl));
                 }
             });
 

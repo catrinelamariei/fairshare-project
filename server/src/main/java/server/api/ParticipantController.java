@@ -86,7 +86,8 @@ public class ParticipantController {
         Participant participant = p.get();
 
         if(messagingTemplate != null) {
-            messagingTemplate.convertAndSend("/topic/events", new EventDTO(participant.event));
+            messagingTemplate.convertAndSend("/topic/events", new ParticipantDTO(participant)
+                    .getEventId());
         }
         for (Transaction t: participant.getParticipatedTransactions()) {
             t.getParticipants().remove(participant);

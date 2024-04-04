@@ -228,5 +228,18 @@ public class ServerUtils {
         });
     }
 
+    public void register(String dest, Consumer<UUID> consumer, UUID id) {
+        session.subscribe(dest, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return UUID.class;
+            }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((UUID) payload) ;
+            }
+        });
+    }
+
 
 }
