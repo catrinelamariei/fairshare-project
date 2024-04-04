@@ -85,7 +85,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private ScrollPane participantsScrollPane;
     @FXML
-    private ChoiceBox<TagDTO> tagsInput;
+    private ComboBox<TagDTO> tagsInput;
     @FXML
     private Button submitTransaction;
     @FXML
@@ -221,7 +221,23 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
-
+        tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
+            @Override
+            public ListCell<TagDTO> call(ListView<TagDTO> param) {
+                return new ListCell<TagDTO>() {
+                    @Override
+                    protected void updateItem(TagDTO item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.getName());
+                            setStyle("-fx-background-color: " + item.color.colorCode + ";");
+                        } else {
+                            setText(null);
+                        }
+                    }
+                };
+            }
+        });
         undoService.clear();
     }
 
@@ -255,6 +271,7 @@ public class EventPageCtrl implements Initializable {
         tagBox.getChildren().add(new Text(input.getName()));
         tagBox.getChildren().add(spacer);
         tagBox.getChildren().add(deleteTag);
+        tagBox.setStyle("-fx-background-color: " + input.color.colorCode + ";");
         tagsVBox.getChildren().add(tagBox);
         tags.add(input);
     }

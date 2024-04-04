@@ -5,8 +5,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
@@ -238,7 +237,7 @@
                                                          <VBox fx:id="tagsVBox" />
                                                      </content>
                                                  </ScrollPane>
-                                                 <ChoiceBox fx:id="tagsInput" layoutX="450.0" layoutY="257.0" prefWidth="150.0" />
+                                                 <ComboBox fx:id="tagsInput" layoutX="450.0" layoutY="257.0" prefWidth="150.0" />
                                              </children>
                                           </AnchorPane>
                                           <HBox alignment="CENTER">
