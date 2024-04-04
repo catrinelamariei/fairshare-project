@@ -1,9 +1,9 @@
 package client.scenes.javaFXClasses.VisualNode;
 
-import client.scenes.javaFXClasses.DataNode.ParticipantNode;
-import client.utils.ServerUtils;
 import client.UserData;
 import client.scenes.EventPageCtrl;
+import client.scenes.javaFXClasses.DataNode.ParticipantNode;
+import client.utils.ServerUtils;
 import commons.DTOs.ParticipantDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
