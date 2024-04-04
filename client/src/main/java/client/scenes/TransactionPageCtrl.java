@@ -2,6 +2,7 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.Event;
 import commons.Participant;
 import commons.Tag;
@@ -12,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.BigDecimalStringConverter;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
