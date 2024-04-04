@@ -59,7 +59,15 @@ public class ParticipantController {
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         if(p == null || !p.validate()) return ResponseEntity.badRequest().build();
         p.id = id;
-        return ResponseEntity.ok(new ParticipantDTO(d2e.update(p)));
+
+        ParticipantDTO updated = new ParticipantDTO(d2e.update(p));
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.id = updated.eventId;
+        eventDTO = new EventDTO(d2e.get(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", eventDTO);
+        }
+        return ResponseEntity.ok(updated);
     }
 
     // TODO: manage dependencies
@@ -70,6 +78,10 @@ public class ParticipantController {
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         Optional<Participant> p = repo.findById(id);
         Participant participant = p.get();
+
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", new EventDTO(participant.event));
+        }
         for (Transaction t: participant.getParticipatedTransactions()) {
             t.getParticipants().remove(participant);
         }

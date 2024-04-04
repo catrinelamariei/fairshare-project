@@ -34,6 +34,7 @@ public class ParticipantControllerTest {
         participant = new Participant(event, "participant","last name", "email", "iban","bic");
         participant.id = UUID.randomUUID();
         participantDTO = new ParticipantDTO(participant);
+        when(d2e.get(any(EventDTO.class))).thenReturn(new Event("event"));
     }
 
     @Test
@@ -55,7 +56,6 @@ public class ParticipantControllerTest {
     public void createParticipant() {
         participantDTO.id = null;
         when(d2e.create(participantDTO)).thenReturn(participant);
-        when(d2e.get(any(EventDTO.class))).thenReturn(new Event("event"));
         ResponseEntity<ParticipantDTO> response = controller.createParticipant(participantDTO);
         participantDTO.id = participant.id;
         assertEquals(participantDTO, response.getBody());

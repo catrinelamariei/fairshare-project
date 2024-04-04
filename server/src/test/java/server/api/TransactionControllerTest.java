@@ -1,5 +1,6 @@
 package server.api;
 
+import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
@@ -31,7 +32,7 @@ public class TransactionControllerTest {
 
     @BeforeEach
     public void setUp() {
-        controller = new TransactionController(repo,d2e);
+        controller = new TransactionController(repo,d2e,null);
         Event event = new Event("event");
         event.id = UUID.randomUUID();
         Participant participant = new Participant(event, "participant",
@@ -40,6 +41,7 @@ public class TransactionControllerTest {
                 participant, "description");
         transaction.id = UUID.randomUUID();
         transactionDTO = new TransactionDTO(transaction);
+        when(d2e.get(any(EventDTO.class))).thenReturn(event);
     }
 
     @Test
