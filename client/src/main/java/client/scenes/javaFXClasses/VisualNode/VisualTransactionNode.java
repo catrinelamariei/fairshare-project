@@ -2,8 +2,10 @@ package client.scenes.javaFXClasses.VisualNode;
 
 import client.UserData;
 import client.scenes.EventPageCtrl;
+import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.utils.RateUtils;
 import client.utils.ServerUtils;
+import client.utils.UndoService;
 import commons.Currency.RateDTO;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
