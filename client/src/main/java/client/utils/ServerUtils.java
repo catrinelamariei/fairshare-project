@@ -15,15 +15,12 @@
  */
 package client.utils;
 
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import client.UserData;
 import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.DTOs.TagDTO;
 import commons.DTOs.TransactionDTO;
 import jakarta.ws.rs.WebApplicationException;
-
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
@@ -40,6 +37,8 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
     //events
@@ -64,9 +63,9 @@ public class ServerUtils {
     }
 
     public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
-        System.out.println("am intrat");
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("/api/event/"+eventDTO.getId())
+            .target(UserData.getInstance().getServerURL())
+                .path("/api/event/"+eventDTO.getId())
             .request(APPLICATION_JSON)
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
@@ -111,7 +110,10 @@ public class ServerUtils {
     }
 
     public TransactionDTO putTransaction(TransactionDTO ts) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/transaction")
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
 
     /**
@@ -128,7 +130,10 @@ public class ServerUtils {
 
     //participants
     public ParticipantDTO getParticipant(UUID id) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/participants/" + id)
+                .request(APPLICATION_JSON)
+                .get(ParticipantDTO.class);
     }
 
     //create a gatParticipants method
@@ -136,17 +141,23 @@ public class ServerUtils {
 
     public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/participants/")
-            .request(APPLICATION_JSON)
-            .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
+                .target(UserData.getInstance().getServerURL()).path("api/participants")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public ParticipantDTO putParticipant(ParticipantDTO p) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/participants/")
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public void deleteParticipant(UUID id) throws WebApplicationException {
-
+        ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("api/participants/" + id)
+            .request()
+            .delete();
     }
 
     //tags

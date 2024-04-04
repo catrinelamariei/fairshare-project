@@ -12,7 +12,7 @@
       <font>
          <Font size="18.0" />
       </font></Button>
-    <PasswordField fx:id="password" alignment="CENTER" layoutX="232.0" layoutY="169.0" onKeyPressed="#handleEnterPressed" prefHeight="46.0" prefWidth="168.0" promptText="Password" style="-fx-background-color: FAF7F0; -fx-border-color: #98A8F8;">
+    <PasswordField fx:id="password" alignment="CENTER" layoutX="232.0" layoutY="169.0" prefHeight="46.0" prefWidth="168.0" promptText="Password" style="-fx-background-color: FAF7F0; -fx-border-color: #98A8F8;">
       <font>
          <Font size="18.0" />
       </font></PasswordField>

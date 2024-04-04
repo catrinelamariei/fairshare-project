@@ -91,6 +91,10 @@ public class Transaction {
         return tags;
     }
 
+    public String getSubject() {
+        return subject;
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }
@@ -108,6 +112,22 @@ public class Transaction {
     }
     public Event getEvent() {
         return event;
+    }
+
+    public void setAuthor(Participant author) {
+        this.author = author;
+    }
+
+    public void setParticipants(Set<Participant> participants) {
+        this.participants = participants;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     @Override
