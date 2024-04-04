@@ -21,7 +21,7 @@ public class PojoNodeFactory implements NodeFactory {
     public DebtNode createDebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
                                    String currencyCode, double amount, EventDTO event,
                                    ServerUtils server, EventPageCtrl ctrl) {
-        return new DebtNode(debtor, creditor, currencyCode, amount, event, server, ctrl, this);
+        return new DebtNode(debtor, creditor, currencyCode, amount, event, server, ctrl);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class VisualNodeFactory implements NodeFactory {
                                    String currencyCode, double amount,
                                    EventDTO event, ServerUtils server, EventPageCtrl ctrl) {
         return new VisualDebtNode(debtor, creditor, currencyCode, amount,
-                event, server, ctrl, this);
+                event, server, ctrl);
     }
 
     @Override

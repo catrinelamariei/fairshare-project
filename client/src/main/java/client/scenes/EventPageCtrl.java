@@ -421,7 +421,7 @@ public class EventPageCtrl implements Initializable {
         } else if (localDate == null) {
             MainCtrl.alert("Date cannot be empty");
         } else if (selectedRadioButton == null) {
-            MainCtrl.alert("Please chose how to split the transaction!");
+            MainCtrl.alert("Please choose how to split the transaction!");
         } else if (customSplit.isSelected()) {
             if (!participantIsSelected) {
                 MainCtrl.alert("Select at least 1 participant that isn't the author");
@@ -614,12 +614,6 @@ public class EventPageCtrl implements Initializable {
             });
         }
         debts.getPanes().removeAll(toRemove);
-    }
-
-    public static void printParticipantsSplit(Set<ParticipantDTO> participants) {
-        for (ParticipantDTO participant : participants) {
-            System.out.println(participant);
-        }
     }
 
     private boolean isValidEmail(String email) {

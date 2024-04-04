@@ -2,11 +2,8 @@ package client.scenes.javaFXClasses.VisualNode;
 
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.DebtNode;
-import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
 import commons.DTOs.*;
-import commons.Tag;
-import jakarta.ws.rs.WebApplicationException;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
@@ -19,9 +16,9 @@ public class VisualDebtNode extends DebtNode {
     protected VisualDebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
                     String currencyCode, double amount,
                              EventDTO event, ServerUtils server,
-                             EventPageCtrl ctrl, NodeFactory nodeFactory) {
+                             EventPageCtrl ctrl) {
 
-        super(debtor, creditor, currencyCode, amount, event, server, ctrl, nodeFactory);
+        super(debtor, creditor, currencyCode, amount, event, server, ctrl);
 
         String txt = String.format("%s gives %.2f%s to %s",
                 debtor.getFullName(), amount,
@@ -37,7 +34,7 @@ public class VisualDebtNode extends DebtNode {
         receivedButton.setOnAction(e -> {
             ctrl.debts.getPanes().remove(this);
             debtToTransaction(debtor, creditor, currencyCode,
-                    amount, event, server, ctrl, nodeFactory);
+                    amount, event, server, ctrl);
         });
 
 
@@ -70,35 +67,16 @@ public class VisualDebtNode extends DebtNode {
 
     private static void debtToTransaction(ParticipantDTO debtor, ParticipantDTO creditor,
                                           String currencyCode, double amount, EventDTO event,
-                                          ServerUtils server, EventPageCtrl ctrl,
-                                          NodeFactory nodeFactory) {
-        TagDTO debtTag;
-        Optional<TagDTO> optionalDebtTag = event.tags
+                                          ServerUtils server, EventPageCtrl ctrl) {
+        TagDTO debtTag = event.tags
                 .stream()
                 .filter(tag -> tag.name.equals("debt"))
-                .findFirst();
-        if (optionalDebtTag.isEmpty()) {
-            debtTag = new TagDTO(null, event.id, "debt", Tag.Color.ORANGE);
-            try {
-                server.postTag(debtTag);
-            } catch (WebApplicationException err) {
-                System.err.println("Error creating tag for debt: " + err.getMessage());
-                return;
-            }
-        } else {
-            debtTag = optionalDebtTag.get();
-        }
+                .findFirst()
+                .get();
         TransactionDTO ts = new TransactionDTO(null, event.id, new Date(), currencyCode,
                 BigDecimal.valueOf(amount), debtor, new HashSet<>(Arrays.asList(creditor)),
                 new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
-        try {
-            ts = server.postTransaction(ts);
-            ctrl.transactions.getChildren().add(nodeFactory
-                    .createTransactionNode(server.putTransaction(ts)));
-        } catch (WebApplicationException err) {
-            System.err.println("Error creating transaction from debt: " + err.getMessage());
-            err.printStackTrace();
-        }
+        ctrl.createTransaction(ts);
     }
 
 }
