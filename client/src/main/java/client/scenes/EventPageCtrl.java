@@ -1,28 +1,16 @@
 package client.scenes;
 
-import client.MainCtrl;
-import client.UserData;
-import client.scenes.javaFXClasses.DataNode.DebtNode;
-import client.scenes.javaFXClasses.DataNode.ParticipantNode;
-import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.*;
+import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.DebtGraph;
-import client.utils.ServerUtils;
-import client.utils.UndoService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
+import client.utils.*;
+import com.google.inject.*;
+import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.animation.*;
+import javafx.collections.*;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.*;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -34,18 +22,15 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
-import javafx.util.Pair;
+import javafx.util.*;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import static client.utils.UndoService.TsAction.*;
 
@@ -136,13 +121,13 @@ public class EventPageCtrl implements Initializable {
     private Button settleButton;
     @FXML
     private TabPane participantTabPane;
-
-    @FXML
-    private TabPane expenseTabPane;
     @FXML
     Text totalExpenses;
     @FXML
     private Button statsButton;
+
+    @FXML
+    private TabPane expenseTabPane;
 
     @FXML
     private Tab overviewExpenses;
@@ -359,6 +344,7 @@ public class EventPageCtrl implements Initializable {
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
                 .sum()));
+        System.out.println(getTotalExpenses().getText());
     }
 
     private TransactionDTO readTransactionFields() {
