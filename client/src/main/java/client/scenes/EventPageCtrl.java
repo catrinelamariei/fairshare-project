@@ -1,28 +1,16 @@
 package client.scenes;
 
-import client.MainCtrl;
-import client.UserData;
-import client.scenes.javaFXClasses.DataNode.DebtNode;
-import client.scenes.javaFXClasses.DataNode.ParticipantNode;
-import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.*;
+import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.DebtGraph;
-import client.utils.ServerUtils;
-import client.utils.UndoService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
+import client.utils.*;
+import com.google.inject.*;
+import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.animation.*;
+import javafx.collections.*;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.*;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -34,18 +22,16 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
-import javafx.util.Pair;
+import javafx.util.*;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
+import java.util.stream.Collectors;
 
 import static client.utils.UndoService.TsAction.*;
 
@@ -92,7 +78,7 @@ public class EventPageCtrl implements Initializable {
     private RadioButton equalSplit;
     @FXML
     private RadioButton customSplit;
-//    @FXML
+    //    @FXML
 //    private Checkbox checkboxParticipant;
     @FXML
     private VBox vboxParticipantsTransaction;
@@ -148,6 +134,10 @@ public class EventPageCtrl implements Initializable {
 
     Set<TagDTO> tags = new HashSet<>();
 
+    @FXML
+    private ChoiceBox<String> payerFilter;
+    @FXML
+    private ChoiceBox<String> participantFilter;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
@@ -190,6 +180,7 @@ public class EventPageCtrl implements Initializable {
             });
         });
     }
+
     public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
 
@@ -201,7 +192,7 @@ public class EventPageCtrl implements Initializable {
         //load transactions
         transactions.getChildren().clear();
         transactions.getChildren().addAll(eventDTO.transactions.stream()
-            .map(nodeFactory::createTransactionNode).toList());
+                .map(nodeFactory::createTransactionNode).toList());
 
         //load participants
         participants.getPanes().clear();
@@ -213,8 +204,20 @@ public class EventPageCtrl implements Initializable {
 
         //checkboxes for participants
         vboxParticipantsTransaction.getChildren().setAll(eventDTO.participants.stream()
-            .map(EventPageCtrl::participantCheckbox).toList());
+                .map(EventPageCtrl::participantCheckbox).toList());
         //c1f05a35-1407-4ba1-ada3-0692649256b8
+
+        //choiceboxes for transaction filter
+        payerFilter.getItems().clear();
+        participantFilter.getItems().clear();
+        payerFilter.getItems().add("All");
+        participantFilter.getItems().add("All");
+        for (ParticipantDTO p : eventDTO.participants) {
+            payerFilter.getItems().add(p.getFullName());
+            participantFilter.getItems().add(p.getFullName());
+        }
+        payerFilter.setValue("All");
+        participantFilter.setValue("All");
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
@@ -259,13 +262,14 @@ public class EventPageCtrl implements Initializable {
     public void gotoHome() {
         mainCtrl.showStartPage();
     }
+
     public void gotoAdminLogin() {
         mainCtrl.showAdminPage();
     }
 
     public void copyInviteCode() {
 
-        if(UserData.getInstance().getCurrentUUID() == null) {
+        if (UserData.getInstance().getCurrentUUID() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -309,7 +313,7 @@ public class EventPageCtrl implements Initializable {
         timeline.play();
     }
 
-    public void onCreateTransaction(ActionEvent event){
+    public void onCreateTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
 
         if (createTransaction(ts) != null)
@@ -342,23 +346,6 @@ public class EventPageCtrl implements Initializable {
         ParticipantDTO author = authorInput.getValue();
 
 
-//<<<<<<< HEAD
-//        public void onCreateTransaction(ActionEvent event){
-//
-//            ParticipantDTO author = authorInput.getValue();
-//        Boolean invalidInput = checkInput(name, transactionAmountString,
-//                currency, localDate, author);
-//
-//        if(invalidInput)
-//            return;
-//
-//        try {
-//            amount = new BigDecimal(transactionAmountString);
-//        } catch (NumberFormatException e) {
-//            MainCtrl.alert("Please enter a number for the Amount field");
-//            return;
-//        }
-
         //radio buttons
         Set<ParticipantDTO> participants;
         RadioButton selectedRadioButton = (RadioButton) toggleGroup.getSelectedToggle();
@@ -386,8 +373,27 @@ public class EventPageCtrl implements Initializable {
 
 
         Date date = java.sql.Date.valueOf(localDate);
-        return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
+        TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
                 date, currency, amount, author, participants, tags, name);
+        try {
+            ts = server.postTransaction(ts);
+            String selectedPayer = (String) payerFilter.getValue();
+            String selectedParticipant = (String) participantFilter.getValue();
+            if ((selectedPayer.equals("All")
+                    || selectedPayer.equals(author.getFullName()))
+                    && (selectedParticipant.equals("All") ||
+                    participants.stream().anyMatch(p ->
+                            p.getFullName().equals(selectedParticipant)))) {
+
+                TransactionNode tn = nodeFactory
+                        .createTransactionNode(ts);
+                transactions.getChildren().add(tn);
+            }
+        } catch (WebApplicationException e) {
+            System.err.println("Error creating transaction: " + e.getMessage());
+        }
+
+        return ts;
     }
 
     public void clearTransaction() {
@@ -430,13 +436,13 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Please enter a description");
         } else if (author == null) {
             MainCtrl.alert("Please select a payer");
-        }  else if (amount == null) {
+        } else if (amount == null) {
             MainCtrl.alert("Please enter a valid amount");
         } else if (currency == null || currency.isEmpty()) {
             MainCtrl.alert("Please choose a currency code");
-        } else if (localDate ==null) {
+        } else if (localDate == null) {
             MainCtrl.alert("Date cannot be empty");
-        } else if (selectedRadioButton ==null){
+        } else if (selectedRadioButton == null) {
             MainCtrl.alert("Please chose how to split the transaction!");
         } else if (customSplit.isSelected()) {
             if (!participantIsSelected) {
@@ -461,24 +467,24 @@ public class EventPageCtrl implements Initializable {
     }
 
     private boolean checkInput(String name, String transactionAmountString, String currency,
-                            LocalDate localDate, ParticipantDTO author) {
-        if(name==null || name.isEmpty()){
+                               LocalDate localDate, ParticipantDTO author) {
+        if (name == null || name.isEmpty()) {
             MainCtrl.alert("Please enter the name of the expense");
             return true;
         }
-        if(author==null){
+        if (author == null) {
             MainCtrl.alert("Please chose the author of the transaction");
             return true;
         }
-        if(transactionAmountString==null || transactionAmountString.isEmpty()){
+        if (transactionAmountString == null || transactionAmountString.isEmpty()) {
             MainCtrl.alert("Please enter the amount of the expense");
             return true;
         }
-        if(currency==null){
+        if (currency == null) {
             MainCtrl.alert("Please enter the currency of the expense");
             return true;
         }
-        if(localDate==null){
+        if (localDate == null) {
             MainCtrl.alert("Please enter the date of the expense");
             return true;
         }
@@ -522,11 +528,11 @@ public class EventPageCtrl implements Initializable {
         ParticipantDTO participantDTO;
 
         try {
-            if(fName.isEmpty()){
+            if (fName.isEmpty()) {
                 MainCtrl.alert("Please enter the first name");
                 return;
             }
-            if(lName.isEmpty()){
+            if (lName.isEmpty()) {
                 MainCtrl.alert("Please enter the last name");
                 return;
             }
@@ -534,20 +540,22 @@ public class EventPageCtrl implements Initializable {
                 MainCtrl.alert("Please enter a valid email address");
                 return;
             }
-            if(bicText.isEmpty()){
-                bicText="-";
+            if (bicText.isEmpty()) {
+                bicText = "-";
             }
-            if(ibanText.isEmpty()){
-                ibanText="-";
+            if (ibanText.isEmpty()) {
+                ibanText = "-";
             }
             participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
-                fName, lName, mail, ibanText, bicText);
+                    fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
 
             //updating event page
             participants.getPanes().add(nodeFactory.createParticipantNode(participantDTO));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
+            payerFilter.getItems().add(participantDTO.getFullName());
+            participantFilter.getItems().add(participantDTO.getFullName());
             showOverviewParticipants();
         } catch (WebApplicationException e) {
             System.err.println("Error adding participant: " + e.getMessage());
@@ -606,11 +614,12 @@ public class EventPageCtrl implements Initializable {
 
     }
 
-    public static void printParticipantsSplit(Set<ParticipantDTO> participants){
-        for(ParticipantDTO participant : participants){
+    public static void printParticipantsSplit(Set<ParticipantDTO> participants) {
+        for (ParticipantDTO participant : participants) {
             System.out.println(participant);
         }
     }
+
     private boolean isValidEmail(String email) {
         // Regex pattern to match email address
         String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -667,11 +676,32 @@ public class EventPageCtrl implements Initializable {
     public void showOverviewTransactions() {
         expenseTabPane.getSelectionModel().select(overviewExpenses);
     }
+
     public void enableEditing(TransactionNode tsn) {
         transactionEditTarget = tsn;
         addExpenseTab.setText("Edit Expense");
         addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
         submitTransaction.setOnAction(this::submitEditTransaction);
+    }
+
+    @FXML
+    public void filterTransactions() {
+        String selectedPayer = (String) payerFilter.getValue();
+        String selectedParticipant = (String) participantFilter.getValue();
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+
+        transactions.getChildren().setAll(
+                event.transactions
+                        .stream()
+                        .filter(ts -> selectedPayer.equals("All")
+                                || ts.author.getFullName().equals(selectedPayer))
+                        .filter(ts -> selectedParticipant.equals("All") ||
+                                ts.participants.stream()
+                                        .anyMatch(p -> p.getFullName().equals(selectedParticipant)))
+                        .map(t -> nodeFactory.createTransactionNode(t))
+                        .collect(Collectors.toList()));
+
     }
 
     public void fillTransaction(TransactionDTO transaction) {
@@ -683,12 +713,13 @@ public class EventPageCtrl implements Initializable {
         this.authorInput.setValue(transaction.getAuthor());
         this.toggleGroup.selectToggle(customSplit);
 
-            //select checkboxes of participants
+        //select checkboxes of participants
         vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
                 .map(CheckBox.class::cast)
                 .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
                 .forEach(cb -> cb.setSelected(true));
     }
+
     public void submitEditTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
 
@@ -716,8 +747,8 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant){
-        if(newParticipant == null){
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant) {
+        if (newParticipant == null) {
             return;
         }
 
@@ -730,10 +761,10 @@ public class EventPageCtrl implements Initializable {
                 MainCtrl.alert("Please enter a valid email address");
                 return;
             }
-            if(newParticipant.getBic().isEmpty()){
+            if (newParticipant.getBic().isEmpty()) {
                 newParticipant.setBic("-");
             }
-            if(newParticipant.getIban().isEmpty()){
+            if (newParticipant.getIban().isEmpty()) {
                 newParticipant.setIban("-");
             }
 

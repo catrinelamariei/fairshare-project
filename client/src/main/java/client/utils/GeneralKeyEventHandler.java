@@ -3,8 +3,6 @@ package client.utils;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 
-import static javafx.scene.input.KeyCode.*;
-
 public interface GeneralKeyEventHandler extends EventHandler<KeyEvent> {
     //some universal keyEvents
     @Override
