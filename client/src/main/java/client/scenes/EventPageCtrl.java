@@ -31,6 +31,7 @@ import java.net.URL;
 import java.time.*;
 import java.util.*;
 import java.util.regex.*;
+import java.util.stream.Collectors;
 
 import static client.utils.UndoService.TsAction.*;
 
@@ -135,6 +136,10 @@ public class EventPageCtrl implements Initializable {
 
     Set<TagDTO> tags = new HashSet<>();
 
+    @FXML
+    private ChoiceBox<String> payerFilter;
+    @FXML
+    private ChoiceBox<String> participantFilter;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
@@ -215,6 +220,18 @@ public class EventPageCtrl implements Initializable {
         debts.getPanes().clear();
         settleButton.setText("Settle debts");
         //c1f05a35-1407-4ba1-ada3-0692649256b8
+
+        //choiceboxes for transaction filter
+        payerFilter.getItems().clear();
+        participantFilter.getItems().clear();
+        payerFilter.getItems().add("All");
+        participantFilter.getItems().add("All");
+        for (ParticipantDTO p : eventDTO.participants) {
+            payerFilter.getItems().add(p.getFullName());
+            participantFilter.getItems().add(p.getFullName());
+        }
+        payerFilter.setValue("All");
+        participantFilter.setValue("All");
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
@@ -370,8 +387,27 @@ public class EventPageCtrl implements Initializable {
 
 
         Date date = java.sql.Date.valueOf(localDate);
-        return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
+        TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
                 date, currency, amount, author, participants, tags, name);
+        try {
+            ts = server.postTransaction(ts);
+            String selectedPayer = (String) payerFilter.getValue();
+            String selectedParticipant = (String) participantFilter.getValue();
+            if ((selectedPayer.equals("All")
+                    || selectedPayer.equals(author.getFullName()))
+                    && (selectedParticipant.equals("All") ||
+                    participants.stream().anyMatch(p ->
+                            p.getFullName().equals(selectedParticipant)))) {
+
+                TransactionNode tn = nodeFactory
+                        .createTransactionNode(ts);
+                transactions.getChildren().add(tn);
+            }
+        } catch (WebApplicationException e) {
+            System.err.println("Error creating transaction: " + e.getMessage());
+        }
+
+        return ts;
     }
 
     public void clearTransaction() {
@@ -532,6 +568,8 @@ public class EventPageCtrl implements Initializable {
             participants.getPanes().add(nodeFactory.createParticipantNode(participantDTO));
             authorInput.getItems().add(participantDTO);
             vboxParticipantsTransaction.getChildren().add(participantCheckbox(participantDTO));
+            payerFilter.getItems().add(participantDTO.getFullName());
+            participantFilter.getItems().add(participantDTO.getFullName());
             creditorFilter.getItems().add(participantDTO.getFullName());
             showOverviewParticipants();
         } catch (IllegalArgumentException e) {
@@ -604,7 +642,7 @@ public class EventPageCtrl implements Initializable {
     public void filterDebts() {
         String selectedCreditor = (String) creditorFilter.getValue();
         // remove other debtNodes if a creditor is selected
-        Set<TitledPane> toRemove = new HashSet<>();
+        Set<TitledPane> toRemove = new HashSet<>() ;
         if (!selectedCreditor.equals("All")) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
@@ -678,6 +716,26 @@ public class EventPageCtrl implements Initializable {
         addExpenseTab.setText("Edit Expense");
         addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
         submitTransaction.setOnAction(this::submitEditTransaction);
+    }
+
+    @FXML
+    public void filterTransactions() {
+        String selectedPayer = (String) payerFilter.getValue();
+        String selectedParticipant = (String) participantFilter.getValue();
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+
+        transactions.getChildren().setAll(
+                event.transactions
+                        .stream()
+                        .filter(ts -> selectedPayer.equals("All")
+                                || ts.author.getFullName().equals(selectedPayer))
+                        .filter(ts -> selectedParticipant.equals("All") ||
+                                ts.participants.stream()
+                                        .anyMatch(p -> p.getFullName().equals(selectedParticipant)))
+                        .map(t -> nodeFactory.createTransactionNode(t))
+                        .collect(Collectors.toList()));
+
     }
 
     public void fillTransaction(TransactionDTO transaction) {
