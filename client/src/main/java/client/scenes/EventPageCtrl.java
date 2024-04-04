@@ -5,7 +5,6 @@ import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.*;
 import com.google.inject.*;
-import commons.Currency.Rate;
 import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
