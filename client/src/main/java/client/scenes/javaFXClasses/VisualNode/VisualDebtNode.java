@@ -70,7 +70,8 @@ public class VisualDebtNode extends DebtNode {
 
     private static void debtToTransaction(ParticipantDTO debtor, ParticipantDTO creditor,
                                           String currencyCode, double amount, EventDTO event,
-                                          ServerUtils server, EventPageCtrl ctrl, NodeFactory nodeFactory) {
+                                          ServerUtils server, EventPageCtrl ctrl,
+                                          NodeFactory nodeFactory) {
         TagDTO debtTag;
         Optional<TagDTO> optionalDebtTag = event.tags
                 .stream()
