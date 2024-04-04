@@ -1,41 +1,33 @@
-package client.scenes.javaFXClasses;
+package client.scenes.javaFXClasses.VisualNode;
 
 import client.scenes.EventPageCtrl;
+import client.scenes.javaFXClasses.DataNode.DebtNode;
+import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
+import commons.DTOs.*;
 import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
-public class DebtNode extends TitledPane {
-
-    public ParticipantDTO creditor;
-
-    public DebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
+public class VisualDebtNode extends DebtNode {
+    protected VisualDebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
                     String currencyCode, double amount,
-                    EventDTO event, ServerUtils server, EventPageCtrl ctrl) {
+                             EventDTO event, ServerUtils server,
+                             EventPageCtrl ctrl, NodeFactory nodeFactory) {
 
-        super(String.format("%s gives %.2f%s to %s",
+        super(debtor, creditor, currencyCode, amount, event, server, ctrl, nodeFactory);
+
+        String txt = String.format("%s gives %.2f%s to %s",
                 debtor.getFullName(), amount,
-                currencyCode, creditor.getFullName()), null);
+                currencyCode, creditor.getFullName());
+        this.setText(txt);
 
-        this.creditor = creditor;
 
         Button receivedButton = new Button("Mark as received");
 
@@ -44,7 +36,8 @@ public class DebtNode extends TitledPane {
         // otherwise a new tag will be created
         receivedButton.setOnAction(e -> {
             ctrl.debts.getPanes().remove(this);
-            debtToTransaction(debtor, creditor, currencyCode, amount, event, server, ctrl);
+            debtToTransaction(debtor, creditor, currencyCode,
+                    amount, event, server, ctrl, nodeFactory);
         });
 
 
@@ -77,7 +70,7 @@ public class DebtNode extends TitledPane {
 
     private static void debtToTransaction(ParticipantDTO debtor, ParticipantDTO creditor,
                                           String currencyCode, double amount, EventDTO event,
-                                          ServerUtils server, EventPageCtrl ctrl) {
+                                          ServerUtils server, EventPageCtrl ctrl, NodeFactory nodeFactory) {
         TagDTO debtTag;
         Optional<TagDTO> optionalDebtTag = event.tags
                 .stream()
@@ -99,7 +92,8 @@ public class DebtNode extends TitledPane {
                 new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
         try {
             ts = server.postTransaction(ts);
-            ctrl.transactions.getChildren().add(new TransactionNode(ts, ctrl));
+            ctrl.transactions.getChildren().add(nodeFactory
+                    .createTransactionNode(server.putTransaction(ts)));
         } catch (WebApplicationException err) {
             System.err.println("Error creating transaction from debt: " + err.getMessage());
             err.printStackTrace();

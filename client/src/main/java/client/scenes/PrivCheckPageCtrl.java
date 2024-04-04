@@ -1,16 +1,14 @@
 package client.scenes;
 
-import client.MainCtrl;
-import client.UserData;
+import client.*;
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import javafx.scene.control.PasswordField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.text.Text;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 

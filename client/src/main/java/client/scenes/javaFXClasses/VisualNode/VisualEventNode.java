@@ -1,30 +1,20 @@
-package client.scenes.javaFXClasses;
+package client.scenes.javaFXClasses.VisualNode;
 
-import client.MainCtrl;
-import client.UserData;
+import client.*;
+import client.scenes.javaFXClasses.DataNode.EventNode;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.UUID;
 
 import static client.UserData.Pair;
-public class EventNode extends TitledPane {
-    private final Pair<UUID, String> idNamePair; // for UserData
-    private final MainCtrl mainCtrl;
+public class VisualEventNode extends EventNode {
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private TextField idField, dateField, participantField, transactionField, balanceField;
     private Text invitationCodeText;
@@ -32,10 +22,7 @@ public class EventNode extends TitledPane {
     /**
      * create eventnode but without any actual data
      */
-    private EventNode(Pair<UUID, String> pair, MainCtrl mainCtrl) {
-        super();
-        this.idNamePair = pair; //necessary for field to be final
-        this.mainCtrl = mainCtrl;
+    private void initialize() {
         this.setAnimated(false);
 
         //text
@@ -100,8 +87,9 @@ public class EventNode extends TitledPane {
      * create eventnode from data
      * @param event data source
      */
-    public EventNode(EventDTO event, MainCtrl mainCtrl) {
-        this(new Pair<>(event.getId(), event.getName()), mainCtrl);
+    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl) {
+        super(mainCtrl, new Pair<>(event.getId(), event.getName()));
+        this.initialize();
 
         this.setText(event.name);
         idField.setText(event.id.toString());

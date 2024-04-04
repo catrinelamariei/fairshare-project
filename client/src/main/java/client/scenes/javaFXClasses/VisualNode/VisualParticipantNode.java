@@ -1,34 +1,26 @@
-package client.scenes.javaFXClasses;
+package client.scenes.javaFXClasses.VisualNode;
 
 import client.UserData;
 import client.scenes.EventPageCtrl;
+import client.scenes.javaFXClasses.DataNode.ParticipantNode;
 import client.utils.ServerUtils;
 import commons.DTOs.ParticipantDTO;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class ParticipantNode extends TitledPane {
-    private final UUID id; //to address participant contained in this node
-    private final EventPageCtrl eventPageCtrl;
+public class VisualParticipantNode extends ParticipantNode {
     //create text (shared among all ParticipantNodes)
-    static Text fNameText = new Text("First Name");
-    static Text lNameText = new Text("Last Name");
-    static Text emailText = new Text("Email");
-    static Text ibanText = new Text("IBAN");
-    static Text bicText = new Text("BIC");
+    Text fNameText = new Text("First Name");
+    Text lNameText = new Text("Last Name");
+    Text emailText = new Text("Email");
+    Text ibanText = new Text("IBAN");
+    Text bicText = new Text("BIC");
 
     //text-fields are Participant dependant (on data)
     TextField fNameField;
@@ -46,23 +38,16 @@ public class ParticipantNode extends TitledPane {
             "-fx-min-width: 300; ";
 
     /**
-     * initializes styling on shared/static nodes
-     */
-    public static void init() {
-        //apply style to all text
-        List.of(fNameText, lNameText, emailText, ibanText, bicText)
-                .forEach(t -> t.setStyle(textStyle));
-    }
-
-    /**
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
      * @param participant data to be used/displayed
      */
-    public ParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl) {
-        super(participant.getFullName(), null);
+    protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl) {
+        super(participant.id, participant.getFullName(), eventPageCtrl);
         this.getStyleClass().add("participants"); //set CSS class
-        this.id = participant.id;
-        this.eventPageCtrl = eventPageCtrl;
+
+        //apply style to all text
+        List.of(fNameText, lNameText, emailText, ibanText, bicText)
+                .forEach(t -> t.setStyle(textStyle));
 
         //create text-field
         fNameField = new TextField(participant.firstName);

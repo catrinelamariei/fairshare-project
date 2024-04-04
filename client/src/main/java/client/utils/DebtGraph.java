@@ -1,14 +1,10 @@
-package client.scenes.javaFXClasses;
+package client.utils;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TransactionDTO;
+import commons.DTOs.*;
 import javafx.util.Pair;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.DirectedWeightedPseudograph;
+import org.jgrapht.graph.*;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.*;
 import java.util.*;
 
 
