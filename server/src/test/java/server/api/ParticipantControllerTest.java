@@ -1,5 +1,6 @@
 package server.api;
 
+import commons.DTOs.EventDTO;
 import commons.DTOs.ParticipantDTO;
 import commons.Event;
 import commons.Participant;
@@ -54,6 +55,7 @@ public class ParticipantControllerTest {
     public void createParticipant() {
         participantDTO.id = null;
         when(d2e.create(participantDTO)).thenReturn(participant);
+        when(d2e.get(any(EventDTO.class))).thenReturn(new Event("event"));
         ResponseEntity<ParticipantDTO> response = controller.createParticipant(participantDTO);
         participantDTO.id = participant.id;
         assertEquals(participantDTO, response.getBody());
