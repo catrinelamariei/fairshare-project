@@ -27,7 +27,7 @@ public class ParticipantControllerTest {
 
     @BeforeEach
     public void setUp() {
-        controller = new ParticipantController(repo,d2e);
+        controller = new ParticipantController(repo,d2e,null);
         Event event = new Event("event");
         event.id = UUID.randomUUID();
         participant = new Participant(event, "participant","last name", "email", "iban","bic");

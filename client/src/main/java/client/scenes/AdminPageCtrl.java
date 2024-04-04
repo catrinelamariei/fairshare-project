@@ -5,6 +5,7 @@ import client.scenes.javaFXClasses.EventNode;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import commons.Event;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -45,6 +46,33 @@ public class AdminPageCtrl implements Initializable {
         comparatorList.setValue(EventDTO.EventComparator.name);
         comparatorList.valueProperty().addListener(((ov, oldVal, newVal) -> reSort()));
         overviewTab.selectedProperty().addListener(((ov, oldVal, newVal) -> toggleTab(newVal)));
+
+        server.register("/topic/events",q -> {
+            System.out.println("Received event update");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    eventAccordion.getPanes().remove(new EventNode(q, mainCtrl));
+                    eventAccordion.getPanes().add(new EventNode(q, mainCtrl));
+                }
+            });
+
+
+        });
+
+        server.register("/topic/deletedEvent",q -> {
+            System.out.println("Received event delete");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    eventAccordion.getPanes().remove(new EventNode(q, mainCtrl));
+                }
+            });
+
+
+        });
     }
 
     /**

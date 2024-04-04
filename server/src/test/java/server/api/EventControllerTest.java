@@ -24,7 +24,7 @@ public class EventControllerTest {
 
     @BeforeEach
     public void setUp() {
-        controller = new EventController(repo, d2e);
+        controller = new EventController(repo, d2e, null);
         event = new Event("event");
         event.id = java.util.UUID.randomUUID();
         eventDTO = new EventDTO(event);

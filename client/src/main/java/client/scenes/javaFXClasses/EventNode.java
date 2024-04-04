@@ -19,6 +19,7 @@ import javafx.scene.text.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static client.UserData.Pair;
@@ -124,5 +125,17 @@ public class EventNode extends TitledPane {
         mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
         UserData.getInstance().getRecentUUIDs()
                 .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EventNode eventNode)) return false;
+        return Objects.equals(idNamePair.getKey(), eventNode.idNamePair.getKey());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idNamePair);
     }
 }
