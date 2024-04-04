@@ -1,28 +1,16 @@
 package client.scenes;
 
-import client.MainCtrl;
-import client.UserData;
-import client.scenes.javaFXClasses.DataNode.DebtNode;
-import client.scenes.javaFXClasses.DataNode.ParticipantNode;
-import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.*;
+import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.DebtGraph;
-import client.utils.ServerUtils;
-import client.utils.UndoService;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
+import client.utils.*;
+import com.google.inject.*;
+import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.animation.*;
+import javafx.collections.*;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.*;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -34,18 +22,15 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
-import javafx.util.Pair;
+import javafx.util.*;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import static client.utils.UndoService.TsAction.*;
 
@@ -371,15 +356,9 @@ public class EventPageCtrl implements Initializable {
                 .filter(item -> !item.getText().equals(author.toString()))
                 .findAny().isPresent();
         amount = isValidAmount(transactionAmountString);
-        boolean authorIsSelected = vboxParticipantsTransaction.getChildren()
-                .stream()
-                .map(item -> (CheckBox) item)
-                .filter(item -> item.isSelected())
-                .filter(item -> item.getText().equals(author.toString()))
-                .findAny().isPresent();
 
         if (!infoIsValid(name, author, amount, currency, localDate, selectedRadioButton,
-                participantIsSelected, authorIsSelected))
+                participantIsSelected))
             return null;
 
         participants = getTransactionParticipants(selectedRadioButton);
@@ -425,7 +404,7 @@ public class EventPageCtrl implements Initializable {
     private boolean infoIsValid(String name, ParticipantDTO author, BigDecimal amount,
                                 String currency, LocalDate localDate,
                                 RadioButton selectedRadioButton,
-                                boolean participantIsSelected, boolean authorIsSelected) {
+                                boolean participantIsSelected) {
         if (name == null || name.isEmpty()) {
             MainCtrl.alert("Please enter a description");
         } else if (author == null) {
@@ -438,12 +417,8 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Date cannot be empty");
         } else if (selectedRadioButton ==null){
             MainCtrl.alert("Please chose how to split the transaction!");
-        } else if (customSplit.isSelected()) {
-            if (!participantIsSelected) {
+        } else if (customSplit.isSelected() && !participantIsSelected) {
                 MainCtrl.alert("Select at least 1 participant that isn't the author");
-            } else if (!authorIsSelected) {
-                MainCtrl.alert("Select the author as a participant");
-            } else return true; //otherwise all customsplit end here and return false
         } else {
             return true;
         }
