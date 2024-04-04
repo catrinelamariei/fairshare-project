@@ -5,6 +5,7 @@ import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.*;
 import com.google.inject.*;
+import commons.Currency.Rate;
 import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
@@ -13,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -42,7 +44,6 @@ public class EventPageCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
     public final UndoService undoService; //should be made private using factory injection
-
     private EventDTO eventDTO;
 
     //delete event
@@ -125,12 +126,23 @@ public class EventPageCtrl implements Initializable {
 
     @FXML
     private TabPane expenseTabPane;
+    @FXML
+    private TabPane statisticsTabPane;
 
     @FXML
     private Tab overviewExpenses;
 
     @FXML
     private Tab overviewParticipants;
+
+    //Statistics
+    @FXML
+    private Tab overviewStatistics;
+    @FXML
+    private Tab pieChartTab;
+    @FXML
+    private PieChart pieChart;
+
 
     Set<TagDTO> tags = new HashSet<>();
 
@@ -179,6 +191,16 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
+
+        //Placeholder pie chart
+        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
+                new PieChart.Data("Expenses", 30),
+                new PieChart.Data("Debts", 20),
+                new PieChart.Data("Balance", 50));
+
+        pieChart.setData(pieData);
+        pieChart.setStartAngle(90);
+
     }
 
     public void load() throws WebApplicationException {
@@ -318,6 +340,9 @@ public class EventPageCtrl implements Initializable {
 
         if (createTransaction(ts) != null)
             MainCtrl.inform("Transaction created successfully");
+
+        // calculate new amount after conversion, put <tagcolor, amount>
+        // convert amount + add to the total expenses
     }
 
     public TransactionDTO createTransaction(TransactionDTO ts) {
@@ -682,6 +707,8 @@ public class EventPageCtrl implements Initializable {
         addExpenseTab.setText("Edit Expense");
         addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
         submitTransaction.setOnAction(this::submitEditTransaction);
+        //for test purposes
+        submitTransaction.setOnAction(this::expenseDistribution);
     }
 
     @FXML
@@ -742,6 +769,16 @@ public class EventPageCtrl implements Initializable {
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
 
+        //START OF UPDATE
+        //new is ts old is old
+        // BigDecimal total = get<tag>
+        // if new > old -> amount = |new-old|    put <tag, total+amount>
+        // if new < old ->                      put <tag, total-amount>
+
+        //TAGS
+        // if tag unselected -> put <tag, total-old>
+        // if new tag selected -> put <tag, total+new>
+
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);
     }
@@ -780,4 +817,20 @@ public class EventPageCtrl implements Initializable {
             System.err.println("Error updating participant: " + e.getMessage());
         }
     }
+
+    public void expenseDistribution(ActionEvent actionEvent) {
+        System.out.println("expenseDistribution method...");
+        BigDecimal amount = new BigDecimal(transactionAmount.getText());
+        String currency = currencyCodeInput.getValue();
+        Date date = java.sql.Date.valueOf(transactionDate.getValue());
+//        Rate rate = new Rate(currency, "EUR", 1.0, date);
+        if(!currency.equals("EUR")){
+//                rate = currencyExchange.getRate(currency, "EUR", date);
+        }
+//        BigDecimal convertedAmount = amount.multiply(BigDecimal.valueOf(rate.getRate()));
+
+        System.out.println("amount" + amount + " currency" + currency + " date" + date);
+
+    }
+
 }
