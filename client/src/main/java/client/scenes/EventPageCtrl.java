@@ -337,11 +337,21 @@ public class EventPageCtrl implements Initializable {
     public TransactionDTO createTransaction(TransactionDTO ts) {
         if (ts == null) return null;
 
+
         try {
             ts = server.postTransaction(ts);
             undoService.addAction(CREATE, ts);
-            TransactionNode tsNode = nodeFactory.createTransactionNode(ts);
-            transactions.getChildren().add(tsNode);
+            String selectedPayer = payerFilter.getValue();
+            String selectedParticipant = participantFilter.getValue();
+            if ((selectedPayer.equals("All")
+                    || selectedPayer.equals(ts.author.getFullName()))
+                    && (selectedParticipant.equals("All") ||
+                    ts.participants.stream().anyMatch(p ->
+                            p.getFullName().equals(selectedParticipant)))) {
+
+                TransactionNode tsNode = nodeFactory.createTransactionNode(ts);
+                transactions.getChildren().add(tsNode);
+            }
         } catch (WebApplicationException e) {
             System.err.println("Error creating transaction: " + e.getMessage());
             return null;
@@ -354,7 +364,7 @@ public class EventPageCtrl implements Initializable {
     private TransactionDTO readTransactionFields() {
         String name = transactionName.getText().trim();
         String transactionAmountString = transactionAmount.getText().trim();
-        String currency = (String) currencyCodeInput.getValue();
+        String currency = currencyCodeInput.getValue();
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
         ParticipantDTO author = authorInput.getValue();
@@ -387,27 +397,8 @@ public class EventPageCtrl implements Initializable {
 
 
         Date date = java.sql.Date.valueOf(localDate);
-        TransactionDTO ts = new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
+        return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
                 date, currency, amount, author, participants, tags, name);
-        try {
-            ts = server.postTransaction(ts);
-            String selectedPayer = (String) payerFilter.getValue();
-            String selectedParticipant = (String) participantFilter.getValue();
-            if ((selectedPayer.equals("All")
-                    || selectedPayer.equals(author.getFullName()))
-                    && (selectedParticipant.equals("All") ||
-                    participants.stream().anyMatch(p ->
-                            p.getFullName().equals(selectedParticipant)))) {
-
-                TransactionNode tn = nodeFactory
-                        .createTransactionNode(ts);
-                transactions.getChildren().add(tn);
-            }
-        } catch (WebApplicationException e) {
-            System.err.println("Error creating transaction: " + e.getMessage());
-        }
-
-        return ts;
     }
 
     public void clearTransaction() {
