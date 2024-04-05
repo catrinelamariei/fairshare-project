@@ -1,23 +1,27 @@
 package server.api;
 
 import commons.DTOs.ParticipantDTO;
+import commons.DTOs.TransactionDTO;
 import commons.Participant;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/participants")
 public class ParticipantController {
     private final ParticipantRepository repo;
     private final DTOtoEntity d2e;
-
+    private final Map<Object, Consumer<ParticipantDTO>> listeners = new ConcurrentHashMap<>();
     public ParticipantController(ParticipantRepository repo, DTOtoEntity dtoToEntity){
         this.repo = repo;
         this.d2e = dtoToEntity;
@@ -33,10 +37,19 @@ public class ParticipantController {
     @Transactional
    @PostMapping(path = {"", "/"})
    public ResponseEntity<ParticipantDTO> createParticipant(
-           @RequestBody ParticipantDTO participantDTO) {
-        if (participantDTO == null || !participantDTO.validate())
+           @RequestBody ParticipantDTO p) {
+        if (p == null || !p.validate())
             return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(new ParticipantDTO(d2e.create(participantDTO)));
+        ParticipantDTO result = new ParticipantDTO(d2e.create(p));
+
+        notifyListeners(result);
+        return ResponseEntity.ok(result);
+    }
+
+    private void notifyListeners(ParticipantDTO participantDTO) {
+        listeners.values().forEach(listener -> {
+            listener.accept(participantDTO);
+        });
     }
 
     @Transactional
@@ -71,5 +84,20 @@ public class ParticipantController {
         repo.delete(participant);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/updates")
+    public DeferredResult<ResponseEntity<ParticipantDTO>> getParticipantUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<ParticipantDTO>>(5000L, noContent);
+        var key = new Object();
+        listeners.put(key, t ->{
+            res.setResult(ResponseEntity.ok(t));
+        });
+        res.onCompletion(()->{
+            listeners.remove(key);
+        });
+        return res;
+    }
+
 
 }

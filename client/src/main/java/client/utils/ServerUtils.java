@@ -201,7 +201,8 @@ public class ServerUtils {
         EXEC.submit(()->{
             while(!Thread.interrupted()) {
                 var res = ClientBuilder.newClient()
-                        .target(UserData.getInstance().getServerURL()).path("api/transaction/updates")
+                        .target(UserData.getInstance().getServerURL())
+                        .path("api/transaction/updates")
                         .request(APPLICATION_JSON)
                         .get(Response.class);
                 if(res.getStatus()==204){
@@ -213,10 +214,26 @@ public class ServerUtils {
         });
     }
 
+    public void registerForUpdatesParticipant(Consumer<ParticipantDTO> consumer) {
+        EXEC.submit(() -> {
+            while (!Thread.interrupted()) {
+                var res = ClientBuilder.newClient()
+                        .target(UserData.getInstance().getServerURL())
+                        .path("api/participants/updates")
+                        .request(APPLICATION_JSON)
+                        .get(Response.class);
+                if (res.getStatus() == 204) {
+                    continue;
+                }
+                var participant = res.readEntity(ParticipantDTO.class);
+                consumer.accept(participant);
+            }
+        });
+    }
+
     public void stop(){
         EXEC.shutdownNow();
     }
-
 
 
 }

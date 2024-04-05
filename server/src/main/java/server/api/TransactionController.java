@@ -81,10 +81,6 @@ public class TransactionController {
         res.onCompletion(()->{
             listeners.remove(key);
         });
-        /*
-        in add method:
-            listeners.forEach((k, l)->l.accept(transaction));
-        */
         return res;
     }
 }

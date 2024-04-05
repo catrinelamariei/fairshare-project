@@ -183,15 +183,20 @@ public class EventPageCtrl implements Initializable {
 
         server.registerForUpdatesTransaction(t ->{
             Platform.runLater(()->{
-//                TransactionNode tsNode = nodeFactory.createTransactionNode(t);
-//                transactions.getChildren().add(tsNode);
-                //clearTransaction();
-                //load transactions
                 eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
                 transactions.getChildren().clear();
                 transactions.getChildren().addAll(eventDTO.transactions.stream()
                         .map(nodeFactory::createTransactionNode).toList());
+            });
+        });
+
+        server.registerForUpdatesParticipant(p->{
+            Platform.runLater(()->{
+                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+                participants.getPanes().clear();
+                participants.getPanes().addAll(eventDTO.participants.stream()
+                        .map(nodeFactory::createParticipantNode).toList());
             });
         });
 

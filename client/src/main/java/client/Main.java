@@ -1,6 +1,7 @@
 package client;
 
 import client.scenes.*;
+import client.utils.ServerUtils;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -33,6 +34,7 @@ public class Main extends Application {
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
             privCheckPage, startPage, transactionPage);
+
 
         primaryStage.setOnCloseRequest(e->{
             eventPage.getKey().stop();
