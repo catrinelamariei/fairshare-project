@@ -183,9 +183,15 @@ public class EventPageCtrl implements Initializable {
 
         server.registerForUpdatesTransaction(t ->{
             Platform.runLater(()->{
-                TransactionNode tsNode = nodeFactory.createTransactionNode(t);
-                transactions.getChildren().add(tsNode);
+//                TransactionNode tsNode = nodeFactory.createTransactionNode(t);
+//                transactions.getChildren().add(tsNode);
                 //clearTransaction();
+                //load transactions
+                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+                transactions.getChildren().clear();
+                transactions.getChildren().addAll(eventDTO.transactions.stream()
+                        .map(nodeFactory::createTransactionNode).toList());
             });
         });
 
@@ -357,6 +363,7 @@ public class EventPageCtrl implements Initializable {
         }
 
         clearTransaction();
+        showOverviewTransactions();
         return ts;
     }
 
