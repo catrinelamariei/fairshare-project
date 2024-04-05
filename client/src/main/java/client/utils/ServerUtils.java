@@ -25,6 +25,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
+import org.springframework.http.HttpStatus;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -214,12 +215,14 @@ public class ServerUtils {
         });
     }
 
+    private static ExecutorService exec;
     public void registerForUpdatesParticipant(Consumer<ParticipantDTO> consumer) {
-        EXEC.submit(() -> {
+        exec = Executors.newSingleThreadExecutor();
+        exec.submit(() -> {
             while (!Thread.interrupted()) {
                 var res = ClientBuilder.newClient()
                         .target(UserData.getInstance().getServerURL())
-                        .path("api/participants/updates")
+                        .path("/api/participants/updates")
                         .request(APPLICATION_JSON)
                         .get(Response.class);
                 if (res.getStatus() == 204) {
@@ -233,6 +236,27 @@ public class ServerUtils {
 
     public void stop(){
         EXEC.shutdownNow();
+    }
+
+    public void registerForDeletionUpdates(Runnable action) {
+        EXEC.submit(() -> {
+            while (!Thread.interrupted()) {
+                var response = ClientBuilder.newClient()
+                        .target(UserData.getInstance().getServerURL())
+                        .path("/api/transactions/deletion/updates")
+                        .request(APPLICATION_JSON)
+                        .get(Response.class);
+
+                if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
+                    continue;
+                }
+
+                if (response.getStatus() == HttpStatus.OK.value()) {
+                    String deletedTransactionId = response.readEntity(String.class);
+                    action.run();
+                }
+            }
+        });
     }
 
 

@@ -47,6 +47,7 @@ public class ParticipantController {
     }
 
     private void notifyListeners(ParticipantDTO participantDTO) {
+        System.out.println("hei?");
         listeners.values().forEach(listener -> {
             listener.accept(participantDTO);
         });

@@ -10,6 +10,7 @@ import server.Services.DTOtoEntity;
 import server.database.TransactionRepository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 
@@ -66,6 +67,7 @@ public class TransactionController {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         Transaction transaction = repo.getReferenceById(id);
         repo.delete(transaction);
+        notifyDeletionListeners(new TransactionDTO(transaction));
         return ResponseEntity.ok().build();
     }
 
@@ -82,5 +84,29 @@ public class TransactionController {
             listeners.remove(key);
         });
         return res;
+    }
+    private final Map<Object, Consumer<TransactionDTO>> deletionListeners = new ConcurrentHashMap<>();
+    @GetMapping("/deletion/updates")
+    public DeferredResult<ResponseEntity<Void>> getTransactionDeletionUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var deferredResult = new DeferredResult<ResponseEntity<Void>>(5000L, noContent);
+        var key = new Object();
+
+        deletionListeners.put(key, t -> {
+            deferredResult.setResult(ResponseEntity.ok().build());
+        });
+
+        deferredResult.onCompletion(() -> {
+            deletionListeners.remove(key);
+        });
+
+        return deferredResult;
+    }
+
+    // Method to notify deletion listeners
+    private void notifyDeletionListeners(TransactionDTO transactionDTO) {
+        deletionListeners.values().forEach(listener -> {
+            listener.accept(transactionDTO);
+        });
     }
 }

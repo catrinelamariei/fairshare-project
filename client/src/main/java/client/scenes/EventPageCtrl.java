@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
 
+import static client.Main.INJECTOR;
 import static client.utils.UndoService.TsAction.*;
 
 @Singleton //for provider
@@ -183,6 +184,7 @@ public class EventPageCtrl implements Initializable {
 
         server.registerForUpdatesTransaction(t ->{
             Platform.runLater(()->{
+                System.out.println("heiiiii");
                 eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
                 transactions.getChildren().clear();
@@ -193,10 +195,23 @@ public class EventPageCtrl implements Initializable {
 
         server.registerForUpdatesParticipant(p->{
             Platform.runLater(()->{
+                System.out.println("hei");
                 eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
                 participants.getPanes().clear();
                 participants.getPanes().addAll(eventDTO.participants.stream()
                         .map(nodeFactory::createParticipantNode).toList());
+            });
+        });
+
+        server.registerForDeletionUpdates(() -> {
+            // Update UI when a transaction is deleted
+            Platform.runLater(() -> {
+                // Refresh event data or update UI components as needed
+                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+
+                transactions.getChildren().clear();
+                transactions.getChildren().addAll(eventDTO.transactions.stream()
+                        .map(nodeFactory::createTransactionNode).toList());
             });
         });
 
