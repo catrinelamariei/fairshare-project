@@ -24,9 +24,14 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -190,6 +195,28 @@ public class ServerUtils {
     public void putJSON(String json, UUID id) throws WebApplicationException {
 
     }
+//////////////////////////////////////
+    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public void registerForUpdatesTransaction(Consumer<TransactionDTO> consumer){
+        EXEC.submit(()->{
+            while(!Thread.interrupted()) {
+                var res = ClientBuilder.newClient()
+                        .target(UserData.getInstance().getServerURL()).path("api/transaction/updates")
+                        .request(APPLICATION_JSON)
+                        .get(Response.class);
+                if(res.getStatus()==204){
+                    continue;
+                }
+                var t = res.readEntity(TransactionDTO.class);
+                consumer.accept(t);
+            }
+        });
+    }
+
+    public void stop(){
+        EXEC.shutdownNow();
+    }
+
 
 
 }

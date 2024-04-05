@@ -8,6 +8,7 @@ import com.google.inject.*;
 import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -179,6 +180,26 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
+
+        server.registerForUpdatesTransaction(t ->{
+            Platform.runLater(()->{
+                TransactionNode tsNode = nodeFactory.createTransactionNode(t);
+                transactions.getChildren().add(tsNode);
+                //clearTransaction();
+            });
+        });
+
+    }
+
+    public void stop(){
+        server.stop();
+    }
+
+    private void loadTransactions(){
+        transactions.getChildren().clear();
+        transactions.getChildren().addAll(eventDTO.transactions.stream()
+                .map(nodeFactory::createTransactionNode).toList());
+
     }
 
     public void load() throws WebApplicationException {
@@ -223,6 +244,8 @@ public class EventPageCtrl implements Initializable {
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
 
         undoService.clear();
+
+
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {

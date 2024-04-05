@@ -2,12 +2,15 @@ package server.api;
 import commons.DTOs.TransactionDTO;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.Services.DTOtoEntity;
 import server.database.TransactionRepository;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Consumer;
 
 
 @RestController
@@ -25,7 +28,11 @@ public class TransactionController {
     public ResponseEntity<TransactionDTO> createTransaction(
             @RequestBody TransactionDTO ts) {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(new TransactionDTO(d2e.create(ts)));
+
+        TransactionDTO result = new TransactionDTO(d2e.create(ts));
+        listeners.forEach((k, l)->l.accept(result));
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
@@ -60,5 +67,24 @@ public class TransactionController {
         Transaction transaction = repo.getReferenceById(id);
         repo.delete(transaction);
         return ResponseEntity.ok().build();
+    }
+
+    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    @GetMapping("/updates")
+    public DeferredResult<ResponseEntity<TransactionDTO>> getUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<TransactionDTO>>(5000L, noContent);
+        var key = new Object();
+        listeners.put(key, t ->{
+            res.setResult(ResponseEntity.ok(t));
+        });
+        res.onCompletion(()->{
+            listeners.remove(key);
+        });
+        /*
+        in add method:
+            listeners.forEach((k, l)->l.accept(transaction));
+        */
+        return res;
     }
 }
