@@ -330,13 +330,10 @@ public class EventPageCtrl implements Initializable {
         return ts;
     }
 
-    public Text getTotalExpenses() {
-        return totalExpenses;
-    }
 
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
-        getTotalExpenses().setText(String.valueOf(e.getTransactions().stream()
+        totalExpenses.setText(String.valueOf(e.getTransactions().stream()
                 .filter(
                         ts -> ts.getTags()
                                 .stream()
@@ -344,7 +341,7 @@ public class EventPageCtrl implements Initializable {
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
                 .sum()));
-        System.out.println(getTotalExpenses().getText());
+        System.out.println(totalExpenses.getText());
     }
 
     private TransactionDTO readTransactionFields() {
