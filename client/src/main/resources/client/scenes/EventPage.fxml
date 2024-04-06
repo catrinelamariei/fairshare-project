@@ -40,38 +40,42 @@
       <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefHeight="800.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color: CDFCF6;" BorderPane.alignment="CENTER">
 
          <children>
-            <HBox alignment="CENTER" cache="true" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: CDFCF6;">
+            <HBox alignment="CENTER" cache="true" prefHeight="144.0" prefWidth="801.0" style="-fx-background-color: CDFCF6;">
                <children>
-                  <Button mnemonicParsing="false" onAction="#gotoHome" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Home">
-                     <HBox.margin>
-                        <Insets left="5.0" />
-                     </HBox.margin>
+                  <HBox maxHeight="-Infinity" prefHeight="100.0" prefWidth="98.0">
+                     <children>
+                        <Button alignment="TOP_CENTER" mnemonicParsing="false" onAction="#gotoHome" prefHeight="27.0" prefWidth="64.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Home">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <Text fx:id="eventTitle" fontSmoothingType="LCD" smooth="false" strokeType="OUTSIDE" strokeWidth="0.0" text="New Year Party" textAlignment="CENTER" wrappingWidth="297.284912109375" HBox.hgrow="NEVER">
                      <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Button>
-                  <Text fx:id="eventTitle" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="New Year Party" textAlignment="CENTER" wrappingWidth="297.284912109375" HBox.hgrow="NEVER">
-                     <font>
-                        <Font name="System Bold" size="36.0" />
+                        <Font name="System Bold" size="40.0" />
                      </font>
                      <HBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </HBox.margin>
                   </Text>
-                  <Pane style="-fx-background-color: CDFCF6;" HBox.hgrow="ALWAYS">
-                     <children>
-                        <Button fx:id="editButton" layoutX="-5.0" layoutY="27.0" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="28.0" prefWidth="69.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Edit" />
-                     </children></Pane>
-                  <VBox alignment="CENTER">
+                  <Pane prefHeight="124.0" prefWidth="188.0" />
+                  <VBox alignment="CENTER" prefHeight="128.0" prefWidth="149.0">
                      <children>
 
-                                          <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="32.0" prefWidth="132.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Copy Invite Code" VBox.vgrow="NEVER">
+                                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Copy Invite Code" textAlignment="CENTER" VBox.vgrow="NEVER">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Pane style="-fx-background-color: CDFCF6;" VBox.vgrow="ALWAYS" />
-                        <Button fx:id="deleteEventButton" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDeleteEvent" prefHeight="32.0" prefWidth="132.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Delete Event" textAlignment="CENTER" VBox.vgrow="NEVER">
+                        <Pane prefHeight="7.0" prefWidth="143.0" style="-fx-background-color: CDFCF6;" />
+                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Edit Event" textAlignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Pane prefHeight="7.0" prefWidth="132.0" style="-fx-background-color: CDFCF6;" />
+                        <Button fx:id="deleteEventButton" mnemonicParsing="false" onAction="#onDeleteEvent" prefHeight="20.0" prefWidth="121.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Delete Event" textAlignment="CENTER" VBox.vgrow="NEVER">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -91,7 +95,6 @@
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding></HBox>
-            <VBox prefHeight="40.0" style="-fx-background-color: CDFCF6;" VBox.vgrow="SOMETIMES" />
             <TabPane style="-fx-border-color: #98A8F8; -fx-background-color: FAF7F0;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
                 <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Expenses">
@@ -175,7 +178,7 @@
                                                                   <graphic>
                                                                       <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                                           <image>
-                                                                              <Image url="@../Images/764599.png" />
+                                                                              <Image url="@../Images/edit-button-3.png" />
                                                                           </image>
                                                                       </ImageView>
                                                                   </graphic>
@@ -440,32 +443,37 @@
                               <content>
                                 <AnchorPane style="-fx-background-color: FAF7F0;">
                                        <children>
-                                          <Text layoutX="313.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name">
+                                          <Text layoutX="313.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name *">
                                              <font>
                                                 <Font size="14.0" />
                                              </font></Text>
-                                          <Text layoutX="313.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name">
+                                          <Text layoutX="313.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name *">
                                              <font>
                                                 <Font size="14.0" />
                                              </font></Text>
-                                          <Text layoutX="313.0" layoutY="187.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email">
+                                          <Text layoutX="313.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email *">
                                              <font>
                                                 <Font size="14.0" />
                                              </font></Text>
-                                          <Text layoutX="314.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IBAN">
+                                          <Text layoutX="314.0" layoutY="255.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IBAN">
                                              <font>
                                                 <Font size="14.0" />
                                              </font></Text>
-                                          <Text layoutX="313.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0" text="BIC">
+                                          <Text layoutX="313.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" text="BIC">
                                              <font>
                                                 <Font size="14.0" />
                                              </font></Text>
-                                          <TextField fx:id="firstName" layoutX="313.0" layoutY="76.0" style="-fx-border-color: #98A8F8;" />
-                                          <TextField fx:id="lastName" layoutX="313.0" layoutY="139.0" style="-fx-border-color: #98A8F8;" />
-                                          <TextField fx:id="email" layoutX="313.0" layoutY="192.0" style="-fx-border-color: #98A8F8;" />
-                                          <TextField fx:id="iban" layoutX="313.0" layoutY="258.0" style="-fx-border-color: #98A8F8;" />
+                                          <TextField fx:id="firstName" layoutX="313.0" layoutY="80.0" style="-fx-border-color: #98A8F8;" />
+                                          <TextField fx:id="lastName" layoutX="313.0" layoutY="140.0" style="-fx-border-color: #98A8F8;" />
+                                          <TextField fx:id="email" layoutX="313.0" layoutY="200.0" style="-fx-border-color: #98A8F8;" />
+                                          <TextField fx:id="iban" layoutX="313.0" layoutY="260.0" style="-fx-border-color: #98A8F8;" />
                                           <TextField fx:id="bic" layoutX="313.0" layoutY="320.0" style="-fx-border-color: #98A8F8;" />
-                                          <Button fx:id="addParticipantButton" layoutX="339.0" layoutY="401.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Add Participant" />
+                                          <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Add Participant" />
+                                          <Text layoutX="314.0" layoutY="369.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Required Fields">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Text>
                                        </children></AnchorPane>
                               </content>
                             </Tab>
