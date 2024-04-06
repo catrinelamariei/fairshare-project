@@ -16,17 +16,12 @@
 package client.utils;
 
 import client.UserData;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
+import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.*;
 import jakarta.ws.rs.core.GenericType;
 
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -167,7 +162,10 @@ public class ServerUtils {
     }
 
     public void deleteTag(UUID id) throws WebApplicationException {
-
+        ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/tags/" + id)
+                .request()
+                .delete();
     }
 
     //JSON

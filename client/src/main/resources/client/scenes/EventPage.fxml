@@ -476,17 +476,10 @@
                                  <children>
                                     <HBox minHeight="-Infinity" minWidth="-Infinity">
                                        <children>
-                                          <ScrollPane minHeight="-Infinity" minWidth="-Infinity">
+                                          <ScrollPane prefHeight="200.0" prefWidth="200.0">
                                              <content>
-                                                <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
-                                                   <children>
-                                                      <VBox fx:id="allTagsVBox" />
-                                                   </children>
-                                                </AnchorPane>
+                                                <VBox fx:id="allTagsVBox" fillWidth="true" minWidth="-Infinity" prefWidth="195.0" />
                                              </content>
-                                             <HBox.margin>
-                                                <Insets right="5.0" />
-                                             </HBox.margin>
                                           </ScrollPane>
                                        </children>
                                     </HBox>
@@ -505,8 +498,8 @@
                                              <children>
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name:" />
                                                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color:" GridPane.rowIndex="1" />
-                                                <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#addTag" text="add tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                                                <ChoiceBox fx:id="tagColor" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="create tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                                <ComboBox fx:id="tagColor" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                 <TextField fx:id="tagNameInput" GridPane.columnIndex="1" />
                                              </children>
                                           </GridPane>
