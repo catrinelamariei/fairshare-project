@@ -15,16 +15,11 @@
  */
 package client;
 
-import client.scenes.AdminPageCtrl;
-import client.scenes.EventPageCtrl;
-import client.scenes.PrivCheckPageCtrl;
-import client.scenes.StartPageCtrl;
+import client.scenes.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
-import client.utils.ServerUtils;
-import client.utils.UndoService;
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import client.utils.*;
+import com.google.inject.*;
 
 public class MyModule extends AbstractModule {
 

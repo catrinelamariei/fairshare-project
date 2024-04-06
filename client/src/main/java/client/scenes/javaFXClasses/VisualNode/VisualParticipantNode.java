@@ -6,19 +6,13 @@ import client.scenes.javaFXClasses.DataNode.ParticipantNode;
 import client.utils.ServerUtils;
 import commons.DTOs.ParticipantDTO;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class VisualParticipantNode extends ParticipantNode {
     //create text (shared among all ParticipantNodes)
