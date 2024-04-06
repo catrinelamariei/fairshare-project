@@ -136,11 +136,10 @@ public class EventPageCtrl implements Initializable {
 
     //Statistics
     @FXML
-    private Tab overviewStatistics;
-    @FXML
-    private Tab pieChartTab;
-    @FXML
     private PieChart pieChart;
+
+    @FXML
+    private Button updateChart;
 
 
     Set<TagDTO> tags = new HashSet<>();
@@ -191,7 +190,17 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
-        loadPieChart();
+//        loadPieChart();
+//        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
+//                new PieChart.Data("Expenses", 30),
+//                new PieChart.Data("Debts", 20),
+//                new PieChart.Data("Balance", 50));
+//
+//        pieChart.setData(pieData);
+//        pieChart.setStartAngle(90);
+
+        updateChart.setOnAction(e -> loadPieChart());
+
 
 
     }
