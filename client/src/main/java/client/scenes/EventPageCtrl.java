@@ -191,14 +191,8 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
-        //Placeholder pie chart
-        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
-                new PieChart.Data("Expenses", 30),
-                new PieChart.Data("Debts", 20),
-                new PieChart.Data("Balance", 50));
+        loadPieChart();
 
-        pieChart.setData(pieData);
-        pieChart.setStartAngle(90);
 
     }
 
@@ -706,8 +700,6 @@ public class EventPageCtrl implements Initializable {
         addExpenseTab.setText("Edit Expense");
         addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
         submitTransaction.setOnAction(this::submitEditTransaction);
-        //for test purposes
-        submitTransaction.setOnAction(this::expenseDistribution);
     }
 
     @FXML
@@ -817,19 +809,38 @@ public class EventPageCtrl implements Initializable {
         }
     }
 
-    public void expenseDistribution(ActionEvent actionEvent) {
-        System.out.println("expenseDistribution method...");
-        BigDecimal amount = new BigDecimal(transactionAmount.getText());
-        String currency = currencyCodeInput.getValue();
-        Date date = java.sql.Date.valueOf(transactionDate.getValue());
-//        Rate rate = new Rate(currency, "EUR", 1.0, date);
-        if(!currency.equals("EUR")){
-//                rate = currencyExchange.getRate(currency, "EUR", date);
+    public void loadPieChart() {
+
+        Map<String, BigDecimal> tagToAmount = new HashMap<>();
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        Set<TransactionDTO> transactions = event.getTransactions();
+        for(TransactionDTO t : transactions){
+            Set<TagDTO> tags = t.getTags();
+            for(TagDTO tag : tags){
+                String tagName = tag.getName();
+                BigDecimal amount = t.getAmount();
+                tagToAmount.put(tagName, amount);
+            }
         }
-//        BigDecimal convertedAmount = amount.multiply(BigDecimal.valueOf(rate.getRate()));
 
-        System.out.println("amount" + amount + " currency" + currency + " date" + date);
+        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
+                tagToAmount.entrySet().stream()
+                        .map(e -> new PieChart.Data(e.getKey(), e.getValue().doubleValue()))
+                        .collect(Collectors.toList())
+        );
 
+        pieChart.setData(pieData);
     }
+
+    public String printTotalExpenses() {
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        Set<TransactionDTO> transactions = event.getTransactions();
+        double totalExpenses = transactions.stream()
+                .map(TransactionDTO::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .doubleValue();
+        return (String.valueOf(totalExpenses));
+    }
+
 
 }
