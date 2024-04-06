@@ -243,6 +243,7 @@ public class EventPageCtrl implements Initializable {
 
         // generate statistics button
         statsButton.setText("Generate statistics");
+        totalExpenses.setText("");
         statsButton.setOnAction(e -> {
             statsButton.setText("Refresh statistics");
             updateTotalExpenses();
