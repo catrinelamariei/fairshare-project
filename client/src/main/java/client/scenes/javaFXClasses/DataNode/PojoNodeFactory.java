@@ -1,13 +1,10 @@
 package client.scenes.javaFXClasses.DataNode;
 
-import client.MainCtrl;
-import client.UserData;
+import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TransactionDTO;
+import commons.DTOs.*;
 
 public class PojoNodeFactory implements NodeFactory {
     private final MainCtrl mainCtrl;
@@ -22,8 +19,9 @@ public class PojoNodeFactory implements NodeFactory {
 
     @Override
     public DebtNode createDebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
-                                   String currencyCode, double amount) {
-        return new DebtNode();
+                                   String currencyCode, double amount, EventDTO event,
+                                   ServerUtils server, EventPageCtrl ctrl) {
+        return new DebtNode(debtor, creditor, currencyCode, amount, event, server, ctrl);
     }
 
     @Override

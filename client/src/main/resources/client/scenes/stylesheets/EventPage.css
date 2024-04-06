@@ -27,3 +27,8 @@
 .transaction > VBox > .participantText {
     -fx-font: italic 15 "System";
 }
+
+/* without this it's goign to throw an exception */
+.root {
+    -fx-accent: #ffffff;
+}
