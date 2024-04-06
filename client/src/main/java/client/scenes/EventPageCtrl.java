@@ -140,7 +140,8 @@ public class EventPageCtrl implements Initializable {
 
     @FXML
     private Button updateChart;
-
+    @FXML
+    private Text eventCost;
 
     Set<TagDTO> tags = new HashSet<>();
 
@@ -199,7 +200,14 @@ public class EventPageCtrl implements Initializable {
 //        pieChart.setData(pieData);
 //        pieChart.setStartAngle(90);
 
-        updateChart.setOnAction(e -> loadPieChart());
+        updateChart.setText("Load Statistics");
+        updateChart.setOnAction(e -> {
+            updateChart.setText("Refresh statistics");
+            loadPieChart();
+            eventCost.setText(printTotalExpenses());
+        });
+
+
 
 
 
@@ -341,10 +349,8 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         if (createTransaction(ts) != null)
-            MainCtrl.inform("Transaction created successfully");
+            MainCtrl.inform("Expense",ts.getSubject() + " Expense Created!");
 
-        // calculate new amount after conversion, put <tagcolor, amount>
-        // convert amount + add to the total expenses
     }
 
     public TransactionDTO createTransaction(TransactionDTO ts) {
@@ -356,7 +362,7 @@ public class EventPageCtrl implements Initializable {
             TransactionNode tsNode = nodeFactory.createTransactionNode(ts);
             transactions.getChildren().add(tsNode);
         } catch (WebApplicationException e) {
-            System.err.println("Error creating transaction: " + e.getMessage());
+            System.err.println("Error creating expense: " + e.getMessage());
             return null;
         }
 

@@ -200,7 +200,7 @@
                                           <AnchorPane style="-fx-background-color: FAF7F0;">
                                              <children>
                                                 <DatePicker fx:id="transactionDate" layoutX="106.0" layoutY="275.0" style="-fx-border-color: #98A8F8;" />
-                                                <Text layoutX="106.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction date">
+                                                <Text layoutX="106.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense date">
                                                    <font>
                                                       <Font size="13.0" />
                                                    </font>
@@ -215,7 +215,7 @@
                                                       <Font size="13.0" />
                                                    </font>
                                                 </Text>
-                                                <Text layoutX="110.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Transaction name" wrappingWidth="107.4000015258789">
+                                                <Text layoutX="110.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense name" wrappingWidth="107.4000015258789">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -236,7 +236,7 @@
                                                 </Text>
                                                 <VBox fx:id="root" layoutX="450.0" layoutY="27.0" prefHeight="200.0" prefWidth="100.0">
                                                    <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to split the transaction?">
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to split the expense?">
                                                          <font>
                                                             <Font size="13.0" />
                                                          </font>
@@ -479,6 +479,16 @@
                              <children>
                                  <PieChart fx:id="pieChart" layoutX="161.0" layoutY="89.0" prefHeight="333.0" prefWidth="456.0" title="Expense Distribution" />
                               <Button fx:id="updateChart" layoutX="326.0" layoutY="450.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" text="Update Pie Chart" />
+                              <Text layoutX="33.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Cost of Event: " wrappingWidth="154.21630859375">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="eventCost" layoutX="187.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.0">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Text>
                              </children>
                          </AnchorPane>
                      </content>
