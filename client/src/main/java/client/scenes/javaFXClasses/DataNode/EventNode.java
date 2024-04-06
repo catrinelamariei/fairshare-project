@@ -16,4 +16,8 @@ public class EventNode extends TitledPane {
         this.mainCtrl = mainCtrl;
         this.idNamePair = idNamePair;
     }
+
+    public Pair<UUID, String> getPair() {
+        return idNamePair;
+    }
 }

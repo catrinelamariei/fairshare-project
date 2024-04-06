@@ -68,8 +68,16 @@ public class AdminPageCtrl implements Initializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    eventAccordion.getPanes().remove(new VisualEventNode(q, mainCtrl));
-                    eventAccordion.getPanes().add(new VisualEventNode(q, mainCtrl));
+                    //remove old event
+                    eventAccordion.getPanes().removeIf(p -> {
+                        if (p instanceof VisualEventNode) {
+                            return ((VisualEventNode) p).getPair().getKey().equals(q.id);
+                        }
+                        return false;
+
+                    });
+
+                    eventAccordion.getPanes().add(nodeFactory.createEventNode(q));
                 }
             });
 
@@ -83,8 +91,15 @@ public class AdminPageCtrl implements Initializable {
                 @Override
                 public void run() {
                     EventDTO event = server.getEvent(q);
-                    eventAccordion.getPanes().remove(new VisualEventNode(event, mainCtrl));
-                    eventAccordion.getPanes().add(new VisualEventNode(event, mainCtrl));
+                    eventAccordion.getPanes().removeIf(p -> {
+                        if (p instanceof VisualEventNode) {
+                            return ((VisualEventNode) p).getPair().getKey().equals(event.id);
+                        }
+                        return false;
+
+                    });
+
+                    eventAccordion.getPanes().add(nodeFactory.createEventNode(event));
                 }
             });
 
@@ -97,7 +112,13 @@ public class AdminPageCtrl implements Initializable {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    eventAccordion.getPanes().remove(new VisualEventNode(q, mainCtrl));
+                    eventAccordion.getPanes().removeIf(p -> {
+                        if (p instanceof VisualEventNode) {
+                            return ((VisualEventNode) p).getPair().getKey().equals(q.id);
+                        }
+                        return false;
+
+                    });
                 }
             });
 

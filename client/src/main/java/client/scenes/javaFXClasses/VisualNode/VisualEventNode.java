@@ -88,7 +88,7 @@ public class VisualEventNode extends EventNode {
      * create eventnode from data
      * @param event data source
      */
-    public VisualEventNode(EventDTO event, MainCtrl mainCtrl) {
+    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl) {
         super(mainCtrl, new Pair<>(event.getId(), event.getName()));
         this.initialize();
 

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
@@ -15,8 +16,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -24,12 +24,13 @@ public class ParticipantControllerTest {
     private ParticipantController controller;
     private ParticipantRepository repo = mock(ParticipantRepository.class);
     private DTOtoEntity d2e = mock(DTOtoEntity.class);
+    private SimpMessagingTemplate smtMock = mock(SimpMessagingTemplate.class);
     private ParticipantDTO participantDTO;
     private Participant participant;
 
     @BeforeEach
     public void setUp() {
-        controller = new ParticipantController(repo,d2e,null);
+        controller = new ParticipantController(repo,d2e,smtMock);
         Event event = new Event("event");
         event.id = UUID.randomUUID();
         participant = new Participant(event, "participant","last name", "email", "iban","bic");

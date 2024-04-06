@@ -11,6 +11,7 @@ import commons.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 import server.database.TransactionRepository;
@@ -27,12 +28,13 @@ public class TransactionControllerTest {
     private TransactionController controller;
     private TransactionRepository repo = mock(TransactionRepository.class);
     private DTOtoEntity d2e = mock(DTOtoEntity.class);
+    private SimpMessagingTemplate smtMock = mock(SimpMessagingTemplate.class);
     private Transaction transaction;
     private TransactionDTO transactionDTO;
 
     @BeforeEach
     public void setUp() {
-        controller = new TransactionController(repo,d2e,null);
+        controller = new TransactionController(repo,d2e,smtMock);
         Event event = new Event("event");
         event.id = UUID.randomUUID();
         Participant participant = new Participant(event, "participant",
