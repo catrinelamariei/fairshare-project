@@ -58,9 +58,9 @@ public class VisualTransactionNode extends TransactionNode {
         deleteTransactionButton.setOnAction(this::deleteTransaction);
 
         // Edit Button: some options below
-//        Image img = new Image("/client/Images/edit-button-3.png", 25d, 25d, true, false); //imageview size
-//        Image img = new Image("/client/Images/edit-button-1.png", 30d, 30d, true, false); //imageview size
-        Image img = new Image("/client/Images/edit-button-2.png", 30d, 30d, true, false); //imageview size
+//        Image img = new Image("/client/Images/edit-button-3.png", 25d, 25d, true, false);
+//        Image img = new Image("/client/Images/edit-button-1.png", 30d, 30d, true, false);
+        Image img = new Image("/client/Images/edit-button-2.png", 30d, 30d, true, false);
 
 
         ImageView imgv = new ImageView(img);
