@@ -32,9 +32,16 @@ public class VisualTransactionNode extends TransactionNode {
         //date
         Text date = new Text(formatter.format(ts.date));
 
+        String currencySymbol = switch (ts.currencyCode) {
+            case "EUR" -> "€";
+            case "USD" -> "$";
+            case "GBP" -> "£";
+            default -> ts.currencyCode;
+        };
+
         //main body
-        Text desc = new Text(String.format("%s paid %.2f%s for %s",
-            ts.author.firstName.trim(), ts.amount, ts.currencyCode, ts.subject));
+        Text desc = new Text(String.format("%s paid %s%.2f for %s",
+            ts.author.firstName.trim(), currencySymbol, ts.amount, ts.subject));
         desc.getStyleClass().add("desc"); //set css class to .desc
 
         Text participants = new Text("(" +
