@@ -1,20 +1,13 @@
 package client.scenes.javaFXClasses.VisualNode;
 
-import client.MainCtrl;
-import client.UserData;
+import client.*;
 import client.scenes.javaFXClasses.DataNode.EventNode;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.text.SimpleDateFormat;

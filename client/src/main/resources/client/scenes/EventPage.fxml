@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
+<!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -42,7 +43,7 @@
                      </children></Pane>
                   <VBox alignment="CENTER">
                      <children>
-                  
+
                                           <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="32.0" prefWidth="132.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Copy Invite Code" VBox.vgrow="NEVER">
                            <font>
                               <Font size="14.0" />
@@ -78,58 +79,93 @@
                           <tabs>
                             <Tab fx:id="overviewExpenses" style="-fx-background-color: FAF7F0;" text="Overview">
                                  <content>
-                                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
+                                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
                                        <content>
-                                          <VBox fx:id="transactions" alignment="TOP_CENTER" style="-fx-background-color: FAF7F0;">
+                                          <VBox minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                              <children>
-                                                <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="100.0" style="-fx-border-color: BCCEF8;" styleClass="transaction">
+                                                <HBox minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                                    <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="31/12/2023">
-                                                         <HBox.margin>
-                                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                         </HBox.margin>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Text>
-                                                      <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                                      <GridPane>
+                                                        <columnConstraints>
+                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                        </columnConstraints>
+                                                        <rowConstraints>
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                        </rowConstraints>
                                                          <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="desc" text="John Paid $123 for Drinks">
-                                                               <VBox.margin>
-                                                                  <Insets left="10.0" right="10.0" top="10.0" />
-                                                               </VBox.margin>
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="participantText" text="(all)">
-                                                               <VBox.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" />
-                                                               </VBox.margin>
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="From:" />
+                                                            <ChoiceBox fx:id="payerFilter" prefHeight="25.0" prefWidth="75.0" GridPane.rowIndex="1" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Including:" GridPane.columnIndex="1" />
+                                                            <ChoiceBox fx:id="participantFilter" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                            <Button mnemonicParsing="false" onAction="#filterTransactions" text="Filter" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                                          </children>
-                                                      </VBox>
-                                                      <Button fx:id="deleteTransactionButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="62.0" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Delete">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font></Button>
-                                                      <Button mnemonicParsing="false">
-                                                         <graphic>
-                                                            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../Images/764599.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
                                                          <HBox.margin>
-                                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                            <Insets left="5.0" />
                                                          </HBox.margin>
-                                                      </Button>
+                                                      </GridPane>
                                                    </children>
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                   <padding>
+                                                      <Insets bottom="5.0" />
+                                                   </padding>
                                                 </HBox>
+                                              <VBox fx:id="transactions" alignment="TOP_CENTER" style="-fx-background-color: FAF7F0;">
+                                                  <children>
+                                                      <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="100.0" style="-fx-border-color: BCCEF8;" styleClass="transaction">
+                                                          <children>
+                                                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="31/12/2023">
+                                                                  <HBox.margin>
+                                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                  </HBox.margin>
+                                                                  <font>
+                                                                      <Font size="14.0" />
+                                                                  </font>
+                                                              </Text>
+                                                              <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                                                  <children>
+                                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="desc" text="John Paid $123 for Drinks">
+                                                                          <VBox.margin>
+                                                                              <Insets left="10.0" right="10.0" top="10.0" />
+                                                                          </VBox.margin>
+                                                                          <font>
+                                                                              <Font size="14.0" />
+                                                                          </font>
+                                                                      </Text>
+                                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="participantText" text="(all)">
+                                                                          <VBox.margin>
+                                                                              <Insets bottom="10.0" left="10.0" right="10.0" />
+                                                                          </VBox.margin>
+                                                                          <font>
+                                                                              <Font size="14.0" />
+                                                                          </font>
+                                                                      </Text>
+                                                                  </children>
+                                                              </VBox>
+                                                              <Button fx:id="deleteTransactionButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="62.0" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Delete">
+                                                                  <font>
+                                                                      <Font size="14.0" />
+                                                                  </font></Button>
+                                                              <Button mnemonicParsing="false">
+                                                                  <graphic>
+                                                                      <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                                          <image>
+                                                                              <Image url="@../Images/764599.png" />
+                                                                          </image>
+                                                                      </ImageView>
+                                                                  </graphic>
+                                                                  <HBox.margin>
+                                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                  </HBox.margin>
+                                                              </Button>
+                                                          </children>
+                                                      </HBox>
+                                                  </children>
+                                              </VBox>
                                              </children>
                                           </VBox>
                                        </content>
@@ -249,14 +285,22 @@
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="283.0" prefWidth="783.0" style="-fx-background-color: FAF7F0;">
                                              <children>
-                                                <VBox fx:id="debts" layoutX="6.0" layoutY="58.0" prefHeight="488.0" prefWidth="754.0" style="-fx-background-color: FAF7F0;">
+                                                <VBox layoutX="6.0" layoutY="8.0" prefHeight="528.0" prefWidth="754.0" style="-fx-background-color: FAF7F0;">
                                                    <children>
                                                       <Button fx:id="settleButton" mnemonicParsing="false" onAction="#debtSimplification" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Settle Debts">
                                                          <font>
                                                             <Font size="15.0" />
                                                          </font>
                                                       </Button>
+                                                      <VBox prefHeight="22.0" prefWidth="754.0">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="(refresh debts to apply filter)" textAlignment="RIGHT" wrappingWidth="765.2526092529297" />
+                                                         </children>
+                                                      </VBox>
+                                                      <Accordion fx:id="debts" prefHeight="382.0" prefWidth="754.0" />
                                                    </children></VBox>
+                                                <Text layoutX="572.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Debts owed to:" />
+                                                <ChoiceBox fx:id="creditorFilter" layoutX="658.0" layoutY="14.0" prefHeight="25.0" prefWidth="113.0" />
                                              </children>
                                           </AnchorPane>
                                       </content>

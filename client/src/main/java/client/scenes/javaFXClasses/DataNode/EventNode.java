@@ -1,7 +1,7 @@
 package client.scenes.javaFXClasses.DataNode;
 
-import javafx.scene.control.TitledPane;
 import client.MainCtrl;
+import javafx.scene.control.TitledPane;
 
 import java.util.UUID;
 

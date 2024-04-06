@@ -6,12 +6,8 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Tab;
+import javafx.fxml.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
