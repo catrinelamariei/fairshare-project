@@ -124,6 +124,10 @@ public class EventPageCtrl implements Initializable {
 
     @FXML
     private TabPane participantTabPane;
+    @FXML
+    Text totalExpenses;
+    @FXML
+    private Button statsButton;
 
     @FXML
     private TabPane expenseTabPane;
@@ -197,6 +201,7 @@ public class EventPageCtrl implements Initializable {
             updateChart.setText("Refresh statistics");
             loadPieChart();
             eventCost.setText("\u20AC " + printTotalExpenses());
+            updateTotalExpenses();
         });
     }
 
@@ -396,6 +401,21 @@ public class EventPageCtrl implements Initializable {
         return ts;
     }
 
+
+    public void updateTotalExpenses() {
+        EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+        totalExpenses.setText("\u20AC" +
+                String.valueOf(e.getTransactions().stream()
+                .filter(
+                        ts -> ts.getTags()
+                                .stream()
+                                .map(tag -> tag.getName())
+                                .noneMatch(tagName -> tagName.equals("debt")))
+                .mapToDouble(ts -> ts.getAmount().doubleValue())
+                .sum()));
+        System.out.println(totalExpenses.getText());
+    }
+
     private TransactionDTO readTransactionFields() {
         String name = transactionName.getText().trim();
         String transactionAmountString = transactionAmount.getText().trim();
@@ -482,7 +502,7 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Please choose at least one participant other than yourself.");
         } else {
             return true;
-        }  
+        }
         return false;
     }
 
