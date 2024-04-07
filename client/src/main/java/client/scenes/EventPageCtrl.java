@@ -196,7 +196,7 @@ public class EventPageCtrl implements Initializable {
         updateChart.setOnAction(e -> {
             updateChart.setText("Refresh statistics");
             loadPieChart();
-            eventCost.setText("€ " + printTotalExpenses());
+            eventCost.setText("\u20AC " + printTotalExpenses());
         });
     }
 

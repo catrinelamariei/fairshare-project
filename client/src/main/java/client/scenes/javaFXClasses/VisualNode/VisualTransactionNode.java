@@ -29,9 +29,9 @@ public class VisualTransactionNode extends TransactionNode {
         Text date = new Text(formatter.format(ts.date));
 
         String currencySymbol = switch (ts.currencyCode) {
-            case "EUR" -> "€";
-            case "USD" -> "$";
-            case "GBP" -> "£";
+            case "EUR" -> "\u20AC";
+            case "USD" -> "\u0024";
+            case "GBP" -> "\u00A3";
             default -> ts.currencyCode;
         };
 
