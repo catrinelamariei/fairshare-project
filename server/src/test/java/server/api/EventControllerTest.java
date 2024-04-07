@@ -1,17 +1,15 @@
 package server.api;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.TagDTO;
-import commons.Event;
+import commons.DTOs.*;
 import commons.Tag;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import commons.*;
+import org.junit.jupiter.api.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -20,12 +18,13 @@ public class EventControllerTest {
     EventController controller;
     EventRepository repo = mock(EventRepository.class);
     DTOtoEntity d2e = mock(DTOtoEntity.class);
+    SimpMessagingTemplate smtMock = mock(SimpMessagingTemplate.class);
     Event event;
     EventDTO eventDTO;
 
     @BeforeEach
     public void setUp() {
-        controller = new EventController(repo, d2e);
+        controller = new EventController(repo, d2e, smtMock);
         event = new Event("event");
         event.id = java.util.UUID.randomUUID();
         eventDTO = new EventDTO(event);
@@ -50,18 +49,22 @@ public class EventControllerTest {
     public void createEvent() {
         eventDTO.id = null;
         when(d2e.create(eventDTO)).thenReturn(event);
+        doNothing().when(smtMock).convertAndSend("/topic/events", eventDTO);
         ResponseEntity<EventDTO> response = controller.createEvent(eventDTO);
         eventDTO.id = event.id;
         assertEquals(eventDTO, response.getBody());
+        verify(smtMock).convertAndSend("/topic/events", eventDTO);
     }
 
     @Test
     public void updateEvent() {
         when(repo.existsById(event.id)).thenReturn(true);
         when(d2e.update(eventDTO)).thenReturn(event);
+        doNothing().when(smtMock).convertAndSend("/topic/events", eventDTO);
         ResponseEntity<EventDTO> response = controller.updateEvent(event.id, eventDTO);
         verify(d2e).update(eventDTO);
         assertEquals(eventDTO, response.getBody());
+        verify(smtMock).convertAndSend("/topic/events", eventDTO);
     }
 
     @Test
@@ -94,8 +97,11 @@ public class EventControllerTest {
     @Test
     public void deleteEvent() {
         when(repo.existsById(event.id)).thenReturn(true);
+        when(repo.getReferenceById(event.id)).thenReturn(event);
+        doNothing().when(smtMock).convertAndSend("/topic/deletedEvent", eventDTO);
         ResponseEntity response = controller.deleteEvent(event.id);
         assertEquals(ResponseEntity.ok().build(), response);
+        verify(smtMock).convertAndSend("/topic/deletedEvent", eventDTO);
     }
 
     @Test

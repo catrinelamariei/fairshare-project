@@ -1,31 +1,31 @@
 package server.api;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.TagDTO;
-import commons.Event;
-import commons.Tag;
+import commons.DTOs.*;
+import commons.*;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import server.Authentication.Authenticator;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/event")
 public class EventController implements WebMvcConfigurer {
     private final EventRepository repo;
     private final DTOtoEntity d2e;
-    public EventController(EventRepository repo, DTOtoEntity dtoToEntity) {
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public EventController(EventRepository repo,
+                           DTOtoEntity dtoToEntity,
+                           SimpMessagingTemplate msgTemplate) {
         this.repo = repo;
         this.d2e = dtoToEntity;
+        this.messagingTemplate = msgTemplate;
     }
     // TODO: move this, also check path url because it doesn't match
     @Override
@@ -43,7 +43,12 @@ public class EventController implements WebMvcConfigurer {
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
         if (eventDTO == null || !eventDTO.validate()) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(new EventDTO(d2e.create(eventDTO)));
+
+        EventDTO created = new EventDTO(d2e.create(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", created);
+        }
+        return ResponseEntity.ok(created);
     }
 
     @GetMapping("/{id}")
@@ -75,7 +80,11 @@ public class EventController implements WebMvcConfigurer {
             return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         eventDTO.id = id;
-        return ResponseEntity.ok(new EventDTO(d2e.update(eventDTO)));
+        EventDTO updated = new EventDTO(d2e.update(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", updated);
+        }
+        return ResponseEntity.ok(updated);
     }
 
     // TODO: manage dependencies
@@ -86,7 +95,9 @@ public class EventController implements WebMvcConfigurer {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         Event e = repo.getReferenceById(id);
         repo.delete(e);
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/deletedEvent", new EventDTO(e));
+        }
         return ResponseEntity.ok().build();
     }
-
 }

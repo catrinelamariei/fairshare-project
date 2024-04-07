@@ -2,16 +2,19 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
+import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
+import javafx.application.Platform;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
@@ -46,6 +49,61 @@ public class AdminPageCtrl implements Initializable {
         comparatorList.setValue(EventDTO.EventComparator.name);
         comparatorList.valueProperty().addListener(((ov, oldVal, newVal) -> reSort()));
         overviewTab.selectedProperty().addListener(((ov, oldVal, newVal) -> toggleTab(newVal)));
+
+        server.register("/topic/events", (Consumer<EventDTO>) q -> {
+            System.out.println("Received event update");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    //remove old event
+                    removeEventNode(q);
+
+                    eventAccordion.getPanes().add(nodeFactory.createEventNode(q));
+                }
+            });
+
+
+        });
+
+        server.register("/topic/events", (Consumer<UUID>) q -> {
+            System.out.println("Received event update");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    EventDTO event = server.getEvent(q);
+                    removeEventNode(event);
+
+                    eventAccordion.getPanes().add(nodeFactory.createEventNode(event));
+                }
+            });
+
+
+        },null);
+
+        server.register("/topic/deletedEvent", (Consumer<EventDTO>) q -> {
+            System.out.println("Received event delete");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    removeEventNode(q);
+                }
+            });
+
+
+        });
+    }
+
+    private void removeEventNode(EventDTO event) {
+        eventAccordion.getPanes().removeIf(p -> {
+            if (p instanceof VisualEventNode) {
+                return ((VisualEventNode) p).getPair().getKey().equals(event.id);
+            }
+            return false;
+
+        });
     }
 
     /**
