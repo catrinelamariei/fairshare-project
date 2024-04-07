@@ -65,7 +65,7 @@ public class StartPageCtrl {
         setCurrentEvent(pair);
 
         //confirmation dialog
-        MainCtrl.inform("Event",text + " Event Created!");
+        MainCtrl.inform("Event","Event \"" + text + "\" Created!");
         mainCtrl.showEventPage();
     }
 
