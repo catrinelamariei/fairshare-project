@@ -125,8 +125,6 @@ public class EventPageCtrl implements Initializable {
 
     @FXML
     private TabPane expenseTabPane;
-    @FXML
-    private TabPane statisticsTabPane;
 
     @FXML
     private Tab overviewExpenses;
@@ -191,26 +189,13 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
-//        loadPieChart();
-//        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
-//                new PieChart.Data("Expenses", 30),
-//                new PieChart.Data("Debts", 20),
-//                new PieChart.Data("Balance", 50));
-//
-//        pieChart.setData(pieData);
-//        pieChart.setStartAngle(90);
-
+        //loading stats
         updateChart.setText("Load Statistics");
         updateChart.setOnAction(e -> {
             updateChart.setText("Refresh statistics");
             loadPieChart();
             eventCost.setText("€ " + printTotalExpenses());
         });
-
-
-
-
-
     }
 
     public void load() throws WebApplicationException {
@@ -774,17 +759,6 @@ public class EventPageCtrl implements Initializable {
                 .createTransactionNode(server.putTransaction(ts));
         int index = this.transactions.getChildren().indexOf(transactionEditTarget);
         this.transactions.getChildren().set(index, updatedTSNode);
-
-        //START OF UPDATE
-        //new is ts old is old
-        // BigDecimal total = get<tag>
-        // if new > old -> amount = |new-old|    put <tag, total+amount>
-        // if new < old ->                      put <tag, total-amount>
-
-        //TAGS
-        // if tag unselected -> put <tag, total-old>
-        // if new tag selected -> put <tag, total+new>
-
         clearTransaction();
         addExpenseTab.getTabPane().getSelectionModel().select(expenseOverviewTab);
     }
