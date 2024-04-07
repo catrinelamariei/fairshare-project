@@ -24,9 +24,19 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -189,6 +199,53 @@ public class ServerUtils {
 
     public void putJSON(String json, UUID id) throws WebApplicationException {
 
+    }
+
+    private String getWebSocketURL() {
+        String url = UserData.getInstance().getServerURL();
+        url = url.replaceFirst("http", "ws");
+        url = url + "/websocket";
+        return url;
+    }
+    private StompSession session = connect(getWebSocketURL()) ;
+    private StompSession connect (String url) {
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
+        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        try {
+            return stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e){
+            System.out.println("Error connecting to websocket");
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public void register(String dest, Consumer<EventDTO> consumer) {
+        session.subscribe(dest, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return EventDTO.class;
+            }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((EventDTO) payload) ;
+            }
+        });
+    }
+
+    public void register(String dest, Consumer<UUID> consumer, UUID id) {
+        session.subscribe(dest, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return UUID.class;
+            }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((UUID) payload) ;
+            }
+        });
     }
 
 

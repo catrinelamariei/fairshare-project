@@ -399,15 +399,9 @@ public class EventPageCtrl implements Initializable {
                 .filter(item -> !item.getText().equals(author.toString()))
                 .findAny().isPresent();
         amount = isValidAmount(transactionAmountString);
-        boolean authorIsSelected = vboxParticipantsTransaction.getChildren()
-                .stream()
-                .map(item -> (CheckBox) item)
-                .filter(item -> item.isSelected())
-                .filter(item -> item.getText().equals(author.toString()))
-                .findAny().isPresent();
 
         if (!infoIsValid(name, author, amount, currency, localDate, selectedRadioButton,
-                participantIsSelected, authorIsSelected))
+                participantIsSelected))
             return null;
 
         participants = getTransactionParticipants(selectedRadioButton);
@@ -453,7 +447,7 @@ public class EventPageCtrl implements Initializable {
     private boolean infoIsValid(String name, ParticipantDTO author, BigDecimal amount,
                                 String currency, LocalDate localDate,
                                 RadioButton selectedRadioButton,
-                                boolean participantIsSelected, boolean authorIsSelected) {
+                                boolean participantIsSelected) {
         if (name == null || name.isEmpty()) {
             MainCtrl.alert("Please enter a description");
         } else if (author == null) {
@@ -466,12 +460,8 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Date cannot be empty");
         } else if (selectedRadioButton == null) {
             MainCtrl.alert("Please choose how to split the transaction!");
-        } else if (customSplit.isSelected()) {
-            if (!participantIsSelected) {
-                MainCtrl.alert("Select at least 1 participant that isn't the author");
-            } else if (!authorIsSelected) {
-                MainCtrl.alert("Select the author as a participant");
-            } else return true; //otherwise all customsplit end here and return false
+        } else if (customSplit.isSelected() && !participantIsSelected) {
+            MainCtrl.alert("Select at least 1 participant that isn't the author");
         } else {
             return true;
         }
