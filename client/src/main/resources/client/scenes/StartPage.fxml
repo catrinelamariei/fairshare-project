@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -53,5 +54,6 @@
       </Text>
       <VBox layoutX="740.0" prefHeight="800.0" prefWidth="60.0" style="-fx-background-color: #98A8F8;" />
       <VBox layoutX="680.0" prefHeight="800.0" prefWidth="60.0" style="-fx-background-color: BCCEF8;" />
+      <ChoiceBox fx:id="languageChoiceBox" layoutX="501.0" layoutY="35.0" prefWidth="150.0" />
    </children>
 </AnchorPane>

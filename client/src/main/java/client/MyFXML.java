@@ -40,8 +40,7 @@ public class MyFXML {
         }
     }
 
-    public <T> Pair<T, Parent> load(Class<T> c, ResourceBundle messages,
-                                    Locale locale, String... parts) {
+    public <T> Pair<T, Parent> load(Class<T> c, ResourceBundle messages, String... parts) {
         try {
             var loader = new FXMLLoader(getLocation(parts), messages, null,
                     new MyFactory(), StandardCharsets.UTF_8);

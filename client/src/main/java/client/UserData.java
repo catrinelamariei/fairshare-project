@@ -21,6 +21,7 @@ public final class UserData {
     private String token;
     private ArrayDeque<Pair<UUID, String>> recentUUIDs = new ArrayDeque<>();
     private String serverURL = "http://localhost:8080/";
+    private String languageCode;
 
     //NOT INCLUDED IN JSON
     private final static String configFileName = "config.json";
@@ -59,6 +60,7 @@ public final class UserData {
         this.token = userData.token;
         this.recentUUIDs = userData.recentUUIDs;
         this.serverURL = userData.serverURL;
+        this.languageCode = userData.languageCode;
     }
 
     @JsonIgnore
@@ -100,6 +102,14 @@ public final class UserData {
 
     public void setServerURL(String serverURL) {
         this.serverURL = serverURL;
+    }
+
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
     }
 
     /**

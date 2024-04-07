@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.*;
 
 import static com.google.inject.Guice.createInjector;
@@ -14,29 +13,35 @@ public class Main extends Application {
 
     private static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
-    private static ResourceBundle languages;
-
+    private static ResourceBundle languageBundle;
+    private static Stage primaryStage;
     public static void main(String[] args) {
         launch();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Locale locale = Locale.getDefault(); // Get default locale
-        loadLanguages(locale);
+        //UserData.getInstance().getLangCode()
+        //Locale locale = Locale.getDefault(); // Get default locale
+        this.primaryStage = primaryStage;
+        initializeUI(UserData.getInstance().getLanguageCode());
+    }
+
+    public static void initializeUI(String langCode) {
+        languageBundle = loadLanguages(langCode);
 
         // Your existing initialization code
-        var startPage = FXML.load(StartPageCtrl.class, languages, locale,
+        var startPage = FXML.load(StartPageCtrl.class, languageBundle,
                 "client", "scenes", "StartPage.fxml");
-        var mainPage = FXML.load(StartPageCtrl.class, languages, locale,
+        var mainPage = FXML.load(StartPageCtrl.class, languageBundle,
                 "client", "scenes", "StartPage.fxml");
-        var eventPage = FXML.load(EventPageCtrl.class, languages, locale,
+        var eventPage = FXML.load(EventPageCtrl.class, languageBundle,
                 "client", "scenes", "EventPage.fxml");
-        var adminPage = FXML.load(AdminPageCtrl.class, languages, locale,
+        var adminPage = FXML.load(AdminPageCtrl.class, languageBundle,
                 "client", "scenes", "AdminPage.fxml");
-        var privCheckPage = FXML.load(PrivCheckPageCtrl.class, languages, locale,
+        var privCheckPage = FXML.load(PrivCheckPageCtrl.class, languageBundle,
                 "client", "scenes", "PrivCheckPage.fxml");
-        var transactionPage = FXML.load(TransactionPageCtrl.class, languages, locale,
+        var transactionPage = FXML.load(TransactionPageCtrl.class, languageBundle,
                 "client", "scenes", "TransactionPage.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
@@ -46,40 +51,9 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    // Method to load messages from all language files in the specified directory
-    public static void loadLanguages(Locale locale) {
-        List<ResourceBundle> bundles = loadAllLanguages();
-
-        // Search for the correct bundle based on the specified locale
-        for (ResourceBundle bundle : bundles) {
-            if (bundle.getLocale().equals(locale)) {
-                languages = bundle;
-                return;
-            }
-        }
-
-        // If no matching bundle found, use the default properties
-        languages = ResourceBundle.getBundle("client.lang.EN", Locale.ENGLISH);
-    }
-
-    public static List<ResourceBundle> loadAllLanguages() {
-        List<ResourceBundle> bundles = new ArrayList<>();
-        File langFolder = new File("src/main/resources/client/lang/");
-        File[] files = langFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".properties"));
-
-        if (files != null) {
-            for (File file : files) {
-                String fileName = file.getName();
-                String languageCode = fileName.substring(0, fileName.lastIndexOf('.'));
-                ResourceBundle bundle = loadLanguages(languageCode);
-                bundles.add(bundle);
-            }
-        }
-        return bundles;
-    }
-
     public static ResourceBundle loadLanguages(String languageCode) {
-        Locale locale = new Locale(languageCode);
-        return ResourceBundle.getBundle("client.lang." + languageCode, locale);
+        return ResourceBundle.getBundle("client.lang." + languageCode);
     }
+
+
 }
