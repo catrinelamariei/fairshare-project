@@ -182,14 +182,30 @@ public class StartPageCtrl {
         }
     }
     public static List<String> getAllLanguageCodes(){
-        String folderPath = "src/main/resources/client/lang";
+        String folderPath1 = "src/main/resources/client/lang";
+        String folderPath2 = "client/src/main/resources/client/lang";
+
         List<String> fileNameList = new ArrayList<>();
 
         // Create a File object representing the folder
-        File folder = new File(folderPath);
+        File folder1 = new File(folderPath1);
+        File folder2 = new File(folderPath2);
 
         // Get a list of files in the folder
-        File[] files = folder.listFiles();
+        File[] files = folder1.listFiles();
+
+        // Add filenames to the list
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    String filename = file.getName();
+                    filename = filename.substring(0, filename.length()-11);
+                    fileNameList.add(filename);
+                }
+            }
+        }
+
+        files = folder2.listFiles();
 
         // Add filenames to the list
         if (files != null) {
