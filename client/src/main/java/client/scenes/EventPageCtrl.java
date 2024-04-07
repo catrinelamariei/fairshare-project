@@ -479,7 +479,7 @@ public class EventPageCtrl implements Initializable {
         } else if (selectedRadioButton == null) {
             MainCtrl.alert("Please select an option for splitting the expense.");
         } else if (customSplit.isSelected() && !participantIsSelected) {
-                MainCtrl.alert("Please choose at least one participant other than yourself.");
+            MainCtrl.alert("Please choose at least one participant other than yourself.");
         } else {
             return true;
         }  
