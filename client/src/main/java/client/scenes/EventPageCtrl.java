@@ -184,7 +184,6 @@ public class EventPageCtrl implements Initializable {
 
         server.registerForUpdatesTransaction(t ->{
             Platform.runLater(()->{
-                System.out.println("heiiiii");
                 eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
                 transactions.getChildren().clear();
@@ -195,7 +194,6 @@ public class EventPageCtrl implements Initializable {
 
         server.registerForUpdatesParticipant(p->{
             Platform.runLater(()->{
-                System.out.println("hei");
                 eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
                 participants.getPanes().clear();
                 participants.getPanes().addAll(eventDTO.participants.stream()
@@ -203,10 +201,8 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
-        server.registerForDeletionUpdates(() -> {
-            // Update UI when a transaction is deleted
+        server.registerForTransactionDeletionUpdates(dt -> {
             Platform.runLater(() -> {
-                // Refresh event data or update UI components as needed
                 eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
                 transactions.getChildren().clear();

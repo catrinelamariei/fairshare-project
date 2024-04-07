@@ -19,6 +19,10 @@ import java.util.function.Consumer;
 public class TransactionController {
     private final TransactionRepository repo;
     private final DTOtoEntity d2e;
+    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    private Map<Object, Consumer<UUID>> deletionListeners = new ConcurrentHashMap<>();
+
+
 
     public TransactionController(TransactionRepository repo, DTOtoEntity dtoToEntity) {
         this.repo = repo;
@@ -60,18 +64,19 @@ public class TransactionController {
     }
 
     // TODO: manage dependencies
+
+
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
-        if(id==null) return ResponseEntity.badRequest().build();
+        if (id == null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         Transaction transaction = repo.getReferenceById(id);
         repo.delete(transaction);
-        notifyDeletionListeners(new TransactionDTO(transaction));
+        deletionListeners.values().forEach(listener -> listener.accept(id));
         return ResponseEntity.ok().build();
     }
 
-    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
     @GetMapping("/updates")
     public DeferredResult<ResponseEntity<TransactionDTO>> getUpdates() {
         var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -85,17 +90,19 @@ public class TransactionController {
         });
         return res;
     }
-    private final Map<Object, Consumer<TransactionDTO>> deletionListeners = new ConcurrentHashMap<>();
+
     @GetMapping("/deletion/updates")
-    public DeferredResult<ResponseEntity<Void>> getTransactionDeletionUpdates() {
+    public DeferredResult<ResponseEntity<UUID>> registerForTransactionDeletionUpdates() {
         var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        var deferredResult = new DeferredResult<ResponseEntity<Void>>(5000L, noContent);
+        var deferredResult = new DeferredResult<ResponseEntity<UUID>>(5000L, noContent);
         var key = new Object();
 
-        deletionListeners.put(key, t -> {
-            deferredResult.setResult(ResponseEntity.ok().build());
+        // Register a listener for deletion updates
+        deletionListeners.put(key, deletedTransactionId -> {
+            deferredResult.setResult(ResponseEntity.ok(deletedTransactionId));
         });
 
+        // Remove the listener when the long polling request is completed
         deferredResult.onCompletion(() -> {
             deletionListeners.remove(key);
         });
@@ -103,10 +110,4 @@ public class TransactionController {
         return deferredResult;
     }
 
-    // Method to notify deletion listeners
-    private void notifyDeletionListeners(TransactionDTO transactionDTO) {
-        deletionListeners.values().forEach(listener -> {
-            listener.accept(transactionDTO);
-        });
-    }
 }

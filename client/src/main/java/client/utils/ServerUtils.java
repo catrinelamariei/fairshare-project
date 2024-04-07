@@ -237,9 +237,34 @@ public class ServerUtils {
     public void stop(){
         EXEC.shutdownNow();
     }
+    private static final ExecutorService execDeleteTransaction = Executors.newSingleThreadExecutor();
 
-    public void registerForDeletionUpdates(Runnable action) {
-        EXEC.submit(() -> {
+//    public void registerForDeletionUpdates(Runnable action) {
+//        execDeleteTransaction.submit(() -> {
+//            while (!Thread.interrupted()) {
+//                var response = ClientBuilder.newClient()
+//                        .target(UserData.getInstance().getServerURL())
+//                        .path("/api/transactions/deletion/updates")
+//                        .request(APPLICATION_JSON)
+//                        .get(Response.class);
+//
+//                if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
+//                    continue;
+//                }
+//
+//                if (response.getStatus() == HttpStatus.OK.value()) {
+//                    String deletedTransactionId = response.readEntity(String.class);
+//                    action.run();
+//                }
+//            }
+//        });
+//    }
+//    private static final ExecutorService execDelTransaction = Executors.newSingleThreadExecutor();
+
+    public static void registerForTransactionDeletionUpdates(Consumer<UUID> listener) {
+        Executors.newSingleThreadExecutor().submit(() -> {
+            System.out.println("am intrat22222222222222");
+
             while (!Thread.interrupted()) {
                 var response = ClientBuilder.newClient()
                         .target(UserData.getInstance().getServerURL())
@@ -252,12 +277,11 @@ public class ServerUtils {
                 }
 
                 if (response.getStatus() == HttpStatus.OK.value()) {
-                    String deletedTransactionId = response.readEntity(String.class);
-                    action.run();
+                    UUID deletedTransactionId = response.readEntity(UUID.class);
+                    listener.accept(deletedTransactionId);
                 }
             }
         });
     }
-
 
 }
