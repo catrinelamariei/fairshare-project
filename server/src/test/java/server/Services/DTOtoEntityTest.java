@@ -105,6 +105,8 @@ class DTOtoEntityTest {
         Transaction transaction = new Transaction(event, new Date(), "EUR", new BigDecimal(100), participant, "Subject");
         transaction.id = new UUID(0, 2);
         TransactionDTO transactionDTO = new TransactionDTO(transaction);
+        when(currencyExchange.getAmount(transactionDTO.currencyCode, transactionDTO.amount, transactionDTO.date))
+                .thenReturn(new BigDecimal(100));
         when(eventRepository.getReferenceById(transactionDTO.eventId)).thenReturn(event);
         when(participantRepository.getReferenceById(transaction.author.id)).thenReturn(participant);
         when(transactionRepository.save(transaction)).thenReturn(transaction);
@@ -124,6 +126,8 @@ Event event = new Event("event");
         transaction.subject = "new subject";
         when(transactionRepository.getReferenceById(transactionDTO.id)).thenReturn(transaction);
         when(transactionRepository.save(transaction)).thenReturn(transaction);
+        when(currencyExchange.getAmount(transactionDTO.currencyCode, transactionDTO.amount, transactionDTO.date))
+                .thenReturn(new BigDecimal(100));
         assertEquals(transaction, d2e.update(transactionDTO));
 
         transaction.participants.add(participant);
