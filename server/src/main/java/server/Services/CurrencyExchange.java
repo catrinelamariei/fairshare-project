@@ -3,29 +3,34 @@ package server.Services;
 import commons.Currency.Rate;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CurrencyExchange {
-    private Set<Rate> currencies = new HashSet<Rate>();
+    private final Set<Rate> currencies = new HashSet<>();
+    private final FrankfurterAPI api;
 
-    public CurrencyExchange() throws MalformedURLException {
-
+    public CurrencyExchange(FrankfurterAPI api) {
+        this.api = api;
     }
 
-    public Rate getRate(String currencyFrom, String currencyTo,Date date)
-            throws IOException, InterruptedException {
+    public Rate getRate(String currencyFrom, String currencyTo,Date date) {
+
+        try {
+            Files.createDirectories(Paths.get("server/src/main/resources/rates/"));
+        } catch (IOException e) {
+            System.err.println("Cannot create directories: " + e);
+        }
 
         Optional<Rate> r = currencies.stream()
                 .filter(rate -> rate.currencyFrom.equals(currencyFrom) &&
@@ -34,30 +39,22 @@ public class CurrencyExchange {
                 )
                 .findFirst();
         if (r.isEmpty()) {
-            //fetch from API
-            //add to currencies
-
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strDate = dateFormat.format(date);
-
-            String url = "https://api.frankfurter.app/" + strDate
-                    + "?from=" + currencyFrom
-                    + "&to=" + currencyTo;
-
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .build();
-            HttpResponse<String> response = client.send(HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .build(), HttpResponse.BodyHandlers.ofString());
-
-            String[] parts = response.body().split(",");
-            String rate = parts[3].split(":")[2];
-            rate = rate.substring(0, rate.length() - 2);
-
-            Rate result = new Rate(currencyFrom, currencyTo, Double.parseDouble(rate), date);
+            String url = api.getURL(currencyFrom, currencyTo, strDate);
+            Double rate = api.getRate(url);
+            Rate result = new Rate(currencyFrom, currencyTo, rate, date);
             currencies.add(result);
+
+            String fileName =  "server/src/main/resources/rates/"
+                    + currencyFrom + "_to_"+ currencyTo+ ".txt";
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                writer.write(rate.toString());
+                writer.close();
+            } catch (IOException e) {
+                System.out.println("Cannot write to rates folder");
+            }
             return result;
 
 
@@ -80,4 +77,47 @@ public class CurrencyExchange {
     }
 
 
+    public Rate getRateFromFile(String currencyFrom, String currencyTo, String date)
+            throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        Date parsedDate = dateFormat.parse(date);
+        String fileName =  "server/src/main/resources/rates/"
+                +currencyFrom+ "_to_"+currencyTo+".txt";
+        File file = new File(fileName);
+        if(!file.exists()){
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+                writer.write("1.0");
+                writer.close();
+                return new Rate(currencyFrom, currencyTo, 1.0, parsedDate);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
+        try {
+            Scanner scanner = new Scanner(file);
+            String rate = scanner.nextLine();
+            scanner.close();
+            return new Rate(currencyFrom, currencyTo, Double.parseDouble(rate), parsedDate);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public BigDecimal getAmount(String currencyCode, BigDecimal amount, Date date) {
+        if(!currencyCode.equals("EUR")){
+            //convert to EUR
+            try {
+                amount = amount.multiply(new BigDecimal(
+                        this.getRate(currencyCode, "EUR", date).rate));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        return amount;
+    }
 }

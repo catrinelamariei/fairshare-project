@@ -13,15 +13,18 @@ public class DTOtoEntity {
     private final TransactionRepository transactionRepository;
     private final TagRepository tagRepository;
     private final ParticipantRepository participantRepository;
+    private final CurrencyExchange currencyExchange;
 
     public DTOtoEntity(EventRepository eventRepository,
                        TransactionRepository transactionRepository,
                        TagRepository tagRepository,
-                       ParticipantRepository participantRepository){
+                       ParticipantRepository participantRepository,
+                       CurrencyExchange currencyExchange){
         this.eventRepository = eventRepository;
         this.transactionRepository = transactionRepository;
         this.tagRepository = tagRepository;
         this.participantRepository = participantRepository;
+        this.currencyExchange = currencyExchange;
     }
 
     // TODO: add  [404 - NOT FOUND EXCEPTION] support
@@ -58,6 +61,8 @@ public class DTOtoEntity {
         return transactionRepository.getReferenceById(t.id);
     }
     public Transaction create(TransactionDTO t){
+        t.amount = currencyExchange.getAmount(t.currencyCode, t.amount, t.date);
+        t.currencyCode = "EUR";
         //create & save transactionEntity
         Transaction transaction = new Transaction(t);
         transaction.event = eventRepository.getReferenceById(t.eventId);
@@ -79,6 +84,8 @@ public class DTOtoEntity {
         return transaction;
     }
     public Transaction update(TransactionDTO t) {
+        t.amount = currencyExchange.getAmount(t.currencyCode, t.amount, t.date);
+        t.currencyCode = "EUR";
         Transaction transaction = transactionRepository.getReferenceById(t.id);
         transaction.setDate(t.date);
         transaction.setCurrencyCode(t.currencyCode);
