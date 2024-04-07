@@ -4,10 +4,7 @@ import commons.DTOs.ParticipantDTO;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -18,19 +15,19 @@ public class Participant {
     @GeneratedValue(strategy = GenerationType.UUID)
     public UUID id;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
+    @Column(nullable = false)
     public String firstName;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
+    @Column(nullable = false)
     public String lastName;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
+    @Column(nullable = false)
     public String email;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
+    @Column
     public String iban;
 
-    @Column(columnDefinition = "CLOB NOT NULL")
+    @Column
     public String bic;
 
     @ManyToOne
