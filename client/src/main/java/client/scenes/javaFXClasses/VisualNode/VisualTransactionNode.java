@@ -3,8 +3,8 @@ package client.scenes.javaFXClasses.VisualNode;
 import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
-import commons.Currency.RateDTO;
 import client.utils.*;
+import commons.Currency.RateDTO;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -37,9 +37,6 @@ public class VisualTransactionNode extends TransactionNode {
             case "GBP" -> "\u00A3";
             default -> ts.currencyCode;
         };
-
-        Text desc = new Text(String.format("%s paid %s%.2f for %s",
-            ts.author.firstName.trim(), currencySymbol, ts.amount, ts.subject));
             
         RateDTO rate = RateUtils.getRate(ts.currencyCode,
                 UserData.getInstance().getCurrencyCode(), ts.date);
