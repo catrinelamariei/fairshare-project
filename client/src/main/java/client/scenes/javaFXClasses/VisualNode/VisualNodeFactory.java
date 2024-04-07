@@ -2,17 +2,11 @@ package client.scenes.javaFXClasses.VisualNode;
 
 import client.MainCtrl;
 import client.scenes.EventPageCtrl;
-import client.scenes.javaFXClasses.DataNode.DebtNode;
-import client.scenes.javaFXClasses.DataNode.EventNode;
-import client.scenes.javaFXClasses.DataNode.ParticipantNode;
-import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TransactionDTO;
+import com.google.inject.*;
+import commons.DTOs.*;
 
 public class VisualNodeFactory implements NodeFactory {
     private final MainCtrl mainCtrl;
@@ -29,8 +23,10 @@ public class VisualNodeFactory implements NodeFactory {
 
     @Override
     public DebtNode createDebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
-                                   String currencyCode, double amount) {
-        return new VisualDebtNode(debtor, creditor, currencyCode, amount);
+                                   String currencyCode, double amount,
+                                   EventDTO event, ServerUtils server, EventPageCtrl ctrl) {
+        return new VisualDebtNode(debtor, creditor, currencyCode, amount,
+                event, server, ctrl);
     }
 
     @Override

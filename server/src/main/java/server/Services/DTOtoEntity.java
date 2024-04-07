@@ -1,18 +1,9 @@
 package server.Services;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
-import commons.Event;
-import commons.Participant;
-import commons.Tag;
-import commons.Transaction;
+import commons.DTOs.*;
+import commons.*;
 import org.springframework.stereotype.Service;
-import server.database.EventRepository;
-import server.database.ParticipantRepository;
-import server.database.TagRepository;
-import server.database.TransactionRepository;
+import server.database.*;
 
 import java.util.stream.Collectors;
 
@@ -45,6 +36,7 @@ public class DTOtoEntity {
         event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
         event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
         event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
+        event.addTag(tagRepository.save(new Tag(event, "debt", Tag.Color.ORANGE)));
         eventRepository.save(event);
         return event;
     }
