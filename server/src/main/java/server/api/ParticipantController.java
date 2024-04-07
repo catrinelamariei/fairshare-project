@@ -1,7 +1,6 @@
 package server.api;
 
 import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TransactionDTO;
 import commons.Participant;
 import commons.Transaction;
 import jakarta.transaction.Transactional;

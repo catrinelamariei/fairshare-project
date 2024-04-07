@@ -29,7 +29,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -237,7 +236,8 @@ public class ServerUtils {
     public void stop(){
         EXEC.shutdownNow();
     }
-    private static final ExecutorService execDeleteTransaction = Executors.newSingleThreadExecutor();
+    private static final ExecutorService execDeleteTransaction
+            = Executors.newSingleThreadExecutor();
 
 //    public void registerForDeletionUpdates(Runnable action) {
 //        execDeleteTransaction.submit(() -> {

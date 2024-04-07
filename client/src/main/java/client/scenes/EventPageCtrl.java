@@ -34,7 +34,6 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
 
-import static client.Main.INJECTOR;
 import static client.utils.UndoService.TsAction.*;
 
 @Singleton //for provider
