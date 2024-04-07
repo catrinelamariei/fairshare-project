@@ -21,6 +21,14 @@ public class RateDTO {
     public RateDTO() {
     }
 
+    public RateDTO(Rate rate) {
+        this.currencyFrom = rate.currencyFrom;
+        this.currencyTo = rate.currencyTo;
+        this.rate = rate.rate;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        this.date = dateFormat.format(rate.date);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

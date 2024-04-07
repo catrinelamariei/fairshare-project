@@ -2,7 +2,6 @@ package server.Services;
 
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -27,9 +26,7 @@ public class FrankfurterAPI {
             String rate = parts[3].split(":")[2];
             rate = rate.substring(0, rate.length() - 2);
             return Double.parseDouble(rate);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

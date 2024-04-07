@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -16,12 +17,11 @@ import java.util.*;
 
 @Service
 public class CurrencyExchange {
-    private Set<Rate> currencies = new HashSet<>();
+    private final Set<Rate> currencies = new HashSet<>();
     private final FrankfurterAPI api;
 
     public CurrencyExchange(FrankfurterAPI api) {
         this.api = api;
-
     }
 
     public Rate getRate(String currencyFrom, String currencyTo,Date date) {
@@ -39,22 +39,15 @@ public class CurrencyExchange {
                 )
                 .findFirst();
         if (r.isEmpty()) {
-            //fetch from API
-            //add to currencies
-
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String strDate = dateFormat.format(date);
-
             String url = api.getURL(currencyFrom, currencyTo, strDate);
-
-
-
             Double rate = api.getRate(url);
-
             Rate result = new Rate(currencyFrom, currencyTo, rate, date);
             currencies.add(result);
+
             String fileName =  "server/src/main/resources/rates/"
-                    +currencyFrom+ "_to_"+currencyTo+".txt";
+                    + currencyFrom + "_to_"+ currencyTo+ ".txt";
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
                 writer.write(rate.toString());
@@ -112,5 +105,19 @@ public class CurrencyExchange {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public BigDecimal getAmount(String currencyCode, BigDecimal amount, Date date) {
+        if(!currencyCode.equals("EUR")){
+            //convert to EUR
+            try {
+                amount = amount.multiply(new BigDecimal(
+                        this.getRate(currencyCode, "EUR", date).rate));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        return amount;
     }
 }

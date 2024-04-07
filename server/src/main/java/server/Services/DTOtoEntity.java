@@ -5,7 +5,6 @@ import commons.*;
 import org.springframework.stereotype.Service;
 import server.database.*;
 
-import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 @Service //singleton bean managed by Spring
@@ -14,7 +13,7 @@ public class DTOtoEntity {
     private final TransactionRepository transactionRepository;
     private final TagRepository tagRepository;
     private final ParticipantRepository participantRepository;
-    private CurrencyExchange currencyExchange;
+    private final CurrencyExchange currencyExchange;
 
     public DTOtoEntity(EventRepository eventRepository,
                        TransactionRepository transactionRepository,
@@ -62,18 +61,7 @@ public class DTOtoEntity {
         return transactionRepository.getReferenceById(t.id);
     }
     public Transaction create(TransactionDTO t){
-        BigDecimal amount = t.amount;
-        if(!t.currencyCode.equals("EUR")){
-            //convert to EUR
-            try {
-                amount = amount.multiply(new BigDecimal(
-                        currencyExchange.getRate(t.currencyCode, "EUR", t.date).rate));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-        t.amount = amount;
+        t.amount = currencyExchange.getAmount(t.currencyCode, t.amount, t.date);
         t.currencyCode = "EUR";
         //create & save transactionEntity
         Transaction transaction = new Transaction(t);
@@ -96,18 +84,7 @@ public class DTOtoEntity {
         return transaction;
     }
     public Transaction update(TransactionDTO t) {
-        BigDecimal amount = t.amount;
-        if(!t.currencyCode.equals("EUR")){
-            //convert to EUR
-            try {
-                amount = amount.multiply(new BigDecimal(
-                        currencyExchange.getRate(t.currencyCode, "EUR", t.date).rate));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-        t.amount = amount;
+        t.amount = currencyExchange.getAmount(t.currencyCode, t.amount, t.date);
         t.currencyCode = "EUR";
         Transaction transaction = transactionRepository.getReferenceById(t.id);
         transaction.setDate(t.date);
