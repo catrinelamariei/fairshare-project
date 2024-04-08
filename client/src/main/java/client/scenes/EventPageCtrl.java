@@ -20,6 +20,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
@@ -125,7 +127,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TabPane participantTabPane;
     @FXML
-    Text totalExpenses;
+    Text eventCostFiltered;
     @FXML
     private Button statsButton;
 
@@ -146,6 +148,10 @@ public class EventPageCtrl implements Initializable {
     private Button updateChart;
     @FXML
     private Text eventCost;
+    @FXML
+    private VBox legendBox;
+    @FXML
+    private GridPane stats;
 
     Set<TagDTO> tags = new HashSet<>();
 
@@ -274,6 +280,15 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
+
+        // statistics clear
+        pieChart.getData().clear();
+        legendBox.getChildren().clear();
+        eventCost.setText(null);
+        eventCostFiltered.setText(null);
+        stats.setVisible(false);
+        pieChart.setVisible(false);
+
         undoService.clear();
     }
 
@@ -404,7 +419,7 @@ public class EventPageCtrl implements Initializable {
 
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
-        totalExpenses.setText("\u20AC" +
+        eventCostFiltered.setText("\u20AC " +
                 String.valueOf(e.getTransactions().stream()
                 .filter(
                         ts -> ts.getTags()
@@ -413,7 +428,6 @@ public class EventPageCtrl implements Initializable {
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
                 .sum()));
-        System.out.println(totalExpenses.getText());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -848,7 +862,11 @@ public class EventPageCtrl implements Initializable {
 
     public void loadPieChart() {
 
+        stats.setVisible(true);
+        pieChart.setVisible(true);
+
         Map<String, BigDecimal> tagToAmount = new HashMap<>();
+        Map<String, String> tagToColor = new HashMap<>();
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
         for(TransactionDTO t : transactions){
@@ -857,6 +875,7 @@ public class EventPageCtrl implements Initializable {
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
                 tagToAmount.put(tagName, amount);
+                tagToColor.put(tagName, tag.color.colorCode);
             }
         }
 
@@ -867,6 +886,30 @@ public class EventPageCtrl implements Initializable {
         );
 
         pieChart.setData(pieData);
+
+        // Set the color of each pie slice to match the corresponding tag color
+        pieData.forEach(data -> {
+            String color = tagToColor.get(data.getName());
+            data.getNode().setStyle("-fx-pie-color: " + color + ";");
+        });
+
+        // disable automatic generated legend
+        pieChart.setLegendVisible(false);
+
+        // Create a legend manually and set the color of each legend item
+        legendBox.getChildren().clear();
+        pieData.forEach(data -> {
+            HBox legendItem = new HBox();
+            legendItem.setSpacing(10);
+            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName())));
+            Label nameLabel = new Label(data.getName());
+            legendItem.getChildren().addAll(circle, nameLabel);
+            legendBox.getChildren().add(legendItem);
+        });
+
+        if (pieChart.getData().isEmpty()) {
+            MainCtrl.inform("Statistics","No statistics to display");
+        }
     }
 
     public String printTotalExpenses() {

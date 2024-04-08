@@ -37,7 +37,7 @@ public class EventPageCtrlTest {
         tagDTO = Mockito.mock(TagDTO.class);
         deque = new ArrayDeque<>();
         deque.add(new UserData.Pair<>(mockId, "Mock Event"));
-        eventPageCtrl.totalExpenses = new Text();
+        eventPageCtrl.eventCostFiltered = new Text();
 
         when(server.getEvent(mockId)).thenReturn(eventDTO);
         when(eventDTO.getTransactions()).thenReturn(new HashSet<>(Arrays.asList(transactionDTO)));
@@ -51,7 +51,7 @@ public class EventPageCtrlTest {
         when(tagDTO.getName()).thenReturn("tagname");
         eventPageCtrl.updateTotalExpenses();
 
-        assertEquals("\u20AC100.0", eventPageCtrl.totalExpenses.getText());
+        assertEquals("\u20AC100.0", eventPageCtrl.eventCostFiltered.getText());
     }
 
     @Test
@@ -59,6 +59,6 @@ public class EventPageCtrlTest {
         when(tagDTO.getName()).thenReturn("debt");
         eventPageCtrl.updateTotalExpenses();
 
-        assertEquals("\u20AC0.0", eventPageCtrl.totalExpenses.getText());
+        assertEquals("\u20AC0.0", eventPageCtrl.eventCostFiltered.getText());
     }
 }
