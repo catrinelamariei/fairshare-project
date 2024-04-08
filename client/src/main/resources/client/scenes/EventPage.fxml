@@ -4,10 +4,11 @@
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -15,7 +16,8 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -28,7 +30,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.ComboBox?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
 
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
@@ -68,7 +69,7 @@
                               </font>
                           </Button>
                           <Pane prefHeight="7.0" prefWidth="143.0" style="-fx-background-color: CDFCF6;" />
-                          <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Edit Event" textAlignment="CENTER">
+                          <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%edit_event" textAlignment="CENTER">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -97,11 +98,11 @@
            </HBox>
            <TabPane style="-fx-border-color: #98A8F8; -fx-background-color: FAF7F0;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                <tabs>
-                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Expenses">
+                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%expenses">
                        <content>
                            <TabPane fx:id="expenseTabPane" tabClosingPolicy="UNAVAILABLE">
                                <tabs>
-                                   <Tab fx:id="overviewExpenses" style="-fx-background-color: FAF7F0;" text="Expenses Overview">
+                                   <Tab fx:id="overviewExpenses" style="-fx-background-color: FAF7F0;" text="%expenses_overview">
                                        <content>
                                            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
                                                <content>
@@ -120,11 +121,11 @@
                                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                                        </rowConstraints>
                                                                        <children>
-                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="From:" />
+                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%from" />
                                                                            <ChoiceBox fx:id="payerFilter" prefHeight="25.0" prefWidth="75.0" GridPane.rowIndex="1" />
-                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Including:" GridPane.columnIndex="1" />
+                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%including" GridPane.columnIndex="1" />
                                                                            <ChoiceBox fx:id="participantFilter" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                                           <Button mnemonicParsing="false" onAction="#filterTransactions" text="Filter" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                                           <Button mnemonicParsing="false" onAction="#filterTransactions" text="%filter" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                                                        </children>
                                                                        <HBox.margin>
                                                                            <Insets left="5.0" />
@@ -170,7 +171,7 @@
                                                                                    </Text>
                                                                                </children>
                                                                            </VBox>
-                                                                           <Button fx:id="deleteTransactionButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="62.0" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Delete">
+                                                                           <Button fx:id="deleteTransactionButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="62.0" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="%delete">
                                                                                <font>
                                                                                    <Font size="14.0" />
                                                                                </font>
@@ -197,29 +198,29 @@
                                            </ScrollPane>
                                        </content>
                                    </Tab>
-                                   <Tab fx:id="addExpenseTab" style="-fx-background-color: FAF7F0;" text="Add Expense">
+                                   <Tab fx:id="addExpenseTab" style="-fx-background-color: FAF7F0;" text="%add_expense">
                                        <content>
                                            <VBox>
                                                <children>
                                                    <AnchorPane style="-fx-background-color: FAF7F0;">
                                                        <children>
                                                            <DatePicker fx:id="transactionDate" layoutX="106.0" layoutY="275.0" style="-fx-border-color: #98A8F8;" />
-                                                           <Text layoutX="106.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense date">
+                                                           <Text layoutX="106.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%expense_date">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
                                                            </Text>
-                                                           <Text layoutX="272.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Currency">
+                                                           <Text layoutX="272.0" layoutY="205.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%currency">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
                                                            </Text>
-                                                           <Text layoutX="107.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amount">
+                                                           <Text layoutX="107.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%amount">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
                                                            </Text>
-                                                           <Text layoutX="110.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense name" wrappingWidth="107.4000015258789">
+                                                           <Text layoutX="110.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%expense_name" wrappingWidth="107.4000015258789">
                                                                <font>
                                                                    <Font size="14.0" />
                                                                </font>
@@ -228,27 +229,27 @@
                                                            <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" style="-fx-border-color: #98A8F8;" />
                                                            <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
                                                            <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
-                                                           <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Who payed?">
+                                                           <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%who_payed">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
                                                            </Text>
-                                                           <Text layoutX="451.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expense type">
+                                                           <Text layoutX="451.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%text_expense_type">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
                                                            </Text>
                                                            <VBox fx:id="root" layoutX="450.0" layoutY="27.0" prefHeight="200.0" prefWidth="100.0">
                                                                <children>
-                                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How do you want to split the expense?">
+                                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%split_transaction">
                                                                        <font>
                                                                            <Font size="13.0" />
                                                                        </font>
                                                                    </Text>
                                                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" />
-                                                                   <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="Equally between everyone" />
+                                                                   <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="%equally_between_everyone" />
                                                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.800048828125" />
-                                                                   <RadioButton fx:id="customSplit" mnemonicParsing="false" text="Only some people" />
+                                                                   <RadioButton fx:id="customSplit" mnemonicParsing="false" text="%only_some_people" />
                                                                    <ScrollPane fx:id="participantsScrollPane" prefHeight="108.0" prefWidth="148.0" style="-fx-border-color: #98A8F8;">
                                                                        <content>
                                                                            <VBox fx:id="vboxParticipantsTransaction" prefHeight="123.0" prefWidth="226.0" style="-fx-border-color: #98A8F8;" />
@@ -256,7 +257,7 @@
                                                                    </ScrollPane>
                                                                </children>
                                                            </VBox>
-                                                           <Button fx:id="addTagButton" layoutX="633.0" layoutY="257.0" mnemonicParsing="false" onAction="#addTag" text="add tag" />
+                                                           <Button fx:id="addTagButton" layoutX="633.0" layoutY="257.0" mnemonicParsing="false" onAction="#addTag" text="%add_tag" />
                                                            <ScrollPane fitToWidth="true" layoutX="451.0" layoutY="289.0" prefHeight="108.0" prefWidth="245.0" style="-fx-border-color: #98A8F8;">
                                                                <content>
                                                                    <VBox fx:id="tagsVBox" />
@@ -267,7 +268,7 @@
                                                    </AnchorPane>
                                                    <HBox alignment="CENTER">
                                                        <children>
-                                                           <Button fx:id="submitTransaction" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateTransaction" prefWidth="81.0" text="Submit">
+                                                           <Button fx:id="submitTransaction" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateTransaction" prefWidth="81.0" text="%submit">
                                                                <font>
                                                                    <Font size="18.0" />
                                                                </font>
@@ -275,7 +276,7 @@
                                                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                                </HBox.margin>
                                                            </Button>
-                                                           <Button fx:id="cancelTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="339.0" layoutY="30.0" mnemonicParsing="false" onAction="#clearTransaction" prefWidth="81.0" text="Cancel" textFill="#ff2424be">
+                                                           <Button fx:id="cancelTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="339.0" layoutY="30.0" mnemonicParsing="false" onAction="#clearTransaction" prefWidth="81.0" text="%text_cancel" textFill="#ff2424be">
                                                                <font>
                                                                    <Font size="18.0" />
                                                                </font>
@@ -297,7 +298,7 @@
                                            </VBox>
                                        </content>
                                    </Tab>
-                                   <Tab style="-fx-background-color: FAF7F0;" text="Debts">
+                                   <Tab style="-fx-background-color: FAF7F0;" text="%debts">
                                        <content>
                                            <ScrollPane prefHeight="200.0" prefWidth="200.0">
                                                <content>
@@ -312,20 +313,20 @@
                                                        <children>
                                                            <VBox layoutX="6.0" layoutY="8.0" prefHeight="528.0" prefWidth="754.0" style="-fx-background-color: FAF7F0;">
                                                                <children>
-                                                                   <Button fx:id="settleButton" mnemonicParsing="false" onAction="#debtSimplification" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Settle Debts">
+                                                                   <Button fx:id="settleButton" mnemonicParsing="false" onAction="#debtSimplification" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%settle_debts">
                                                                        <font>
                                                                            <Font size="15.0" />
                                                                        </font>
                                                                    </Button>
                                                                    <VBox prefHeight="22.0" prefWidth="754.0">
                                                                        <children>
-                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="(refresh debts to apply filter)" textAlignment="RIGHT" wrappingWidth="765.2526092529297" />
+                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%refresh_debts" textAlignment="RIGHT" wrappingWidth="765.2526092529297" />
                                                                        </children>
                                                                    </VBox>
                                                                    <Accordion fx:id="debts" prefHeight="382.0" prefWidth="754.0" />
                                                                </children>
                                                            </VBox>
-                                                           <Text layoutX="572.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Debts owed to:" />
+                                                           <Text layoutX="572.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%debts_owed_to" />
                                                            <ChoiceBox fx:id="creditorFilter" layoutX="658.0" layoutY="14.0" prefHeight="25.0" prefWidth="113.0" />
                                                        </children>
                                                    </AnchorPane>
@@ -337,11 +338,11 @@
                            </TabPane>
                        </content>
                    </Tab>
-                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Participants">
+                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%participants">
                        <content>
                            <TabPane fx:id="participantTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                                <tabs>
-                                   <Tab fx:id="overviewParticipants" style="-fx-background-color: FAF7F0;" text="Participants Overview">
+                                   <Tab fx:id="overviewParticipants" style="-fx-background-color: FAF7F0;" text="%participants_overview">
                                        <content>
                                            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: FAF7F0;">
                                                <content>
@@ -452,31 +453,31 @@
                                            </ScrollPane>
                                        </content>
                                    </Tab>
-                                   <Tab style="-fx-background-color: FAF7F0;" text="Add Participant">
+                                   <Tab style="-fx-background-color: FAF7F0;" text="%add_participant">
                                        <content>
                                            <AnchorPane style="-fx-background-color: FAF7F0;">
                                                <children>
-                                                   <Text layoutX="313.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name *">
+                                                   <Text layoutX="313.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%first_name">
                                                        <font>
                                                            <Font size="14.0" />
                                                        </font>
                                                    </Text>
-                                                   <Text layoutX="313.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name *">
+                                                   <Text layoutX="313.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%last_name">
                                                        <font>
                                                            <Font size="14.0" />
                                                        </font>
                                                    </Text>
-                                                   <Text layoutX="313.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email *">
+                                                   <Text layoutX="313.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%email">
                                                        <font>
                                                            <Font size="14.0" />
                                                        </font>
                                                    </Text>
-                                                   <Text layoutX="314.0" layoutY="255.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IBAN">
+                                                   <Text layoutX="314.0" layoutY="255.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%iban">
                                                        <font>
                                                            <Font size="14.0" />
                                                        </font>
                                                    </Text>
-                                                   <Text layoutX="313.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" text="BIC">
+                                                   <Text layoutX="313.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%bic">
                                                        <font>
                                                            <Font size="14.0" />
                                                        </font>
@@ -486,8 +487,8 @@
                                                    <TextField fx:id="email" layoutX="313.0" layoutY="200.0" style="-fx-border-color: #98A8F8;" />
                                                    <TextField fx:id="iban" layoutX="313.0" layoutY="260.0" style="-fx-border-color: #98A8F8;" />
                                                    <TextField fx:id="bic" layoutX="313.0" layoutY="320.0" style="-fx-border-color: #98A8F8;" />
-                                                   <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Add Participant" />
-                                                   <Text layoutX="314.0" layoutY="369.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Required Fields">
+                                                   <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="%add_participant" />
+                                                   <Text layoutX="314.0" layoutY="369.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%required_fields">
                                                        <font>
                                                            <Font size="12.0" />
                                                        </font>
@@ -500,12 +501,12 @@
                            </TabPane>
                        </content>
                    </Tab>
-                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Statistics">
+                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%statistics">
                        <content>
                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                <children>
-                                   <PieChart fx:id="pieChart" layoutX="161.0" layoutY="90.0" prefHeight="333.0" prefWidth="456.0" title="Expense Distribution" />
-                                   <Button fx:id="updateChart" layoutX="326.0" layoutY="450.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" text="Update Pie Chart" />
+                                   <PieChart fx:id="pieChart" layoutX="161.0" layoutY="90.0" prefHeight="333.0" prefWidth="456.0" title="%expense_distribution" />
+                                   <Button fx:id="updateChart" layoutX="326.0" layoutY="450.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" text="%update_pie" />
                                    <VBox layoutX="21.0" layoutY="18.0" prefHeight="72.0" prefWidth="493.0">
                                        <children>
                                  <GridPane>
@@ -519,7 +520,7 @@
                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                    </rowConstraints>
                                     <children>
-                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total Cost of Event: " wrappingWidth="159.71630859375" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%total_cost_of_event" wrappingWidth="159.71630859375" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                                                       <font>
                                                           <Font size="18.0" />
                                                       </font>
@@ -529,7 +530,7 @@
                                                           <Font size="18.0" />
                                                       </font>
                                                   </Text>
-                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total Cost without debts:" wrappingWidth="235.21630859375" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%total_cost_without_debts" wrappingWidth="235.21630859375" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                                                       <font>
                                                           <Font size="18.0" />
                                                       </font>
