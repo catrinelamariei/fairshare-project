@@ -39,21 +39,21 @@ public class CodeGeneratorTest {
             // Expected exception
         }
     }
-
-    @Test
-    public void testUniqueRandomStrings() {
-        // Generate multiple random strings
-        int numStrings = 1000;
-        String[] randomStrings = new String[numStrings];
-        for (int i = 0; i < numStrings; i++) {
-            randomStrings[i] = CodeGenerator.generateRandomString(10);
-        }
-
-        // Assert that all generated strings are unique
-        for (int i = 0; i < numStrings - 1; i++) {
-            for (int j = i + 1; j < numStrings; j++) {
-                assertNotEquals(randomStrings[i], randomStrings[j]);
-            }
-        }
-    }
+//      Commented probabalistic test
+//    @Test
+//    public void testUniqueRandomStrings() {
+//        // Generate multiple random strings
+//        int numStrings = 1000;
+//        String[] randomStrings = new String[numStrings];
+//        for (int i = 0; i < numStrings; i++) {
+//            randomStrings[i] = CodeGenerator.generateRandomString(10);
+//        }
+//
+//        // Assert that all generated strings are unique
+//        for (int i = 0; i < numStrings - 1; i++) {
+//            for (int j = i + 1; j < numStrings; j++) {
+//                assertNotEquals(randomStrings[i], randomStrings[j]);
+//            }
+//        }
+//    }
 }

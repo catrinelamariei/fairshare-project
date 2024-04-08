@@ -1,24 +1,17 @@
 package client.scenes.javaFXClasses.VisualNode;
 
-import client.MainCtrl;
-import client.UserData;
+import client.*;
 import client.scenes.javaFXClasses.DataNode.EventNode;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.geometry.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.*;
 
 import static client.UserData.Pair;
 public class VisualEventNode extends EventNode {
@@ -120,5 +113,17 @@ public class VisualEventNode extends EventNode {
         mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
         UserData.getInstance().getRecentUUIDs()
                 .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof VisualEventNode eventNode)) return false;
+        return Objects.equals(idNamePair.getKey(), eventNode.idNamePair.getKey());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idNamePair);
     }
 }

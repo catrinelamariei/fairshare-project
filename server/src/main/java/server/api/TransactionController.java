@@ -1,9 +1,11 @@
 package server.api;
-import commons.DTOs.TransactionDTO;
+
+import commons.DTOs.*;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import server.Services.DTOtoEntity;
@@ -19,25 +21,32 @@ import java.util.function.Consumer;
 public class TransactionController {
     private final TransactionRepository repo;
     private final DTOtoEntity d2e;
+    private final SimpMessagingTemplate messagingTemplate;
     private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
     private Map<Object, Consumer<UUID>> deletionListeners = new ConcurrentHashMap<>();
 
 
 
-    public TransactionController(TransactionRepository repo, DTOtoEntity dtoToEntity) {
+    public TransactionController(TransactionRepository repo,
+                                 DTOtoEntity dtoToEntity,
+                                 SimpMessagingTemplate msgTemplate) {
         this.repo = repo;
         this.d2e = dtoToEntity;
+        this.messagingTemplate = msgTemplate;
     }
 
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<TransactionDTO> createTransaction(
             @RequestBody TransactionDTO ts) {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
-
-        TransactionDTO result = new TransactionDTO(d2e.create(ts));
-        listeners.forEach((k, l)->l.accept(result));
-
-        return ResponseEntity.ok(result);
+        TransactionDTO t = new TransactionDTO(d2e.create(ts));
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.id = t.eventId;
+        eventDTO = new EventDTO(d2e.get(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", eventDTO);
+        }
+        return ResponseEntity.ok(t);
     }
 
     @GetMapping("/{id}")
@@ -53,7 +62,14 @@ public class TransactionController {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         ts.id = id;
-        return ResponseEntity.ok(new TransactionDTO(d2e.update(ts)));
+        TransactionDTO updated = new TransactionDTO(d2e.update(ts));
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.id = updated.eventId;
+        eventDTO = new EventDTO(d2e.get(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", eventDTO);
+        }
+        return ResponseEntity.ok(updated);
     }
 
     //id is already included in transactionDTO
@@ -64,16 +80,19 @@ public class TransactionController {
     }
 
     // TODO: manage dependencies
-
-
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
-        if (id == null) return ResponseEntity.badRequest().build();
+        if(id==null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         Transaction transaction = repo.getReferenceById(id);
+
+        TransactionDTO transactionDTO = new TransactionDTO(transaction);
         repo.delete(transaction);
-        deletionListeners.values().forEach(listener -> listener.accept(id));
+
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", transactionDTO.getEventId());
+        }
         return ResponseEntity.ok().build();
     }
 

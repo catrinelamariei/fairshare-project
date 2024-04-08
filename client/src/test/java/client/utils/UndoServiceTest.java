@@ -2,25 +2,17 @@ package client.utils;
 
 import client.MainCtrl;
 import client.scenes.EventPageCtrl;
-import client.scenes.javaFXClasses.DataNode.PojoNodeFactory;
-import client.scenes.javaFXClasses.DataNode.TransactionNode;
+import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import com.google.inject.Provider;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import commons.DTOs.*;
+import javafx.collections.*;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static client.utils.UndoService.TsAction.*;
 import static org.junit.jupiter.api.Assertions.*;

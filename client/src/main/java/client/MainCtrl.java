@@ -3,8 +3,7 @@ package client;
 import client.scenes.*;
 import client.utils.EventPageKeyEventHandler;
 import jakarta.ws.rs.NotFoundException;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -103,9 +102,9 @@ public class MainCtrl {
         alert.showAndWait();
     }
 
-    public static void inform(String msg) {
+    public static void inform(String title, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Event Created");
+        alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();

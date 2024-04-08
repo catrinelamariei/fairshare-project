@@ -2,13 +2,9 @@ package commons;
 
 import commons.DTOs.TagDTO;
 import jakarta.persistence.*;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.*;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -33,7 +29,19 @@ public class Tag {
     public Set<Transaction> transactions;
 
     public enum Color {
-        RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET
+        RED("#FF000080"),
+        ORANGE("#FFA50080"),
+        YELLOW("#FFFF0080"),
+        GREEN("#00800080"),
+        BLUE("#ADD8E6"),
+        INDIGO("#0000FF33"),
+        VIOLET("#EE82EE80");
+
+        public final String colorCode;
+
+        Color(String colorCode) {
+            this.colorCode = colorCode;
+        }
     }
 
     public Tag() {

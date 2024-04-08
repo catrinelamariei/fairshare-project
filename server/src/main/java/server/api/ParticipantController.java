@@ -1,11 +1,11 @@
 package server.api;
 
-import commons.DTOs.ParticipantDTO;
-import commons.Participant;
-import commons.Transaction;
+import commons.DTOs.*;
+import commons.*;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import server.Services.DTOtoEntity;
@@ -21,9 +21,14 @@ public class ParticipantController {
     private final ParticipantRepository repo;
     private final DTOtoEntity d2e;
     private final Map<Object, Consumer<ParticipantDTO>> listeners = new ConcurrentHashMap<>();
-    public ParticipantController(ParticipantRepository repo, DTOtoEntity dtoToEntity){
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public ParticipantController(ParticipantRepository repo,
+                                 DTOtoEntity dtoToEntity,
+                                 SimpMessagingTemplate msgTemplate) {
         this.repo = repo;
         this.d2e = dtoToEntity;
+        this.messagingTemplate = msgTemplate;
     }
 
     @Transactional
@@ -36,20 +41,18 @@ public class ParticipantController {
     @Transactional
    @PostMapping(path = {"", "/"})
    public ResponseEntity<ParticipantDTO> createParticipant(
-           @RequestBody ParticipantDTO p) {
-        if (p == null || !p.validate())
+           @RequestBody ParticipantDTO participantDTO) {
+        if (participantDTO == null || !participantDTO.validate())
             return ResponseEntity.badRequest().build();
-        ParticipantDTO result = new ParticipantDTO(d2e.create(p));
-
-        notifyListeners(result);
-        return ResponseEntity.ok(result);
-    }
-
-    private void notifyListeners(ParticipantDTO participantDTO) {
-        System.out.println("hei?");
-        listeners.values().forEach(listener -> {
-            listener.accept(participantDTO);
-        });
+        ParticipantDTO created = new ParticipantDTO(d2e.create(participantDTO));
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.id = created.eventId;
+        eventDTO = new EventDTO(d2e.get(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", eventDTO);
+        }
+        notifyListeners(created);
+        return ResponseEntity.ok(created);
     }
 
     @Transactional
@@ -59,7 +62,15 @@ public class ParticipantController {
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         if(p == null || !p.validate()) return ResponseEntity.badRequest().build();
         p.id = id;
-        return ResponseEntity.ok(new ParticipantDTO(d2e.update(p)));
+
+        ParticipantDTO updated = new ParticipantDTO(d2e.update(p));
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.id = updated.eventId;
+        eventDTO = new EventDTO(d2e.get(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", eventDTO);
+        }
+        return ResponseEntity.ok(updated);
     }
 
     @Transactional
@@ -76,6 +87,11 @@ public class ParticipantController {
         if(!repo.existsById(id)) return ResponseEntity.notFound().build();
         Optional<Participant> p = repo.findById(id);
         Participant participant = p.get();
+
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", new ParticipantDTO(participant)
+                    .getEventId());
+        }
         for (Transaction t: participant.getParticipatedTransactions()) {
             t.getParticipants().remove(participant);
         }

@@ -1,21 +1,20 @@
 package client.scenes.javaFXClasses.VisualNode;
 
+import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
-import client.utils.ServerUtils;
-import client.utils.UndoService;
+import client.utils.*;
+import commons.Currency.RateDTO;
 import commons.DTOs.TransactionDTO;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
@@ -33,9 +32,21 @@ public class VisualTransactionNode extends TransactionNode {
         //date
         Text date = new Text(formatter.format(ts.date));
 
-        //main body
+        String currencySymbol = switch (ts.currencyCode) {
+            case "EUR" -> "\u20AC";
+            case "USD" -> "\u0024";
+            case "GBP" -> "\u00A3";
+            default -> ts.currencyCode;
+        };
+            
+        RateDTO rate = RateUtils.getRate(ts.currencyCode,
+                UserData.getInstance().getCurrencyCode(), ts.date);
+        BigDecimal amountInPreferred = ts.amount.multiply(BigDecimal.valueOf(rate.rate));
+
         Text desc = new Text(String.format("%s paid %.2f%s for %s",
-            ts.author.firstName.trim(), ts.amount, ts.currencyCode, ts.subject));
+            ts.author.firstName.trim(), amountInPreferred,
+                UserData.getInstance().getCurrencyCode(), ts.subject));
+                
         desc.getStyleClass().add("desc"); //set css class to .desc
 
         Text participants = new Text("(" +
@@ -51,8 +62,12 @@ public class VisualTransactionNode extends TransactionNode {
         Button deleteTransactionButton = new Button("Delete");
         deleteTransactionButton.setOnAction(this::deleteTransaction);
 
-        // Edit Button: image
-        Image img = new Image("/client/Images/764599.png", 30d, 30d, true, false); //imageview size
+        // Edit Button: some options below
+//        Image img = new Image("/client/Images/edit-button-3.png", 25d, 25d, true, false);
+//        Image img = new Image("/client/Images/edit-button-1.png", 30d, 30d, true, false);
+        Image img = new Image("/client/Images/edit-button-2.png", 30d, 30d, true, false);
+
+
         ImageView imgv = new ImageView(img);
         Button btn = new Button("", imgv);
         btn.setOnAction(this::editTransaction); //attach method to button
