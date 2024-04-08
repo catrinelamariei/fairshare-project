@@ -55,5 +55,8 @@ public class Main extends Application {
         return ResourceBundle.getBundle("client.lang." + languageCode);
     }
 
-
+    public static String getTranslation(String variable){
+        return languageBundle.getString(variable);
+    }
+    //example usage: main.getTranslation("email")
 }

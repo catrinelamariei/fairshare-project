@@ -58,6 +58,7 @@ public class StartPageCtrl {
 
     @FXML
     public void initialize() {
+
         //event links
         recentEventsVBox.getChildren().setAll(UserData.getInstance().getRecentUUIDs()
             .stream().map(EventHyperlink::new).toList());
