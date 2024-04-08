@@ -1,6 +1,6 @@
 package server.api;
-import commons.DTOs.EventDTO;
-import commons.DTOs.TransactionDTO;
+
+import commons.DTOs.*;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;

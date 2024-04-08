@@ -1,9 +1,7 @@
 package server.api;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.Participant;
-import commons.Transaction;
+import commons.DTOs.*;
+import commons.*;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -11,8 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/participants")

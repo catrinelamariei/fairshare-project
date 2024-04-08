@@ -102,9 +102,9 @@ public class MainCtrl {
         alert.showAndWait();
     }
 
-    public static void inform(String msg) {
+    public static void inform(String title, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Event Created");
+        alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
