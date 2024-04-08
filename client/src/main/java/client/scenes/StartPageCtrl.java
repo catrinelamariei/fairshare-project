@@ -55,6 +55,7 @@ public class StartPageCtrl {
         this.mainCtrl = mainCtrl;
         this.main = main;
     }
+
     @FXML
     public void initialize() {
         //event links
