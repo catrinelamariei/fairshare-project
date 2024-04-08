@@ -3,12 +3,33 @@
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
 
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
@@ -38,30 +59,35 @@
                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                       </HBox.margin>
                   </Text>
-                  <Pane prefHeight="124.0" prefWidth="188.0" />
-                  <VBox alignment="CENTER" prefHeight="128.0" prefWidth="149.0">
+                  <Pane prefHeight="124.0" prefWidth="188.0">
+                  <children>
+                          <Button fx:id="editButton" layoutX="33.0" layoutY="30.0" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Edit Event" textAlignment="CENTER">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                          </Button>
+                          <Button fx:id="deleteEventButton" layoutX="34.0" layoutY="69.0" mnemonicParsing="false" onAction="#onDeleteEvent" prefHeight="20.0" prefWidth="121.0" style="-fx-background-color: ff8888; -fx-border-color: ffaaaa;" text="Delete Event" textAlignment="CENTER">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                          </Button>
+                  </children></Pane>
+                  <VBox alignment="CENTER" prefHeight="128.0" prefWidth="150.0">
                       <children>
-
-                          <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Copy Invite Code" textAlignment="CENTER" VBox.vgrow="NEVER">
-                              <font>
-                                  <Font size="14.0" />
-                              </font>
-                          </Button>
+                     <Pane prefHeight="200.0" prefWidth="200.0">
+                        <children>
+                           <Text fx:id="inviteCodeText" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Code" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
+      
+                                <Button fx:id="copyButton" layoutX="14.0" layoutY="69.0" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Copy Code" textAlignment="CENTER">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Button>
+                           <Text layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\%inviteCode" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
+                        </children>
+                     </Pane>
                           <Pane prefHeight="7.0" prefWidth="143.0" style="-fx-background-color: CDFCF6;" />
-                          <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Edit Event" textAlignment="CENTER">
-                              <font>
-                                  <Font size="14.0" />
-                              </font>
-                          </Button>
                           <Pane prefHeight="7.0" prefWidth="132.0" style="-fx-background-color: CDFCF6;" />
-                          <Button fx:id="deleteEventButton" mnemonicParsing="false" onAction="#onDeleteEvent" prefHeight="20.0" prefWidth="121.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Delete Event" textAlignment="CENTER" VBox.vgrow="NEVER">
-                              <font>
-                                  <Font size="14.0" />
-                              </font>
-                              <VBox.margin>
-                                  <Insets />
-                              </VBox.margin>
-                          </Button>
                       </children>
                       <HBox.margin>
                           <Insets />
@@ -130,7 +156,7 @@
                                                                                    <Font size="14.0" />
                                                                                </font>
                                                                            </Text>
-                                                                           <VBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="542.0" HBox.hgrow="ALWAYS">
+                                                                           <VBox alignment="CENTER_LEFT" maxWidth="-Infinity" prefHeight="42.0" prefWidth="542.0" HBox.hgrow="ALWAYS">
                                                                                <children>
                                                                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="desc" text="John Paid $123 for Drinks">
                                                                                        <VBox.margin>
@@ -461,11 +487,11 @@
                                                            <Font size="14.0" />
                                                        </font>
                                                    </Text>
-                                                   <TextField fx:id="firstName" layoutX="313.0" layoutY="80.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="lastName" layoutX="313.0" layoutY="140.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="email" layoutX="313.0" layoutY="200.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="iban" layoutX="313.0" layoutY="260.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="bic" layoutX="313.0" layoutY="320.0" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="firstName" layoutX="313.0" layoutY="80.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="lastName" layoutX="313.0" layoutY="140.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="email" layoutX="313.0" layoutY="200.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="iban" layoutX="313.0" layoutY="260.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="bic" layoutX="313.0" layoutY="320.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
                                                    <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Add Participant" />
                                                    <Text layoutX="314.0" layoutY="369.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Required Fields">
                                                        <font>
