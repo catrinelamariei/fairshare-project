@@ -420,14 +420,14 @@ public class EventPageCtrl implements Initializable {
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
         eventCostFiltered.setText("\u20AC " +
-                String.valueOf(e.getTransactions().stream()
+               e.getTransactions().stream()
                 .filter(
                         ts -> ts.getTags()
                                 .stream()
                                 .map(tag -> tag.getName())
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
-                .sum()));
+                .sum());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -863,7 +863,6 @@ public class EventPageCtrl implements Initializable {
     public void loadPieChart() {
 
         stats.setVisible(true);
-        pieChart.setVisible(true);
 
         Map<String, BigDecimal> tagToAmount = new HashMap<>();
         Map<String, String> tagToColor = new HashMap<>();
@@ -893,6 +892,13 @@ public class EventPageCtrl implements Initializable {
             data.getNode().setStyle("-fx-pie-color: " + color + ";");
         });
 
+        if (pieChart.getData().isEmpty()) {
+            MainCtrl.inform("Statistics","No statistics to display");
+            return;
+        } else {
+            pieChart.setVisible(true);
+        }
+
         // disable automatic generated legend
         pieChart.setLegendVisible(false);
 
@@ -907,9 +913,6 @@ public class EventPageCtrl implements Initializable {
             legendBox.getChildren().add(legendItem);
         });
 
-        if (pieChart.getData().isEmpty()) {
-            MainCtrl.inform("Statistics","No statistics to display");
-        }
     }
 
     public String printTotalExpenses() {
