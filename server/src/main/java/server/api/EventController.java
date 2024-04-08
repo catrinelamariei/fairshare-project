@@ -1,23 +1,17 @@
 package server.api;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.TagDTO;
-import commons.Event;
-import commons.Tag;
+import commons.DTOs.*;
+import commons.*;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import server.Authentication.Authenticator;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/event")

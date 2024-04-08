@@ -1,25 +1,15 @@
 package server.api;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TagDTO;
-import commons.DTOs.TransactionDTO;
-import commons.Event;
-import commons.Participant;
-import commons.Tag;
-import commons.Transaction;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import commons.DTOs.*;
+import commons.*;
+import org.junit.jupiter.api.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.Services.DTOtoEntity;
-import server.database.ParticipantRepository;
 import server.database.TransactionRepository;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.UUID;
-
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;

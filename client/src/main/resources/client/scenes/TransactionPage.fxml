@@ -8,34 +8,34 @@
     <bottom>
         <HBox prefHeight="39.0" prefWidth="800.0" style="-fx-background-color: dimgray;" BorderPane.alignment="CENTER" />
     </bottom>
-   <center>
+    <center>
         <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefHeight="761.0" prefWidth="771.0" scaleShape="false" style="-fx-background-color:grey;" BorderPane.alignment="CENTER">
             <children>
                 <HBox prefWidth="200.0" style="-fx-background-color: dimgray;">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#gotoHome" style="-fx-background-color: darkgray;" text="Home">
+                        <Button mnemonicParsing="false" onAction="#gotoHome" style="-fx-background-color: darkgray;" text="%text_home">
                             <HBox.margin>
                                 <Insets left="5.0" />
                             </HBox.margin>
                         </Button>
                         <HBox>
                             <children>
-                                <MenuButton mnemonicParsing="false" style="-fx-background-color:grey;" text="New Year Party">
+                                <MenuButton mnemonicParsing="false" style="-fx-background-color:grey;" text="%text_new_year_party">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#gotoAdminLogin" text="Admin Panel" />
+                                        <MenuItem mnemonicParsing="false" onAction="#gotoAdminLogin" text="%text_admin_panel" />
                                     </items>
                                     <HBox.margin>
                                         <Insets left="5.0" />
                                     </HBox.margin>
                                 </MenuButton>
-                                <Button mnemonicParsing="false" style="-fx-background-color:grey;" text="x">
+                                <Button mnemonicParsing="false" style="-fx-background-color:grey;" text="%text_x">
                                     <HBox.margin>
                                         <Insets left="-5.0" />
                                     </HBox.margin>
                                 </Button>
                             </children>
                         </HBox>
-                        <Button layoutX="67.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: darkgray;" text="Other Event">
+                        <Button layoutX="67.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: darkgray;" text="%text_other_event">
                             <HBox.margin>
                                 <Insets left="5.0" />
                             </HBox.margin>
@@ -51,165 +51,165 @@
                         </HBox>
                     </children>
                 </VBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Add/Edit Expense" textAlignment="CENTER" wrappingWidth="416.5113830566406">
-                     <font>
-                        <Font name="System Bold" size="50.0" />
-                     </font>
-                  </Text>
-               </children>
-            </HBox>
-            <HBox prefHeight="62.0" prefWidth="800.0">
-               <children>
-                  <VBox prefHeight="100.0" prefWidth="395.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Who paid?">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
+                <HBox prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%text_add_edit_expense" textAlignment="CENTER" wrappingWidth="416.5113830566406">
+                            <font>
+                                <Font name="System Bold" size="50.0" />
+                            </font>
                         </Text>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="100.0" prefWidth="411.0">
-                     <children>
-                        <ChoiceBox fx:id="authorInput" prefHeight="25.0" prefWidth="180.0" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="62.0" prefWidth="800.0">
-               <children>
-                  <VBox prefHeight="62.0" prefWidth="393.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="What for?">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="62.0" prefWidth="406.0">
-                     <children>
-                        <TextField fx:id="subjectInput" prefHeight="25.0" prefWidth="180.0" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="62.0" prefWidth="800.0">
-               <children>
-                  <VBox prefHeight="62.0" prefWidth="393.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How much?">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="62.0" prefWidth="282.0">
-                     <children>
-                        <TextField fx:id="amountInput" prefHeight="25.0" prefWidth="157.0" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="62.0" prefWidth="125.0">
-                     <children>
-                        <ChoiceBox fx:id="currencyCodeInput" prefHeight="25.0" prefWidth="122.0" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="62.0" prefWidth="800.0">
-               <children>
-                  <VBox prefHeight="62.0" prefWidth="393.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="When?">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="62.0" prefWidth="406.0">
-                     <children>
-                        <DatePicker fx:id="dateInput" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <VBox prefHeight="269.0" prefWidth="800.0">
-               <children>
-                  <VBox prefHeight="55.0" prefWidth="800.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="How to split?" wrappingWidth="150.1474609375">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </VBox>
-                  <HBox prefHeight="49.0" prefWidth="800.0">
-                     <children>
-                        <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="Equally between everyone" />
-                     </children>
-                  </HBox>
-                  <VBox prefHeight="227.0" prefWidth="800.0">
-                     <children>
-                        <HBox prefHeight="27.0" prefWidth="800.0">
-                           <children>
-                              <RadioButton fx:id="customSplit" mnemonicParsing="false" text="Only some people" />
-                           </children>
+                    </children>
+                </HBox>
+                <HBox prefHeight="62.0" prefWidth="800.0">
+                    <children>
+                        <VBox prefHeight="100.0" prefWidth="395.0">
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%text_who_paid">
+                                    <font>
+                                        <Font size="26.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="100.0" prefWidth="411.0">
+                            <children>
+                                <ChoiceBox fx:id="authorInput" prefHeight="25.0" prefWidth="180.0" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox prefHeight="62.0" prefWidth="800.0">
+                    <children>
+                        <VBox prefHeight="62.0" prefWidth="393.0">
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%text_what_for">
+                                    <font>
+                                        <Font size="26.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="62.0" prefWidth="406.0">
+                            <children>
+                                <TextField fx:id="subjectInput" prefHeight="25.0" prefWidth="180.0" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox prefHeight="62.0" prefWidth="800.0">
+                    <children>
+                        <VBox prefHeight="62.0" prefWidth="393.0">
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%text_how_much">
+                                    <font>
+                                        <Font size="26.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="62.0" prefWidth="282.0">
+                            <children>
+                                <TextField fx:id="amountInput" prefHeight="25.0" prefWidth="157.0" />
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="62.0" prefWidth="125.0">
+                            <children>
+                                <ChoiceBox fx:id="currencyCodeInput" prefHeight="25.0" prefWidth="122.0" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox prefHeight="62.0" prefWidth="800.0">
+                    <children>
+                        <VBox prefHeight="62.0" prefWidth="393.0">
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%text_when">
+                                    <font>
+                                        <Font size="26.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="62.0" prefWidth="406.0">
+                            <children>
+                                <DatePicker fx:id="dateInput" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <VBox prefHeight="269.0" prefWidth="800.0">
+                    <children>
+                        <VBox prefHeight="55.0" prefWidth="800.0">
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%text_how_to_split" wrappingWidth="150.1474609375">
+                                    <font>
+                                        <Font size="26.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                        <HBox prefHeight="49.0" prefWidth="800.0">
+                            <children>
+                                <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="%text_equally_between_everyone" />
+                            </children>
                         </HBox>
-                        <HBox prefHeight="173.0" prefWidth="800.0">
-                           <children>
-                              <HBox prefHeight="167.0" prefWidth="61.0" />
-                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="-Infinity" prefHeight="167.0" prefWidth="774.0" vbarPolicy="ALWAYS">
-                                 <content>
-                                    <VBox fx:id="participantsContainer" prefHeight="169.0" prefWidth="372.0" />
-                                 </content></ScrollPane>
-                              <HBox prefHeight="167.0" prefWidth="797.0" />
-                           </children>
+                        <VBox prefHeight="227.0" prefWidth="800.0">
+                            <children>
+                                <HBox prefHeight="27.0" prefWidth="800.0">
+                                    <children>
+                                        <RadioButton fx:id="customSplit" mnemonicParsing="false" text="%text_only_some_people" />
+                                    </children>
+                                </HBox>
+                                <HBox prefHeight="173.0" prefWidth="800.0">
+                                    <children>
+                                        <HBox prefHeight="167.0" prefWidth="61.0" />
+                                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="-Infinity" prefHeight="167.0" prefWidth="774.0" vbarPolicy="ALWAYS">
+                                            <content>
+                                                <VBox fx:id="participantsContainer" prefHeight="169.0" prefWidth="372.0" />
+                                            </content></ScrollPane>
+                                        <HBox prefHeight="167.0" prefWidth="797.0" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+                <HBox prefHeight="62.0" prefWidth="800.0">
+                    <children>
+                        <VBox prefHeight="62.0" prefWidth="393.0">
+                            <children>
+                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%text_expense_type">
+                                    <font>
+                                        <Font size="26.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="62.0" prefWidth="282.0">
+                            <children>
+                                <TextField fx:id="tagsInput" prefHeight="25.0" prefWidth="157.0" />
+                            </children>
+                        </VBox>
+                        <VBox prefHeight="62.0" prefWidth="125.0">
+                            <children>
+                                <ChoiceBox prefHeight="25.0" prefWidth="122.0" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                <HBox prefHeight="100.0" prefWidth="200.0" />
+                <HBox prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <HBox prefHeight="84.0" prefWidth="393.0" />
+                        <HBox prefHeight="84.0" prefWidth="212.0">
+                            <children>
+                                <Button fx:id="cancel" mnemonicParsing="false" onAction="#eventPage" prefHeight="25.0" prefWidth="153.0" text="%text_cancel" textFill="RED" />
+                            </children>
                         </HBox>
-                     </children>
-                  </VBox>
-               </children>
-            </VBox>
-            <HBox prefHeight="62.0" prefWidth="800.0">
-               <children>
-                  <VBox prefHeight="62.0" prefWidth="393.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Expense Type">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Text>
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="62.0" prefWidth="282.0">
-                     <children>
-                        <TextField fx:id="tagsInput" prefHeight="25.0" prefWidth="157.0" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="62.0" prefWidth="125.0">
-                     <children>
-                        <ChoiceBox prefHeight="25.0" prefWidth="122.0" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" />
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <HBox prefHeight="84.0" prefWidth="393.0" />
-                  <HBox prefHeight="84.0" prefWidth="212.0">
-                     <children>
-                        <Button fx:id="cancel" mnemonicParsing="false" onAction="#eventPage" prefHeight="25.0" prefWidth="153.0" text="Cancel" textFill="RED" />
-                     </children>
-                  </HBox>
-                  <Button fx:id="add" mnemonicParsing="false" onAction="#createTransaction" prefHeight="25.0" prefWidth="165.0" text="Add" />
-               </children>
-            </HBox>
+                        <Button fx:id="add" mnemonicParsing="false" onAction="#createTransaction" prefHeight="25.0" prefWidth="165.0" text="%text_add" />
+                    </children>
+                </HBox>
             </children>
         </VBox>
-   </center>
+    </center>
 </BorderPane>

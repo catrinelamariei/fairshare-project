@@ -8,25 +8,13 @@ import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Tab;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.*;
-
-
 import java.util.function.Consumer;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.ResourceBundle;
-import java.util.UUID;
 
 import static javafx.collections.FXCollections.observableArrayList;
 

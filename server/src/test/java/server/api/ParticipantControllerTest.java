@@ -1,13 +1,9 @@
 package server.api;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.Event;
-import commons.Participant;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import commons.DTOs.*;
+import commons.*;
+import org.junit.jupiter.api.*;
+import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
@@ -17,8 +13,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 public class ParticipantControllerTest {
     private ParticipantController controller;

@@ -11,8 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static client.UserData.Pair;
 public class VisualEventNode extends EventNode {
