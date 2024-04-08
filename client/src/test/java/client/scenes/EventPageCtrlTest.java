@@ -51,7 +51,7 @@ public class EventPageCtrlTest {
         when(tagDTO.getName()).thenReturn("tagname");
         eventPageCtrl.updateTotalExpenses();
 
-        assertEquals("\u20AC100.0", eventPageCtrl.eventCostFiltered.getText());
+        assertEquals("\u20AC 100.0", eventPageCtrl.eventCostFiltered.getText());
     }
 
     @Test
@@ -59,6 +59,6 @@ public class EventPageCtrlTest {
         when(tagDTO.getName()).thenReturn("debt");
         eventPageCtrl.updateTotalExpenses();
 
-        assertEquals("\u20AC0.0", eventPageCtrl.eventCostFiltered.getText());
+        assertEquals("\u20AC 0.0", eventPageCtrl.eventCostFiltered.getText());
     }
 }
