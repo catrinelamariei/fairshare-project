@@ -8,6 +8,7 @@ import jakarta.ws.rs.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.*;
@@ -27,6 +28,8 @@ public class StartPageCtrl {
     private TextField joinedEvent;
     @FXML
     private VBox recentEventsVBox;
+    @FXML
+    public Region veil;
 
 
     @Inject
@@ -122,6 +125,10 @@ public class StartPageCtrl {
 
     public void adminPage() {
         mainCtrl.showAdminPage();
+    }
+
+    public void settingsPage() {
+        mainCtrl.showSettingsPage();
     }
 
     private class EventHyperlink extends Hyperlink {
