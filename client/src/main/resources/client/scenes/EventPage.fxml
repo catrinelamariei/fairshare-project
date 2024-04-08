@@ -62,7 +62,7 @@
                                         <Font size="14.0" />
                                     </font>
                                 </Button>
-                           <Text layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%inviteCode" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
+                           <Text layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%invite_code" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
                         </children>
                      </Pane>
                           <Pane prefHeight="7.0" prefWidth="143.0" style="-fx-background-color: CDFCF6;" />
