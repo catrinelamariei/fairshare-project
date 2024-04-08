@@ -1,18 +1,15 @@
 package server.api;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.TagDTO;
-import commons.Event;
+import commons.DTOs.*;
 import commons.Tag;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import commons.*;
+import org.junit.jupiter.api.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
