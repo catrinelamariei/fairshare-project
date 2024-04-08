@@ -21,6 +21,7 @@ public class ParticipantController {
     private final ParticipantRepository repo;
     private final DTOtoEntity d2e;
     private final Map<Object, Consumer<ParticipantDTO>> listeners = new ConcurrentHashMap<>();
+    private final Map<Object, Consumer<UUID>> listenersDeletion = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate messagingTemplate;
 
     public ParticipantController(ParticipantRepository repo,
@@ -70,6 +71,7 @@ public class ParticipantController {
         if(messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/events", eventDTO);
         }
+        notifyListeners(updated);
         return ResponseEntity.ok(updated);
     }
 
@@ -98,8 +100,11 @@ public class ParticipantController {
         participant.getParticipatedTransactions().clear();
         //participant.getEvent().getParticipants().remove(p);
         repo.delete(participant);
+        notifyListenersDeletion(id);
         return ResponseEntity.ok().build();
     }
+
+
 
     @GetMapping("/updates")
     public DeferredResult<ResponseEntity<ParticipantDTO>> getParticipantUpdates() {
@@ -114,6 +119,33 @@ public class ParticipantController {
         });
         return res;
     }
+
+    @GetMapping("/deletes")
+    public DeferredResult<ResponseEntity<UUID>> getParticipantDeletes() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<UUID>>(5000L, noContent);
+        var key = new Object();
+        listenersDeletion.put(key, t ->{
+            res.setResult(ResponseEntity.ok(t));
+        });
+        res.onCompletion(()->{
+            listenersDeletion.remove(key);
+        });
+        return res;
+    }
+
+    private void notifyListeners(ParticipantDTO p) {
+        listeners.values().forEach(listener -> {
+            listener.accept(p);
+        });
+    }
+
+    private void notifyListenersDeletion(UUID id) {
+        listenersDeletion.values().forEach(listener -> {
+            listener.accept(id);
+        });
+    }
+
 
 
 }

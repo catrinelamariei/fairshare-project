@@ -197,39 +197,77 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
-        server.registerForUpdatesTransaction(t ->{
-            Platform.runLater(()->{
-                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
-
-                transactions.getChildren().clear();
-                transactions.getChildren().addAll(eventDTO.transactions.stream()
-                        .map(nodeFactory::createTransactionNode).toList());
-            });
-        });
-
-        server.registerForUpdatesParticipant(p->{
-            Platform.runLater(()->{
-                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
-                participants.getPanes().clear();
-                participants.getPanes().addAll(eventDTO.participants.stream()
-                        .map(nodeFactory::createParticipantNode).toList());
-            });
-        });
-
-        server.registerForTransactionDeletionUpdates(dt -> {
-            Platform.runLater(() -> {
-                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
-
-                transactions.getChildren().clear();
-                transactions.getChildren().addAll(eventDTO.transactions.stream()
-                        .map(nodeFactory::createTransactionNode).toList());
-            });
-        });
+        subscribe();
 
     }
 
-    public void stop(){
-        server.stop();
+    private void subscribe() {
+        server.registerForUpdatesParticipant(p->{
+            Platform.runLater(()->{
+                if(p.eventId.equals(UserData.getInstance().getCurrentUUID())){
+                    participants.getPanes().clear();
+                    eventDTO.participants.removeIf(participantDTO ->
+                            participantDTO.getId().equals(p.getId()));
+                    eventDTO.participants.add(p);
+                    participants.getPanes().addAll(eventDTO.participants.stream()
+                            .map(nodeFactory::createParticipantNode).toList());
+                    authorInput.getItems().clear();
+                    authorInput.getItems().addAll(eventDTO.participants);
+                    vboxParticipantsTransaction.getChildren().clear();
+                    vboxParticipantsTransaction.getChildren().addAll(eventDTO.participants.stream()
+                            .map(EventPageCtrl::participantCheckbox).toList());
+                    payerFilter.getItems().clear();
+                    participantFilter.getItems().clear();
+                    payerFilter.getItems().add("All");
+                    participantFilter.getItems().add("All");
+                    for (ParticipantDTO part : eventDTO.participants) {
+                        payerFilter.getItems().add(part.getFullName());
+                        participantFilter.getItems().add(part.getFullName());
+                    }
+                    payerFilter.setValue("All");
+                    participantFilter.setValue("All");
+                }
+
+
+            });
+        });
+
+        server.registerForParticipantDeletionUpdates(id->{
+            Platform.runLater(()->{
+                if(eventDTO.participants.stream().anyMatch(p->p.getId().equals(id))){
+                    eventDTO.participants.removeIf(p->p.getId().equals(id));
+                    participants.getPanes().clear();
+                    participants.getPanes().addAll(eventDTO.participants.stream()
+                            .map(nodeFactory::createParticipantNode).toList());
+                    authorInput.getItems().clear();
+                    authorInput.getItems().addAll(eventDTO.participants);
+                    vboxParticipantsTransaction.getChildren().clear();
+                    vboxParticipantsTransaction.getChildren().addAll(eventDTO.participants.stream()
+                            .map(EventPageCtrl::participantCheckbox).toList());
+                    payerFilter.getItems().clear();
+                    participantFilter.getItems().clear();
+                    payerFilter.getItems().add("All");
+                    participantFilter.getItems().add("All");
+                    for (ParticipantDTO part : eventDTO.participants) {
+                        payerFilter.getItems().add(part.getFullName());
+                        participantFilter.getItems().add(part.getFullName());
+                    }
+                    payerFilter.setValue("All");
+                    participantFilter.setValue("All");
+
+
+                    //this is necessary because sometimes, deleting
+                    // a participant will also delete a transaction
+                    EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+                    transactions.getChildren().clear();
+                    transactions.getChildren().addAll(e.transactions.stream()
+                            .map(nodeFactory::createTransactionNode).toList());
+
+
+
+                }
+            });
+        });
     }
 
     private void loadTransactions(){

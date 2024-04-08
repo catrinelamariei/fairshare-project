@@ -6,7 +6,6 @@ import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.utils.*;
 import commons.Currency.RateDTO;
 import commons.DTOs.TransactionDTO;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -100,19 +99,6 @@ public class VisualTransactionNode extends TransactionNode {
             eventPageCtrl.undoService.addAction(UndoService.TsAction.DELETE, old);
             server.deleteTransaction(id);
 
-            ServerUtils.registerForTransactionDeletionUpdates(deletedTransactionId -> {
-                Platform.runLater(()->{
-                    //aici nu intra
-                    System.out.println("te am vazut");
-                    if (deletedTransactionId.equals(id)) {
-                        // Remove this node from parent when the transaction is deleted
-                        //((Pane) this.getParent()).getChildren().remove(this);
-                        eventPageCtrl.load();
-                    }
-                });
-
-
-            });
 
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());

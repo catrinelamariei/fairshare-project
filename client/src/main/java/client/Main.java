@@ -1,11 +1,11 @@
 package client;
 
 import client.scenes.*;
+import client.utils.ServerUtils;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.util.*;
 
 import static com.google.inject.Guice.createInjector;
@@ -26,6 +26,14 @@ public class Main extends Application {
         //Locale locale = Locale.getDefault(); // Get default locale
         this.primaryStage = primaryStage;
         initializeUI(UserData.getInstance().getLanguageCode());
+
+        primaryStage.onCloseRequestProperty().set(e -> {
+            try {
+                INJECTOR.getInstance(ServerUtils.class).stop();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
 
     public static void initializeUI(String langCode) {
@@ -54,12 +62,7 @@ public class Main extends Application {
 
     public static ResourceBundle loadLanguages(String languageCode) {
         return ResourceBundle.getBundle("client.lang." + languageCode);
-            privCheckPage, startPage, transactionPage);
 
-
-        primaryStage.setOnCloseRequest(e->{
-            eventPage.getKey().stop();
-        });
     }
 
     public static String getTranslation(String variable){
