@@ -709,8 +709,8 @@ public class EventPageCtrl implements Initializable {
             UUID currentUUID = UserData.getInstance().getCurrentUUID();
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete event");
-            alert.setHeaderText("Do you want to delete this event?");
+            alert.setTitle(Main.getTranslation("delete_event_confirmation"));
+            alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK){
@@ -720,7 +720,8 @@ public class EventPageCtrl implements Initializable {
                 mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
 
                 mainCtrl.showStartPage();
-                MainCtrl.alert("Event deleted!");
+                MainCtrl.inform(Main.getTranslation("deleted"),
+                        Main.getTranslation("event_deleted_success"));
             }
 
         } catch (WebApplicationException e) {
