@@ -1,14 +1,10 @@
-package client.scenes.javaFXClasses;
+package client.utils;
 
-import commons.DTOs.EventDTO;
-import commons.DTOs.ParticipantDTO;
-import commons.DTOs.TransactionDTO;
+import commons.DTOs.*;
 import javafx.util.Pair;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.DirectedWeightedPseudograph;
+import org.jgrapht.graph.*;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.math.*;
 import java.util.*;
 
 
@@ -34,8 +30,10 @@ public class DebtGraph extends DirectedWeightedPseudograph<ParticipantDTO, Defau
         // (since they're splitting equally)
         for (TransactionDTO t : event.transactions) {
             // assign remainder to a random unlucky participant :)
-            double equalSplitAmount = t.amount.divide(BigDecimal.valueOf
-                (t.participants.size()), 2, RoundingMode.FLOOR).doubleValue();
+            double equalSplitAmount = t.amount
+                .divide(BigDecimal
+                .valueOf(t.participants.size()), 2, RoundingMode.FLOOR)
+                .doubleValue();
             double remainder = t.amount.doubleValue() - t.participants.size()*equalSplitAmount;
             List<ParticipantDTO> tempList = new ArrayList<>(t.participants);
             ParticipantDTO unluckyParticipant =

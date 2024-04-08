@@ -1,27 +1,39 @@
 package client.scenes;
 
 import client.MainCtrl;
-import client.scenes.javaFXClasses.EventNode;
+import client.scenes.javaFXClasses.NodeFactory;
+import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
 import client.utils.ServerUtils;
+import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
+import javafx.fxml.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
-import javax.inject.Inject;
 import java.net.URL;
 import java.util.*;
+
+
+import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
 public class AdminPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
+    private final NodeFactory nodeFactory;
     private boolean ascending = true;
 
     //overview management
@@ -37,9 +49,10 @@ public class AdminPageCtrl implements Initializable {
     private HBox sortingContainer;
 
     @Inject
-    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
+    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl, NodeFactory nodeFactory) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+        this.nodeFactory = nodeFactory;
     }
 
     //run on startup
@@ -48,6 +61,61 @@ public class AdminPageCtrl implements Initializable {
         comparatorList.setValue(EventDTO.EventComparator.name);
         comparatorList.valueProperty().addListener(((ov, oldVal, newVal) -> reSort()));
         overviewTab.selectedProperty().addListener(((ov, oldVal, newVal) -> toggleTab(newVal)));
+
+        server.register("/topic/events", (Consumer<EventDTO>) q -> {
+            System.out.println("Received event update");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    //remove old event
+                    removeEventNode(q);
+
+                    eventAccordion.getPanes().add(nodeFactory.createEventNode(q));
+                }
+            });
+
+
+        });
+
+        server.register("/topic/events", (Consumer<UUID>) q -> {
+            System.out.println("Received event update");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    EventDTO event = server.getEvent(q);
+                    removeEventNode(event);
+
+                    eventAccordion.getPanes().add(nodeFactory.createEventNode(event));
+                }
+            });
+
+
+        },null);
+
+        server.register("/topic/deletedEvent", (Consumer<EventDTO>) q -> {
+            System.out.println("Received event delete");
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    removeEventNode(q);
+                }
+            });
+
+
+        });
+    }
+
+    private void removeEventNode(EventDTO event) {
+        eventAccordion.getPanes().removeIf(p -> {
+            if (p instanceof VisualEventNode) {
+                return ((VisualEventNode) p).getPair().getKey().equals(event.id);
+            }
+            return false;
+
+        });
     }
 
     /**
@@ -61,13 +129,8 @@ public class AdminPageCtrl implements Initializable {
         ArrayList<EventDTO> events = new ArrayList<>(server.getAllEvents()); //get all events
         events.sort(cmp); //sort
 
-        List<EventNode> list = new ArrayList<>();
-        for (EventDTO event : events) {
-            EventNode eventNode = new EventNode(event, mainCtrl);
-            list.add(eventNode);
-        }
-
-        eventAccordion.getPanes().setAll(list);
+        eventAccordion.getPanes().setAll(events.stream()
+                .map(nodeFactory::createEventNode).toList());
     }
 
     public void homePage() {
@@ -78,7 +141,7 @@ public class AdminPageCtrl implements Initializable {
     public void generateEventTest() {
         Event event = new Event("TestEvent");
         event.id = new UUID(0, 0);
-        eventAccordion.getPanes().add(new EventNode(new EventDTO(event), mainCtrl));
+        eventAccordion.getPanes().add(nodeFactory.createEventNode(new EventDTO(event)));
     }
 
     //EVENT-ordering

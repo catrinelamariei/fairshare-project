@@ -15,24 +15,24 @@
  */
 package client;
 
-import client.scenes.AdminPageCtrl;
-import client.scenes.EventPageCtrl;
-import client.MainCtrl;
-import client.scenes.PrivCheckPageCtrl;
-import client.scenes.StartPageCtrl;
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import com.google.inject.Scopes;
+import client.scenes.*;
+import client.scenes.javaFXClasses.NodeFactory;
+import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
+import client.utils.*;
+import com.google.inject.*;
 
-public class MyModule implements Module {
+public class MyModule extends AbstractModule {
 
     @Override
-    public void configure(Binder binder) {
-        binder.bind(MainCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(StartPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(EventPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
-        binder.bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
-
+    public void configure() {
+        bind(MainCtrl.class).in(Scopes.SINGLETON);
+        bind(StartPageCtrl.class).in(Scopes.SINGLETON);
+        bind(NodeFactory.class).to(VisualNodeFactory.class).in(Scopes.SINGLETON);
+        bind(EventPageCtrl.class).in(Scopes.SINGLETON);
+        bind(PrivCheckPageCtrl.class).in(Scopes.SINGLETON);
+        bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
+        bind(ServerUtils.class).in(Scopes.SINGLETON);
+        bind(UndoService.class).in(Scopes.SINGLETON);
+        binder().disableCircularProxies();
     }
 }

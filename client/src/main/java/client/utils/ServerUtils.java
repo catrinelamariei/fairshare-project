@@ -24,9 +24,19 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.StompFrameHandler;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -53,9 +63,9 @@ public class ServerUtils {
     }
 
     public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
-        System.out.println("am intrat");
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("/api/event/"+eventDTO.getId())
+            .target(UserData.getInstance().getServerURL())
+                .path("/api/event/"+eventDTO.getId())
             .request(APPLICATION_JSON)
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
@@ -120,7 +130,10 @@ public class ServerUtils {
 
     //participants
     public ParticipantDTO getParticipant(UUID id) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/participants/" + id)
+                .request(APPLICATION_JSON)
+                .get(ParticipantDTO.class);
     }
 
     //create a gatParticipants method
@@ -128,17 +141,23 @@ public class ServerUtils {
 
     public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/participants/")
-            .request(APPLICATION_JSON)
-            .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
+                .target(UserData.getInstance().getServerURL()).path("api/participants")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public ParticipantDTO putParticipant(ParticipantDTO p) throws WebApplicationException {
-        return null;
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/participants/")
+                .request(APPLICATION_JSON)
+                .put(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public void deleteParticipant(UUID id) throws WebApplicationException {
-
+        ClientBuilder.newClient()
+            .target(UserData.getInstance().getServerURL()).path("api/participants/" + id)
+            .request()
+            .delete();
     }
 
     //tags
@@ -180,6 +199,53 @@ public class ServerUtils {
 
     public void putJSON(String json, UUID id) throws WebApplicationException {
 
+    }
+
+    private String getWebSocketURL() {
+        String url = UserData.getInstance().getServerURL();
+        url = url.replaceFirst("http", "ws");
+        url = url + "/websocket";
+        return url;
+    }
+    private StompSession session = connect(getWebSocketURL()) ;
+    private StompSession connect (String url) {
+        var client = new StandardWebSocketClient();
+        var stomp = new WebSocketStompClient(client);
+        stomp.setMessageConverter(new MappingJackson2MessageConverter());
+        try {
+            return stomp.connect(url, new StompSessionHandlerAdapter() {}).get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e){
+            System.out.println("Error connecting to websocket");
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public void register(String dest, Consumer<EventDTO> consumer) {
+        session.subscribe(dest, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return EventDTO.class;
+            }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((EventDTO) payload) ;
+            }
+        });
+    }
+
+    public void register(String dest, Consumer<UUID> consumer, UUID id) {
+        session.subscribe(dest, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return UUID.class;
+            }
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                consumer.accept((UUID) payload) ;
+            }
+        });
     }
 
 

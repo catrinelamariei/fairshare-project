@@ -2,23 +2,17 @@ package client.scenes;
 
 import client.MainCtrl;
 import client.utils.ServerUtils;
-import commons.Event;
-import commons.Participant;
-import commons.Tag;
-import commons.Transaction;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import com.google.inject.Inject;
+import commons.*;
+import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.BigDecimalStringConverter;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
