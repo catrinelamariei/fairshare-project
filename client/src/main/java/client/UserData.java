@@ -17,7 +17,7 @@ public final class UserData{
     private String token;
     private ArrayDeque<Pair<UUID, String>> recentUUIDs = new ArrayDeque<>();
     private String serverURL = "http://localhost:8080/";
-    private String languageCode;
+    private String languageCode = "EN";
 
     private String preferredCurrency = "EUR";
 
