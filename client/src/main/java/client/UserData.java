@@ -9,34 +9,50 @@ import java.util.*;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
+@JsonPropertyOrder({"languageCode", "preferredCurrency", "selectedURL", "urlDataList"})
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE)
 public final class UserData{
     // All values in here are default values and will be overwritten at startup if a
     // config file is found. The file regularly gets persisted.
 
     //INCLUDED IN JSON
-    private String token;
-    private ArrayDeque<Pair<UUID, String>> recentUUIDs = new ArrayDeque<>();
-    private String serverURL = "http://localhost:8080/";
+    @JsonProperty
     private String languageCode = "EN";
-
+    @JsonProperty
     private String preferredCurrency = "EUR";
+    @JsonProperty
+    private String selectedURL = "http://localhost:8080/";
+    @JsonProperty
+    private ArrayList<UrlData> urlDataList = new ArrayList<>(List.of(new UrlData(selectedURL)));
 
     //NOT INCLUDED IN JSON
     private final static String configFileName = "config.json";
     private final static ObjectMapper objectMapper = new ObjectMapper().enable(INDENT_OUTPUT);
-    private final static UserData INSTANCE = new UserData().load();
+    private final static UserData INSTANCE = load();
 
-    private UserData() {}
+    private UserData() {};
 
-    private UserData load() {
+    @JsonCreator
+    private UserData(@JsonProperty("languageCode") String languageCode,
+                     @JsonProperty("preferredCurrency") String preferredCurrency,
+                     @JsonProperty("selectedURL") String selectedURL,
+                     @JsonProperty("urlDataList") ArrayList<UrlData> urlDataList) {
+        this.languageCode = languageCode;
+        this.preferredCurrency = preferredCurrency;
+        this.selectedURL = selectedURL;
+        this.urlDataList = urlDataList;
+    }
+
+    private static UserData load() {
         try {
-            this.update(objectMapper.readValue(new File(configFileName), UserData.class));
+            return objectMapper.readValue(new File(configFileName), UserData.class);
         } catch (JsonProcessingException e) {
             System.err.println("LOADING ERROR: creating JSON: " + e);
         } catch (IOException e) {
             System.err.println("LOADING ERROR: opening file: " + e);
         }
-        return this;
+        return new UserData(); //default values
     }
 
     public void save() {
@@ -49,74 +65,53 @@ public final class UserData{
         }
     }
 
-    /**
-     * overwrites all fields because instance might be saved in which
-     * case overwriting instance wouldn't suffice
-     * @param userData data source
-     */
-    private void update(UserData userData) {
-        this.token = userData.token;
-        this.recentUUIDs = userData.recentUUIDs;
-        this.serverURL = userData.serverURL;
-        this.languageCode = userData.languageCode;
-        this.preferredCurrency = userData.preferredCurrency;
-    }
-
-    @JsonIgnore
+    //getters
     public static UserData getInstance() {
         return INSTANCE;
     }
-
-    public void setToken(String u) {
-        this.token = u;
-    }
-
-    public String getToken() {
-        return this.token;
-    }
-
-    public ArrayDeque<Pair<UUID, String>> getRecentUUIDs() {
-        return recentUUIDs;
-    }
-
-    public void setRecentUUIDs(
-        ArrayDeque<Pair<UUID, String>> recentUUIDs) {
-        this.recentUUIDs = recentUUIDs;
-    }
-
-    @JsonIgnore
     public UUID getCurrentUUID() {
         return getRecentUUIDs().peekFirst().getKey();
     }
-
-    public void setCurrentUUID(Pair<UUID, String> pair) {
-        recentUUIDs.removeIf(p -> p.getKey().equals(pair.getKey())); //remove if present
-        recentUUIDs.addFirst(pair); //(re-)insert at front
-        save(); //save to filesystem
+    private UrlData getUrlData() {
+        return urlDataList.stream().filter(urlData -> urlData.url.equals(selectedURL))
+                .findAny().get();
     }
-
-    public String getServerURL() {
-        return serverURL;
+    public String getToken() {
+        return getUrlData().token;
     }
-
-    public void setServerURL(String serverURL) {
-        this.serverURL = serverURL;
+    public ArrayDeque<Pair<UUID, String>> getRecentUUIDs() {
+        return getUrlData().recentUUIDs;
     }
-
     public String getLanguageCode() {
         return languageCode;
-    }
-
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
     }
 
     public String getCurrencyCode() {
         return preferredCurrency;
     }
+    public String getServerURL() {
+        return selectedURL;
+    }
+    //setters (JSON)
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
+    //setters
+    public void setToken(String u) {
+        getUrlData().token = u;
+    }
+    public void setCurrentUUID(Pair<UUID, String> pair) {
+        getRecentUUIDs().removeIf(p -> p.getKey().equals(pair.getKey())); //remove if present
+        getRecentUUIDs().addFirst(pair); //(re-)insert at front
+        save(); //save to filesystem
+    }
     public void setCurrencyCode(String currencyCode) {
         this.preferredCurrency = currencyCode;
+    }
+    public void setSelectedURL(String selectedURL) {
+        // TODO: cases (existent/non-existent URL)
+        this.selectedURL = selectedURL;
     }
 
     /**
@@ -147,6 +142,27 @@ public final class UserData{
 
         public void setValue(V value) {
             this.value = value;
+        }
+    }
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    private static final class UrlData {
+        private final String url;
+        private final ArrayDeque<Pair<UUID, String>> recentUUIDs;
+        private String token;
+
+        @JsonCreator
+        private UrlData(@JsonProperty("url") String url,
+                        @JsonProperty("recentUUIDs") ArrayDeque<Pair<UUID, String>> recentUUIDs,
+                        @JsonProperty("token") String token) {
+            this.url = url;
+            this.recentUUIDs = recentUUIDs;
+            this.token = token;
+        }
+
+        private UrlData(String url) {
+            this.url = url;
+            this.recentUUIDs = new ArrayDeque<>();
         }
     }
 }

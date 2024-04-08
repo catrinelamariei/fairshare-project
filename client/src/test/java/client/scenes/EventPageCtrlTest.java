@@ -25,7 +25,6 @@ public class EventPageCtrlTest {
     private EventDTO eventDTO;
     private TransactionDTO transactionDTO;
     private TagDTO tagDTO;
-    private ArrayDeque deque;
 
 
     @BeforeEach
@@ -35,15 +34,14 @@ public class EventPageCtrlTest {
         mockId = UUID.randomUUID(); // Generate a random UUID for testing
         transactionDTO = Mockito.mock(TransactionDTO.class);
         tagDTO = Mockito.mock(TagDTO.class);
-        deque = new ArrayDeque<>();
-        deque.add(new UserData.Pair<>(mockId, "Mock Event"));
         eventPageCtrl.totalExpenses = new Text();
 
         when(server.getEvent(mockId)).thenReturn(eventDTO);
         when(eventDTO.getTransactions()).thenReturn(new HashSet<>(Arrays.asList(transactionDTO)));
         when(transactionDTO.getTags()).thenReturn(new HashSet<>(Arrays.asList(tagDTO)));
         when(transactionDTO.getAmount()).thenReturn(BigDecimal.valueOf(100.0));
-        UserData.getInstance().setRecentUUIDs(deque);
+        UserData.getInstance().getRecentUUIDs().clear();
+        UserData.getInstance().getRecentUUIDs().add(new UserData.Pair<>(mockId, "Mock Event"));
     }
 
     @Test

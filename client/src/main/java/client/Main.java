@@ -41,7 +41,7 @@ public class Main extends Application {
                 "client", "scenes", "AdminPage.fxml");
         var privCheckPage = FXML.load(PrivCheckPageCtrl.class, languageBundle,
                 "client", "scenes", "PrivCheckPage.fxml");
-            var settingsPage = FXML.load(SettingsPageCtrl.class, languageBundle,
+        var settingsPage = FXML.load(SettingsPageCtrl.class, languageBundle,
                     "client", "scenes", "SettingsPage.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
