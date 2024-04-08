@@ -7,7 +7,6 @@ import javafx.scene.*;
 import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Pair;
 
 public class MainCtrl {
