@@ -942,10 +942,14 @@ public class EventPageCtrl implements Initializable {
             }
         }
 
-        BigDecimal totalAmount = tagToAmount
-                .values()
-                .stream()
+        // TODO: zero
+
+        final BigDecimal totalAmount = transactions.stream()
+                .map(TransactionDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        MathContext mc
+                = new MathContext(5);
 
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
                 tagToAmount.entrySet().stream()
@@ -953,7 +957,7 @@ public class EventPageCtrl implements Initializable {
                             PieChart.Data data = new PieChart.Data(e.getKey(),
                                     e.getValue().doubleValue());
                             double percentage = e.getValue()
-                                    .divide(totalAmount, 2, RoundingMode.HALF_UP)
+                                    .divide(totalAmount, mc)
                                     .doubleValue() * 100;
                             data.nameProperty().bind(
                                     Bindings.concat(
@@ -1006,7 +1010,6 @@ public class EventPageCtrl implements Initializable {
                 .map(TransactionDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .doubleValue();
-        var temp = String.valueOf(totalExpenses);
         return (String.valueOf(totalExpenses));
     }
 
