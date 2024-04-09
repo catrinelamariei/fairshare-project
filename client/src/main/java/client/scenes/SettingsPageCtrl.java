@@ -6,6 +6,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -49,36 +50,46 @@ public class SettingsPageCtrl implements Initializable {
         languageChoiceBox.setItems(FXCollections.observableList(
                 StartPageCtrl.getAllLanguageCodes()));
         languageChoiceBox.setValue(userData.getLanguageCode());
+        languageChoiceBox.valueProperty().addListener((obs, oldVal, newVal) ->
+                valueChanged(languageChoiceBox, userData.getLanguageCode(), newVal));
 
         //load all currencies
         currencyChoiceBox.setItems(FXCollections.observableList(List.of("EUR", "USD", "CHF")));
         currencyChoiceBox.setValue(userData.getCurrencyCode());
+        currencyChoiceBox.valueProperty().addListener((obs, oldVal, newVal) ->
+                valueChanged(currencyChoiceBox, userData.getCurrencyCode(), newVal));
 
         //load all urls
         urlList.setCellFactory(list -> new UrlListCell());
         urlList.setItems(FXCollections.observableList(userData.getUrlList()));
         urlList.setValue(userData.getServerURL());
+        urlList.valueProperty().addListener((obs, oldVal, newVal) ->
+                valueChanged(urlList, userData.getServerURL(), newVal));
     }
 
     @FXML
     private void selectLanguage() {
         userData.setLanguageCode(languageChoiceBox.getValue());
         Main.initializeUI(languageChoiceBox.getValue());
+        languageChoiceBox.setStyle("");
     }
 
     @FXML
     private void cancelLanguage() {
         languageChoiceBox.setValue(userData.getLanguageCode());
+        languageChoiceBox.setStyle("");
     }
 
     @FXML
     private void selectCurrency() {
         userData.setCurrencyCode(currencyChoiceBox.getValue());
+        currencyChoiceBox.setStyle("");
     }
 
     @FXML
     private void cancelCurrency() {
         currencyChoiceBox.setValue(userData.getCurrencyCode());
+        currencyChoiceBox.setStyle("");
     }
 
     @FXML
@@ -110,9 +121,16 @@ public class SettingsPageCtrl implements Initializable {
     @FXML
     private void selectSavedConnection() {
         userData.setSelectedURL(urlList.getValue());
+        urlList.setStyle("");
     }
 
     //utility methods
+    private void valueChanged(Control choiceBox, String oldVal, String newVal) {
+        if (!newVal.equals(oldVal))
+            choiceBox.setStyle("-fx-background-color: lightblue");
+        else
+            choiceBox.setStyle("");
+    }
     private class UrlListCell extends ListCell<String> {
         @Override
         protected void updateItem(String item, boolean empty) {
