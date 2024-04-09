@@ -3,6 +3,7 @@ package client.scenes;
 import client.MainCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
+import client.utils.EventJson.EventJsonUtil;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
@@ -22,6 +23,7 @@ public class AdminPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
+    private final EventJsonUtil jsonUtil;
     private boolean ascending = true;
 
     //overview management
@@ -37,10 +39,12 @@ public class AdminPageCtrl implements Initializable {
     private HBox sortingContainer;
 
     @Inject
-    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl, NodeFactory nodeFactory) {
+    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl, NodeFactory nodeFactory,
+                         EventJsonUtil jsonUtil) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.nodeFactory = nodeFactory;
+        this.jsonUtil = jsonUtil;
     }
 
     //run on startup
@@ -156,5 +160,11 @@ public class AdminPageCtrl implements Initializable {
     public void sendGetRequest() {
         String response = server.getJSON();
         System.out.println("Response from server: " + response);
+    }
+
+    @FXML
+    private void uploadJson() {
+        jsonUtil.postJson("");
+        // TODO
     }
 }

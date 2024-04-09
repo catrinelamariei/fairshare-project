@@ -1,7 +1,7 @@
 package client;
 
 import client.scenes.*;
-import client.utils.EventPageKeyEventHandler;
+import client.utils.KeyEvents.EventPageKeyEventHandler;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.*;
 import javafx.scene.control.Alert;

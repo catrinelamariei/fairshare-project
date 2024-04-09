@@ -50,9 +50,11 @@ public class VisualEventNode extends EventNode {
 
         //buttons
         Button joinButton = new Button("JOIN");
+        Button downloadButton = new Button("DOWNLOAD");
         Button deleteButton = new Button("DELETE");
         deleteButton.setStyle("-fx-text-fill: red;");
         joinButton.setOnAction(this::join);
+        downloadButton.setOnAction(this::jsonPost);
         deleteButton.setOnAction(this::delete);
 
         //gridpance css styling
@@ -78,6 +80,7 @@ public class VisualEventNode extends EventNode {
         gridPane.addColumn(0, idText, dateText, participantText, transactionText, balanceText);
         gridPane.addColumn(1, idField, dateField, participantField, transactionField, balanceField);
         gridPane.add(joinButton, 2, 0, 2, 2); //button (span 2)
+        gridPane.add(downloadButton, 2, 2, 2, 1);
         gridPane.add(deleteButton, 2, 3, 2, 2); //button (span 2)
 
         //finalize (add gridpane to this)
@@ -104,6 +107,11 @@ public class VisualEventNode extends EventNode {
     private void join(ActionEvent actionEvent) {
         UserData.getInstance().setCurrentUUID(idNamePair);
         mainCtrl.showEventPage();
+    }
+
+    private void jsonPost(ActionEvent actionEvent) {
+        System.out.println("posting from node");
+        //TODO
     }
 
     private void delete(ActionEvent actionEvent) {
