@@ -25,8 +25,13 @@ public class MainCtrl {
     private PrivCheckPageCtrl privCheckPageCtrl;
     private Scene privCheckPage;
 
+    private final Stage sideStage = new Stage();
     private SettingsPageCtrl settingsPageCtrl;
     private Scene settingsPage;
+
+    public MainCtrl() {
+        sideStage.initModality(Modality.APPLICATION_MODAL);
+    }
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
@@ -53,6 +58,7 @@ public class MainCtrl {
 
         this.settingsPageCtrl = settingsPage.getKey();
         this.settingsPage = new Scene(settingsPage.getValue());
+        startPageCtrl.veil.visibleProperty().bind(sideStage.showingProperty());
 
         showStartPage();
         primaryStage.show();
@@ -94,12 +100,9 @@ public class MainCtrl {
      * disables current window
      */
     public void showSettingsPage() {
-        Stage sideStage = new Stage();
         sideStage.setScene(settingsPage);
         sideStage.setTitle("Settings");
 
-        startPageCtrl.veil.visibleProperty().bind(sideStage.showingProperty());
-        sideStage.initModality(Modality.APPLICATION_MODAL);
         sideStage.showAndWait(); //waits until sideStage is closed
         startPageCtrl.initialize(); //TODO: check if this is actually sufficient to switch url
     }

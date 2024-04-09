@@ -6,7 +6,6 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

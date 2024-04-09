@@ -25,6 +25,7 @@ public class Main extends Application {
         //Locale locale = Locale.getDefault(); // Get default locale
         this.primaryStage = primaryStage;
         initializeUI(UserData.getInstance().getLanguageCode());
+        primaryStage.show();
     }
 
     public static void initializeUI(String langCode) {
@@ -47,8 +48,6 @@ public class Main extends Application {
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
                 privCheckPage, startPage, settingsPage);
-
-        primaryStage.show();
     }
 
     public static ResourceBundle loadLanguages(String languageCode) {
