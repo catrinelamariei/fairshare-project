@@ -131,8 +131,6 @@ public class EventPageCtrl implements Initializable {
     private TabPane participantTabPane;
     @FXML
     Text eventCostFiltered;
-    @FXML
-    private Button statsButton;
 
     @FXML
     private TabPane expenseTabPane;
@@ -211,9 +209,9 @@ public class EventPageCtrl implements Initializable {
         });
 
         //loading stats
-        updateChart.setText("Load Statistics");
+        updateChart.setText(resources.getString("load_stats"));
         updateChart.setOnAction(e -> {
-            updateChart.setText("Refresh statistics");
+            updateChart.setText(resources.getString("update_stats"));
             loadPieChart();
             eventCost.setText("\u20AC " + printTotalExpenses());
             updateTotalExpenses();
