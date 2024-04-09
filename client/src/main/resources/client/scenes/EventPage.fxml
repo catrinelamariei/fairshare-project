@@ -88,7 +88,7 @@
                                <tabs>
                                    <Tab fx:id="overviewExpenses" style="-fx-background-color: FAF7F0;" text="%expenses_overview">
                                        <content>
-                                           <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
+                                           <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
                                                <content>
                                                    <VBox minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                                        <children>
@@ -123,7 +123,7 @@
                                                                    <Insets bottom="5.0" />
                                                                </padding>
                                                            </HBox>
-                                                           <VBox fx:id="transactions" alignment="TOP_CENTER" style="-fx-background-color: FAF7F0;">
+                                                           <VBox fx:id="transactions" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                                                <children>
                                                                    <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="100.0" style="-fx-border-color: BCCEF8;" styleClass="transaction">
                                                                        <children>
