@@ -1,17 +1,11 @@
 package server.Services;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class CurrencyExchangeTest {
 

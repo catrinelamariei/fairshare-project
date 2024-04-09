@@ -6,12 +6,13 @@ import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.*;
 import com.google.inject.*;
 import commons.DTOs.*;
+import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
-import javafx.geometry.Bounds;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -161,6 +162,12 @@ public class EventPageCtrl implements Initializable {
     private ChoiceBox<String> payerFilter;
     @FXML
     private ChoiceBox<String> participantFilter;
+    @FXML
+    private TextField tagNameInput;
+    @FXML
+    private ComboBox<Tag.Color> tagColor;
+    @FXML
+    private VBox allTagsVBox;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
@@ -266,6 +273,19 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
+
+        //load tags
+        tagNameInput.clear();
+        tagColor.setValue(null);
+        allTagsVBox.getChildren().setAll(eventDTO.tags.stream()
+                .map(t -> hboxFromTag(t)).toList());
+        // load colors
+        tagColor.getItems().addAll(Tag.Color.values());
+
+        // TODO: replace with color code
+
+
+
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
             public ListCell<TagDTO> call(ListView<TagDTO> param) {
@@ -293,6 +313,31 @@ public class EventPageCtrl implements Initializable {
         pieChart.setVisible(false);
 
         undoService.clear();
+    }
+
+    private HBox hboxFromTag(TagDTO t) {
+        HBox hbox = new HBox();
+        hbox.setPrefHeight(47);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        // TODO: replace with color code
+        hbox.setStyle("-fx-background-color: " + t.color);
+        Text text = new Text(t.getName());
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button deleteTag = new Button("X");
+        deleteTag.setOnAction(e -> {
+            allTagsVBox.getChildren().remove(hbox);
+            tagsInput.getItems().remove(t);
+            try {
+                server.deleteTag(t.id);
+            } catch (WebApplicationException ex) {
+                System.err.println("Error deleting tag: " + ex.getMessage());
+            }
+        });
+        hbox.getChildren().add(text);
+        hbox.getChildren().add(spacer);
+        hbox.getChildren().add(deleteTag);
+        return hbox;
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -328,6 +373,30 @@ public class EventPageCtrl implements Initializable {
         tagBox.setStyle("-fx-background-color: " + input.color.colorCode + ";");
         tagsVBox.getChildren().add(tagBox);
         tags.add(input);
+    }
+
+    public void createTag() {
+        String name = tagNameInput.getText();
+        Tag.Color color = tagColor.getValue();
+        if (name == null || name.isEmpty()) {
+            MainCtrl.alert("Please enter a tag name");
+            return;
+        } else if (color == null) {
+            MainCtrl.alert("Please choose a color");
+            return;
+        }
+        TagDTO tag = new TagDTO(null, UserData.getInstance().getCurrentUUID(), name, color);
+        try {
+            tag = server.postTag(tag);
+            tagsInput.getItems().add(tag);
+            HBox hbox = hboxFromTag(tag);
+            allTagsVBox.getChildren().add(hbox);
+        } catch (WebApplicationException e) {
+            System.err.println("Error creating tag: " + e.getMessage());
+        }
+        MainCtrl.inform("Tag", "Tag created successfully");
+        tagNameInput.clear();
+        tagColor.setValue(null);
     }
 
     public void gotoHome() {

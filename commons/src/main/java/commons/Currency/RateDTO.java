@@ -1,8 +1,7 @@
 package commons.Currency;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 public class RateDTO {
     public String currencyFrom;

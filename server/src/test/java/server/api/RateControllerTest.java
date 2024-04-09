@@ -1,18 +1,14 @@
 package server.api;
 
-import commons.Currency.Rate;
-import commons.Currency.RateDTO;
+import commons.Currency.*;
 import org.junit.jupiter.api.Test;
 import server.Services.CurrencyExchange;
-import server.Services.FrankfurterAPI;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 class RateControllerTest {

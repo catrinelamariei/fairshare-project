@@ -169,7 +169,10 @@ public class ServerUtils {
     }
 
     public void deleteTag(UUID id) throws WebApplicationException {
-
+        ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/tags/" + id)
+                .request()
+                .delete();
     }
 
     //JSON
