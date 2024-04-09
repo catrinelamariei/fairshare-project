@@ -5,13 +5,12 @@ import client.utils.KeyEvents.EventPageKeyEventHandler;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import javafx.util.Pair;
 
 public class MainCtrl {
 
-    private Stage primaryStage;
+    public Stage primaryStage;
 
     public StartPageCtrl startPageCtrl; //this needs to be fixed -> need to start using services
     private Scene startPage;

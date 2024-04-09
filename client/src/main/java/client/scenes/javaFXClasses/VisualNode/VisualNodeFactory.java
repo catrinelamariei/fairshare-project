@@ -4,21 +4,24 @@ import client.MainCtrl;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
+import client.utils.EventJson.EventJsonUtil;
 import client.utils.ServerUtils;
 import com.google.inject.*;
 import commons.DTOs.*;
 
-public class VisualNodeFactory implements NodeFactory {
+public final class VisualNodeFactory implements NodeFactory {
     private final MainCtrl mainCtrl;
     private final Provider<EventPageCtrl> epcProvider; //break cyclic dependency
     private final ServerUtils server;
+    private final EventJsonUtil jsonUtil;
 
     @Inject
     public VisualNodeFactory(MainCtrl mainCtrl, Provider<EventPageCtrl> epcProvider,
-                             ServerUtils server) {
+                             ServerUtils server, EventJsonUtil jsonUtil) {
         this.mainCtrl = mainCtrl;
         this.epcProvider = epcProvider;
         this.server = server;
+        this.jsonUtil = jsonUtil;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class VisualNodeFactory implements NodeFactory {
 
     @Override
     public EventNode createEventNode(EventDTO e) {
-        return new VisualEventNode(e, mainCtrl);
+        return new VisualEventNode(e, mainCtrl, jsonUtil);
     }
 
     @Override

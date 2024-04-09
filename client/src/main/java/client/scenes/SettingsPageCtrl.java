@@ -1,21 +1,18 @@
 package client.scenes;
 
-import client.Main;
-import client.UserData;
+import client.*;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
 import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class SettingsPageCtrl implements Initializable {
     //Services

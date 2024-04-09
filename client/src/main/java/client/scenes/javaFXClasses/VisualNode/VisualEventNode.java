@@ -2,6 +2,7 @@ package client.scenes.javaFXClasses.VisualNode;
 
 import client.*;
 import client.scenes.javaFXClasses.DataNode.EventNode;
+import client.utils.EventJson.EventJsonUtil;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
@@ -9,7 +10,11 @@ import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -54,7 +59,7 @@ public class VisualEventNode extends EventNode {
         Button deleteButton = new Button("DELETE");
         deleteButton.setStyle("-fx-text-fill: red;");
         joinButton.setOnAction(this::join);
-        downloadButton.setOnAction(this::jsonPost);
+        downloadButton.setOnAction(this::jsonSave);
         deleteButton.setOnAction(this::delete);
 
         //gridpance css styling
@@ -91,8 +96,8 @@ public class VisualEventNode extends EventNode {
      * create eventnode from data
      * @param event data source
      */
-    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl) {
-        super(mainCtrl, new Pair<>(event.getId(), event.getName()));
+    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl, EventJsonUtil jsonUtil) {
+        super(mainCtrl, jsonUtil, new Pair<>(event.getId(), event.getName()));
         this.initialize();
 
         this.setText(event.name);
@@ -109,9 +114,24 @@ public class VisualEventNode extends EventNode {
         mainCtrl.showEventPage();
     }
 
-    private void jsonPost(ActionEvent actionEvent) {
-        System.out.println("posting from node");
-        //TODO
+    private void jsonSave(ActionEvent actionEvent) {
+        //getting location to save file
+        FileChooser fileCHooser = new FileChooser();
+        fileCHooser.setTitle("Save JSON");
+        FileChooser.ExtensionFilter extensionFilter =
+            new FileChooser.ExtensionFilter("JSON", ".json");
+        fileCHooser.getExtensionFilters().add(extensionFilter);
+        fileCHooser.setSelectedExtensionFilter(extensionFilter);
+        File file = fileCHooser.showSaveDialog(mainCtrl.primaryStage);
+
+        //creating and saving file
+        try {
+            FileWriter fw = new FileWriter(file);
+            fw.write(jsonUtil.getJson(idNamePair.getKey()));
+            fw.close();
+        } catch (IOException e) {
+            System.err.println(e);
+        }
     }
 
     private void delete(ActionEvent actionEvent) {

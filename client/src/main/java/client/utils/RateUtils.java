@@ -3,14 +3,11 @@ package client.utils;
 import client.UserData;
 import commons.Currency.RateDTO;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.*;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.Scanner;
+import java.nio.file.*;
+import java.util.*;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 

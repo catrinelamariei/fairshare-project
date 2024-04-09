@@ -1,28 +1,17 @@
 package client.scenes;
 
-import client.Main;
-import client.MainCtrl;
-import client.UserData;
 import client.*;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static client.UserData.Pair;
 
@@ -73,6 +62,9 @@ public class StartPageCtrl {
             return;
         } catch (WebApplicationException ex) {
             MainCtrl.alert(ex.getMessage());
+            return;
+        }catch (ProcessingException ex){
+            MainCtrl.alert("Server is not available");
             return;
         }
 
@@ -165,7 +157,7 @@ public class StartPageCtrl {
                     recentEventsVBox.getChildren().add(0, this);
                     eventPage();
                 });
-            } catch (NotFoundException e) {
+            } catch (NotFoundException | ProcessingException e) {
                 this.pair = new Pair<>(p.getKey(), p.getValue());
                 this.getStyleClass().add("dissabledHyperlink");
                 this.setDisable(true); //cant be clicked on

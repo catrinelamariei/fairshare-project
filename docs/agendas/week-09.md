@@ -21,6 +21,7 @@ Agenda Items:
     - Quick discussion about MR (5 min)
     - Assigment: Self Reflection (due friday) (1 min)
     - Presentation test (10 min)
+    - Questions after exam? (5 min)
 
 - Summarize action points: Who , what , when? (4 min)
 - Question round: Does anyone have anything to add before the meeting closes? (1 min)

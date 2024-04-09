@@ -19,8 +19,7 @@ import client.UserData;
 import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.*;
-import jakarta.ws.rs.core.GenericType;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.*;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
@@ -170,7 +169,10 @@ public class ServerUtils {
     }
 
     public void deleteTag(UUID id) throws WebApplicationException {
-
+        ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("api/tags/" + id)
+                .request()
+                .delete();
     }
 
     //JSON
@@ -217,29 +219,42 @@ public class ServerUtils {
         return null;
     }
     public void register(String dest, Consumer<EventDTO> consumer) {
-        session.subscribe(dest, new StompFrameHandler() {
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return EventDTO.class;
-            }
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                consumer.accept((EventDTO) payload) ;
-            }
-        });
+        if(session != null && session.isConnected()) {
+            session.subscribe(dest, new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return EventDTO.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    consumer.accept((EventDTO) payload);
+                }
+            });
+        }
     }
 
     public void register(String dest, Consumer<UUID> consumer, UUID id) {
-        session.subscribe(dest, new StompFrameHandler() {
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return UUID.class;
-            }
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                consumer.accept((UUID) payload) ;
-            }
-        });
+        if(session != null && session.isConnected()) {
+            session.subscribe(dest, new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return UUID.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    consumer.accept((UUID) payload);
+                }
+            });
+        }
+    }
+
+    public void webSocketReconnect() {
+        if(session != null && session.isConnected()) {
+            session.disconnect();
+        }
+        session = connect(getWebSocketURL());
     }
 
     //Testing
