@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.ResourceBundle;
 
 import static com.google.inject.Guice.createInjector;
 

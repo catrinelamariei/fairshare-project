@@ -5,8 +5,7 @@ import client.utils.EventPageKeyEventHandler;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import javafx.util.Pair;
 
 public class MainCtrl {
