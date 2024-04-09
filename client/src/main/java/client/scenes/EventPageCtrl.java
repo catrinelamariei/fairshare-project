@@ -9,6 +9,7 @@ import commons.DTOs.*;
 import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
+import javafx.beans.binding.Bindings;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -30,7 +31,7 @@ import javafx.util.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.math.BigDecimal;
+import java.math.*;
 import java.net.URL;
 import java.time.*;
 import java.util.*;
@@ -941,9 +942,16 @@ public class EventPageCtrl implements Initializable {
             }
         }
 
+        BigDecimal totalAmount = tagToAmount.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
                 tagToAmount.entrySet().stream()
-                        .map(e -> new PieChart.Data(e.getKey(), e.getValue().doubleValue()))
+                        .map(e -> {
+                            PieChart.Data data = new PieChart.Data(e.getKey(), e.getValue().doubleValue());
+                            double percentage = e.getValue().divide(totalAmount, 2, RoundingMode.HALF_UP).doubleValue() * 100;
+                            data.nameProperty().bind(Bindings.concat(data.getName(), " ", Bindings.format("%.1f%%", percentage)));
+                            return data;
+                        })
                         .collect(Collectors.toList())
         );
 
@@ -951,7 +959,9 @@ public class EventPageCtrl implements Initializable {
 
         // Set the color of each pie slice to match the corresponding tag color
         pieData.forEach(data -> {
-            String color = tagToColor.get(data.getName());
+            // Extract the tag name from the pie slice's name (removing the percentage part)
+            String tagName = data.getName().substring(0, data.getName().lastIndexOf(" "));
+            String color = tagToColor.get(tagName);
             data.getNode().setStyle("-fx-pie-color: " + color + ";");
         });
 
@@ -970,12 +980,14 @@ public class EventPageCtrl implements Initializable {
         pieData.forEach(data -> {
             HBox legendItem = new HBox();
             legendItem.setSpacing(10);
-            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName())));
-            Label nameLabel = new Label(data.getName());
+            Circle circle = new Circle(7, Color.web(tagToColor.get(
+                    data.getName().substring(0, data.getName().lastIndexOf(" ")))));
+            Label nameLabel = new Label(data
+                    .getName()
+                    .substring(0, data.getName().lastIndexOf(" ")));
             legendItem.getChildren().addAll(circle, nameLabel);
             legendBox.getChildren().add(legendItem);
         });
-
     }
 
     public String printTotalExpenses() {
@@ -985,6 +997,7 @@ public class EventPageCtrl implements Initializable {
                 .map(TransactionDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .doubleValue();
+        var temp = String.valueOf(totalExpenses);
         return (String.valueOf(totalExpenses));
     }
 
