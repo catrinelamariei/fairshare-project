@@ -56,6 +56,8 @@ public class EventPageCtrl implements Initializable {
     //event header
     @FXML
     private Text eventTitle;
+    @FXML
+    private Text inviteCodeText;
 
     //transaction attributes and buttons
     @FXML
@@ -212,6 +214,7 @@ public class EventPageCtrl implements Initializable {
 
         //update name
         eventTitle.setText(eventDTO.name);
+        inviteCodeText.setText(eventDTO.id.toString());
 
         //load transactions
         transactions.getChildren().clear();
@@ -705,12 +708,22 @@ public class EventPageCtrl implements Initializable {
 //            mainCtrl.showStartPage();
             UUID currentUUID = UserData.getInstance().getCurrentUUID();
 
-            server.deleteEvent(currentUUID);
-            UserData.getInstance().getRecentUUIDs().removeIf(p -> p.getKey().equals(currentUUID));
-            mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(Main.getTranslation("delete_event_confirmation"));
+            alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
-            mainCtrl.showStartPage();
-            MainCtrl.alert("Event deleted!");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                server.deleteEvent(currentUUID);
+                UserData.getInstance().getRecentUUIDs()
+                        .removeIf(p -> p.getKey().equals(currentUUID));
+                mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+
+                mainCtrl.showStartPage();
+                MainCtrl.inform(Main.getTranslation("deleted"),
+                        Main.getTranslation("event_deleted_success"));
+            }
+
         } catch (WebApplicationException e) {
             System.err.println("Error deleting event: " + e.getMessage());
         }

@@ -51,6 +51,7 @@ public class VisualEventNode extends EventNode {
         //buttons
         Button joinButton = new Button("JOIN");
         Button deleteButton = new Button("DELETE");
+        deleteButton.setStyle("-fx-text-fill: red;");
         joinButton.setOnAction(this::join);
         deleteButton.setOnAction(this::delete);
 
@@ -106,13 +107,22 @@ public class VisualEventNode extends EventNode {
     }
 
     private void delete(ActionEvent actionEvent) {
-        ((Accordion) this.getParent()).getPanes().remove(this);
-        (new ServerUtils()).deleteEvent(idNamePair.getKey());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Event");
+        alert.setHeaderText("Are you sure you want to delete this event?");
 
-        // TODO: put these lines into service
-        mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
-        UserData.getInstance().getRecentUUIDs()
-                .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            ;
+
+            ((Accordion) this.getParent()).getPanes().remove(this);
+            (new ServerUtils()).deleteEvent(idNamePair.getKey());
+
+            // TODO: put these lines into service
+            mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
+            UserData.getInstance().getRecentUUIDs()
+                    .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+        }
     }
 
     @Override

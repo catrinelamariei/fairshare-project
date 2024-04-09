@@ -11,6 +11,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.math.BigDecimal;
@@ -53,22 +55,29 @@ public class VisualTransactionNode extends TransactionNode {
                 .map(p -> p.firstName.trim())
                 .collect(Collectors.joining(", "))
             + ")"); //concatenate with ", " in between each name
-        participants.getStyleClass().add("participantText"); //set css class to .participants
+        participants.getStyleClass().add("participantText");
+
+        participants.setWrappingWidth(400.0);
+        desc.setWrappingWidth(400.0);
+        //set css class to .participants
 
         VBox body = new VBox(desc, participants);
 
         // Delete Button
         Button deleteTransactionButton = new Button("Delete");
+        deleteTransactionButton.setStyle("-fx-text-fill: #ff0000;");
         deleteTransactionButton.setOnAction(this::deleteTransaction);
+        deleteTransactionButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
         // Edit Button: some options below
 //        Image img = new Image("/client/Images/edit-button-3.png", 25d, 25d, true, false);
 //        Image img = new Image("/client/Images/edit-button-1.png", 30d, 30d, true, false);
-        Image img = new Image("/client/Images/edit-button-2.png", 30d, 30d, true, false);
+        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
 
 
         ImageView imgv = new ImageView(img);
-        Button btn = new Button("", imgv);
+        Button btn = new Button("Edit", imgv);
+        btn.setFont(Font.font("System", FontWeight.BOLD, 20.0));
         btn.setOnAction(this::editTransaction); //attach method to button
 
         //assembling it all
