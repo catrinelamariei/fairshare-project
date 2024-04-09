@@ -101,6 +101,7 @@ public class MainCtrl {
         startPageCtrl.veil.visibleProperty().bind(sideStage.showingProperty());
         sideStage.initModality(Modality.APPLICATION_MODAL);
         sideStage.showAndWait(); //waits until sideStage is closed
+        startPageCtrl.initialize(); //TODO: check if this is actually sufficient to switch url
     }
 
     // Display an error message if the input is invalid

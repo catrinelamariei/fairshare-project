@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -99,7 +100,7 @@
                                     <Font size="20.0" />
                                  </font>
                               </Text>
-                              <ChoiceBox prefWidth="150.0" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="urlList" prefHeight="25.0" prefWidth="200.0" GridPane.rowIndex="2" />
                               <Button mnemonicParsing="false" onAction="#selectSavedConnection" text="select" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>

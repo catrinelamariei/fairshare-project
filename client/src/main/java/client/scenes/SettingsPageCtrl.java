@@ -3,13 +3,19 @@ package client.scenes;
 import client.UserData;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.core.Response;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-public class SettingsPageCtrl {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class SettingsPageCtrl implements Initializable {
     //Services
     private final ServerUtils server;
     private final UserData userData = UserData.getInstance(); //should be injected
@@ -21,10 +27,20 @@ public class SettingsPageCtrl {
     private TextField urlTextField;
     @FXML
     private Text statusText;
+    @FXML
+    private ComboBox<String> urlList;
 
     @Inject
     public SettingsPageCtrl(ServerUtils serverUtils) {
         this.server = serverUtils;
+    }
+
+    @Override
+    public void initialize(URL url1, ResourceBundle resourceBundle) {
+        //load all urls
+        urlList.setCellFactory(list -> new UrlListCell());
+        urlList.setItems(FXCollections.observableList(userData.getUrlList()));
+        urlList.setValue(userData.getServerURL());
     }
 
     @FXML
@@ -34,7 +50,13 @@ public class SettingsPageCtrl {
     private void cancelLanguage() {}
 
     @FXML
-    private void addConnection() {}
+    private void addConnection() {
+        userData.setSelectedURL(urlTextField.getText());
+        //update saved URLS
+        urlList.setItems(FXCollections.observableList(userData.getUrlList()));
+        urlList.setValue(urlTextField.getText());
+        urlTextField.clear();
+    }
 
     @FXML
     private void testConnection() {
@@ -54,6 +76,25 @@ public class SettingsPageCtrl {
     }
 
     @FXML
-    private void selectSavedConnection() {}
+    private void selectSavedConnection() {
+        userData.setSelectedURL(urlList.getValue());
+    }
 
+    //utility methods
+    private class UrlListCell extends ListCell<String> {
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) return;
+
+            setText(item);
+            try {
+                if (server.reach(item).equals(Response.Status.OK)) {
+                    setTextFill(Color.GREEN);
+                    return;
+                }
+            } catch (ProcessingException e) {}
+            setTextFill(Color.RED);
+        }
+    }
 }

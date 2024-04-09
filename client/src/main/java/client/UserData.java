@@ -69,19 +69,24 @@ public final class UserData{
     public static UserData getInstance() {
         return INSTANCE;
     }
+
     public UUID getCurrentUUID() {
         return getRecentUUIDs().peekFirst().getKey();
     }
+
     private UrlData getUrlData() {
         return urlDataList.stream().filter(urlData -> urlData.url.equals(selectedURL))
                 .findAny().get();
     }
+
     public String getToken() {
         return getUrlData().token;
     }
+
     public ArrayDeque<Pair<UUID, String>> getRecentUUIDs() {
         return getUrlData().recentUUIDs;
     }
+
     public String getLanguageCode() {
         return languageCode;
     }
@@ -89,29 +94,41 @@ public final class UserData{
     public String getCurrencyCode() {
         return preferredCurrency;
     }
+
     public String getServerURL() {
         return selectedURL;
     }
+
+    public List<String> getUrlList() {
+        return this.urlDataList.stream().map(urlData -> urlData.url).toList();
+    }
+
     //setters (JSON)
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
 
-    //setters
     public void setToken(String u) {
         getUrlData().token = u;
     }
+
     public void setCurrentUUID(Pair<UUID, String> pair) {
         getRecentUUIDs().removeIf(p -> p.getKey().equals(pair.getKey())); //remove if present
         getRecentUUIDs().addFirst(pair); //(re-)insert at front
         save(); //save to filesystem
     }
+
     public void setCurrencyCode(String currencyCode) {
         this.preferredCurrency = currencyCode;
     }
+
     public void setSelectedURL(String selectedURL) {
-        // TODO: cases (existent/non-existent URL)
         this.selectedURL = selectedURL;
+        try {
+            getUrlData();
+        } catch (NoSuchElementException e) {
+            urlDataList.add(new UrlData(selectedURL));
+        }
     }
 
     /**

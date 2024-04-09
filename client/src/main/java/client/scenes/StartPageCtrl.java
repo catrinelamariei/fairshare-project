@@ -73,6 +73,7 @@ public class StartPageCtrl {
         languageChoiceBox.setItems(observableLanguageList);
         languageChoiceBox.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
+                    if (newValue == null) return;
                     System.out.println("Selected: " + newValue);
                     UserData.getInstance().setLanguageCode(newValue);
                     main.initializeUI(newValue);
