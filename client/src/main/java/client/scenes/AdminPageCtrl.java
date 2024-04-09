@@ -49,7 +49,9 @@ public class AdminPageCtrl implements Initializable {
         comparatorList.setValue(EventDTO.EventComparator.name);
         comparatorList.valueProperty().addListener(((ov, oldVal, newVal) -> reSort()));
         overviewTab.selectedProperty().addListener(((ov, oldVal, newVal) -> toggleTab(newVal)));
+    }
 
+    private void subscribe() {
         server.register("/topic/events", (Consumer<EventDTO>) q -> {
             System.out.println("Received event update");
 
@@ -110,6 +112,8 @@ public class AdminPageCtrl implements Initializable {
      * called when switching to this scene
      */
     public void load() {
+        server.webSocketReconnect();
+        subscribe();
         //get desired sorting order
         Comparator<EventDTO> cmp = comparatorList.getValue().cmp;
         if (!ascending) cmp = cmp.reversed();

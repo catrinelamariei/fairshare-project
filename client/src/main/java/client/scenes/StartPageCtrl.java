@@ -63,6 +63,9 @@ public class StartPageCtrl {
         } catch (WebApplicationException ex) {
             MainCtrl.alert(ex.getMessage());
             return;
+        }catch (ProcessingException ex){
+            MainCtrl.alert("Server is not available");
+            return;
         }
 
         newEvent.clear();
@@ -154,7 +157,7 @@ public class StartPageCtrl {
                     recentEventsVBox.getChildren().add(0, this);
                     eventPage();
                 });
-            } catch (NotFoundException e) {
+            } catch (NotFoundException | ProcessingException e) {
                 this.pair = new Pair<>(p.getKey(), p.getValue());
                 this.getStyleClass().add("dissabledHyperlink");
                 this.setDisable(true); //cant be clicked on
