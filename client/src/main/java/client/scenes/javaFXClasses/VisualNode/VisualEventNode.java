@@ -11,7 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.*;
 
 import static client.UserData.Pair;
 public class VisualEventNode extends EventNode {
@@ -51,6 +51,7 @@ public class VisualEventNode extends EventNode {
         //buttons
         Button joinButton = new Button("JOIN");
         Button deleteButton = new Button("DELETE");
+        deleteButton.setStyle("-fx-text-fill: red;");
         joinButton.setOnAction(this::join);
         deleteButton.setOnAction(this::delete);
 
@@ -106,12 +107,33 @@ public class VisualEventNode extends EventNode {
     }
 
     private void delete(ActionEvent actionEvent) {
-        ((Accordion) this.getParent()).getPanes().remove(this);
-        (new ServerUtils()).deleteEvent(idNamePair.getKey());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Event");
+        alert.setHeaderText("Are you sure you want to delete this event?");
 
-        // TODO: put these lines into service
-        mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
-        UserData.getInstance().getRecentUUIDs()
-                .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            ;
+
+            ((Accordion) this.getParent()).getPanes().remove(this);
+            (new ServerUtils()).deleteEvent(idNamePair.getKey());
+
+            // TODO: put these lines into service
+            mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
+            UserData.getInstance().getRecentUUIDs()
+                    .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof VisualEventNode eventNode)) return false;
+        return Objects.equals(idNamePair.getKey(), eventNode.idNamePair.getKey());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idNamePair);
     }
 }

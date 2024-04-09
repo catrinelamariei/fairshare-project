@@ -1,8 +1,10 @@
 package client.scenes.javaFXClasses.VisualNode;
 
+import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.DebtNode;
-import client.utils.ServerUtils;
+import client.utils.*;
+import commons.Currency.RateDTO;
 import commons.DTOs.*;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -20,9 +22,22 @@ public class VisualDebtNode extends DebtNode {
 
         super(debtor, creditor, currencyCode, amount, event, server, ctrl);
 
-        String txt = String.format("%s gives %.2f%s to %s",
-                debtor.getFullName(), amount,
-                currencyCode, creditor.getFullName());
+        String txt = null;
+        if (UserData.getInstance().getCurrencyCode().equals(currencyCode)) {
+            txt = String.format("%s gives %.2f%s to %s",
+                    debtor.getFullName(), amount,
+                    currencyCode, creditor.getFullName());
+        } else {
+            RateDTO rate = RateUtils.getRate(currencyCode,
+                    UserData.getInstance().getCurrencyCode(), new Date());
+            BigDecimal amountInPreferred = BigDecimal.valueOf(amount)
+                    .multiply(BigDecimal.valueOf(rate.rate));
+            txt = String.format("%s gives %.2f%s(%.2f%s) to %s",
+                    debtor.getFullName(), amount,
+                    "EUR",amountInPreferred,
+                    UserData.getInstance().getCurrencyCode(), creditor.getFullName());
+        }
+
         this.setText(txt);
 
 

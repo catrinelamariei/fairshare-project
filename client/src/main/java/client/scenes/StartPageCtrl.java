@@ -8,8 +8,9 @@ import jakarta.ws.rs.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
+import java.io.File;
 import java.util.*;
 
 import static client.UserData.Pair;
@@ -17,6 +18,7 @@ import static client.UserData.Pair;
 public class StartPageCtrl {
     private ServerUtils serverUtils;
     private MainCtrl mainCtrl;
+    private Main main;
     @FXML
     private Button createButton;
     @FXML
@@ -27,15 +29,20 @@ public class StartPageCtrl {
     private TextField joinedEvent;
     @FXML
     private VBox recentEventsVBox;
+    @FXML
+    public Region veil;
 
 
     @Inject
-    public StartPageCtrl(ServerUtils serverUtils, MainCtrl mainCtrl) {
+    public StartPageCtrl(ServerUtils serverUtils, MainCtrl mainCtrl, Main main) {
         this.serverUtils = serverUtils;
         this.mainCtrl = mainCtrl;
+        this.main = main;
     }
 
+    @FXML
     public void initialize() {
+
         //event links
         recentEventsVBox.getChildren().setAll(UserData.getInstance().getRecentUUIDs()
             .stream().map(EventHyperlink::new).toList());
@@ -65,7 +72,7 @@ public class StartPageCtrl {
         setCurrentEvent(pair);
 
         //confirmation dialog
-        MainCtrl.inform(text + " event created!");
+        MainCtrl.inform("Event","Event \"" + text + "\" Created!");
         mainCtrl.showEventPage();
     }
 
@@ -124,6 +131,10 @@ public class StartPageCtrl {
         mainCtrl.showAdminPage();
     }
 
+    public void settingsPage() {
+        mainCtrl.showSettingsPage();
+    }
+
     private class EventHyperlink extends Hyperlink {
         public Pair<UUID, String> pair;
 
@@ -150,5 +161,45 @@ public class StartPageCtrl {
             }
             this.setText(this.pair.getValue());
         }
+    }
+
+    @SuppressWarnings("checkstyle:CyclomaticComplexity")
+    public static List<String> getAllLanguageCodes(){
+        String folderPath1 = "src/main/resources/client/lang";
+        String folderPath2 = "client/src/main/resources/client/lang";
+
+        List<String> fileNameList = new ArrayList<>();
+
+        // Create a File object representing the folder
+        File folder1 = new File(folderPath1);
+        File folder2 = new File(folderPath2);
+
+        // Get a list of files in the folder
+        File[] files = folder1.listFiles();
+
+        // Add filenames to the list
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    String filename = file.getName();
+                    filename = filename.substring(0, filename.length()-11);
+                    fileNameList.add(filename);
+                }
+            }
+        }
+
+        files = folder2.listFiles();
+
+        // Add filenames to the list
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    String filename = file.getName();
+                    filename = filename.substring(0, filename.length()-11);
+                    fileNameList.add(filename);
+                }
+            }
+        }
+        return fileNameList;
     }
 }

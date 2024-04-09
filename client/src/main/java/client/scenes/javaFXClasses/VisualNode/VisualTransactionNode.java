@@ -1,16 +1,19 @@
 package client.scenes.javaFXClasses.VisualNode;
 
+import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.utils.*;
+import commons.Currency.RateDTO;
 import commons.DTOs.TransactionDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
@@ -28,9 +31,21 @@ public class VisualTransactionNode extends TransactionNode {
         //date
         Text date = new Text(formatter.format(ts.date));
 
-        //main body
+        String currencySymbol = switch (ts.currencyCode) {
+            case "EUR" -> "\u20AC";
+            case "USD" -> "\u0024";
+            case "GBP" -> "\u00A3";
+            default -> ts.currencyCode;
+        };
+            
+        RateDTO rate = RateUtils.getRate(ts.currencyCode,
+                UserData.getInstance().getCurrencyCode(), ts.date);
+        BigDecimal amountInPreferred = ts.amount.multiply(BigDecimal.valueOf(rate.rate));
+
         Text desc = new Text(String.format("%s paid %.2f%s for %s",
-            ts.author.firstName.trim(), ts.amount, ts.currencyCode, ts.subject));
+            ts.author.firstName.trim(), amountInPreferred,
+                UserData.getInstance().getCurrencyCode(), ts.subject));
+                
         desc.getStyleClass().add("desc"); //set css class to .desc
 
         Text participants = new Text("(" +
@@ -38,18 +53,29 @@ public class VisualTransactionNode extends TransactionNode {
                 .map(p -> p.firstName.trim())
                 .collect(Collectors.joining(", "))
             + ")"); //concatenate with ", " in between each name
-        participants.getStyleClass().add("participantText"); //set css class to .participants
+        participants.getStyleClass().add("participantText");
+
+        participants.setWrappingWidth(400.0);
+        desc.setWrappingWidth(400.0);
+        //set css class to .participants
 
         VBox body = new VBox(desc, participants);
 
         // Delete Button
         Button deleteTransactionButton = new Button("Delete");
+        deleteTransactionButton.setStyle("-fx-text-fill: #ff0000;");
         deleteTransactionButton.setOnAction(this::deleteTransaction);
+        deleteTransactionButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
-        // Edit Button: image
-        Image img = new Image("/client/Images/764599.png", 30d, 30d, true, false); //imageview size
+        // Edit Button: some options below
+//        Image img = new Image("/client/Images/edit-button-3.png", 25d, 25d, true, false);
+//        Image img = new Image("/client/Images/edit-button-1.png", 30d, 30d, true, false);
+        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+
+
         ImageView imgv = new ImageView(img);
-        Button btn = new Button("", imgv);
+        Button btn = new Button("Edit", imgv);
+        btn.setFont(Font.font("System", FontWeight.BOLD, 20.0));
         btn.setOnAction(this::editTransaction); //attach method to button
 
         //assembling it all
