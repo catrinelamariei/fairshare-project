@@ -937,16 +937,24 @@ public class EventPageCtrl implements Initializable {
             for (TagDTO tag : tags) {
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
-                tagToAmount.put(tagName, amount);
-                tagToColor.put(tagName, tag.color.colorCode);
+                if (tagToAmount.containsKey(tagName)) {
+                    tagToAmount.get(tagName).add(amount);
+                } else {
+                    tagToAmount.put(tagName, amount);
+                    tagToColor.put(tagName, tag.color.colorCode);
+                }
             }
         }
-
-        // TODO: zero
 
         final BigDecimal totalAmount = transactions.stream()
                 .map(TransactionDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (totalAmount.compareTo(BigDecimal.ZERO) == 0) {
+            MainCtrl.inform("Statistics", "No statistics to display");
+            return;
+        } else {
+            pieChart.setVisible(true);
+        }
 
         MathContext mc
                 = new MathContext(5);
@@ -978,12 +986,6 @@ public class EventPageCtrl implements Initializable {
             data.getNode().setStyle("-fx-pie-color: " + color + ";");
         });
 
-        if (pieChart.getData().isEmpty()) {
-            MainCtrl.inform("Statistics", "No statistics to display");
-            return;
-        } else {
-            pieChart.setVisible(true);
-        }
 
         // disable automatic generated legend
         pieChart.setLegendVisible(false);
