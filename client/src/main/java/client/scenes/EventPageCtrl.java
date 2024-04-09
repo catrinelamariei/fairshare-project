@@ -212,6 +212,15 @@ public class EventPageCtrl implements Initializable {
 
         subscribe();
 
+        //loading stats
+        updateChart.setText(resources.getString("load_stats"));
+        updateChart.setOnAction(e -> {
+            updateChart.setText(resources.getString("update_stats"));
+            loadPieChart();
+            eventCost.setText("\u20AC " + printTotalExpenses());
+            updateTotalExpenses();
+        });
+
     }
 
     private void subscribe() {
@@ -288,15 +297,6 @@ public class EventPageCtrl implements Initializable {
         transactions.getChildren().addAll(eventDTO.transactions.stream()
                 .map(nodeFactory::createTransactionNode).toList());
 
-
-        //loading stats
-        updateChart.setText(resources.getString("load_stats"));
-        updateChart.setOnAction(e -> {
-            updateChart.setText(resources.getString("update_stats"));
-            loadPieChart();
-            eventCost.setText("\u20AC " + printTotalExpenses());
-            updateTotalExpenses();
-        });
     }
 
     public void load() throws WebApplicationException {
@@ -392,6 +392,9 @@ public class EventPageCtrl implements Initializable {
         pieChart.setVisible(false);
 
         undoService.clear();
+
+        server.stop();
+        subscribe();
     }
 
     private HBox hboxFromTag(TagDTO t) {

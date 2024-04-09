@@ -219,7 +219,7 @@ public class ServerUtils {
 //        });
 //    }
 
-    private static ExecutorService execUpdateParticipant = Executors.newSingleThreadExecutor();
+    private static ExecutorService execUpdateParticipant;
     public void registerForUpdatesParticipant(Consumer<ParticipantDTO> consumer) {
         execUpdateParticipant = Executors.newSingleThreadExecutor();
         execUpdateParticipant.submit(() -> {
@@ -238,10 +238,11 @@ public class ServerUtils {
         });
     }
 
-    private static final ExecutorService execDeleteParticipant
-            = Executors.newSingleThreadExecutor();
+    private static ExecutorService execDeleteParticipant;
+
 
     public void registerForParticipantDeletionUpdates(Consumer<UUID> listener) {
+        execDeleteParticipant = Executors.newSingleThreadExecutor();
         execDeleteParticipant.submit(() -> {
             while (!Thread.interrupted()) {
                 var response = ClientBuilder.newClient()
@@ -263,8 +264,10 @@ public class ServerUtils {
     }
 
     public void stop(){
-        execUpdateParticipant.shutdownNow();
-        execDeleteParticipant.shutdownNow();
+        if(execUpdateParticipant != null && execDeleteParticipant != null){
+            execUpdateParticipant.shutdownNow();
+            execDeleteParticipant.shutdownNow();
+        }
     }
 //    private static final ExecutorService execDeleteTransaction
 //            = Executors.newSingleThreadExecutor();
