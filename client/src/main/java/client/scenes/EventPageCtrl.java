@@ -281,8 +281,6 @@ public class EventPageCtrl implements Initializable {
 
         // TODO: replace with color code
 
-
-
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
             public ListCell<TagDTO> call(ListView<TagDTO> param) {
@@ -300,12 +298,14 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
-        tagsInput.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                String colorCode = newSelection.color.colorCode;
-                tagsInput.setStyle("-fx-background-color: " + colorCode + ";");
-            }
-        });
+        tagsInput.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        String colorCode = newSelection.color.colorCode;
+                        tagsInput.setStyle("-fx-background-color: " + colorCode + ";");
+                    }
+                });
 
         // statistics clear
         pieChart.getData().clear();
@@ -439,7 +439,7 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         if (createTransaction(ts) != null)
-            MainCtrl.inform("Expense","Expense \"" + ts.getSubject() + "\" Created!");
+            MainCtrl.inform("Expense", "Expense \"" + ts.getSubject() + "\" Created!");
 
     }
 
@@ -474,14 +474,14 @@ public class EventPageCtrl implements Initializable {
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
         eventCostFiltered.setText("\u20AC " +
-               e.getTransactions().stream()
-                .filter(
-                        ts -> ts.getTags()
-                                .stream()
-                                .map(tag -> tag.getName())
-                                .noneMatch(tagName -> tagName.equals("debt")))
-                .mapToDouble(ts -> ts.getAmount().doubleValue())
-                .sum());
+                e.getTransactions().stream()
+                        .filter(
+                                ts -> ts.getTags()
+                                        .stream()
+                                        .map(tag -> tag.getName())
+                                        .noneMatch(tagName -> tagName.equals("debt")))
+                        .mapToDouble(ts -> ts.getAmount().doubleValue())
+                        .sum());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -702,7 +702,7 @@ public class EventPageCtrl implements Initializable {
 
         // end if no debts to simplify
         if (positive.isEmpty()) {
-            MainCtrl.inform("Debts","No debts to simplify!");
+            MainCtrl.inform("Debts", "No debts to simplify!");
             return;
         }
 
@@ -745,7 +745,7 @@ public class EventPageCtrl implements Initializable {
     public void filterDebts() {
         String selectedCreditor = (String) creditorFilter.getValue();
         // remove other debtNodes if a creditor is selected
-        Set<TitledPane> toRemove = new HashSet<>() ;
+        Set<TitledPane> toRemove = new HashSet<>();
         if (!selectedCreditor.equals("All")) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
@@ -778,7 +778,7 @@ public class EventPageCtrl implements Initializable {
             alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 server.deleteEvent(currentUUID);
                 UserData.getInstance().getRecentUUIDs()
                         .removeIf(p -> p.getKey().equals(currentUUID));
@@ -932,9 +932,9 @@ public class EventPageCtrl implements Initializable {
         Map<String, String> tagToColor = new HashMap<>();
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
-        for(TransactionDTO t : transactions){
+        for (TransactionDTO t : transactions) {
             Set<TagDTO> tags = t.getTags();
-            for(TagDTO tag : tags){
+            for (TagDTO tag : tags) {
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
                 tagToAmount.put(tagName, amount);
@@ -942,14 +942,23 @@ public class EventPageCtrl implements Initializable {
             }
         }
 
-        BigDecimal totalAmount = tagToAmount.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalAmount = tagToAmount
+                .values()
+                .stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
                 tagToAmount.entrySet().stream()
                         .map(e -> {
-                            PieChart.Data data = new PieChart.Data(e.getKey(), e.getValue().doubleValue());
-                            double percentage = e.getValue().divide(totalAmount, 2, RoundingMode.HALF_UP).doubleValue() * 100;
-                            data.nameProperty().bind(Bindings.concat(data.getName(), " ", Bindings.format("%.1f%%", percentage)));
+                            PieChart.Data data = new PieChart.Data(e.getKey(),
+                                    e.getValue().doubleValue());
+                            double percentage = e.getValue()
+                                    .divide(totalAmount, 2, RoundingMode.HALF_UP)
+                                    .doubleValue() * 100;
+                            data.nameProperty().bind(
+                                    Bindings.concat(
+                                            data.getName(), " ",
+                                            Bindings.format("%.1f%%", percentage)));
                             return data;
                         })
                         .collect(Collectors.toList())
@@ -966,7 +975,7 @@ public class EventPageCtrl implements Initializable {
         });
 
         if (pieChart.getData().isEmpty()) {
-            MainCtrl.inform("Statistics","No statistics to display");
+            MainCtrl.inform("Statistics", "No statistics to display");
             return;
         } else {
             pieChart.setVisible(true);
