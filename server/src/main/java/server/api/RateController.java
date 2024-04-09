@@ -1,7 +1,6 @@
 package server.api;
 
-import commons.Currency.Rate;
-import commons.Currency.RateDTO;
+import commons.Currency.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.Services.CurrencyExchange;

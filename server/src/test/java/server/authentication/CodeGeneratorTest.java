@@ -3,7 +3,6 @@ package server.authentication;
 import org.junit.jupiter.api.Test;
 import server.Authentication.CodeGenerator;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CodeGeneratorTest {

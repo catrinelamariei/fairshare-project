@@ -6,13 +6,14 @@ import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.*;
 import com.google.inject.*;
 import commons.DTOs.*;
+import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
-import javafx.geometry.Bounds;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -21,6 +22,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
@@ -58,6 +61,8 @@ public class EventPageCtrl implements Initializable {
     //event header
     @FXML
     private Text eventTitle;
+    @FXML
+    private Text inviteCodeText;
 
     //transaction attributes and buttons
     @FXML
@@ -127,9 +132,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TabPane participantTabPane;
     @FXML
-    Text totalExpenses;
-    @FXML
-    private Button statsButton;
+    Text eventCostFiltered;
 
     @FXML
     private TabPane expenseTabPane;
@@ -148,6 +151,10 @@ public class EventPageCtrl implements Initializable {
     private Button updateChart;
     @FXML
     private Text eventCost;
+    @FXML
+    private VBox legendBox;
+    @FXML
+    private GridPane stats;
 
     Set<TagDTO> tags = new HashSet<>();
 
@@ -155,6 +162,12 @@ public class EventPageCtrl implements Initializable {
     private ChoiceBox<String> payerFilter;
     @FXML
     private ChoiceBox<String> participantFilter;
+    @FXML
+    private TextField tagNameInput;
+    @FXML
+    private ComboBox<Tag.Color> tagColor;
+    @FXML
+    private VBox allTagsVBox;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
@@ -277,9 +290,9 @@ public class EventPageCtrl implements Initializable {
 
 
         //loading stats
-        updateChart.setText("Load Statistics");
+        updateChart.setText(resources.getString("load_stats"));
         updateChart.setOnAction(e -> {
-            updateChart.setText("Refresh statistics");
+            updateChart.setText(resources.getString("update_stats"));
             loadPieChart();
             eventCost.setText("\u20AC " + printTotalExpenses());
             updateTotalExpenses();
@@ -293,6 +306,7 @@ public class EventPageCtrl implements Initializable {
 
         //update name
         eventTitle.setText(eventDTO.name);
+        inviteCodeText.setText(eventDTO.id.toString());
 
         //load transactions
         transactions.getChildren().clear();
@@ -338,6 +352,19 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
+
+        //load tags
+        tagNameInput.clear();
+        tagColor.setValue(null);
+        allTagsVBox.getChildren().setAll(eventDTO.tags.stream()
+                .map(t -> hboxFromTag(t)).toList());
+        // load colors
+        tagColor.getItems().addAll(Tag.Color.values());
+
+        // TODO: replace with color code
+
+
+
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
             public ListCell<TagDTO> call(ListView<TagDTO> param) {
@@ -355,7 +382,41 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
+
+        // statistics clear
+        pieChart.getData().clear();
+        legendBox.getChildren().clear();
+        eventCost.setText(null);
+        eventCostFiltered.setText(null);
+        stats.setVisible(false);
+        pieChart.setVisible(false);
+
         undoService.clear();
+    }
+
+    private HBox hboxFromTag(TagDTO t) {
+        HBox hbox = new HBox();
+        hbox.setPrefHeight(47);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        // TODO: replace with color code
+        hbox.setStyle("-fx-background-color: " + t.color);
+        Text text = new Text(t.getName());
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button deleteTag = new Button("X");
+        deleteTag.setOnAction(e -> {
+            allTagsVBox.getChildren().remove(hbox);
+            tagsInput.getItems().remove(t);
+            try {
+                server.deleteTag(t.id);
+            } catch (WebApplicationException ex) {
+                System.err.println("Error deleting tag: " + ex.getMessage());
+            }
+        });
+        hbox.getChildren().add(text);
+        hbox.getChildren().add(spacer);
+        hbox.getChildren().add(deleteTag);
+        return hbox;
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -391,6 +452,30 @@ public class EventPageCtrl implements Initializable {
         tagBox.setStyle("-fx-background-color: " + input.color.colorCode + ";");
         tagsVBox.getChildren().add(tagBox);
         tags.add(input);
+    }
+
+    public void createTag() {
+        String name = tagNameInput.getText();
+        Tag.Color color = tagColor.getValue();
+        if (name == null || name.isEmpty()) {
+            MainCtrl.alert("Please enter a tag name");
+            return;
+        } else if (color == null) {
+            MainCtrl.alert("Please choose a color");
+            return;
+        }
+        TagDTO tag = new TagDTO(null, UserData.getInstance().getCurrentUUID(), name, color);
+        try {
+            tag = server.postTag(tag);
+            tagsInput.getItems().add(tag);
+            HBox hbox = hboxFromTag(tag);
+            allTagsVBox.getChildren().add(hbox);
+        } catch (WebApplicationException e) {
+            System.err.println("Error creating tag: " + e.getMessage());
+        }
+        MainCtrl.inform("Tag", "Tag created successfully");
+        tagNameInput.clear();
+        tagColor.setValue(null);
     }
 
     public void gotoHome() {
@@ -485,16 +570,15 @@ public class EventPageCtrl implements Initializable {
 
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
-        totalExpenses.setText("\u20AC" +
-                String.valueOf(e.getTransactions().stream()
+        eventCostFiltered.setText("\u20AC " +
+               e.getTransactions().stream()
                 .filter(
                         ts -> ts.getTags()
                                 .stream()
                                 .map(tag -> tag.getName())
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
-                .sum()));
-        System.out.println(totalExpenses.getText());
+                .sum());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -786,12 +870,22 @@ public class EventPageCtrl implements Initializable {
 //            mainCtrl.showStartPage();
             UUID currentUUID = UserData.getInstance().getCurrentUUID();
 
-            server.deleteEvent(currentUUID);
-            UserData.getInstance().getRecentUUIDs().removeIf(p -> p.getKey().equals(currentUUID));
-            mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(Main.getTranslation("delete_event_confirmation"));
+            alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
-            mainCtrl.showStartPage();
-            MainCtrl.alert("Event deleted!");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                server.deleteEvent(currentUUID);
+                UserData.getInstance().getRecentUUIDs()
+                        .removeIf(p -> p.getKey().equals(currentUUID));
+                mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+
+                mainCtrl.showStartPage();
+                MainCtrl.inform(Main.getTranslation("deleted"),
+                        Main.getTranslation("event_deleted_success"));
+            }
+
         } catch (WebApplicationException e) {
             System.err.println("Error deleting event: " + e.getMessage());
         }
@@ -929,7 +1023,10 @@ public class EventPageCtrl implements Initializable {
 
     public void loadPieChart() {
 
+        stats.setVisible(true);
+
         Map<String, BigDecimal> tagToAmount = new HashMap<>();
+        Map<String, String> tagToColor = new HashMap<>();
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
         for(TransactionDTO t : transactions){
@@ -938,6 +1035,7 @@ public class EventPageCtrl implements Initializable {
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
                 tagToAmount.put(tagName, amount);
+                tagToColor.put(tagName, tag.color.colorCode);
             }
         }
 
@@ -948,6 +1046,34 @@ public class EventPageCtrl implements Initializable {
         );
 
         pieChart.setData(pieData);
+
+        // Set the color of each pie slice to match the corresponding tag color
+        pieData.forEach(data -> {
+            String color = tagToColor.get(data.getName());
+            data.getNode().setStyle("-fx-pie-color: " + color + ";");
+        });
+
+        if (pieChart.getData().isEmpty()) {
+            MainCtrl.inform("Statistics","No statistics to display");
+            return;
+        } else {
+            pieChart.setVisible(true);
+        }
+
+        // disable automatic generated legend
+        pieChart.setLegendVisible(false);
+
+        // Create a legend manually and set the color of each legend item
+        legendBox.getChildren().clear();
+        pieData.forEach(data -> {
+            HBox legendItem = new HBox();
+            legendItem.setSpacing(10);
+            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName())));
+            Label nameLabel = new Label(data.getName());
+            legendItem.getChildren().addAll(circle, nameLabel);
+            legendBox.getChildren().add(legendItem);
+        });
+
     }
 
     public String printTotalExpenses() {
