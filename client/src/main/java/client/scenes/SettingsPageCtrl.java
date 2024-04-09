@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class SettingsPageCtrl implements Initializable {
@@ -24,6 +25,10 @@ public class SettingsPageCtrl implements Initializable {
     //Languages
     @FXML
     private ChoiceBox<String> languageChoiceBox;
+
+    //Currencies
+    @FXML
+    private ChoiceBox<String> currencyChoiceBox;
 
     //Connections
     @FXML
@@ -45,6 +50,10 @@ public class SettingsPageCtrl implements Initializable {
                 StartPageCtrl.getAllLanguageCodes()));
         languageChoiceBox.setValue(userData.getLanguageCode());
 
+        //load all currencies
+        currencyChoiceBox.setItems(FXCollections.observableList(List.of("EUR", "USD", "CHF")));
+        currencyChoiceBox.setValue(userData.getCurrencyCode());
+
         //load all urls
         urlList.setCellFactory(list -> new UrlListCell());
         urlList.setItems(FXCollections.observableList(userData.getUrlList()));
@@ -60,6 +69,16 @@ public class SettingsPageCtrl implements Initializable {
     @FXML
     private void cancelLanguage() {
         languageChoiceBox.setValue(userData.getLanguageCode());
+    }
+
+    @FXML
+    private void selectCurrency() {
+        userData.setCurrencyCode(currencyChoiceBox.getValue());
+    }
+
+    @FXML
+    private void cancelCurrency() {
+        currencyChoiceBox.setValue(userData.getCurrencyCode());
     }
 
     @FXML

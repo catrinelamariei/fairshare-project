@@ -17,30 +17,64 @@
    <content>
       <VBox spacing="20.0">
          <children>
-            <VBox alignment="CENTER" spacing="10.0">
+            <GridPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" />
+                  <ColumnConstraints hgrow="SOMETIMES" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="language" textAlignment="CENTER" underline="true">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Text>
-                  <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" />
-                  <GridPane hgap="50.0">
-                    <columnConstraints>
-                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                  <VBox alignment="CENTER" spacing="10.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#cancelLanguage" text="Cancel" />
-                        <Button layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#selectLanguage" text="Select" GridPane.columnIndex="1" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="language" textAlignment="CENTER" underline="true">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Text>
+                        <ChoiceBox fx:id="languageChoiceBox" prefWidth="150.0" />
+                        <GridPane hgap="50.0">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#cancelLanguage" text="Cancel" />
+                              <Button layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#selectLanguage" text="Select" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
                      </children>
-                  </GridPane>
+                  </VBox>
+                  <VBox alignment="CENTER" spacing="10.0" GridPane.columnIndex="1">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Currency" textAlignment="CENTER" underline="true">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Text>
+                        <ChoiceBox fx:id="currencyChoiceBox" prefWidth="150.0" />
+                        <GridPane hgap="50.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#cancelCurrency" text="Cancel" />
+                              <Button layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#selectCurrency" text="Select" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
-            <VBox alignment="CENTER">
+            </GridPane>
+            <VBox alignment="CENTER" fillWidth="false">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="server" textAlignment="CENTER" underline="true">
                      <font>
@@ -49,17 +83,17 @@
                   </Text>
                   <GridPane hgap="40.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="SOMETIMES" />
+                      <ColumnConstraints fillWidth="false" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <GridPane hgap="5.0" vgap="10.0">
+                        <GridPane alignment="TOP_RIGHT" hgap="5.0" vgap="10.0">
                           <columnConstraints>
-                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
-                            <ColumnConstraints hgrow="SOMETIMES" />
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="40.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -69,15 +103,15 @@
                           </rowConstraints>
                            <children>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="status:" GridPane.rowIndex="1" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="connect new" underline="true" GridPane.columnSpan="2" GridPane.halignment="CENTER">
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="connect new" underline="true" GridPane.columnSpan="2" GridPane.halignment="LEFT">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
                               </Text>
                               <Text fx:id="statusText" strokeType="OUTSIDE" strokeWidth="0.0" text="N/A" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <TextField fx:id="urlTextField" maxWidth="-Infinity" prefWidth="170.0" scaleShape="false" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2">
+                              <TextField fx:id="urlTextField" prefWidth="170.0" scaleShape="false" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="2">
                                  <GridPane.margin>
-                                    <Insets left="-45.0" />
+                                    <Insets />
                                  </GridPane.margin>
                               </TextField>
                               <Button mnemonicParsing="false" onAction="#testConnection" text="Test Connection" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -86,7 +120,7 @@
                         </GridPane>
                         <GridPane vgap="10.0" GridPane.columnIndex="1">
                           <columnConstraints>
-                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -100,7 +134,7 @@
                                     <Font size="20.0" />
                                  </font>
                               </Text>
-                              <ComboBox fx:id="urlList" prefHeight="25.0" prefWidth="200.0" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="urlList" prefWidth="170.0" GridPane.rowIndex="2" />
                               <Button mnemonicParsing="false" onAction="#selectSavedConnection" text="select" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
