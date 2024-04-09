@@ -47,7 +47,7 @@ public class PrivCheckPageCtrl {
             if(!response.equals("Invalid password")) {
                 UserData data = UserData.getInstance();
                 data.setToken(response);
-                System.out.println("1. token: " + response);
+                //System.out.println("1. token: " + response);
                 adminPage();
             }else{
                 text.setStyle("-fx-text-fill: red;");
