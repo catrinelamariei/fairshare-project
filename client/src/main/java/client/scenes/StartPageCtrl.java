@@ -9,16 +9,12 @@ import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.WebApplicationException;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import jakarta.ws.rs.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
-import javafx.scene.control.*;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 
@@ -27,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.*;
 
 import static client.UserData.Pair;
 
@@ -46,7 +41,7 @@ public class StartPageCtrl {
     @FXML
     private VBox recentEventsVBox;
     @FXML
-    private ChoiceBox<String> languageChoiceBox;
+    public Region veil;
 
 
     @Inject
@@ -62,19 +57,6 @@ public class StartPageCtrl {
         //event links
         recentEventsVBox.getChildren().setAll(UserData.getInstance().getRecentUUIDs()
             .stream().map(EventHyperlink::new).toList());
-
-        List<String> languageList = getAllLanguageCodes();
-        ObservableList<String> observableLanguageList =
-                FXCollections.observableArrayList(languageList);
-        languageChoiceBox.setValue(UserData.getInstance().getLanguageCode());
-        languageChoiceBox.setItems(observableLanguageList);
-        languageChoiceBox.getSelectionModel().selectedItemProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    System.out.println("Selected: " + newValue);
-                    UserData.getInstance().setLanguageCode(newValue);
-                    main.initializeUI(newValue);
-                    languageChoiceBox.setValue(newValue);
-                });
     }
 
 
@@ -158,6 +140,10 @@ public class StartPageCtrl {
 
     public void adminPage() {
         mainCtrl.showAdminPage();
+    }
+
+    public void settingsPage() {
+        mainCtrl.showSettingsPage();
     }
 
     private class EventHyperlink extends Hyperlink {

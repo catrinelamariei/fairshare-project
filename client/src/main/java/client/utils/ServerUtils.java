@@ -20,6 +20,7 @@ import commons.DTOs.*;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.*;
 import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
@@ -193,6 +194,7 @@ public class ServerUtils {
 
     }
 
+    //Websockets
     private String getWebSocketURL() {
         String url = UserData.getInstance().getServerURL();
         url = url.replaceFirst("http", "ws");
@@ -240,5 +242,11 @@ public class ServerUtils {
         });
     }
 
-
+    //Testing
+    public Response.StatusType reach(String url) {
+        return ClientBuilder.newClient()
+                .target(url).path("api/test/reach/")
+                .request()
+                .get().getStatusInfo();
+    }
 }
