@@ -211,14 +211,14 @@
                                                            </Text>
                                                            <TextField fx:id="transactionName" layoutX="108.0" layoutY="65.0" style="-fx-border-color: #98A8F8;" />
                                                            <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" style="-fx-border-color: #98A8F8;" />
-                                                           <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
-                                                           <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
+                                                           <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: #AA77FF; -fx-background-color: #98A8F8;" />
+                                                           <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: #AA77FF; -fx-background-color: #98A8F8;" />
                                                            <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%who_payed">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
                                                            </Text>
-                                                           <Text layoutX="451.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%text_expense_type">
+                                                           <Text layoutX="451.0" layoutY="265.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%text_expense_type">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
@@ -241,13 +241,8 @@
                                                                    </ScrollPane>
                                                                </children>
                                                            </VBox>
-                                                           <Button fx:id="addTagButton" layoutX="633.0" layoutY="257.0" mnemonicParsing="false" onAction="#addTag" text="%add_tag" />
-                                                           <ScrollPane fitToWidth="true" layoutX="451.0" layoutY="289.0" prefHeight="108.0" prefWidth="245.0" style="-fx-border-color: #98A8F8;">
-                                                               <content>
-                                                                   <VBox fx:id="tagsVBox" />
-                                                               </content>
-                                                           </ScrollPane>
-                                                           <ComboBox fx:id="tagsInput" layoutX="450.0" layoutY="257.0" prefWidth="150.0" />
+                                                           <ComboBox fx:id="tagsInput" layoutX="450.0" layoutY="274.0" prefWidth="150.0" style="-fx-border-color: #AA77FF; -fx-background-color: #98A8F8;" />
+                                             <Button layoutX="614.0" layoutY="275.0" mnemonicParsing="false" onAction="#clearTagsInput" text="\%clear" />
                                                        </children>
                                                    </AnchorPane>
                                                    <HBox alignment="CENTER">

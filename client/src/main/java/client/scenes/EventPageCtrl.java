@@ -97,8 +97,6 @@ public class EventPageCtrl implements Initializable {
     private Button cancelTransaction;
     @FXML
     public VBox transactions;
-    @FXML
-    private VBox tagsVBox;
     private ToggleGroup toggleGroup;
     private TransactionNode transactionEditTarget;
 
@@ -301,6 +299,12 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
+        tagsInput.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                String colorCode = newSelection.color.colorCode;
+                tagsInput.setStyle("-fx-background-color: " + colorCode + ";");
+            }
+        });
 
         // statistics clear
         pieChart.getData().clear();
@@ -311,6 +315,13 @@ public class EventPageCtrl implements Initializable {
         pieChart.setVisible(false);
 
         undoService.clear();
+    }
+
+    public void clearTagsInput() {
+        tagsInput.setValue(null);
+        // TODO: fix the color
+        tagsInput.setStyle("-fx-background-color:#98A8F8;");
+        tagsInput.setStyle("-fx-border-color: #AA77FF;");
     }
 
     private HBox hboxFromTag(TagDTO t) {
@@ -344,34 +355,6 @@ public class EventPageCtrl implements Initializable {
         return checkBox;
     }
 
-
-    @FXML
-    private void addTag() {
-        TagDTO input = tagsInput.getValue();
-        if (input == null) {
-            MainCtrl.alert("Please choose a tag from the dropdown menu");
-            return;
-        } else if (tags.contains(input)) {
-            MainCtrl.alert("Tag already added");
-            return;
-        }
-        tagsInput.setValue(null);
-
-        HBox tagBox = new HBox();
-        Button deleteTag = new Button("X");
-        deleteTag.setOnAction(e2 -> {
-            tags.remove(input);
-            tagsVBox.getChildren().remove(tagBox);
-        });
-        Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        tagBox.getChildren().add(new Text(input.getName()));
-        tagBox.getChildren().add(spacer);
-        tagBox.getChildren().add(deleteTag);
-        tagBox.setStyle("-fx-background-color: " + input.color.colorCode + ";");
-        tagsVBox.getChildren().add(tagBox);
-        tags.add(input);
-    }
 
     public void createTag() {
         String name = tagNameInput.getText();
@@ -507,6 +490,7 @@ public class EventPageCtrl implements Initializable {
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
         ParticipantDTO author = authorInput.getValue();
+        TagDTO tag = tagsInput.getValue();
 
 
         //radio buttons
@@ -531,7 +515,8 @@ public class EventPageCtrl implements Initializable {
 
         Date date = java.sql.Date.valueOf(localDate);
         return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
-                date, currency, amount, author, participants, tags, name);
+                date, currency, amount, author, participants,
+                new HashSet<>(Arrays.asList(tag)), name);
     }
 
     public void clearTransaction() {
@@ -542,9 +527,7 @@ public class EventPageCtrl implements Initializable {
         customSplit.setSelected(false);
         currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
-        tagsInput.setValue(null);
-        tags.clear();
-        tagsVBox.getChildren().clear();
+        clearTagsInput();
         for (Node node : vboxParticipantsTransaction.getChildren()) {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
