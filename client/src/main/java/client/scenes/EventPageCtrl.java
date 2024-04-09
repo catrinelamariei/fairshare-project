@@ -605,27 +605,35 @@ public class EventPageCtrl implements Initializable {
     boolean checkInput(String name, String transactionAmountString, String currency,
                        LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter the name of the expense");
+            alert("Please enter the name of the expense");
             return true;
         }
         if (author == null) {
-            MainCtrl.alert("Please chose the author of the transaction");
+            alert("Please chose the author of the transaction");
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            MainCtrl.alert("Please enter the amount of the expense");
+            alert("Please enter the amount of the expense");
             return true;
         }
         if (currency == null) {
-            MainCtrl.alert("Please enter the currency of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
         if (localDate == null) {
-            MainCtrl.alert("Please enter the date of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
 
         return false;
+    }
+
+    private void alert(String text){
+        try{
+            MainCtrl.alert(text);
+        } catch (Exception e){
+            System.out.println("can't produce an alert in testing");
+        }
     }
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
