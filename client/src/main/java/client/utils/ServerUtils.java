@@ -217,29 +217,42 @@ public class ServerUtils {
         return null;
     }
     public void register(String dest, Consumer<EventDTO> consumer) {
-        session.subscribe(dest, new StompFrameHandler() {
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return EventDTO.class;
-            }
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                consumer.accept((EventDTO) payload) ;
-            }
-        });
+        if(session != null && session.isConnected()) {
+            session.subscribe(dest, new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return EventDTO.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    consumer.accept((EventDTO) payload);
+                }
+            });
+        }
     }
 
     public void register(String dest, Consumer<UUID> consumer, UUID id) {
-        session.subscribe(dest, new StompFrameHandler() {
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return UUID.class;
-            }
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                consumer.accept((UUID) payload) ;
-            }
-        });
+        if(session != null && session.isConnected()) {
+            session.subscribe(dest, new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return UUID.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    consumer.accept((UUID) payload);
+                }
+            });
+        }
+    }
+
+    public void webSocketReconnect() {
+        if(session != null && session.isConnected()) {
+            session.disconnect();
+        }
+        session = connect(getWebSocketURL());
     }
 
     //Testing

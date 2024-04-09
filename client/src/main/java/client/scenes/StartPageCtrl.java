@@ -8,6 +8,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -73,6 +74,9 @@ public class StartPageCtrl {
             return;
         } catch (WebApplicationException ex) {
             MainCtrl.alert(ex.getMessage());
+            return;
+        }catch (ProcessingException ex){
+            MainCtrl.alert("Server is not available");
             return;
         }
 
@@ -165,7 +169,7 @@ public class StartPageCtrl {
                     recentEventsVBox.getChildren().add(0, this);
                     eventPage();
                 });
-            } catch (NotFoundException e) {
+            } catch (NotFoundException | ProcessingException e) {
                 this.pair = new Pair<>(p.getKey(), p.getValue());
                 this.getStyleClass().add("dissabledHyperlink");
                 this.setDisable(true); //cant be clicked on
