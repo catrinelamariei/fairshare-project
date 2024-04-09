@@ -22,7 +22,7 @@ public class TransactionController {
     private final TransactionRepository repo;
     private final DTOtoEntity d2e;
     private final SimpMessagingTemplate messagingTemplate;
-    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    //private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
     private Map<Object, Consumer<UUID>> deletionListeners = new ConcurrentHashMap<>();
 
 
@@ -40,6 +40,7 @@ public class TransactionController {
             @RequestBody TransactionDTO ts) {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
         TransactionDTO t = new TransactionDTO(d2e.create(ts));
+        listeners.forEach((k, l)->l.accept(t));
         EventDTO eventDTO = new EventDTO();
         eventDTO.id = t.eventId;
         eventDTO = new EventDTO(d2e.get(eventDTO));
@@ -96,6 +97,8 @@ public class TransactionController {
         return ResponseEntity.ok().build();
     }
 
+    //private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
     @GetMapping("/updates")
     public DeferredResult<ResponseEntity<TransactionDTO>> getUpdates() {
         var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();

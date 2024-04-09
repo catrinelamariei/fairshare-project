@@ -196,6 +196,14 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
+        server.registerForUpdatesTransaction(t ->{
+            Platform.runLater(()->{
+                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+                transactions.getChildren().clear();
+                transactions.getChildren().addAll(eventDTO.transactions.stream()
+                        .map(nodeFactory::createTransactionNode).toList());
+            });
+        });
 
         subscribe();
 
@@ -268,6 +276,8 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
+
+
     }
 
     private void loadTransactions(){
@@ -958,6 +968,10 @@ public class EventPageCtrl implements Initializable {
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .doubleValue();
         return (String.valueOf(totalExpenses));
+    }
+
+    public void stop(){
+        server.stop();
     }
 
 }

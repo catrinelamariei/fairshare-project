@@ -34,6 +34,7 @@ public class Main extends Application {
                 ex.printStackTrace();
             }
         });
+
     }
 
     public static void initializeUI(String langCode) {
@@ -58,6 +59,10 @@ public class Main extends Application {
                 privCheckPage, startPage, transactionPage);
 
         primaryStage.show();
+
+//        primaryStage.setOnCloseRequest(e->{
+//            eventPage.getKey().stop();
+//        });
     }
 
     public static ResourceBundle loadLanguages(String languageCode) {

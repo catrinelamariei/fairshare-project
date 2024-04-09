@@ -198,23 +198,23 @@ public class ServerUtils {
 
     }
 //////////////////////////////////////
-//    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
-//    public void registerForUpdatesTransaction(Consumer<TransactionDTO> consumer){
-//        EXEC.submit(()->{
-//            while(!Thread.interrupted()) {
-//                var res = ClientBuilder.newClient()
-//                        .target(UserData.getInstance().getServerURL())
-//                        .path("api/transaction/updates")
-//                        .request(APPLICATION_JSON)
-//                        .get(Response.class);
-//                if(res.getStatus()==204){
-//                    continue;
-//                }
-//                var t = res.readEntity(TransactionDTO.class);
-//                consumer.accept(t);
-//            }
-//        });
-//    }
+    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public void registerForUpdatesTransaction(Consumer<TransactionDTO> consumer){
+        EXEC.submit(()->{
+            while(!Thread.interrupted()) {
+                var res = ClientBuilder.newClient()
+                        .target(UserData.getInstance().getServerURL()).path("api/transaction/updates")
+                        .request(APPLICATION_JSON)
+                        .get(Response.class);
+                if(res.getStatus()==204){
+                    continue;
+                }
+                var t = res.readEntity(TransactionDTO.class);
+                consumer.accept(t);
+            }
+        });
+    }
+
 
     private static ExecutorService execUpdateParticipant = Executors.newSingleThreadExecutor();
     public void registerForUpdatesParticipant(Consumer<ParticipantDTO> consumer) {
@@ -262,6 +262,8 @@ public class ServerUtils {
     public void stop(){
         execUpdateParticipant.shutdownNow();
         execDeleteParticipant.shutdownNow();
+        EXEC.shutdownNow();
+
     }
 //    private static final ExecutorService execDeleteTransaction
 //            = Executors.newSingleThreadExecutor();
