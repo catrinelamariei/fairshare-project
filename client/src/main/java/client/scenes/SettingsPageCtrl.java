@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.Main;
 import client.UserData;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -21,6 +22,8 @@ public class SettingsPageCtrl implements Initializable {
     private final UserData userData = UserData.getInstance(); //should be injected
 
     //Languages
+    @FXML
+    private ChoiceBox<String> languageChoiceBox;
 
     //Connections
     @FXML
@@ -37,6 +40,11 @@ public class SettingsPageCtrl implements Initializable {
 
     @Override
     public void initialize(URL url1, ResourceBundle resourceBundle) {
+        //load all languages
+        languageChoiceBox.setItems(FXCollections.observableList(
+                StartPageCtrl.getAllLanguageCodes()));
+        languageChoiceBox.setValue(userData.getLanguageCode());
+
         //load all urls
         urlList.setCellFactory(list -> new UrlListCell());
         urlList.setItems(FXCollections.observableList(userData.getUrlList()));
@@ -44,10 +52,15 @@ public class SettingsPageCtrl implements Initializable {
     }
 
     @FXML
-    private void selectLanguage() {}
+    private void selectLanguage() {
+        userData.setLanguageCode(languageChoiceBox.getValue());
+        Main.initializeUI(languageChoiceBox.getValue());
+    }
 
     @FXML
-    private void cancelLanguage() {}
+    private void cancelLanguage() {
+        languageChoiceBox.setValue(userData.getLanguageCode());
+    }
 
     @FXML
     private void addConnection() {
