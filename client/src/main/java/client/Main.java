@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.ResourceBundle;
 
 import static com.google.inject.Guice.createInjector;
 
@@ -25,6 +25,7 @@ public class Main extends Application {
         //Locale locale = Locale.getDefault(); // Get default locale
         this.primaryStage = primaryStage;
         initializeUI(UserData.getInstance().getLanguageCode());
+        primaryStage.show();
     }
 
     public static void initializeUI(String langCode) {
@@ -41,19 +42,20 @@ public class Main extends Application {
                 "client", "scenes", "AdminPage.fxml");
         var privCheckPage = FXML.load(PrivCheckPageCtrl.class, languageBundle,
                 "client", "scenes", "PrivCheckPage.fxml");
-        var transactionPage = FXML.load(TransactionPageCtrl.class, languageBundle,
-                "client", "scenes", "TransactionPage.fxml");
+        var settingsPage = FXML.load(SettingsPageCtrl.class, languageBundle,
+                    "client", "scenes", "SettingsPage.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
-                privCheckPage, startPage, transactionPage);
-
-        primaryStage.show();
+                privCheckPage, startPage, settingsPage);
     }
 
     public static ResourceBundle loadLanguages(String languageCode) {
         return ResourceBundle.getBundle("client.lang." + languageCode);
     }
 
-
+    public static String getTranslation(String variable){
+        return languageBundle.getString(variable);
+    }
+    //example usage: main.getTranslation("email")
 }

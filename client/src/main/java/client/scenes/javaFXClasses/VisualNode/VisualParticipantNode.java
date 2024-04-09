@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 
@@ -86,8 +87,12 @@ public class VisualParticipantNode extends ParticipantNode {
         col1.setHgrow(Priority.ALWAYS);
         gridPane.getColumnConstraints().addAll(col0, col1);
 
+        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+
+
+        ImageView imgv = new ImageView(img);
         //create button
-        editSaveButton = new Button("Edit");
+        editSaveButton = new Button("Edit",imgv);
         editSaveButton.setOnAction(this::editParticipantFields);
         editSaveButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
@@ -100,6 +105,7 @@ public class VisualParticipantNode extends ParticipantNode {
         deleteButton = new Button("Delete");
         deleteButton.setOnAction(this::deleteParticipant);
         deleteButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
+        deleteButton.setStyle("-fx-text-fill: #ff0000;");
         // Add delete button to the layout
         TilePane deleteButtonPane = new TilePane(deleteButton);
         deleteButtonPane.setAlignment(Pos.CENTER);
@@ -141,18 +147,25 @@ public class VisualParticipantNode extends ParticipantNode {
             return;
         }
         try {
-            // Delete participant from the server
-            ServerUtils serverUtils = new ServerUtils();
-            serverUtils.deleteParticipant(id);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete event");
+            alert.setHeaderText("Do you want to delete this participant?");
 
-            // Remove the participant from the UI
-            Node parent = this.getParent();
-            if (parent instanceof Accordion) {
-                Accordion accordion = (Accordion) parent;
-                accordion.getPanes().remove(this);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                // Delete participant from the server
+                ServerUtils serverUtils = new ServerUtils();
+                serverUtils.deleteParticipant(id);
+
+                // Remove the participant from the UI
+                Node parent = this.getParent();
+                if (parent instanceof Accordion) {
+                    Accordion accordion = (Accordion) parent;
+                    accordion.getPanes().remove(this);
+                }
+
+                System.out.println("Participant deleted successfully.");
             }
-
-            System.out.println("Participant deleted successfully.");
         } catch (Exception e) {
             System.err.println("Error deleting participant: " + e.getMessage());
         }

@@ -5,7 +5,7 @@ import client.utils.EventPageKeyEventHandler;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import javafx.util.Pair;
 
 public class MainCtrl {
@@ -24,15 +24,20 @@ public class MainCtrl {
     private PrivCheckPageCtrl privCheckPageCtrl;
     private Scene privCheckPage;
 
-    private TransactionPageCtrl transactionPageCtrl;
-    private Scene transactionPage;
+    private final Stage sideStage = new Stage();
+    private SettingsPageCtrl settingsPageCtrl;
+    private Scene settingsPage;
+
+    public MainCtrl() {
+        sideStage.initModality(Modality.APPLICATION_MODAL);
+    }
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
                            Pair<AdminPageCtrl, Parent> adminPage,
                            Pair<PrivCheckPageCtrl, Parent> privCheckPage,
                            Pair<StartPageCtrl, Parent> page,
-                           Pair<TransactionPageCtrl, Parent> transactionPage) {
+                           Pair<SettingsPageCtrl, Parent> settingsPage) {
 
         this.primaryStage = primaryStage;
         this.primaryStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
@@ -50,8 +55,9 @@ public class MainCtrl {
         this.adminPageCtrl = adminPage.getKey();
         this.adminPage = new Scene(adminPage.getValue());
 
-        this.transactionPageCtrl = transactionPage.getKey();
-        this.transactionPage = new Scene(transactionPage.getValue());
+        this.settingsPageCtrl = settingsPage.getKey();
+        this.settingsPage = new Scene(settingsPage.getValue());
+        startPageCtrl.veil.visibleProperty().bind(sideStage.showingProperty());
 
         showStartPage();
         primaryStage.show();
@@ -88,9 +94,16 @@ public class MainCtrl {
         primaryStage.setScene(privCheckPage);
     }
 
-    public void showTransactionPage() {
-        primaryStage.setTitle("<EventName>: overview");
-        primaryStage.setScene(transactionPage);
+    /**
+     * creates a new window with settings
+     * disables current window
+     */
+    public void showSettingsPage() {
+        sideStage.setScene(settingsPage);
+        sideStage.setTitle("Settings");
+
+        sideStage.showAndWait(); //waits until sideStage is closed
+        startPageCtrl.initialize(); //TODO: check if this is actually sufficient to switch url
     }
 
     // Display an error message if the input is invalid
