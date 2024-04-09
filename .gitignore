@@ -45,3 +45,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Client Config ###
+client/config.json
