@@ -1,7 +1,7 @@
 package client.scenes.javaFXClasses.DataNode;
 
 import client.MainCtrl;
-import client.utils.EventJson.EventJsonUtil;
+import client.utils.EventJsonUtil;
 import javafx.scene.control.TitledPane;
 
 import java.util.UUID;

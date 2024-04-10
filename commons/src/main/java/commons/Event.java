@@ -32,15 +32,15 @@ public class Event {
     @SuppressWarnings("unused")
     public Event() {
         // for object mapper
-        this.creationDate = new Date();
-    }
-
-    public Event(String name) {
-        this.name = name;
-        this.tags = new HashSet<>();
         this.participants = new HashSet<>();
         this.creationDate = new Date();
         this.transactions = new HashSet<>();
+        this.tags = new HashSet<>();
+    }
+
+    public Event(String name) {
+        this();
+        this.name = name;
     }
 
     public boolean addTag(Tag tag) {

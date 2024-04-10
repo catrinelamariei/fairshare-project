@@ -19,7 +19,7 @@ import client.scenes.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
 import client.utils.*;
-import client.utils.EventJson.EventJsonUtil;
+import client.utils.EventJsonUtil;
 import com.google.inject.*;
 
 public class MyModule extends AbstractModule {

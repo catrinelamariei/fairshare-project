@@ -2,7 +2,7 @@ package client.scenes.javaFXClasses.VisualNode;
 
 import client.*;
 import client.scenes.javaFXClasses.DataNode.EventNode;
-import client.utils.EventJson.EventJsonUtil;
+import client.utils.EventJsonUtil;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;

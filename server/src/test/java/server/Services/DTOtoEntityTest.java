@@ -65,6 +65,31 @@ class DTOtoEntityTest {
         assertEquals(event, d2e.update(eventDTO));
     }
 
+    //the fact that this test passes is crazy to me
+    @Test
+    void setEvent() {
+        EventDTO eventDTO = new EventDTO(UUID.randomUUID(), "christmass");
+
+        TagDTO tag = new TagDTO(UUID.randomUUID(), eventDTO.id, "food", Tag.Color.BLUE);
+        eventDTO.tags.add(tag);
+
+        ParticipantDTO participant = new ParticipantDTO(UUID.randomUUID(),
+            eventDTO.id, "Max", "Well", "mw@me.com", "-", "-");
+        eventDTO.participants.add(participant);
+
+        eventDTO.transactions.add(new TransactionDTO(UUID.randomUUID(), eventDTO.id, new Date(),
+            "EUR", BigDecimal.valueOf(14.99d), participant, new HashSet<>(List.of(participant)),
+            new HashSet<>(List.of(tag)), "Burgers"));
+
+        doNothing().when(eventRepository).deleteById(any());
+        when(eventRepository.save(any(Event.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(participantRepository.saveAll(any())).thenReturn(null);
+        when(tagRepository.saveAll(any())).thenReturn(null);
+        when(transactionRepository.saveAll(any())).thenReturn(null);
+
+        assertEquals(eventDTO, new EventDTO(d2e.set(eventDTO)));
+    }
+
     @Test
     void deleteEvent() {
         Event event = new Event("event");

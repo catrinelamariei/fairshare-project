@@ -3,7 +3,7 @@ package client.scenes.javaFXClasses.DataNode;
 import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.EventJson.EventJsonUtil;
+import client.utils.EventJsonUtil;
 import client.utils.ServerUtils;
 import commons.DTOs.*;
 

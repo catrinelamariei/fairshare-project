@@ -4,7 +4,7 @@ import client.MainCtrl;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.EventJson.EventJsonUtil;
+import client.utils.EventJsonUtil;
 import client.utils.ServerUtils;
 import com.google.inject.*;
 import commons.DTOs.*;

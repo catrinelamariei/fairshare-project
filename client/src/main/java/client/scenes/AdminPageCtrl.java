@@ -3,7 +3,7 @@ package client.scenes;
 import client.MainCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
-import client.utils.EventJson.EventJsonUtil;
+import client.utils.EventJsonUtil;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
