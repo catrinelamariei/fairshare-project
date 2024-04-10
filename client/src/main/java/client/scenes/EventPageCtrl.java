@@ -9,6 +9,7 @@ import commons.DTOs.*;
 import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -46,6 +47,7 @@ public class EventPageCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
     public final UndoService undoService; //should be made private using factory injection
+
     private EventDTO eventDTO;
 
     //delete event
@@ -208,6 +210,8 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
+        subscribe();
+
         //loading stats
         updateChart.setText(resources.getString("load_stats"));
         updateChart.setOnAction(e -> {
@@ -216,6 +220,83 @@ public class EventPageCtrl implements Initializable {
             eventCost.setText("\u20AC " + printTotalExpenses());
             updateTotalExpenses();
         });
+
+    }
+
+    private void subscribe() {
+        server.registerForUpdatesParticipant(p->{
+            Platform.runLater(()->{
+                if(p.eventId.equals(UserData.getInstance().getCurrentUUID())){
+                    participants.getPanes().clear();
+                    eventDTO.participants.removeIf(participantDTO ->
+                            participantDTO.getId().equals(p.getId()));
+                    eventDTO.participants.add(p);
+                    participants.getPanes().addAll(eventDTO.participants.stream()
+                            .map(nodeFactory::createParticipantNode).toList());
+                    authorInput.getItems().clear();
+                    authorInput.getItems().addAll(eventDTO.participants);
+                    vboxParticipantsTransaction.getChildren().clear();
+                    vboxParticipantsTransaction.getChildren().addAll(eventDTO.participants.stream()
+                            .map(EventPageCtrl::participantCheckbox).toList());
+                    payerFilter.getItems().clear();
+                    participantFilter.getItems().clear();
+                    payerFilter.getItems().add("All");
+                    participantFilter.getItems().add("All");
+                    for (ParticipantDTO part : eventDTO.participants) {
+                        payerFilter.getItems().add(part.getFullName());
+                        participantFilter.getItems().add(part.getFullName());
+                    }
+                    payerFilter.setValue("All");
+                    participantFilter.setValue("All");
+                }
+
+
+            });
+        });
+
+        server.registerForParticipantDeletionUpdates(id->{
+            Platform.runLater(()->{
+                if(eventDTO.participants.stream().anyMatch(p->p.getId().equals(id))){
+                    eventDTO.participants.removeIf(p->p.getId().equals(id));
+                    participants.getPanes().clear();
+                    participants.getPanes().addAll(eventDTO.participants.stream()
+                            .map(nodeFactory::createParticipantNode).toList());
+                    authorInput.getItems().clear();
+                    authorInput.getItems().addAll(eventDTO.participants);
+                    vboxParticipantsTransaction.getChildren().clear();
+                    vboxParticipantsTransaction.getChildren().addAll(eventDTO.participants.stream()
+                            .map(EventPageCtrl::participantCheckbox).toList());
+                    payerFilter.getItems().clear();
+                    participantFilter.getItems().clear();
+                    payerFilter.getItems().add("All");
+                    participantFilter.getItems().add("All");
+                    for (ParticipantDTO part : eventDTO.participants) {
+                        payerFilter.getItems().add(part.getFullName());
+                        participantFilter.getItems().add(part.getFullName());
+                    }
+                    payerFilter.setValue("All");
+                    participantFilter.setValue("All");
+
+
+                    //this is necessary because sometimes, deleting
+                    // a participant will also delete a transaction
+                    EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+                    transactions.getChildren().clear();
+                    transactions.getChildren().addAll(e.transactions.stream()
+                            .map(nodeFactory::createTransactionNode).toList());
+
+
+
+                }
+            });
+        });
+    }
+
+    private void loadTransactions(){
+        transactions.getChildren().clear();
+        transactions.getChildren().addAll(eventDTO.transactions.stream()
+                .map(nodeFactory::createTransactionNode).toList());
+
     }
 
     public void load() throws WebApplicationException {
@@ -311,6 +392,9 @@ public class EventPageCtrl implements Initializable {
         pieChart.setVisible(false);
 
         undoService.clear();
+
+        server.stop();
+        subscribe();
     }
 
     private HBox hboxFromTag(TagDTO t) {
@@ -462,7 +546,6 @@ public class EventPageCtrl implements Initializable {
     public TransactionDTO createTransaction(TransactionDTO ts) {
         if (ts == null) return null;
 
-
         try {
             ts = server.postTransaction(ts);
             undoService.addAction(CREATE, ts);
@@ -483,6 +566,7 @@ public class EventPageCtrl implements Initializable {
         }
 
         clearTransaction();
+        showOverviewTransactions();
         return ts;
     }
 
