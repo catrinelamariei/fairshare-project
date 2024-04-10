@@ -612,7 +612,7 @@ public class EventPageCtrl implements Initializable {
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
         Set<ParticipantDTO> participants = new HashSet<>();
-        if (selectedRadioButton == equalSplit) {
+        if (selectedRadioButton == getEqualSplit()) {
             // Handle split equally logic
             ObservableList<ParticipantDTO> choiceBoxItems = authorInput.getItems();
             participants = new HashSet<>(choiceBoxItems);
@@ -634,6 +634,10 @@ public class EventPageCtrl implements Initializable {
 
         }
         return participants;
+    }
+
+    private RadioButton getEqualSplit() {
+        return equalSplit;
     }
 
     public void onAddParticipant() {
@@ -848,25 +852,40 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void fillTransaction(TransactionDTO transaction) {
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         this.transactionName.setText(transaction.getSubject());
         this.transactionAmount.setText(transaction.getAmount().toString());
         this.currencyCodeInput.setValue(transaction.getCurrencyCode());
         this.transactionDate.setValue(transaction.getDate().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate());
         this.authorInput.setValue(transaction.getAuthor());
-        this.toggleGroup.selectToggle(customSplit);
+        if (transaction.getTags().size() > 0) {
+            this.tagsInput.setValue(transaction.getTags().iterator().next());
+            this.tagsInput.setStyle("-fx-background-color: " + transaction.getTags()
+                    .iterator().next().color.colorCode + ";");
+        }
+        if (transaction.getParticipants().size() == event.participants.size()) {
+            this.toggleGroup.selectToggle(equalSplit);
+            vboxParticipantsTransaction.getChildren().forEach(node -> {
+                if (node instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) node;
+                    checkBox.setDisable(true);
+                    checkBox.setSelected(true);
+                }
+            });
+        } else {
+            this.toggleGroup.selectToggle(customSplit);
+            vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
+                    .map(CheckBox.class::cast)
+                    .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
+                    .forEach(cb -> cb.setSelected(true));
+        }
 
-        //select checkboxes of participants
-        vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
-                .map(CheckBox.class::cast)
-                .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
-                .forEach(cb -> cb.setSelected(true));
     }
 
     //TODO do we need this method maybe we can use only updateTransaction?
     public void submitEditTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
-
         updateTransaction(ts);
     }
 
