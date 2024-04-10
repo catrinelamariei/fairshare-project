@@ -47,7 +47,7 @@ public class Transaction {
         this.date = date;
         this.currencyCode = currencyCode;
         this.amount = amount;
-        this.tags = new HashSet<Tag>();
+        this.tags = new HashSet<>();
         this.author = author;
         this.participants = new HashSet<>();
         this.subject = subject;

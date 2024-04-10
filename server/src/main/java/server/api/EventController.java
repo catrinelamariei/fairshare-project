@@ -3,6 +3,7 @@ package server.api;
 import commons.DTOs.*;
 import commons.*;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,8 @@ public class EventController implements WebMvcConfigurer {
     @PostMapping(path = {"" , "/"})
     public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
         if (eventDTO == null || !eventDTO.validate()) return ResponseEntity.badRequest().build();
+        if (eventDTO.id != null && repo.existsById(eventDTO.id))
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
 
         EventDTO created = new EventDTO(d2e.create(eventDTO));
         if(messagingTemplate != null) {
@@ -73,9 +76,9 @@ public class EventController implements WebMvcConfigurer {
 
 
     @Transactional
-    @PutMapping("/{id}")
-    public ResponseEntity<EventDTO> updateEvent(@PathVariable("id") UUID id,
-                                                @RequestBody EventDTO eventDTO) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<EventDTO> updateEventName(@PathVariable("id") UUID id,
+                                                    @RequestBody EventDTO eventDTO) {
         if (id == null || eventDTO == null  || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
@@ -85,6 +88,12 @@ public class EventController implements WebMvcConfigurer {
             messagingTemplate.convertAndSend("/topic/events", updated);
         }
         return ResponseEntity.ok(updated);
+    }
+
+    @Transactional
+    @PutMapping
+    public ResponseEntity<EventDTO> updateEvent(@RequestBody EventDTO eventDTO) {
+        return ResponseEntity.ok(new EventDTO(d2e.set(eventDTO)));
     }
 
     // TODO: manage dependencies

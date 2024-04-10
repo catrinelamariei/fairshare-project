@@ -3,6 +3,7 @@ package client.scenes;
 import client.MainCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
+import client.utils.EventJsonUtil;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
@@ -11,7 +12,10 @@ import javafx.application.Platform;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -22,6 +26,7 @@ public class AdminPageCtrl implements Initializable {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
+    private final EventJsonUtil jsonUtil;
     private boolean ascending = true;
 
     //overview management
@@ -37,10 +42,12 @@ public class AdminPageCtrl implements Initializable {
     private HBox sortingContainer;
 
     @Inject
-    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl, NodeFactory nodeFactory) {
+    public AdminPageCtrl(ServerUtils server, MainCtrl mainCtrl, NodeFactory nodeFactory,
+                         EventJsonUtil jsonUtil) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.nodeFactory = nodeFactory;
+        this.jsonUtil = jsonUtil;
     }
 
     //run on startup
@@ -160,5 +167,26 @@ public class AdminPageCtrl implements Initializable {
     public void sendGetRequest() {
         String response = server.getJSON();
         System.out.println("Response from server: " + response);
+    }
+
+    @FXML
+    private void uploadJson() throws IOException {
+        //get file
+        FileChooser fileCHooser = new FileChooser();
+        fileCHooser.setTitle("Load JSON");
+        FileChooser.ExtensionFilter extensionFilter =
+            new FileChooser.ExtensionFilter("JSON", "*.json");
+        fileCHooser.getExtensionFilters().add(extensionFilter);
+        File file = fileCHooser.showOpenDialog(mainCtrl.primaryStage);
+
+        //get JSON and turn into DTO
+        String out = (new Scanner(file)).useDelimiter("\\Z").next();
+        EventDTO event = jsonUtil.putJSON(out);
+
+        //update nodes
+        eventAccordion.getPanes().removeIf(titledPane ->
+            ((titledPane instanceof VisualEventNode ven)
+            && ven.getPair().getKey().equals(event.id)));
+        eventAccordion.getPanes().add(nodeFactory.createEventNode(event));
     }
 }

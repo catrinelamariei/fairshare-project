@@ -52,6 +52,7 @@ public class Tag {
         this.id = t.id;
         this.name = t.name;
         this.color = t.color;
+        this.transactions = new HashSet<>();
     }
 
     public Tag(Event event, String name, Color color) {

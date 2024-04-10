@@ -17,6 +17,7 @@ package client.utils;
 
 import client.UserData;
 import commons.DTOs.*;
+import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.*;
 import jakarta.ws.rs.core.*;
@@ -59,12 +60,19 @@ public class ServerUtils {
                 .post(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
     }
 
-    public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
+    public EventDTO patchEvent(EventDTO eventDTO) throws WebApplicationException {
         return ClientBuilder.newClient()
             .target(UserData.getInstance().getServerURL())
                 .path("/api/event/"+eventDTO.getId())
             .request(APPLICATION_JSON)
-            .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
+            .method(HttpMethod.PATCH, Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
+    }
+
+    public EventDTO putEvent(EventDTO event) throws WebApplicationException {
+        return ClientBuilder.newClient() //
+            .target(UserData.getInstance().getServerURL()).path("api/event") //
+            .request(APPLICATION_JSON) //
+            .put(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
     }
 
     public void deleteEvent(UUID id) throws WebApplicationException {
