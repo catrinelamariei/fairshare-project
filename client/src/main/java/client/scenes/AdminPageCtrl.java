@@ -12,7 +12,10 @@ import javafx.application.Platform;
 import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -167,8 +170,23 @@ public class AdminPageCtrl implements Initializable {
     }
 
     @FXML
-    private void uploadJson() {
-        jsonUtil.postJson("");
-        // TODO
+    private void uploadJson() throws IOException {
+        //get file
+        FileChooser fileCHooser = new FileChooser();
+        fileCHooser.setTitle("Load JSON");
+        FileChooser.ExtensionFilter extensionFilter =
+            new FileChooser.ExtensionFilter("JSON", "*.json");
+        fileCHooser.getExtensionFilters().add(extensionFilter);
+        File file = fileCHooser.showOpenDialog(mainCtrl.primaryStage);
+
+        //get JSON and turn into DTO
+        String out = (new Scanner(file)).useDelimiter("\\Z").next();
+        EventDTO event = jsonUtil.putJSON(out);
+
+        //update nodes
+        eventAccordion.getPanes().removeIf(titledPane ->
+            ((titledPane instanceof VisualEventNode ven)
+            && ven.getPair().getKey().equals(event.id)));
+        eventAccordion.getPanes().add(nodeFactory.createEventNode(event));
     }
 }

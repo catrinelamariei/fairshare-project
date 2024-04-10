@@ -28,6 +28,7 @@ class EventTest {
         Tag t = new Tag(e, "name", BLUE);
         e.addTag(t);
         Event e2 = new Event("name");
+        e2.id = e.id;
         Tag t2 = new Tag(e2, "name", BLUE);
         e2.addTag(t2);
         assertEquals(t, t2);
@@ -52,6 +53,7 @@ class EventTest {
         Tag t = new Tag(e, "name", BLUE);
         e.addTag(t);
         Event e2 = new Event("name");
+        e2.id = e.id;
         Tag t2 = new Tag(e2, "name", BLUE);
         e2.addTag(t2);
         assertEquals(e.hashCode(), e2.hashCode());

@@ -47,6 +47,7 @@ class DTOtoEntityTest {
     void createEvent() {
         EventDTO eventDTO = new EventDTO(UUID.randomUUID(), "event");
         Event event = new Event(eventDTO.getName());
+        event.id = eventDTO.id;
         when(tagRepository.save(any(Tag.class))).thenReturn(new Tag(event, "tag", Tag.Color.BLUE));
         when(eventRepository.save(event)).thenReturn(event);
         assertEquals(event, d2e.create(eventDTO));

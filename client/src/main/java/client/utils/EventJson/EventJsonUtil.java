@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
+import jakarta.ws.rs.WebApplicationException;
 
 import java.util.UUID;
 
@@ -38,13 +39,12 @@ public class EventJsonUtil {
     }
 
     /**
-     * creates event, sends to server
+     * creates event if not existent, then sets values of event
      * @param json string of eventDTO json
      * @return eventDTO as returned by server
      */
-    public EventDTO postJson(String json) {
-        System.out.println("Post JSON");
-        return null;
-        //TODO
+    public EventDTO putJSON(String json) throws JsonProcessingException, WebApplicationException {
+        EventDTO event = objectMapper.readValue(json, EventDTO.class);
+        return server.putEvent(event);
     }
 }

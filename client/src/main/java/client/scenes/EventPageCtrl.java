@@ -822,7 +822,7 @@ public class EventPageCtrl implements Initializable {
             eventDTO.name = newEventName;
             //eventTitle.setText(newEventName);
             try {
-                server.putEvent(eventDTO);
+                server.patchEvent(eventDTO);
                 eventTitle.setText(newEventName);
             } catch (WebApplicationException e) {
                 System.err.println("Error updating event name: " + e.getMessage());

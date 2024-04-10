@@ -11,8 +11,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 public class Event {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    public UUID id = UUID.randomUUID();
 
     @Column(nullable = false)
     private String name;
@@ -21,7 +20,7 @@ public class Event {
     public Set<Tag> tags;
 
     @Column (nullable = false)
-    private final Date creationDate;
+    private Date creationDate;
 
     @OneToMany(mappedBy="event", cascade = CascadeType.ALL)
     public Set<Participant> participants;
@@ -43,7 +42,6 @@ public class Event {
         this.creationDate = new Date();
         this.transactions = new HashSet<>();
     }
-
 
     public boolean addTag(Tag tag) {
         if(tags == null) tags = new HashSet<>();
@@ -92,6 +90,10 @@ public class Event {
         return transactions;
     }
 
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
     public boolean addParticipant(Participant participant) {
         if(participants == null) participants = new HashSet<>();
         if(participants.contains(participant)) return false;
@@ -114,7 +116,7 @@ public class Event {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Event event)) return false;
-        return id == event.id && Objects.equals(name, event.name);
+        return Objects.equals(id, event.id) && Objects.equals(name, event.name);
     }
 
     @Override
