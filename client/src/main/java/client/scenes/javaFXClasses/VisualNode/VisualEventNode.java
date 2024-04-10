@@ -119,7 +119,7 @@ public class VisualEventNode extends EventNode {
         FileChooser fileCHooser = new FileChooser();
         fileCHooser.setTitle("Save JSON");
         FileChooser.ExtensionFilter extensionFilter =
-            new FileChooser.ExtensionFilter("JSON", ".json");
+            new FileChooser.ExtensionFilter("JSON", "*.json");
         fileCHooser.getExtensionFilters().add(extensionFilter);
         fileCHooser.setSelectedExtensionFilter(extensionFilter);
         File file = fileCHooser.showSaveDialog(mainCtrl.primaryStage);
