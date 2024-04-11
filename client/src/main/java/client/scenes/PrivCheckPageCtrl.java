@@ -43,7 +43,7 @@ public class PrivCheckPageCtrl {
         String passwordText = password.getText();
         if(passwordText!=null && !passwordText.isEmpty()){
             String response = postRequest(password.getText());
-
+            //todo
             if(!response.equals("Invalid password")) {
                 UserData data = UserData.getInstance();
                 data.setToken(response);
@@ -51,10 +51,10 @@ public class PrivCheckPageCtrl {
                 adminPage();
             }else{
                 text.setStyle("-fx-text-fill: red;");
-                text.setText("Wrong code");
+                text.setText(Main.getTranslation("wrong_code"));
             }
         }else{
-            mainCtrl.alert("Please provide a password");
+            mainCtrl.alert(Main.getTranslation("provide_password"));
         }
 
     }
