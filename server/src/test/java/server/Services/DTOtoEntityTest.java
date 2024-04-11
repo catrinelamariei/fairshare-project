@@ -44,12 +44,24 @@ class DTOtoEntityTest {
     }
 
     @Test
-    void createEvent() {
+    void createEventNoUUID() {
+        EventDTO eventDTO = new EventDTO(null, "event");
+        Event event = new Event(eventDTO.getName());
+        when(tagRepository.save(any(Tag.class))).thenReturn(new Tag(event, "tag", Tag.Color.BLUE));
+        when(eventRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        Event result = d2e.create(eventDTO);
+        event.id = result.id; //for equals because UUID is random generated
+        assertEquals(event, result);
+    }
+
+    @Test
+    void createEventWithUUID() {
         EventDTO eventDTO = new EventDTO(UUID.randomUUID(), "event");
         Event event = new Event(eventDTO.getName());
         event.id = eventDTO.id;
         when(tagRepository.save(any(Tag.class))).thenReturn(new Tag(event, "tag", Tag.Color.BLUE));
-        when(eventRepository.save(event)).thenReturn(event);
+        when(eventRepository.save(event)).thenReturn(null);
         assertEquals(event, d2e.create(eventDTO));
     }
 
