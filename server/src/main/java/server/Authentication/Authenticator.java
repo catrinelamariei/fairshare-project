@@ -16,7 +16,7 @@ public class Authenticator implements HandlerInterceptor {
         JwtTokenService jwtTokenService = new JwtTokenService();
 
         //validate token
-        if(token != null && jwtTokenService.
+        if(!request.getMethod().equals("GET") || token != null && jwtTokenService.
                 isValidToken(token.replace("Bearer ", ""),request.getRemoteAddr())){
             return true; //continue request
         }

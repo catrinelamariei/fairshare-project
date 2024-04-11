@@ -110,6 +110,7 @@ public final class UserData{
 
     public void setToken(String u) {
         getUrlData().token = u;
+        save();
     }
 
     public void setCurrentUUID(Pair<UUID, String> pair) {
