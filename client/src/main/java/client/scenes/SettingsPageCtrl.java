@@ -62,6 +62,8 @@ public class SettingsPageCtrl implements Initializable {
         urlList.valueProperty().addListener((obs, oldVal, newVal) ->
                 valueChanged(urlList, userData.getServerURL(), newVal));
 
+        urlTextField.textProperty().addListener((obs, oldVal, newVal) -> urlTextChanged());
+
         selectedURLAvailabiltyStyle();
     }
 
@@ -138,6 +140,12 @@ public class SettingsPageCtrl implements Initializable {
             choiceBox.getStyleClass().add("ChangedValue"); //value was changed
         else
             choiceBox.getStyleClass().removeAll("ChangedValue"); //value no longer changed
+    }
+
+    private void urlTextChanged() {
+        //restore all fields to default
+        statusText.setText("N/A");
+        statusText.setFill(Color.BLACK);
     }
 
     private void selectedURLAvailabiltyStyle() {
