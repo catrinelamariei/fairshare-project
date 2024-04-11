@@ -44,7 +44,8 @@ public class DTOtoEntity {
      */
     public Event create(EventDTO e){
         Event event = new Event(e.getName());
-        try {event.id = UUID.fromString(e.id.toString());} catch (IllegalArgumentException ign) {}
+        try {event.id = UUID.fromString(e.id.toString());} catch (IllegalArgumentException | NullPointerException ign) {}
+        eventRepository.save(event);
         event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
         event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
         event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
