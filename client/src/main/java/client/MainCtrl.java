@@ -2,6 +2,9 @@ package client;
 
 import client.scenes.*;
 import client.utils.KeyEvents.EventPageKeyEventHandler;
+import client.utils.ServerUtils;
+import commons.DTOs.EventDTO;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
@@ -28,11 +31,17 @@ public class MainCtrl {
     private SettingsPageCtrl settingsPageCtrl;
     private Scene settingsPage;
 
-    public MainCtrl() {
+    private final ServerUtils server;
+
+
+    @Inject
+    public MainCtrl(ServerUtils server) {
+        this.server = server;
         sideStage.initModality(Modality.APPLICATION_MODAL);
     }
 
-    public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
+    public void initialize(Stage primaryStage,
+                           Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
                            Pair<AdminPageCtrl, Parent> adminPage,
                            Pair<PrivCheckPageCtrl, Parent> privCheckPage,
@@ -64,7 +73,7 @@ public class MainCtrl {
     }
 
     public void showStartPage() {
-        primaryStage.setTitle("Home Screen");
+        primaryStage.setTitle(Main.getTranslation("home_screen"));
         primaryStage.setScene(startPage);
     }
 
@@ -72,9 +81,9 @@ public class MainCtrl {
         try {
             eventPageCtrl.load(); //INITIALIZE eventPage with data
             primaryStage.setScene(eventPage);
-            primaryStage.setTitle("event");
+            primaryStage.setTitle(Main.getTranslation("event"));
         } catch (NotFoundException e) {
-            MainCtrl.alert("404 - EVENT NOT FOUND!");
+            MainCtrl.alert(Main.getTranslation("event_not_found_404"));
         }
     }
 
@@ -83,14 +92,13 @@ public class MainCtrl {
             showAdminCheckPage(); //if no key is present, obtain one
             return;
         }
-
-        primaryStage.setTitle("<EventName>: admin panel");
+        primaryStage.setTitle(getEventName() + " - " + Main.getTranslation("admin_panel"));
         adminPageCtrl.load();
         primaryStage.setScene(adminPage);
     }
 
     public void showAdminCheckPage() {
-        primaryStage.setTitle("<EventName>: admin panel login");
+        primaryStage.setTitle(getEventName() + " - " +  Main.getTranslation("admin_panel_login"));
         primaryStage.setScene(privCheckPage);
     }
 
@@ -100,7 +108,7 @@ public class MainCtrl {
      */
     public void showSettingsPage() {
         sideStage.setScene(settingsPage);
-        sideStage.setTitle("Settings");
+        sideStage.setTitle(Main.getTranslation("settings"));
 
         sideStage.showAndWait(); //waits until sideStage is closed
         startPageCtrl.initialize(); //TODO: check if this is actually sufficient to switch url
@@ -109,7 +117,7 @@ public class MainCtrl {
     // Display an error message if the input is invalid
     public static void alert(String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        alert.setTitle(Main.getTranslation("error"));
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
@@ -121,6 +129,11 @@ public class MainCtrl {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
+    }
+
+    private String getEventName() {
+        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        return event.getName();
     }
 
 

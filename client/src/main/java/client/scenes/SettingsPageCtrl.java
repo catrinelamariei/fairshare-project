@@ -109,7 +109,7 @@ public class SettingsPageCtrl implements Initializable {
             }
         } catch (Exception e) {
             System.err.println(e);
-            statusText.setText("unavailable");
+            statusText.setText(Main.getTranslation("unavailable"));
         }
         statusText.setFill(Color.RED);
     }
