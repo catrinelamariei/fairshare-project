@@ -18,6 +18,7 @@ package client.utils;
 import client.UserData;
 import commons.DTOs.*;
 import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.*;
 import jakarta.ws.rs.core.*;
@@ -34,7 +35,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -385,7 +385,7 @@ public class ServerUtils {
     }
 
     //Testing
-    public Response.StatusType reach(String url) {
+    public Response.StatusType reach(String url) throws ProcessingException {
         return ClientBuilder.newClient()
                 .target(url).path("api/test/reach/")
                 .request()

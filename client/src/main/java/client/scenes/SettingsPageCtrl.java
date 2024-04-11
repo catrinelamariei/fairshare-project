@@ -61,31 +61,33 @@ public class SettingsPageCtrl implements Initializable {
         urlList.setValue(userData.getServerURL());
         urlList.valueProperty().addListener((obs, oldVal, newVal) ->
                 valueChanged(urlList, userData.getServerURL(), newVal));
+
+        selectedURLAvailabiltyStyle();
     }
 
     @FXML
     private void selectLanguage() {
         userData.setLanguageCode(languageChoiceBox.getValue());
         Main.initializeUI(languageChoiceBox.getValue());
-        languageChoiceBox.setStyle("");
+        languageChoiceBox.getStyleClass().removeAll("ChangedValue");
     }
 
     @FXML
     private void cancelLanguage() {
         languageChoiceBox.setValue(userData.getLanguageCode());
-        languageChoiceBox.setStyle("");
+        languageChoiceBox.getStyleClass().removeAll("ChangedValue");
     }
 
     @FXML
     private void selectCurrency() {
         userData.setCurrencyCode(currencyChoiceBox.getValue());
-        currencyChoiceBox.setStyle("");
+        currencyChoiceBox.getStyleClass().removeAll("ChangedValue");
     }
 
     @FXML
     private void cancelCurrency() {
         currencyChoiceBox.setValue(userData.getCurrencyCode());
-        currencyChoiceBox.setStyle("");
+        currencyChoiceBox.getStyleClass().removeAll("ChangedValue");
     }
 
     @FXML
@@ -117,16 +119,34 @@ public class SettingsPageCtrl implements Initializable {
     @FXML
     private void selectSavedConnection() {
         userData.setSelectedURL(urlList.getValue());
-        urlList.setStyle("");
+        selectedURLAvailabiltyStyle();
     }
 
     //utility methods
     private void valueChanged(Control choiceBox, String oldVal, String newVal) {
         if (!newVal.equals(oldVal))
-            choiceBox.setStyle("-fx-background-color: lightblue");
+            choiceBox.getStyleClass().add("ChangedValue");
         else
-            choiceBox.setStyle("");
+            choiceBox.getStyleClass().removeAll("ChangedValue");
     }
+
+    private void selectedURLAvailabiltyStyle() {
+        urlList.getStyleClass().removeAll("Available", "Unavailable", "ChangedValue");
+
+        if (reach(urlList.getValue()))
+            urlList.getStyleClass().add("Available");
+        else
+            urlList.getStyleClass().add("Unavailable");
+    }
+
+    private boolean reach(String url) {
+        try {
+            return server.reach(url).getFamily().equals(Response.Status.Family.SUCCESSFUL);
+        } catch (ProcessingException e) {
+            return false;
+        }
+    }
+
     private class UrlListCell extends ListCell<String> {
         @Override
         protected void updateItem(String item, boolean empty) {
@@ -135,12 +155,12 @@ public class SettingsPageCtrl implements Initializable {
 
             setText(item);
             try {
-                if (server.reach(item).equals(Response.Status.OK)) {
-                    setTextFill(Color.GREEN);
+                if (reach(item)) {
+                    getStyleClass().add("Available");
                     return;
                 }
             } catch (ProcessingException e) {}
-            setTextFill(Color.RED);
+            getStyleClass().add("Unavailable");
         }
     }
 }
