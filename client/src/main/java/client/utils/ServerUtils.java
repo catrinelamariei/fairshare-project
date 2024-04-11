@@ -208,6 +208,21 @@ public class ServerUtils {
     public void putJSON(String json, UUID id) throws WebApplicationException {
 
     }
+
+    //ADMIN
+    public Response.StatusType adminReqCode() {
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("/admin")
+                .request().get().getStatusInfo();
+    }
+
+    public Response adminReqToken(String code) {
+        return ClientBuilder.newClient()
+                .target(UserData.getInstance().getServerURL()).path("/admin")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(code, APPLICATION_JSON));
+    }
+
 //////////////////////////////////////
 //    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
 //    public void registerForUpdatesTransaction(Consumer<TransactionDTO> consumer){
