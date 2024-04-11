@@ -172,7 +172,8 @@ public class TransactionPageCtrl implements Initializable {
             alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(Main.getTranslation("expense_created"));
             alert.setHeaderText(null);
-            alert.setContentText(Main.getTranslation("expense_creation_start") + subject + Main.getTranslation("expense_creation_end"));
+            alert.setContentText(Main.getTranslation("expense_creation_start")
+                    + subject + Main.getTranslation("expense_creation_end"));
             alert.showAndWait();
             eventPage();
         }

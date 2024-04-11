@@ -117,7 +117,8 @@ public class StartPageCtrl {
             }catch(NotFoundException e){
                 MainCtrl.alert(Main.getTranslation("event_not_found_2"));
             } catch (IllegalArgumentException e) {
-                MainCtrl.alert(String.format(Main.getTranslation("invite_code_error") + "\n[%s]", text));
+                MainCtrl.alert(String.format(
+                        Main.getTranslation("invite_code_error") + "\n[%s]", text));
             }
 
         } else {
