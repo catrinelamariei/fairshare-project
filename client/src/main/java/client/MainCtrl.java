@@ -31,6 +31,7 @@ public class MainCtrl {
 
     public MainCtrl() {
         sideStage.initModality(Modality.APPLICATION_MODAL);
+        sideStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
     }
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
