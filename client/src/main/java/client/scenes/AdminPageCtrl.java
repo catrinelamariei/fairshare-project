@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.Main;
 import client.MainCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
@@ -152,7 +153,8 @@ public class AdminPageCtrl implements Initializable {
 
     public void toggleAscDesc() {
         ascending = !ascending;
-        ascDescButton.setText(ascending ? "Ascending" : "Descending");
+        ascDescButton.setText(ascending ? Main.getTranslation("ascending")
+                : Main.getTranslation("descending"));
         reSort();
     }
 
@@ -173,7 +175,7 @@ public class AdminPageCtrl implements Initializable {
     private void uploadJson() throws IOException {
         //get file
         FileChooser fileCHooser = new FileChooser();
-        fileCHooser.setTitle("Load JSON");
+        fileCHooser.setTitle(Main.getTranslation("load_json"));
         FileChooser.ExtensionFilter extensionFilter =
             new FileChooser.ExtensionFilter("JSON", "*.json");
         fileCHooser.getExtensionFilters().add(extensionFilter);
