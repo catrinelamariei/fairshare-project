@@ -792,52 +792,61 @@ public class EventPageCtrl implements Initializable {
     @FXML
     public void debtSimplification() {
 
-        debts.getPanes().clear();
+        try {
+            debts.getPanes().clear();
 
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        DebtGraph graph = new DebtGraph(event);
-        PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
-        PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
+            DebtGraph graph = new DebtGraph(event);
+            PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
+            PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
-        // end if no debts to simplify
-        if (positive.isEmpty()) {
-            MainCtrl.inform("Debts","No debts to simplify!");
-            return;
-        }
-
-        // display debts if there are debts to simplify
-        while (!positive.isEmpty() && !negative.isEmpty()) {
-
-            Pair<ParticipantDTO, Double> pos = positive.poll();
-            Pair<ParticipantDTO, Double> neg = negative.poll();
-
-            ParticipantDTO creditor = pos.getKey();
-            ParticipantDTO debtor = neg.getKey();
-            Double credit = pos.getValue();
-            Double debt = neg.getValue();
-            double settlementAmount = Math.min(credit, Math.abs(debt));
-
-            // deal with currency later
-            DebtNode debtNode = nodeFactory.createDebtNode(debtor, creditor, "eur",
-                    settlementAmount, event, server, this);
-            debts.getPanes().add(debtNode);
-            // Update debts
-            credit -= settlementAmount;
-            debt += settlementAmount;
-
-            // Reinsert participants into priority queues if they still have non-zero debt
-            if (debt < 0) {
-                negative.offer(new Pair<>(debtor, debt));
+            // end if no debts to simplify
+            if (positive.isEmpty()) {
+                MainCtrl.inform("Debts", "No debts to simplify!");
+                return;
             }
-            if (credit > 0) {
-                positive.offer(new Pair<>(creditor, credit));
+
+            // display debts if there are debts to simplify
+            while (!positive.isEmpty() && !negative.isEmpty()) {
+
+                Pair<ParticipantDTO, Double> pos = positive.poll();
+                Pair<ParticipantDTO, Double> neg = negative.poll();
+
+                ParticipantDTO creditor = pos.getKey();
+                ParticipantDTO debtor = neg.getKey();
+                Double credit = pos.getValue();
+                Double debt = neg.getValue();
+                double settlementAmount = Math.min(credit, Math.abs(debt));
+
+                // deal with currency later
+                DebtNode debtNode = nodeFactory.createDebtNode(debtor, creditor, "eur",
+                        settlementAmount, event, server, this);
+                debts.getPanes().add(debtNode);
+                // Update debts
+                credit -= settlementAmount;
+                debt += settlementAmount;
+
+                // Reinsert participants into priority queues if they still have non-zero debt
+                if (debt < 0) {
+                    negative.offer(new Pair<>(debtor, debt));
+                }
+                if (credit > 0) {
+                    positive.offer(new Pair<>(creditor, credit));
+                }
+            }
+
+            // update the button
+            settleButton.setText("Refresh debts");
+            filterDebts();
+        } catch (Exception e) {
+            if(e.getMessage().equals("No participants")){
+                MainCtrl.alert( "A transaction has no beneficiaries." +
+                        " Please add participants to all transactions.");
+            } else {
+                MainCtrl.alert("Error simplifying debts");
             }
         }
-
-        // update the button
-        settleButton.setText("Refresh debts");
-        filterDebts();
 
     }
 
