@@ -78,7 +78,8 @@ public class DTOtoEntity {
         event.participants = e.participants.stream().map(Participant::new).collect(Collectors.toSet());
         event.transactions = e.transactions.stream().map(Transaction::new).collect(Collectors.toSet());
 
-        participantRepository.saveAll(event.participants); //break cyclic dependency (Transaction-Participant)
+        //break cyclic dependencies (Transaction-participant), (Transaction-Tag)
+        transactionRepository.saveAll(event.transactions);
 
         //fill in gaps (relations) (I am sorry)
         for (Tag tag : event.tags) {
@@ -105,8 +106,8 @@ public class DTOtoEntity {
         } //event, author, participant, tags
 
         tagRepository.saveAll(event.tags);
-        transactionRepository.saveAll(event.transactions);
         participantRepository.saveAll(event.participants);
+        transactionRepository.saveAll(event.transactions);
         return eventRepository.save(event);
     }
 

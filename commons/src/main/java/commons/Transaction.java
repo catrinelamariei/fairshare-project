@@ -13,8 +13,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    public UUID id = UUID.randomUUID();
     @Column(columnDefinition = "TIMESTAMP(0)")
     public Date date;
     public String currencyCode;
