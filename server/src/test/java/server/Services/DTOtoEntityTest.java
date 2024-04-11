@@ -189,11 +189,12 @@ Event event = new Event("event");
         Event event = new Event("event");
         event.id = new UUID(0, 1);
         Participant participant = new Participant(event, "name", "surname", "mail", "iban", "bic");
-        participant.id = new UUID(0, 2);
         ParticipantDTO participantDTO = new ParticipantDTO(participant);
-        when(eventRepository.getReferenceById(participantDTO.eventId)).thenReturn(event);
+        when(eventRepository.getReferenceById(any())).thenReturn(event);
         when(participantRepository.save(participant)).thenReturn(participant);
-        assertEquals(participant, d2e.create(participantDTO));
+        Participant result = d2e.create(participantDTO);
+        participant.id = result.id;
+        assertEquals(participant, result);
     }
 
     @Test

@@ -175,6 +175,7 @@ public class DTOtoEntity {
     public Participant create(ParticipantDTO p){
         //create & save participant
         Participant participant = new Participant(p);
+        participant.id = UUID.randomUUID();
         participant.event = eventRepository.getReferenceById(p.eventId);
         participantRepository.save(participant);
 

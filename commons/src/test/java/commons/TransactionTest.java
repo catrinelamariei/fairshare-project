@@ -84,7 +84,7 @@ public class TransactionTest {
         Transaction a = new Transaction(event, date, currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Chicken-Burger");
         Transaction b = new Transaction(event, date, currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Chicken-Burger");
         b.id = a.id;
-        
+
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
     }
