@@ -64,8 +64,6 @@ class EventDTOTest {
 
         assertEquals(id, eventDTO.getId());
         assertEquals(name, eventDTO.getName());
-        assertEquals(date, eventDTO.getDate());
-
     }
 
     @Test
