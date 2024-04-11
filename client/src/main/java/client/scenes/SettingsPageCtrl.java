@@ -57,7 +57,7 @@ public class SettingsPageCtrl implements Initializable {
 
         //load all urls
         urlList.setCellFactory(list -> new UrlListCell());
-        urlList.setItems(FXCollections.observableList(userData.getUrlList()));
+        urlList.setItems(FXCollections.observableArrayList(userData.getUrlList()));
         urlList.setValue(userData.getServerURL());
         urlList.valueProperty().addListener((obs, oldVal, newVal) ->
                 valueChanged(urlList, userData.getServerURL(), newVal));
@@ -94,8 +94,9 @@ public class SettingsPageCtrl implements Initializable {
     private void addConnection() {
         userData.setSelectedURL(urlTextField.getText());
         //update saved URLS
-        urlList.setItems(FXCollections.observableList(userData.getUrlList()));
+        urlList.setItems(FXCollections.observableArrayList(userData.getUrlList()));
         urlList.setValue(urlTextField.getText());
+        selectedURLAvailabiltyStyle();
         urlTextField.clear();
     }
 
@@ -122,21 +123,26 @@ public class SettingsPageCtrl implements Initializable {
         selectedURLAvailabiltyStyle();
     }
 
+    @FXML
+    private void removeSavedConnection() {
+        String target = urlList.getValue();
+        userData.removeUrl(target);
+        urlList.setItems(FXCollections.observableArrayList(userData.getUrlList())); //refresh
+        urlList.setValue(userData.getServerURL());
+        selectedURLAvailabiltyStyle();
+    }
+
     //utility methods
     private void valueChanged(Control choiceBox, String oldVal, String newVal) {
         if (!newVal.equals(oldVal))
-            choiceBox.getStyleClass().add("ChangedValue");
+            choiceBox.getStyleClass().add("ChangedValue"); //value was changed
         else
-            choiceBox.getStyleClass().removeAll("ChangedValue");
+            choiceBox.getStyleClass().removeAll("ChangedValue"); //value no longer changed
     }
 
     private void selectedURLAvailabiltyStyle() {
         urlList.getStyleClass().removeAll("Available", "Unavailable", "ChangedValue");
-
-        if (reach(urlList.getValue()))
-            urlList.getStyleClass().add("Available");
-        else
-            urlList.getStyleClass().add("Unavailable");
+        urlList.getStyleClass().add(reach(urlList.getValue()) ? "Available" : "Unavailable");
     }
 
     private boolean reach(String url) {
@@ -157,10 +163,12 @@ public class SettingsPageCtrl implements Initializable {
             try {
                 if (reach(item)) {
                     getStyleClass().add("Available");
+                    getStyleClass().removeAll("Unavailable");
                     return;
                 }
             } catch (ProcessingException e) {}
             getStyleClass().add("Unavailable");
+            getStyleClass().removeAll("Available");
         }
     }
 }
