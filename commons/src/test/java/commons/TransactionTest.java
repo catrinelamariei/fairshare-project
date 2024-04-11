@@ -39,7 +39,7 @@ public class TransactionTest {
         String currencyCode = "USD";
 
         Event event = new Event("event");
-        Transaction transaction = new Transaction(event,new Date(), currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Cheese-Burger");
+        Transaction transaction = new Transaction(event,date, currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Cheese-Burger");
 
         assertEquals(event, transaction.event);
         assertEquals(date, transaction.date);
