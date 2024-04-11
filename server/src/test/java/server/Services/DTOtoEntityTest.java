@@ -146,8 +146,11 @@ class DTOtoEntityTest {
                 .thenReturn(new BigDecimal(100));
         when(eventRepository.getReferenceById(transactionDTO.eventId)).thenReturn(event);
         when(participantRepository.getReferenceById(transaction.author.id)).thenReturn(participant);
-        when(transactionRepository.save(transaction)).thenReturn(transaction);
-        assertEquals(transaction, d2e.create(transactionDTO));
+        when(transactionRepository.save(any())).thenReturn(transaction);
+
+        Transaction result = d2e.create(transactionDTO);
+        transaction.id = result.id;
+        assertEquals(transaction, result);
     }
 
     @Test

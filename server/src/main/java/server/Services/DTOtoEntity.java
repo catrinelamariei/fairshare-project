@@ -126,6 +126,7 @@ public class DTOtoEntity {
         t.currencyCode = "EUR";
         //create & save transactionEntity
         Transaction transaction = new Transaction(t);
+        transaction.id = UUID.randomUUID(); //creating should assign new ID
         transaction.event = eventRepository.getReferenceById(t.eventId);
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
