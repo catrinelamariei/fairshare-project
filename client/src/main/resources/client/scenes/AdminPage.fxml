@@ -71,64 +71,56 @@
                                                       <GridPane hgap="10.0" style="-fx-background-color: FAF7F0;" vgap="10.0">
                                                         <columnConstraints>
                                                           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
-                                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity" prefWidth="250.0" />
-                                                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" prefWidth="250.0" />
                                                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                                                         </columnConstraints>
-                                                        <rowConstraints>
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                        </rowConstraints>
                                                          <children>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ID">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Outstanding Balance" GridPane.rowIndex="4">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Transactions" GridPane.rowIndex="3">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Participants" GridPane.rowIndex="2">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Creation Date" GridPane.rowIndex="1">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
-                                                            <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="100.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="JOIN" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowSpan="2">
+                                                            <Button mnemonicParsing="false" prefWidth="125.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="JOIN" GridPane.columnIndex="2" GridPane.rowSpan="2">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="16.0" />
                                                                </font></Button>
-                                                            <Button mnemonicParsing="false" prefWidth="100.0" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="DELETE" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                                                            <Button mnemonicParsing="false" prefWidth="125.0" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="DELETE" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="16.0" />
                                                                </font></Button>
                                                             <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="00000000-0000-0000-0000-000000000000" GridPane.columnIndex="1">
                                                             </TextField>
                                                             <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="542.79$" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                             </TextField>
-                                                            <TextField alignment="CENTER" editable="false" prefHeight="27.0" prefWidth="246.0" style="-fx-border-color: #98A8F8;" text="32" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="32" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                             </TextField>
-                                                            <TextField alignment="CENTER" editable="false" prefHeight="27.0" prefWidth="246.0" style="-fx-border-color: #98A8F8;" text="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                             </TextField>
-                                                            <TextField alignment="CENTER" editable="false" prefHeight="27.0" prefWidth="246.0" style="-fx-border-color: #98A8F8;" text="01/01/2024" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="01/01/2024" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                             </TextField>
-                                                            <Button layoutX="617.0" layoutY="39.0" mnemonicParsing="false" prefWidth="100.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="DOWNLOAD" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                                            <Button mnemonicParsing="false" prefWidth="125.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="DOWNLOAD" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="3">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="16.0" />
                                                                </font>
                                                             </Button>
                                                          </children>

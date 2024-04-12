@@ -44,7 +44,9 @@ public class DTOtoEntity {
      */
     public Event create(EventDTO e){
         Event event = new Event(e.getName());
-        try {event.id = UUID.fromString(e.id.toString());} catch (IllegalArgumentException ign) {}
+        try {event.id = UUID.fromString(e.id.toString());}
+        catch (IllegalArgumentException | NullPointerException ign) {}
+        eventRepository.save(event);
         event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
         event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
         event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
@@ -76,7 +78,8 @@ public class DTOtoEntity {
         event.participants = e.participants.stream().map(Participant::new).collect(Collectors.toSet());
         event.transactions = e.transactions.stream().map(Transaction::new).collect(Collectors.toSet());
 
-        participantRepository.saveAll(event.participants); //break cyclic dependency (Transaction-Participant)
+        //break cyclic dependencies (Transaction-participant), (Transaction-Tag)
+        transactionRepository.saveAll(event.transactions);
 
         //fill in gaps (relations) (I am sorry)
         for (Tag tag : event.tags) {
@@ -103,8 +106,8 @@ public class DTOtoEntity {
         } //event, author, participant, tags
 
         tagRepository.saveAll(event.tags);
-        transactionRepository.saveAll(event.transactions);
         participantRepository.saveAll(event.participants);
+        transactionRepository.saveAll(event.transactions);
         return eventRepository.save(event);
     }
 
@@ -123,6 +126,7 @@ public class DTOtoEntity {
         t.currencyCode = "EUR";
         //create & save transactionEntity
         Transaction transaction = new Transaction(t);
+        transaction.id = UUID.randomUUID(); //creating should assign new ID
         transaction.event = eventRepository.getReferenceById(t.eventId);
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
@@ -172,6 +176,7 @@ public class DTOtoEntity {
     public Participant create(ParticipantDTO p){
         //create & save participant
         Participant participant = new Participant(p);
+        participant.id = UUID.randomUUID();
         participant.event = eventRepository.getReferenceById(p.eventId);
         participantRepository.save(participant);
 

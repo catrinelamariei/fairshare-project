@@ -14,6 +14,7 @@ import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -397,15 +398,20 @@ public class EventPageCtrl implements Initializable {
     }
 
     private HBox hboxFromTag(TagDTO t) {
+        //creation
         HBox hbox = new HBox();
-        hbox.setPrefHeight(47);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-        // TODO: replace with color code
-        hbox.setStyle("-fx-background-color: " + t.color);
         Text text = new Text(t.getName());
         Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
         Button deleteTag = new Button("X");
+
+        //styling
+        hbox.setPrefHeight(40);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setStyle("-fx-background-color: " + t.color); // TODO: replace with color code
+        hbox.setPadding(new Insets(10.0d, 20.0d, 10.0d, 10.0));
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        //actions
         deleteTag.setOnAction(e -> {
             allTagsVBox.getChildren().remove(hbox);
             tagsInput.getItems().remove(t);
@@ -415,9 +421,9 @@ public class EventPageCtrl implements Initializable {
                 System.err.println("Error deleting tag: " + ex.getMessage());
             }
         });
-        hbox.getChildren().add(text);
-        hbox.getChildren().add(spacer);
-        hbox.getChildren().add(deleteTag);
+
+        //assembly
+        hbox.getChildren().addAll(text, spacer, deleteTag);
         return hbox;
     }
 
@@ -1004,7 +1010,8 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant) {
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant)
+            throws IllegalArgumentException{
         if (newParticipant == null) {
             return;
         }
@@ -1012,11 +1019,12 @@ public class EventPageCtrl implements Initializable {
         try {
             if (newParticipant.getFirstName().isEmpty() || newParticipant.getLastName().isEmpty()
                     || newParticipant.getEmail().isEmpty()) {
+                MainCtrl.alert("Please enter valid participant data");
                 throw new IllegalArgumentException();
             }
             if (invalidEmail(newParticipant.getEmail())) {
                 MainCtrl.alert(Main.getTranslation("invalid_email"));
-                return;
+                throw new IllegalArgumentException();
             }
             if (newParticipant.getBic().isEmpty()) {
                 newParticipant.setBic("-");
@@ -1031,9 +1039,7 @@ public class EventPageCtrl implements Initializable {
             server.putParticipant(newParticipant);
             load();
 
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert(Main.getTranslation("invalid_participant_data"));
-        } catch (WebApplicationException e) {
+        }  catch (WebApplicationException e) {
             System.err.println("Error updating participant: " + e.getMessage());
         }
     }

@@ -2,6 +2,7 @@ package client;
 
 import client.scenes.*;
 import client.utils.KeyEvents.EventPageKeyEventHandler;
+import jakarta.ws.rs.NotAuthorizedException;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import jakarta.inject.Inject;
@@ -38,6 +39,7 @@ public class MainCtrl {
     public MainCtrl(ServerUtils server) {
         this.server = server;
         sideStage.initModality(Modality.APPLICATION_MODAL);
+        sideStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
     }
 
     public void initialize(Stage primaryStage,
@@ -66,6 +68,7 @@ public class MainCtrl {
 
         this.settingsPageCtrl = settingsPage.getKey();
         this.settingsPage = new Scene(settingsPage.getValue());
+        sideStage.setScene(this.settingsPage); //update after language switch
         startPageCtrl.veil.visibleProperty().bind(sideStage.showingProperty());
 
         showStartPage();
@@ -92,9 +95,15 @@ public class MainCtrl {
             showAdminCheckPage(); //if no key is present, obtain one
             return;
         }
-        primaryStage.setTitle(getEventName() + " - " + Main.getTranslation("admin_panel"));
-        adminPageCtrl.load();
-        primaryStage.setScene(adminPage);
+
+        primaryStage.setTitle("<EventName>: admin panel");
+        try {
+            primaryStage.setTitle(getEventName() + " - " + Main.getTranslation("admin_panel"));
+            adminPageCtrl.load();
+            primaryStage.setScene(adminPage);
+        } catch (NotAuthorizedException e) {
+            showAdminCheckPage();
+        }
     }
 
     public void showAdminCheckPage() {

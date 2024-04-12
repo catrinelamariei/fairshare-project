@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.*;
-import server.Authentication.Authenticator;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
@@ -16,7 +14,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/event")
-public class EventController implements WebMvcConfigurer {
+public class EventController {
     private final EventRepository repo;
     private final DTOtoEntity d2e;
     private final SimpMessagingTemplate messagingTemplate;
@@ -27,11 +25,6 @@ public class EventController implements WebMvcConfigurer {
         this.repo = repo;
         this.d2e = dtoToEntity;
         this.messagingTemplate = msgTemplate;
-    }
-    // TODO: move this, also check path url because it doesn't match
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new Authenticator()).addPathPatterns("/api/events/");
     }
 
     @GetMapping(path = {"", "/"})

@@ -74,7 +74,7 @@ public final class UserData{
         return getRecentUUIDs().peekFirst().getKey();
     }
 
-    private UrlData getUrlData() {
+    private UrlData getUrlData() throws NoSuchElementException {
         return urlDataList.stream().filter(urlData -> urlData.url.equals(selectedURL))
                 .findAny().get();
     }
@@ -84,7 +84,16 @@ public final class UserData{
     }
 
     public ArrayDeque<Pair<UUID, String>> getRecentUUIDs() {
-        return getUrlData().recentUUIDs;
+        try {
+            return getUrlData().recentUUIDs;
+        } catch (NoSuchElementException e) { //selected URL not found -> try another
+            if (urlDataList.isEmpty()) {
+                setSelectedURL("http://localhost:8080"); //failsafe, return default URL
+            } else {
+                selectedURL = urlDataList.getFirst().url; //take other random url
+            }
+            return getRecentUUIDs(); //try again
+        }
     }
 
     public String getLanguageCode() {
@@ -110,6 +119,7 @@ public final class UserData{
 
     public void setToken(String u) {
         getUrlData().token = u;
+        save();
     }
 
     public void setCurrentUUID(Pair<UUID, String> pair) {
@@ -129,6 +139,26 @@ public final class UserData{
         } catch (NoSuchElementException e) {
             urlDataList.add(new UrlData(selectedURL));
         }
+    }
+
+    /**
+     * removes a url
+     * @param target target to be removed
+     * @return new selected url
+     */
+    public String removeUrl(String target) throws NoSuchElementException {
+        if (!urlDataList.removeIf(urlData -> urlData.url.equals(target)))
+            throw new NoSuchElementException(target);
+
+        if (selectedURL.equals(target)) {
+            try {
+                selectedURL = urlDataList.getFirst().url;
+            } catch (NoSuchElementException e) {
+                setSelectedURL("http://localhost:8080"); //revert to default
+            }
+        }
+
+        return selectedURL;
     }
 
     /**
