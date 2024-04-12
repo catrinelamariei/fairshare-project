@@ -47,23 +47,17 @@ public class VisualEventNode extends EventNode {
         //text-fields styling
         List.of(idField, dateField, participantField, transactionField, balanceField)
                 .forEach(tf -> {tf.setEditable(false); tf.setAlignment(Pos.CENTER);});
-        idField.setMaxWidth(245.0d);
-        dateField.setMaxWidth(70.0d);
-        participantField.setMaxWidth(30.0d);
-        transactionField.setMaxWidth(30.0d);
-        balanceField.setMaxWidth(60.0d);
 
         //buttons
         Button joinButton = new Button("JOIN");
         Button downloadButton = new Button("DOWNLOAD");
         Button deleteButton = new Button("DELETE");
-        deleteButton.setStyle("-fx-text-fill: red;");
         joinButton.setOnAction(this::join);
         downloadButton.setOnAction(this::jsonSave);
         deleteButton.setOnAction(this::delete);
 
         //gridpance css styling
-        GridPane gridPane = new GridPane(10.0d, 0.0d); //gaps between cells
+        GridPane gridPane = new GridPane(10.0d, 10.0d); //gaps between cells
         gridPane.getStyleClass().add("EventNode");
 
         //gridpane (col/row constraints)
@@ -71,22 +65,18 @@ public class VisualEventNode extends EventNode {
         ColumnConstraints col1 = new ColumnConstraints();
         ColumnConstraints col2 = new ColumnConstraints();
         col0.setHalignment(HPos.RIGHT);
-        col1.setHalignment(HPos.LEFT);
+        col1.setPrefWidth(250d);
+        col1.setMaxWidth(Double.NEGATIVE_INFINITY);
         col2.setHalignment(HPos.CENTER);
-        gridPane.getColumnConstraints().addAll(col0, col1, col2, col2);
+        gridPane.getColumnConstraints().addAll(col0, col1, col2);
         gridPane.getColumnConstraints().forEach(cc -> cc.setHgrow(Priority.SOMETIMES));
-
-        RowConstraints rowConstr = new RowConstraints();
-        rowConstr.setMinHeight(10d);
-        rowConstr.setPrefHeight(30d);
-        gridPane.getRowConstraints().addAll(rowConstr, rowConstr, rowConstr, rowConstr, rowConstr);
 
         //gridpane (contents)
         gridPane.addColumn(0, idText, dateText, participantText, transactionText, balanceText);
         gridPane.addColumn(1, idField, dateField, participantField, transactionField, balanceField);
-        gridPane.add(joinButton, 2, 0, 2, 2); //button (span 2)
-        gridPane.add(downloadButton, 2, 2, 2, 1);
-        gridPane.add(deleteButton, 2, 3, 2, 2); //button (span 2)
+        gridPane.add(joinButton, 2, 0, 1, 2); //button (span 2)
+        gridPane.add(downloadButton, 2, 1, 1, 3);
+        gridPane.add(deleteButton, 2, 3, 1, 2); //button (span 2)
 
         //finalize (add gridpane to this)
         this.setContent(gridPane);

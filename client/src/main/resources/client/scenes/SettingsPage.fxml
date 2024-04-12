@@ -4,7 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.SettingsPageCtrl">
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="600.0" stylesheets="@/client/scenes/stylesheets/SettingsPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.SettingsPageCtrl">
    <content>
       <VBox spacing="20.0">
          <children>
@@ -126,7 +127,15 @@
                                  </font>
                               </Text>
                               <ComboBox fx:id="urlList" prefWidth="170.0" GridPane.rowIndex="2" />
-                              <Button mnemonicParsing="false" onAction="#selectSavedConnection" text="select" GridPane.rowIndex="3" />
+                              <HBox spacing="10.0" GridPane.rowIndex="3">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#removeSavedConnection" text="Delete" />
+                                    <Button mnemonicParsing="false" onAction="#selectSavedConnection" text="Select" />
+                                 </children>
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                              </HBox>
                            </children>
                         </GridPane>
                      </children>

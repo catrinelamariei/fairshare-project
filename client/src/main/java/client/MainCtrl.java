@@ -2,6 +2,7 @@ package client;
 
 import client.scenes.*;
 import client.utils.KeyEvents.EventPageKeyEventHandler;
+import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
@@ -30,6 +31,7 @@ public class MainCtrl {
 
     public MainCtrl() {
         sideStage.initModality(Modality.APPLICATION_MODAL);
+        sideStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
     }
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
@@ -79,14 +81,13 @@ public class MainCtrl {
     }
 
     public void showAdminPage() {
-        if (UserData.getInstance().getToken() == null) {
-            showAdminCheckPage(); //if no key is present, obtain one
-            return;
-        }
-
         primaryStage.setTitle("<EventName>: admin panel");
-        adminPageCtrl.load();
-        primaryStage.setScene(adminPage);
+        try {
+            adminPageCtrl.load();
+            primaryStage.setScene(adminPage);
+        } catch (NotAuthorizedException e) {
+            showAdminCheckPage();
+        }
     }
 
     public void showAdminCheckPage() {

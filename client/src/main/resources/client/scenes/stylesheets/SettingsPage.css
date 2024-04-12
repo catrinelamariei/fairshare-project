@@ -1,0 +1,20 @@
+.root {
+    -fx-accent: #E6E6E6;
+}
+
+.ChangedValue {
+    -fx-background-color: #ACD7E6 !important;
+    -fx-border-color: #738F99 !important;
+}
+
+.Available {
+    -fx-background-color: #A6D1A6;
+    -fx-border-color: #7BB87A;
+    -fx-text-fill: #344E33;
+}
+
+.Unavailable {
+    -fx-background-color: #D19999;
+    -fx-border-color: #B86667;
+    -fx-text-fill: #410000;
+}
