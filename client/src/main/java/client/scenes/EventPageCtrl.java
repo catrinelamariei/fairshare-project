@@ -14,6 +14,7 @@ import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -395,14 +396,23 @@ public class EventPageCtrl implements Initializable {
     }
 
     private HBox hboxFromTag(TagDTO t) {
+        //creation
         HBox hbox = new HBox();
         hbox.setPrefHeight(47);
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setStyle("-fx-background-color: " + t.color.colorCode);
         Text text = new Text(t.getName());
         Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
         Button deleteTag = new Button("X");
+
+        //styling
+        hbox.setPrefHeight(40);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setStyle("-fx-background-color: " + t.color); // TODO: replace with color code
+        hbox.setPadding(new Insets(10.0d, 20.0d, 10.0d, 10.0));
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        //actions
         deleteTag.setOnAction(e -> {
             allTagsVBox.getChildren().remove(hbox);
             tagsInput.getItems().remove(t);
@@ -412,9 +422,9 @@ public class EventPageCtrl implements Initializable {
                 System.err.println("Error deleting tag: " + ex.getMessage());
             }
         });
-        hbox.getChildren().add(text);
-        hbox.getChildren().add(spacer);
-        hbox.getChildren().add(deleteTag);
+
+        //assembly
+        hbox.getChildren().addAll(text, spacer, deleteTag);
         return hbox;
     }
 
@@ -671,40 +681,50 @@ public class EventPageCtrl implements Initializable {
         return false;
     }
 
-    private static BigDecimal isValidAmount(String transactionAmountString) {
+    BigDecimal isValidAmount(String transactionAmountString) {
         BigDecimal amount;
         try {
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             return null;
+        } catch (NullPointerException e){
+            return null;
         }
         return amount;
     }
 
-    private boolean checkInput(String name, String transactionAmountString, String currency,
-                               LocalDate localDate, ParticipantDTO author) {
+    boolean checkInput(String name, String transactionAmountString, String currency,
+                       LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter the name of the expense");
+            alert("Please enter the name of the expense");
             return true;
         }
         if (author == null) {
-            MainCtrl.alert("Please chose the author of the transaction");
+            alert("Please chose the author of the transaction");
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            MainCtrl.alert("Please enter the amount of the expense");
+            alert("Please enter the amount of the expense");
             return true;
         }
         if (currency == null) {
-            MainCtrl.alert("Please enter the currency of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
         if (localDate == null) {
-            MainCtrl.alert("Please enter the date of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
 
         return false;
+    }
+
+    private void alert(String text){
+        try{
+            MainCtrl.alert(text);
+        } catch (Exception e){
+            System.out.println("can't produce an alert in testing");
+        }
     }
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
@@ -863,7 +883,7 @@ public class EventPageCtrl implements Initializable {
         debts.getPanes().removeAll(toRemove);
     }
 
-    private boolean invalidEmail(String email) {
+    boolean invalidEmail(String email) {
         // Regex pattern to match email address
         String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regexPattern);
@@ -996,7 +1016,8 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant) {
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant)
+            throws IllegalArgumentException{
         if (newParticipant == null) {
             return;
         }
@@ -1004,11 +1025,12 @@ public class EventPageCtrl implements Initializable {
         try {
             if (newParticipant.getFirstName().isEmpty() || newParticipant.getLastName().isEmpty()
                     || newParticipant.getEmail().isEmpty()) {
+                MainCtrl.alert("Please enter valid participant data");
                 throw new IllegalArgumentException();
             }
             if (invalidEmail(newParticipant.getEmail())) {
                 MainCtrl.alert("Please enter a valid email address");
-                return;
+                throw new IllegalArgumentException();
             }
             if (newParticipant.getBic().isEmpty()) {
                 newParticipant.setBic("-");
@@ -1023,8 +1045,6 @@ public class EventPageCtrl implements Initializable {
             server.putParticipant(newParticipant);
             load();
 
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
         } catch (WebApplicationException e) {
             System.err.println("Error updating participant: " + e.getMessage());
         }

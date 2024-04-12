@@ -8,6 +8,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
+import jakarta.ws.rs.NotAuthorizedException;
 import javafx.application.Platform;
 import javafx.fxml.*;
 import javafx.scene.control.*;
@@ -118,16 +119,17 @@ public class AdminPageCtrl implements Initializable {
     /**
      * called when switching to this scene
      */
-    public void load() {
+    public void load() throws NotAuthorizedException {
+        //contact the server, if unauthorized return immediately
+        ArrayList<EventDTO> events = new ArrayList<>(server.getAllEvents()); //get all events
+
         server.webSocketReconnect();
         subscribe();
         //get desired sorting order
         Comparator<EventDTO> cmp = comparatorList.getValue().cmp;
         if (!ascending) cmp = cmp.reversed();
 
-        ArrayList<EventDTO> events = new ArrayList<>(server.getAllEvents()); //get all events
         events.sort(cmp); //sort
-
         eventAccordion.getPanes().setAll(events.stream()
                 .map(nodeFactory::createEventNode).toList());
     }

@@ -24,7 +24,7 @@ public class PrivCheckController {
     @ResponseBody
     public ResponseEntity<String> checkPassword(@RequestBody String password) {
         if (!tokenBucket.tryConsume()) {
-            return new ResponseEntity<>("429 Too Many Requests", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.TOO_MANY_REQUESTS);
         }
 
         if (password.equals(code)) {
@@ -35,19 +35,19 @@ public class PrivCheckController {
             String ipAddress = request.getRemoteAddr();
             return new ResponseEntity<>(JwtTokenService.generateToken(ipAddress), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("401 Invalid password", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @GetMapping("/admin")
     @ResponseBody
-    public ResponseEntity<String> generatePassword(){
+    public ResponseEntity generatePassword(){
         if (!tokenBucket.tryConsume()) {
-            return new ResponseEntity<>("429 Too Many Requests", HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.TOO_MANY_REQUESTS);
         }
 
         code = CodeGenerator.generateRandomString(6);
         System.out.println("Code: " + code);
-        return new ResponseEntity<>("200 Code generated", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

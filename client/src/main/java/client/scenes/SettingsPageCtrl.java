@@ -10,8 +10,15 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class SettingsPageCtrl implements Initializable {
@@ -57,43 +64,68 @@ public class SettingsPageCtrl implements Initializable {
 
         //load all urls
         urlList.setCellFactory(list -> new UrlListCell());
-        urlList.setItems(FXCollections.observableList(userData.getUrlList()));
+        urlList.setItems(FXCollections.observableArrayList(userData.getUrlList()));
         urlList.setValue(userData.getServerURL());
         urlList.valueProperty().addListener((obs, oldVal, newVal) ->
                 valueChanged(urlList, userData.getServerURL(), newVal));
+
+        urlTextField.textProperty().addListener((obs, oldVal, newVal) -> urlTextChanged());
+
+        selectedURLAvailabiltyStyle();
     }
 
     @FXML
     private void selectLanguage() {
         userData.setLanguageCode(languageChoiceBox.getValue());
         Main.initializeUI(languageChoiceBox.getValue());
-        languageChoiceBox.setStyle("");
+        languageChoiceBox.getStyleClass().removeAll("ChangedValue");
     }
 
     @FXML
     private void cancelLanguage() {
         languageChoiceBox.setValue(userData.getLanguageCode());
-        languageChoiceBox.setStyle("");
+        languageChoiceBox.getStyleClass().removeAll("ChangedValue");
+    }
+
+    @FXML
+    private void downloadLanguage() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Saving language pack");
+        fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("language file", "*.properties"));
+        fc.setInitialFileName(languageChoiceBox.getValue() + ".properties");
+        fc.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        try {
+            Path source = Paths.get("client", "build", "resources", "main", "client", "lang",
+                    languageChoiceBox.getValue() + ".properties");
+            Path destination = fc.showSaveDialog(languageChoiceBox.getScene().getWindow()).toPath();
+            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            MainCtrl.alert("Error during saving");
+            System.err.println(e);
+        } catch (NullPointerException ignored) {} //filechooser closed without picking file
     }
 
     @FXML
     private void selectCurrency() {
         userData.setCurrencyCode(currencyChoiceBox.getValue());
-        currencyChoiceBox.setStyle("");
+        currencyChoiceBox.getStyleClass().removeAll("ChangedValue");
     }
 
     @FXML
     private void cancelCurrency() {
         currencyChoiceBox.setValue(userData.getCurrencyCode());
-        currencyChoiceBox.setStyle("");
+        currencyChoiceBox.getStyleClass().removeAll("ChangedValue");
     }
 
     @FXML
     private void addConnection() {
         userData.setSelectedURL(urlTextField.getText());
         //update saved URLS
-        urlList.setItems(FXCollections.observableList(userData.getUrlList()));
+        urlList.setItems(FXCollections.observableArrayList(userData.getUrlList()));
         urlList.setValue(urlTextField.getText());
+        selectedURLAvailabiltyStyle();
         urlTextField.clear();
     }
 
@@ -117,16 +149,45 @@ public class SettingsPageCtrl implements Initializable {
     @FXML
     private void selectSavedConnection() {
         userData.setSelectedURL(urlList.getValue());
-        urlList.setStyle("");
+        selectedURLAvailabiltyStyle();
+    }
+
+    @FXML
+    private void removeSavedConnection() {
+        String target = urlList.getValue();
+        userData.removeUrl(target);
+        urlList.setItems(FXCollections.observableArrayList(userData.getUrlList())); //refresh
+        urlList.setValue(userData.getServerURL());
+        selectedURLAvailabiltyStyle();
     }
 
     //utility methods
     private void valueChanged(Control choiceBox, String oldVal, String newVal) {
         if (!newVal.equals(oldVal))
-            choiceBox.setStyle("-fx-background-color: lightblue");
+            choiceBox.getStyleClass().add("ChangedValue"); //value was changed
         else
-            choiceBox.setStyle("");
+            choiceBox.getStyleClass().removeAll("ChangedValue"); //value no longer changed
     }
+
+    private void urlTextChanged() {
+        //restore all fields to default
+        statusText.setText("N/A");
+        statusText.setFill(Color.BLACK);
+    }
+
+    private void selectedURLAvailabiltyStyle() {
+        urlList.getStyleClass().removeAll("Available", "Unavailable", "ChangedValue");
+        urlList.getStyleClass().add(reach(urlList.getValue()) ? "Available" : "Unavailable");
+    }
+
+    private boolean reach(String url) {
+        try {
+            return server.reach(url).getFamily().equals(Response.Status.Family.SUCCESSFUL);
+        } catch (ProcessingException e) {
+            return false;
+        }
+    }
+
     private class UrlListCell extends ListCell<String> {
         @Override
         protected void updateItem(String item, boolean empty) {
@@ -135,12 +196,14 @@ public class SettingsPageCtrl implements Initializable {
 
             setText(item);
             try {
-                if (server.reach(item).equals(Response.Status.OK)) {
-                    setTextFill(Color.GREEN);
+                if (reach(item)) {
+                    getStyleClass().add("Available");
+                    getStyleClass().removeAll("Unavailable");
                     return;
                 }
             } catch (ProcessingException e) {}
-            setTextFill(Color.RED);
+            getStyleClass().add("Unavailable");
+            getStyleClass().removeAll("Available");
         }
     }
 }

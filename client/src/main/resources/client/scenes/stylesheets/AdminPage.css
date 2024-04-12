@@ -4,4 +4,10 @@
 
 .EventNode > Button {
     -fx-font: Bold 16 "System";
+    -fx-background-color: BCCEF8;
+    -fx-pref-width: 125;
+}
+
+.EventNode > * {
+    -fx-border-color: #98A8F8;
 }

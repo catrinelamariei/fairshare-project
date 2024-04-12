@@ -1,7 +1,10 @@
 package client.scenes;
 
 import client.UserData;
+import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
+import client.MainCtrl;
+import client.utils.UndoService;
 import commons.DTOs.*;
 import javafx.scene.text.Text;
 import org.junit.jupiter.api.*;
@@ -10,7 +13,8 @@ import org.mockito.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EventPageCtrlTest {
@@ -31,10 +35,10 @@ public class EventPageCtrlTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        eventDTO = Mockito.mock(EventDTO.class);
+        eventDTO = mock(EventDTO.class);
         mockId = UUID.randomUUID(); // Generate a random UUID for testing
-        transactionDTO = Mockito.mock(TransactionDTO.class);
-        tagDTO = Mockito.mock(TagDTO.class);
+        transactionDTO = mock(TransactionDTO.class);
+        tagDTO = mock(TagDTO.class);
         eventPageCtrl.eventCostFiltered = new Text();
 
         when(server.getEvent(mockId)).thenReturn(eventDTO);

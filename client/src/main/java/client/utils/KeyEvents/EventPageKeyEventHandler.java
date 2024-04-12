@@ -14,7 +14,7 @@ public class EventPageKeyEventHandler implements GeneralKeyEventHandler{
 
     @Override
     public void specificHandle(KeyEvent e) {
-        if (e.isControlDown()) {
+        if (e.isControlDown() || e.isMetaDown()) {
             switch (e.getCode()) {
                 case Z -> undoService.undo();
             }
