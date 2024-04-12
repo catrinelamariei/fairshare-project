@@ -139,6 +139,13 @@ public class VisualParticipantNode extends ParticipantNode {
             eventPageCtrl.updateParticipant(this, p);
         }
         editSaveButton.setText(isEditable ? "Save" : "Edit");
+
+        Image saveimg = new Image(getClass().getResourceAsStream(
+                "/client/Images/save.png"),20d, 20d, true, false);
+        ImageView saveview = new ImageView(saveimg);
+        Image editimg = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+        ImageView editview = new ImageView(editimg);
+        editSaveButton.setGraphic(isEditable ? saveview : editview);
     }
 
     private void deleteParticipant(ActionEvent actionEvent) {
