@@ -398,8 +398,7 @@ public class EventPageCtrl implements Initializable {
         HBox hbox = new HBox();
         hbox.setPrefHeight(47);
         hbox.setAlignment(Pos.CENTER_LEFT);
-        // TODO: replace with color code
-        hbox.setStyle("-fx-background-color: " + t.color);
+        hbox.setStyle("-fx-background-color: " + t.color.colorCode);
         Text text = new Text(t.getName());
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
