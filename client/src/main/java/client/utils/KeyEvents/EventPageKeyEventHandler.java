@@ -1,5 +1,6 @@
-package client.utils;
+package client.utils.KeyEvents;
 
+import client.utils.UndoService;
 import javafx.scene.input.KeyEvent;
 
 public class EventPageKeyEventHandler implements GeneralKeyEventHandler{
@@ -13,7 +14,7 @@ public class EventPageKeyEventHandler implements GeneralKeyEventHandler{
 
     @Override
     public void specificHandle(KeyEvent e) {
-        if (e.isControlDown()) {
+        if (e.isControlDown() || e.isMetaDown()) {
             switch (e.getCode()) {
                 case Z -> undoService.undo();
             }

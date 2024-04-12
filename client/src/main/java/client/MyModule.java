@@ -19,6 +19,7 @@ import client.scenes.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
 import client.utils.*;
+import client.utils.EventJsonUtil;
 import com.google.inject.*;
 
 public class MyModule extends AbstractModule {
@@ -33,6 +34,7 @@ public class MyModule extends AbstractModule {
         bind(AdminPageCtrl.class).in(Scopes.SINGLETON);
         bind(ServerUtils.class).in(Scopes.SINGLETON);
         bind(UndoService.class).in(Scopes.SINGLETON);
+        bind(EventJsonUtil.class).in(Scopes.SINGLETON);
         binder().disableCircularProxies();
     }
 }

@@ -11,15 +11,17 @@ class RateDTOTest {
 
     @Test
     void testEquals() {
-        RateDTO rateDTO1 = new RateDTO("EUR", "USD", 1.1795, new Date());
-        RateDTO rateDTO2 = new RateDTO("EUR", "USD", 1.1795, new Date());
+        Date date = new Date();
+        RateDTO rateDTO1 = new RateDTO("EUR", "USD", 1.1795, date);
+        RateDTO rateDTO2 = new RateDTO("EUR", "USD", 1.1795, date);
         assertEquals(rateDTO1, rateDTO2);
     }
 
     @Test
     void testHashCode() {
-        RateDTO rateDTO1 = new RateDTO("EUR", "USD", 1.1795, new Date());
-        RateDTO rateDTO2 = new RateDTO("EUR", "USD", 1.1795, new Date());
+        Date date = new Date();
+        RateDTO rateDTO1 = new RateDTO("EUR", "USD", 1.1795, date);
+        RateDTO rateDTO2 = new RateDTO("EUR", "USD", 1.1795, date);
         assertEquals(rateDTO1.hashCode(), rateDTO2.hashCode());
     }
 

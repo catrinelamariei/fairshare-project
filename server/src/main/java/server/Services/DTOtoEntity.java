@@ -5,6 +5,9 @@ import commons.*;
 import org.springframework.stereotype.Service;
 import server.database.*;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service //singleton bean managed by Spring
@@ -33,9 +36,17 @@ public class DTOtoEntity {
     public Event get(EventDTO e){
         return eventRepository.getReferenceById(e.id);
     }
+
+    /**
+     * creates event, UUID used if valid
+     * @param e event to be created
+     * @return persisted event
+     */
     public Event create(EventDTO e){
         Event event = new Event(e.getName());
-        eventRepository.save(event); // TODO: optimise this
+        try {event.id = UUID.fromString(e.id.toString());}
+        catch (IllegalArgumentException | NullPointerException ign) {}
+        eventRepository.save(event);
         event.addTag(tagRepository.save(new Tag(event, "food", Tag.Color.GREEN)));
         event.addTag(tagRepository.save(new Tag(event, "entrance fees", Tag.Color.BLUE)));
         event.addTag(tagRepository.save(new Tag(event, "travel", Tag.Color.RED)));
@@ -50,6 +61,56 @@ public class DTOtoEntity {
         eventRepository.save(event);
         return event;
     }
+
+    @SuppressWarnings("checkstyle:LineLength")
+    public Event set(EventDTO e) {
+        eventRepository.deleteById(e.id);
+
+        //basic fields
+        Event event = new Event();
+        event.id = e.id;
+        event.setName(e.name);
+        event.setCreationDate(e.date);
+        eventRepository.save(event);
+
+        //initial creation
+        event.tags = e.tags.stream().map(Tag::new).collect(Collectors.toSet());
+        event.participants = e.participants.stream().map(Participant::new).collect(Collectors.toSet());
+        event.transactions = e.transactions.stream().map(Transaction::new).collect(Collectors.toSet());
+
+        //break cyclic dependencies (Transaction-participant), (Transaction-Tag)
+        transactionRepository.saveAll(event.transactions);
+
+        //fill in gaps (relations) (I am sorry)
+        for (Tag tag : event.tags) {
+            tag.event = event;
+            List<UUID> target = e.transactions.stream().filter(t -> t.tags.contains(new TagDTO(tag))).map(t -> t.id).toList();
+            tag.transactions.addAll(event.transactions.stream().filter(t -> target.contains(t.id)).toList());
+        } //add all transactions t in e where t.tags.id equals this tag, add event
+        for (Participant participant : event.participants) {
+            participant.event = event;
+            List<UUID> targetPaidTransactions = e.transactions.stream().filter(t -> Objects.equals(t.author.id, participant.id)).map(t -> t.id).toList();
+            participant.paidTransactions = event.transactions.stream().filter(t -> targetPaidTransactions.contains(t.id)).collect(Collectors.toSet());
+            List<UUID> targetParticipatedTransactions = e.transactions.stream().filter(t -> t.participants.stream().map(p -> p.id).toList().contains(participant.id)).map(t -> t.id).toList();
+            participant.participatedTransactions = event.transactions.stream().filter(t -> targetParticipatedTransactions.contains(t.id)).collect(Collectors.toSet());
+        } //event, transactions, participatedTransactions
+        for (Transaction transaction : event.transactions) {
+            transaction.event = event;
+            TransactionDTO transactionDTO = e.transactions.stream().filter(t -> Objects.equals(transaction.id, t.id)).findAny().get();
+            UUID targetAuthor = transactionDTO.author.id;
+            transaction.author = event.participants.stream().filter(p -> Objects.equals(p.id, targetAuthor)).findAny().get();
+            List<UUID> targetParticipants =  transactionDTO.participants.stream().map(p -> p.id).toList();
+            transaction.participants = event.participants.stream().filter(p -> targetParticipants.contains(p.id)).collect(Collectors.toSet());
+            List<UUID> targetTags = transactionDTO.tags.stream().map(t -> t.id).toList();
+            transaction.tags = event.tags.stream().filter(t -> targetTags.contains(t.id)).collect(Collectors.toSet());
+        } //event, author, participant, tags
+
+        tagRepository.saveAll(event.tags);
+        participantRepository.saveAll(event.participants);
+        transactionRepository.saveAll(event.transactions);
+        return eventRepository.save(event);
+    }
+
     public boolean delete(EventDTO e){
         if (!eventRepository.existsById(e.id)) return false;
         eventRepository.deleteById(e.id);
@@ -65,6 +126,7 @@ public class DTOtoEntity {
         t.currencyCode = "EUR";
         //create & save transactionEntity
         Transaction transaction = new Transaction(t);
+        transaction.id = UUID.randomUUID(); //creating should assign new ID
         transaction.event = eventRepository.getReferenceById(t.eventId);
         transaction.author = get(t.author);
         transaction.participants.addAll(t.participants.stream().map(this::get).toList());
@@ -114,6 +176,7 @@ public class DTOtoEntity {
     public Participant create(ParticipantDTO p){
         //create & save participant
         Participant participant = new Participant(p);
+        participant.id = UUID.randomUUID();
         participant.event = eventRepository.getReferenceById(p.eventId);
         participantRepository.save(participant);
 

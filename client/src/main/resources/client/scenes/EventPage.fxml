@@ -3,12 +3,33 @@
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
 
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
@@ -88,7 +109,7 @@
                                <tabs>
                                    <Tab fx:id="overviewExpenses" style="-fx-background-color: FAF7F0;" text="%expenses_overview">
                                        <content>
-                                           <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
+                                           <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
                                                <content>
                                                    <VBox minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                                        <children>
@@ -123,7 +144,7 @@
                                                                    <Insets bottom="5.0" />
                                                                </padding>
                                                            </HBox>
-                                                           <VBox fx:id="transactions" alignment="TOP_CENTER" style="-fx-background-color: FAF7F0;">
+                                                           <VBox fx:id="transactions" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                                                <children>
                                                                    <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="100.0" style="-fx-border-color: BCCEF8;" styleClass="transaction">
                                                                        <children>
@@ -537,45 +558,47 @@
                      <content>
                         <AnchorPane style="-fx-background-color: FAF7F0;">
                            <children>
-                               <HBox fx:id="test" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                               <HBox fx:id="test" spacing="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                <padding>
-                                    <Insets bottom="5.0" left="15.0" right="15.0" top="30.0" />
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                  </padding>
                                  <children>
-                                    <HBox minHeight="-Infinity" minWidth="-Infinity">
+                                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="350.0" prefHeight="200.0" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
+                                       <content>
+                                          <VBox fx:id="allTagsVBox" minWidth="-Infinity">
+                                          <children>
+                                             <HBox alignment="CENTER" fillHeight="false" style="-fx-background-color: #FF9999;">
+                                                <children>
+                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Food" />
+                                                   <Pane HBox.hgrow="ALWAYS" />
+                                                   <Button mnemonicParsing="false" text="X" />
+                                                </children>
+                                                <padding>
+                                                   <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                                                </padding>
+                                             </HBox>
+                                          </children>
+                                       </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                    <GridPane minHeight="-Infinity" minWidth="-Infinity">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
                                        <children>
-                                          <ScrollPane prefHeight="200.0" prefWidth="200.0">
-                                             <content>
-                                                <VBox fx:id="allTagsVBox" fillWidth="true" minWidth="-Infinity" prefWidth="195.0" />
-                                             </content>
-                                          </ScrollPane>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name:" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color:" GridPane.rowIndex="1" />
+                                          <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="create tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <ComboBox fx:id="tagColor" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField fx:id="tagNameInput" GridPane.columnIndex="1" />
                                        </children>
-                                    </HBox>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <GridPane minHeight="-Infinity" minWidth="-Infinity" HBox.hgrow="ALWAYS">
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name:" />
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color:" GridPane.rowIndex="1" />
-                                                <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="create tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
-                                                <ComboBox fx:id="tagColor" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <TextField fx:id="tagNameInput" GridPane.columnIndex="1" />
-                                             </children>
-                                          </GridPane>
-                                       </children>
-                                       <padding>
-                                          <Insets left="5.0" />
-                                       </padding>
-                                    </HBox>
+                                    </GridPane>
                                  </children>
                               </HBox>
                            </children>

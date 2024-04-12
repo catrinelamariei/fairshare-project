@@ -3,6 +3,7 @@ package client.scenes;
 import client.*;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.*;
 import javafx.scene.text.Text;
@@ -42,19 +43,16 @@ public class PrivCheckPageCtrl {
     public void login() {
         String passwordText = password.getText();
         if(passwordText!=null && !passwordText.isEmpty()){
-            String response = postRequest(password.getText());
+            Response response = server.adminReqToken(passwordText);
 
-            if(!response.equals("Invalid password")) {
-                UserData data = UserData.getInstance();
-                data.setToken(response);
-                //System.out.println("1. token: " + response);
+            if(response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+                UserData.getInstance().setToken(response.readEntity(String.class));
                 adminPage();
             }else{
-                text.setStyle("-fx-text-fill: red;");
-                text.setText("Wrong code");
+                MainCtrl.alert(String.format("ERROR AUTHENTICATING [%d]", response.getStatus()));
             }
         }else{
-            mainCtrl.alert("Please provide a password");
+            MainCtrl.alert("Please provide a password");
         }
 
     }
@@ -70,9 +68,7 @@ public class PrivCheckPageCtrl {
 
 
     public void requestCodeGeneration(){
-        RestTemplate restTemplate = new RestTemplate();
-        String url = serverUrl + "/admin";
-        String response = restTemplate.getForObject(url, String.class);
+        server.adminReqCode();
     }
     public String postRequest(String code) {
         RestTemplate restTemplate = new RestTemplate();

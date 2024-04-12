@@ -1,7 +1,8 @@
 package client;
 
 import client.scenes.*;
-import client.utils.EventPageKeyEventHandler;
+import client.utils.KeyEvents.EventPageKeyEventHandler;
+import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import javafx.application.Platform;
 import javafx.scene.*;
@@ -11,7 +12,7 @@ import javafx.util.Pair;
 
 public class MainCtrl {
 
-    private Stage primaryStage;
+    public Stage primaryStage;
 
     public StartPageCtrl startPageCtrl; //this needs to be fixed -> need to start using services
     private Scene startPage;
@@ -31,6 +32,7 @@ public class MainCtrl {
 
     public MainCtrl() {
         sideStage.initModality(Modality.APPLICATION_MODAL);
+        sideStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
     }
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
@@ -80,14 +82,13 @@ public class MainCtrl {
     }
 
     public void showAdminPage() {
-        if (UserData.getInstance().getToken() == null) {
-            showAdminCheckPage(); //if no key is present, obtain one
-            return;
-        }
-
         primaryStage.setTitle("<EventName>: admin panel");
-        adminPageCtrl.load();
-        primaryStage.setScene(adminPage);
+        try {
+            adminPageCtrl.load();
+            primaryStage.setScene(adminPage);
+        } catch (NotAuthorizedException e) {
+            showAdminCheckPage();
+        }
     }
 
     public void showAdminCheckPage() {

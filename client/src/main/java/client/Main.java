@@ -1,6 +1,7 @@
 package client;
 
 import client.scenes.*;
+import client.utils.ServerUtils;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -11,7 +12,7 @@ import static com.google.inject.Guice.createInjector;
 
 public class Main extends Application {
 
-    private static final Injector INJECTOR = createInjector(new MyModule());
+    public static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
     private static ResourceBundle languageBundle;
     private static Stage primaryStage;
@@ -25,6 +26,14 @@ public class Main extends Application {
         //Locale locale = Locale.getDefault(); // Get default locale
         this.primaryStage = primaryStage;
         initializeUI(UserData.getInstance().getLanguageCode());
+
+        primaryStage.onCloseRequestProperty().set(e -> {
+            try {
+                INJECTOR.getInstance(ServerUtils.class).stop();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         primaryStage.show();
     }
 

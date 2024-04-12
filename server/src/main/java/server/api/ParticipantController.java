@@ -3,19 +3,25 @@ package server.api;
 import commons.DTOs.*;
 import commons.*;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.Services.DTOtoEntity;
 import server.database.ParticipantRepository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/participants")
 public class ParticipantController {
     private final ParticipantRepository repo;
     private final DTOtoEntity d2e;
+    private final Map<Object, Consumer<ParticipantDTO>> listeners = new ConcurrentHashMap<>();
+    private final Map<Object, Consumer<UUID>> listenersDeletion = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate messagingTemplate;
 
     public ParticipantController(ParticipantRepository repo,
@@ -46,6 +52,7 @@ public class ParticipantController {
         if(messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/events", eventDTO);
         }
+        notifyListeners(created);
         return ResponseEntity.ok(created);
     }
 
@@ -64,6 +71,7 @@ public class ParticipantController {
         if(messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/events", eventDTO);
         }
+        notifyListeners(updated);
         return ResponseEntity.ok(updated);
     }
 
@@ -92,7 +100,52 @@ public class ParticipantController {
         participant.getParticipatedTransactions().clear();
         //participant.getEvent().getParticipants().remove(p);
         repo.delete(participant);
+        notifyListenersDeletion(id);
         return ResponseEntity.ok().build();
     }
+
+
+
+    @GetMapping("/updates")
+    public DeferredResult<ResponseEntity<ParticipantDTO>> getParticipantUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<ParticipantDTO>>(5000L, noContent);
+        var key = new Object();
+        listeners.put(key, t ->{
+            res.setResult(ResponseEntity.ok(t));
+        });
+        res.onCompletion(()->{
+            listeners.remove(key);
+        });
+        return res;
+    }
+
+    @GetMapping("/deletes")
+    public DeferredResult<ResponseEntity<UUID>> getParticipantDeletes() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<UUID>>(5000L, noContent);
+        var key = new Object();
+        listenersDeletion.put(key, t ->{
+            res.setResult(ResponseEntity.ok(t));
+        });
+        res.onCompletion(()->{
+            listenersDeletion.remove(key);
+        });
+        return res;
+    }
+
+    private void notifyListeners(ParticipantDTO p) {
+        listeners.values().forEach(listener -> {
+            listener.accept(p);
+        });
+    }
+
+    private void notifyListenersDeletion(UUID id) {
+        listenersDeletion.values().forEach(listener -> {
+            listener.accept(id);
+        });
+    }
+
+
 
 }
