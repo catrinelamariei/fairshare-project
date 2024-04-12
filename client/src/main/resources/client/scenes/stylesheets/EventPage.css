@@ -31,3 +31,8 @@
 .root {
     -fx-accent: #808080;
 }
+
+.button:focused {
+    -fx-border-color: #0e102e !important;
+    -fx-border-width: 2px !important;
+}

@@ -1,3 +1,8 @@
 .dissabledHyperlink .text {
     -fx-strikethrough: true;
 }
+
+.button:focused {
+    -fx-border-color: #0e102e !important;
+    -fx-border-width: 2px !important;
+}
