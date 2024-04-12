@@ -69,8 +69,8 @@ public class EventController {
 
 
     @Transactional
-    @PatchMapping("/{id}")
-    public ResponseEntity<EventDTO> updateEventName(@PathVariable("id") UUID id,
+    @PutMapping("/{id}")
+    public ResponseEntity<EventDTO> renameEventName(@PathVariable("id") UUID id,
                                                     @RequestBody EventDTO eventDTO) {
         if (id == null || eventDTO == null  || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
