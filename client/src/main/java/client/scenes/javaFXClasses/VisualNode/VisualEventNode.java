@@ -107,7 +107,7 @@ public class VisualEventNode extends EventNode {
     private void jsonSave(ActionEvent actionEvent) {
         //getting location to save file
         FileChooser fileCHooser = new FileChooser();
-        fileCHooser.setTitle("Save JSON");
+        fileCHooser.setTitle(Main.getTranslation("save_json"));
         FileChooser.ExtensionFilter extensionFilter =
             new FileChooser.ExtensionFilter("JSON", "*.json");
         fileCHooser.getExtensionFilters().add(extensionFilter);
@@ -126,8 +126,8 @@ public class VisualEventNode extends EventNode {
 
     private void delete(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Event");
-        alert.setHeaderText("Are you sure you want to delete this event?");
+        alert.setTitle(Main.getTranslation("delete_event"));
+        alert.setHeaderText(Main.getTranslation("sure_of_deletion"));
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {

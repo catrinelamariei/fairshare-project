@@ -1,5 +1,6 @@
 package client.scenes.javaFXClasses.VisualNode;
 
+import client.Main;
 import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.DebtNode;
@@ -41,7 +42,7 @@ public class VisualDebtNode extends DebtNode {
         this.setText(txt);
 
 
-        Button receivedButton = new Button("Mark as received");
+        Button receivedButton = new Button(Main.getTranslation("mark_as_received"));
 
         // a button that creates a transaction for the debt repayment
         // if the event already has a tag "debt", it will be used
@@ -61,17 +62,17 @@ public class VisualDebtNode extends DebtNode {
         VBox vbox;
         if (!creditor.iban.equals("-") && !creditor.bic.equals("-")) {
             Text iban = new Text("IBAN:" + creditor.iban);
-            Text info = new Text("Bank information is available");
+            Text info = new Text(Main.getTranslation("bank_info"));
             Text bic = new Text("BIC: " + creditor.bic);
             vbox = new VBox(info, email, iban, bic);
         } else if (!creditor.iban.equals("-") && creditor.bic.equals("-")) {
-            Text info = new Text("IBAN is available");
+            Text info = new Text(Main.getTranslation("iban_available"));
             vbox = new VBox(info, email, new Text("IBAN: " + creditor.iban));
         } else if (creditor.iban.equals("-") && !creditor.bic.equals("-")) {
-            Text info = new Text("BIC is available");
+            Text info = new Text(Main.getTranslation("bic_available"));
             vbox = new VBox(info, email, new Text("BIC: " + creditor.bic));
         } else {
-            Text info = new Text("Bank information is unavailable");
+            Text info = new Text(Main.getTranslation("no_bank_info"));
             vbox = new VBox(info, email);
         }
         container = new HBox(vbox, spacer, receivedButton);
@@ -90,7 +91,7 @@ public class VisualDebtNode extends DebtNode {
                 .get();
         TransactionDTO ts = new TransactionDTO(null, event.id, new Date(), currencyCode,
                 BigDecimal.valueOf(amount), debtor, new HashSet<>(Arrays.asList(creditor)),
-                new HashSet<>(Arrays.asList(debtTag)), "Debt repayment");
+                new HashSet<>(Arrays.asList(debtTag)), Main.getTranslation("debt_repayment"));
         ctrl.createTransaction(ts);
     }
 

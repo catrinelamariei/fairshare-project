@@ -1,5 +1,6 @@
 package client.scenes.javaFXClasses.VisualNode;
 
+import client.Main;
 import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
@@ -42,7 +43,8 @@ public class VisualTransactionNode extends TransactionNode {
                 UserData.getInstance().getCurrencyCode(), ts.date);
         BigDecimal amountInPreferred = ts.amount.multiply(BigDecimal.valueOf(rate.rate));
 
-        Text desc = new Text(String.format("%s paid %.2f%s for %s",
+        Text desc = new Text(String.format("%s " + Main.getTranslation("paid") + " %.2f%s "
+                        + Main.getTranslation("for") + " %s",
             ts.author.firstName.trim(), amountInPreferred,
                 UserData.getInstance().getCurrencyCode(), ts.subject));
                 
@@ -62,7 +64,7 @@ public class VisualTransactionNode extends TransactionNode {
         VBox body = new VBox(desc, participants);
 
         // Delete Button
-        Button deleteTransactionButton = new Button("Delete");
+        Button deleteTransactionButton = new Button(Main.getTranslation("delete"));
         deleteTransactionButton.setStyle("-fx-text-fill: #ff0000;");
         deleteTransactionButton.setOnAction(this::deleteTransaction);
         deleteTransactionButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
@@ -74,7 +76,7 @@ public class VisualTransactionNode extends TransactionNode {
 
 
         ImageView imgv = new ImageView(img);
-        Button btn = new Button("Edit", imgv);
+        Button btn = new Button(Main.getTranslation("edit"), imgv);
         btn.setFont(Font.font("System", FontWeight.BOLD, 20.0));
         btn.setOnAction(this::editTransaction); //attach method to button
 
