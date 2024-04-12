@@ -10,8 +10,15 @@ import javafx.fxml.*;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class SettingsPageCtrl implements Initializable {
@@ -82,7 +89,22 @@ public class SettingsPageCtrl implements Initializable {
 
     @FXML
     private void downloadLanguage() {
-        
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Saving language pack");
+        fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("language file", "*.properties"));
+        fc.setInitialFileName(languageChoiceBox.getValue() + ".properties");
+        fc.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        try {
+            Path source = Paths.get("client", "build", "resources", "main", "client", "lang",
+                    languageChoiceBox.getValue() + ".properties");
+            Path destination = fc.showSaveDialog(languageChoiceBox.getScene().getWindow()).toPath();
+            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            MainCtrl.alert("Error during saving");
+            System.err.println(e);
+        } catch (NullPointerException ignored) {} //filechooser closed without picking file
     }
 
     @FXML
