@@ -124,13 +124,6 @@
                                                                </font>
                                                             </Button>
                                                          </children>
-                                                         <rowConstraints>
-                                                            <RowConstraints />
-                                                            <RowConstraints />
-                                                            <RowConstraints />
-                                                            <RowConstraints />
-                                                            <RowConstraints />
-                                                         </rowConstraints>
                                                       </GridPane>
                                                    </content>
                                                 </TitledPane>
