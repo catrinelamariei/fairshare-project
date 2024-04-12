@@ -113,8 +113,12 @@
                                     <Insets />
                                  </GridPane.margin>
                               </TextField>
-                              <Button mnemonicParsing="false" onAction="#testConnection" text="%test_connection" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Button mnemonicParsing="false" onAction="#addConnection" text="%text_add" GridPane.rowIndex="3" />
+                              <HBox spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#addConnection" text="%text_add" />
+                                    <Button mnemonicParsing="false" onAction="#testConnection" text="%test_connection" />
+                                 </children>
+                              </HBox>
                            </children>
                         </GridPane>
                         <GridPane vgap="10.0" GridPane.columnIndex="1">
