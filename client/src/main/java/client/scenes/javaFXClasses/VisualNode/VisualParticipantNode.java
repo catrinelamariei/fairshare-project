@@ -81,6 +81,7 @@ public class VisualParticipantNode extends ParticipantNode {
         gridPane.add(ibanField, 1, 3);
         gridPane.add(bicField, 1, 4);
 
+
         //set insets
         Insets insets = new Insets(10.0d);
         gridPane.getChildren().forEach(n -> gridPane.setMargin(n, insets));
