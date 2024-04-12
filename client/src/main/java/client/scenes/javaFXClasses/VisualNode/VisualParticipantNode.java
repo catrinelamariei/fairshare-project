@@ -81,6 +81,7 @@ public class VisualParticipantNode extends ParticipantNode {
         gridPane.add(ibanField, 1, 3);
         gridPane.add(bicField, 1, 4);
 
+
         //set insets
         Insets insets = new Insets(10.0d);
         gridPane.getChildren().forEach(n -> gridPane.setMargin(n, insets));
@@ -161,6 +162,12 @@ public class VisualParticipantNode extends ParticipantNode {
         bicField.setEditable(editing);
 
         editSaveButton.setText(editing ? "Save" : "Edit");
+        Image saveimg = new Image(getClass().getResourceAsStream(
+                "/client/Images/save.png"),20d, 20d, true, false);
+        ImageView saveview = new ImageView(saveimg);
+        Image editimg = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+        ImageView editview = new ImageView(editimg);
+        editSaveButton.setGraphic(editing ? saveview : editview);
     }
 
     private void cancelEdit() {

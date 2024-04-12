@@ -353,6 +353,7 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
+        tagsInput.getItems().add(0, null);
 
         //load tags
         tagNameInput.clear();
@@ -361,10 +362,6 @@ public class EventPageCtrl implements Initializable {
                 .map(t -> hboxFromTag(t)).toList());
         // load colors
         tagColor.getItems().addAll(Tag.Color.values());
-
-        // TODO: replace with color code
-
-
 
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
@@ -401,6 +398,9 @@ public class EventPageCtrl implements Initializable {
     private HBox hboxFromTag(TagDTO t) {
         //creation
         HBox hbox = new HBox();
+        hbox.setPrefHeight(47);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setStyle("-fx-background-color: " + t.color.colorCode);
         Text text = new Text(t.getName());
         Pane spacer = new Pane();
         Button deleteTag = new Button("X");
@@ -439,7 +439,8 @@ public class EventPageCtrl implements Initializable {
     private void addTag() {
         TagDTO input = tagsInput.getValue();
         if (input == null) {
-            MainCtrl.alert("Please choose a tag from the dropdown menu");
+            MainCtrl.alert("Please choose a tag from the dropdown " +
+                    "menu to add a tag");
             return;
         } else if (tags.contains(input)) {
             MainCtrl.alert("Tag already added");
@@ -673,7 +674,7 @@ public class EventPageCtrl implements Initializable {
         } else if (selectedRadioButton == null) {
             MainCtrl.alert("Please select an option for splitting the expense.");
         } else if (customSplit.isSelected() && !participantIsSelected) {
-            MainCtrl.alert("Please choose at least one participant other than yourself.");
+            MainCtrl.alert("Please choose at least one participant");
         } else {
             return true;
         }
