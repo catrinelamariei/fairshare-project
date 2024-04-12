@@ -93,7 +93,11 @@ public class EventController implements WebMvcConfigurer {
     @Transactional
     @PutMapping
     public ResponseEntity<EventDTO> updateEvent(@RequestBody EventDTO eventDTO) {
-        return ResponseEntity.ok(new EventDTO(d2e.set(eventDTO)));
+        EventDTO updated = new EventDTO(d2e.set(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", updated);
+        }
+        return ResponseEntity.ok(updated);
     }
 
     // TODO: manage dependencies
