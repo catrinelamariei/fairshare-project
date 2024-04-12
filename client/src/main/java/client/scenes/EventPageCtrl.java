@@ -336,8 +336,7 @@ public class EventPageCtrl implements Initializable {
 
         // debt
         debts.getPanes().clear();
-        settleButton.setText("Settle debts");
-        //c1f05a35-1407-4ba1-ada3-0692649256b8
+        settleButton.setText(Main.getTranslation("settle_debts"));
 
         //choiceboxes for transaction filter
         payerFilter.getItems().clear();
@@ -439,10 +438,10 @@ public class EventPageCtrl implements Initializable {
     private void addTag() {
         TagDTO input = tagsInput.getValue();
         if (input == null) {
-            MainCtrl.alert("Please choose a tag from the dropdown menu");
+            MainCtrl.alert(Main.getTranslation("tag_input"));
             return;
         } else if (tags.contains(input)) {
-            MainCtrl.alert("Tag already added");
+            MainCtrl.alert(Main.getTranslation("tag_already"));
             return;
         }
         tagsInput.setValue(null);
@@ -467,10 +466,10 @@ public class EventPageCtrl implements Initializable {
         String name = tagNameInput.getText();
         Tag.Color color = tagColor.getValue();
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter a tag name");
+            MainCtrl.alert(Main.getTranslation("tag_name_null"));
             return;
         } else if (color == null) {
-            MainCtrl.alert("Please choose a color");
+            MainCtrl.alert(Main.getTranslation("choose_color"));
             return;
         }
         TagDTO tag = new TagDTO(null, UserData.getInstance().getCurrentUUID(), name, color);
@@ -482,7 +481,7 @@ public class EventPageCtrl implements Initializable {
         } catch (WebApplicationException e) {
             System.err.println("Error creating tag: " + e.getMessage());
         }
-        MainCtrl.inform("Tag", "Tag created successfully");
+        MainCtrl.inform(Main.getTranslation("tag"), Main.getTranslation("tag_created"));
         tagNameInput.clear();
         tagColor.setValue(null);
     }
@@ -499,9 +498,9 @@ public class EventPageCtrl implements Initializable {
 
         if (UserData.getInstance().getCurrentUUID() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
+            alert.setTitle(Main.getTranslation("error"));
             alert.setHeaderText(null);
-            alert.setContentText("Event not found");
+            alert.setContentText(Main.getTranslation("event_not_found"));
             alert.showAndWait();
             return;
         }
@@ -516,7 +515,7 @@ public class EventPageCtrl implements Initializable {
 
 
         //display copied for 3 seconds
-        Label label = new Label("Copied to clipboard!");
+        Label label = new Label(Main.getTranslation("clipboard_copy"));
         label.setStyle("-fx-font-size: 14px;"); // Set label font size
         StackPane stackPane = new StackPane(label);
         stackPane.setStyle(
@@ -545,7 +544,9 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         if (createTransaction(ts) != null)
-            MainCtrl.inform("Expense","Expense \"" + ts.getSubject() + "\" Created!");
+            MainCtrl.inform(Main.getTranslation("expense"),
+                    Main.getTranslation("expense_creation_start") + ts.getSubject()
+                            + Main.getTranslation("expense_creation_end"));
 
     }
 
@@ -557,6 +558,7 @@ public class EventPageCtrl implements Initializable {
             undoService.addAction(CREATE, ts);
             String selectedPayer = payerFilter.getValue();
             String selectedParticipant = participantFilter.getValue();
+            //todo
             if ((selectedPayer.equals("All")
                     || selectedPayer.equals(ts.author.getFullName()))
                     && (selectedParticipant.equals("All") ||
@@ -585,6 +587,7 @@ public class EventPageCtrl implements Initializable {
                         ts -> ts.getTags()
                                 .stream()
                                 .map(tag -> tag.getName())
+                                //todo
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
                 .sum());
@@ -644,7 +647,7 @@ public class EventPageCtrl implements Initializable {
 
         //return buttons/fields to default functions/value
         submitTransaction.setOnAction(this::onCreateTransaction);
-        addExpenseTab.setText("Add Expense");
+        addExpenseTab.setText(Main.getTranslation("add_expense"));
         vboxParticipantsTransaction.getChildren().forEach(node -> {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
@@ -661,19 +664,19 @@ public class EventPageCtrl implements Initializable {
                                 RadioButton selectedRadioButton,
                                 boolean participantIsSelected) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter a description.");
+            MainCtrl.alert(Main.getTranslation("empty_expense_name"));
         } else if (author == null) {
-            MainCtrl.alert("Please select a payer.");
+            MainCtrl.alert(Main.getTranslation("empty_expense_author"));
         } else if (amount == null) {
-            MainCtrl.alert("Please enter a valid amount.");
+            MainCtrl.alert(Main.getTranslation("empty_expense_amount"));
         } else if (currency == null || currency.isEmpty()) {
-            MainCtrl.alert("Please choose a currency code.");
+            MainCtrl.alert(Main.getTranslation("empty_expense_currency"));
         } else if (localDate == null) {
-            MainCtrl.alert("Please choose a date.");
+            MainCtrl.alert(Main.getTranslation("empty_expense_date"));
         } else if (selectedRadioButton == null) {
-            MainCtrl.alert("Please select an option for splitting the expense.");
+            MainCtrl.alert(Main.getTranslation("split_not_selected"));
         } else if (customSplit.isSelected() && !participantIsSelected) {
-            MainCtrl.alert("Please choose at least one participant other than yourself.");
+            MainCtrl.alert(Main.getTranslation("other_participant"));
         } else {
             return true;
         }
@@ -693,23 +696,23 @@ public class EventPageCtrl implements Initializable {
     private boolean checkInput(String name, String transactionAmountString, String currency,
                                LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter the name of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_name"));
             return true;
         }
         if (author == null) {
-            MainCtrl.alert("Please chose the author of the transaction");
+            MainCtrl.alert(Main.getTranslation("author_not_selected"));
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            MainCtrl.alert("Please enter the amount of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_amount"));
             return true;
         }
         if (currency == null) {
-            MainCtrl.alert("Please enter the currency of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_currency"));
             return true;
         }
         if (localDate == null) {
-            MainCtrl.alert("Please enter the date of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_date"));
             return true;
         }
 
@@ -752,15 +755,15 @@ public class EventPageCtrl implements Initializable {
 
         try {
             if (fName.isEmpty()) {
-                MainCtrl.alert("Please enter the first name");
+                MainCtrl.alert(Main.getTranslation("empty_first_name"));
                 return;
             }
             if (lName.isEmpty()) {
-                MainCtrl.alert("Please enter the last name");
+                MainCtrl.alert(Main.getTranslation("empty_last_name"));
                 return;
             }
             if (mail.isEmpty() || invalidEmail(mail)) {
-                MainCtrl.alert("Please enter a valid email address");
+                MainCtrl.alert(Main.getTranslation("invalid_email"));
                 return;
             }
             if (bicText.isEmpty()) {
@@ -809,7 +812,7 @@ public class EventPageCtrl implements Initializable {
 
             // end if no debts to simplify
             if (positive.isEmpty()) {
-                MainCtrl.inform("Debts", "No debts to simplify!");
+                MainCtrl.inform(Main.getTranslation("debts"), Main.getTranslation("no_debts"));
                 return;
             }
 
@@ -843,14 +846,15 @@ public class EventPageCtrl implements Initializable {
             }
 
             // update the button
-            settleButton.setText("Refresh debts");
+            settleButton.setText(Main.getTranslation("refresh_debts"));
             filterDebts();
         } catch (Exception e) {
+            //TODO below:
             if(e.getMessage().equals("No participants")){
-                MainCtrl.alert( "A transaction has no beneficiaries." +
-                        " Please add participants to all transactions.");
+                MainCtrl.alert( Main.getTranslation("expense_without_beneficiary")+
+                        Main.getTranslation("add_participants_to_expense"));
             } else {
-                MainCtrl.alert("Error simplifying debts");
+                MainCtrl.alert(Main.getTranslation("debts_error"));
             }
         }
 
@@ -861,6 +865,7 @@ public class EventPageCtrl implements Initializable {
         String selectedCreditor = (String) creditorFilter.getValue();
         // remove other debtNodes if a creditor is selected
         Set<TitledPane> toRemove = new HashSet<>() ;
+        //TODO:
         if (!selectedCreditor.equals("All")) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
@@ -911,9 +916,9 @@ public class EventPageCtrl implements Initializable {
 
     public void onEditEvent() {
         TextInputDialog dialog = new TextInputDialog(eventDTO.name);
-        dialog.setTitle("Edit Event Name");
+        dialog.setTitle(Main.getTranslation("edit_event_name"));
         dialog.setHeaderText(null);
-        dialog.setContentText("Enter the new event name:");
+        dialog.setContentText(Main.getTranslation("new_event_name"));
 
         Optional<String> result = dialog.showAndWait();
 
@@ -939,7 +944,7 @@ public class EventPageCtrl implements Initializable {
 
     public void enableEditing(TransactionNode tsn) {
         transactionEditTarget = tsn;
-        addExpenseTab.setText("Edit Expense");
+        addExpenseTab.setText(Main.getTranslation("edit_expense"));
         addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
         submitTransaction.setOnAction(this::submitEditTransaction);
     }
@@ -988,7 +993,7 @@ public class EventPageCtrl implements Initializable {
     private void updateTransaction(TransactionDTO ts) {
         if (ts == null) return;
         if (transactionEditTarget == null) {
-            MainCtrl.alert("ERROR: no transaction target set");
+            MainCtrl.alert(Main.getTranslation("expense_target"));
             return;
         }
 
@@ -1018,7 +1023,7 @@ public class EventPageCtrl implements Initializable {
                 throw new IllegalArgumentException();
             }
             if (invalidEmail(newParticipant.getEmail())) {
-                MainCtrl.alert("Please enter a valid email address");
+                MainCtrl.alert(Main.getTranslation("invalid_email"));
                 throw new IllegalArgumentException();
             }
             if (newParticipant.getBic().isEmpty()) {
@@ -1034,7 +1039,7 @@ public class EventPageCtrl implements Initializable {
             server.putParticipant(newParticipant);
             load();
 
-        } catch (WebApplicationException e) {
+        }  catch (WebApplicationException e) {
             System.err.println("Error updating participant: " + e.getMessage());
         }
     }
@@ -1072,7 +1077,7 @@ public class EventPageCtrl implements Initializable {
         });
 
         if (pieChart.getData().isEmpty()) {
-            MainCtrl.inform("Statistics","No statistics to display");
+            MainCtrl.inform(Main.getTranslation("statistics"),Main.getTranslation("no_statistics"));
             return;
         } else {
             pieChart.setVisible(true);

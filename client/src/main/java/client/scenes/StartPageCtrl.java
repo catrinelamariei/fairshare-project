@@ -58,13 +58,13 @@ public class StartPageCtrl {
             if (text == null || text.isEmpty()) throw new IllegalArgumentException();
             e = serverUtils.postEvent(new EventDTO(null, text));
         } catch (IllegalArgumentException ex) {
-            MainCtrl.alert("Please enter a valid event name.");
+            MainCtrl.alert(Main.getTranslation("invalid_event_name"));
             return;
         } catch (WebApplicationException ex) {
             MainCtrl.alert(ex.getMessage());
             return;
         }catch (ProcessingException ex){
-            MainCtrl.alert("Server is not available");
+            MainCtrl.alert(Main.getTranslation("server_not_available"));
             return;
         }
 
@@ -75,7 +75,9 @@ public class StartPageCtrl {
         setCurrentEvent(pair);
 
         //confirmation dialog
-        MainCtrl.inform("Event","Event \"" + text + "\" Created!");
+        MainCtrl.inform(Main.getTranslation("event"),
+                Main.getTranslation("event_creation_start")
+                + text + Main.getTranslation("event_creation_end"));
         mainCtrl.showEventPage();
     }
 
@@ -113,15 +115,15 @@ public class StartPageCtrl {
                 UserData.getInstance().setCurrentUUID(ehl.pair);
                 eventPage();
             }catch(NotFoundException e){
-                MainCtrl.alert("Event not found: no event found with said UUID");
+                MainCtrl.alert(Main.getTranslation("event_not_found_2"));
             } catch (IllegalArgumentException e) {
                 MainCtrl.alert(String.format(
-                        "The following is not a properly structured invite code\n[%s]", text));
+                        Main.getTranslation("invite_code_error") + "\n[%s]", text));
             }
 
         } else {
             // Display an error message if the input is invalid
-            MainCtrl.alert("Event not found: code was empty or null");
+            MainCtrl.alert(Main.getTranslation("event_not_found_3"));
         }
     }
 
