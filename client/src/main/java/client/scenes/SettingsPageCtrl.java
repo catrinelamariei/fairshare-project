@@ -81,6 +81,11 @@ public class SettingsPageCtrl implements Initializable {
     }
 
     @FXML
+    private void downloadLanguage() {
+        
+    }
+
+    @FXML
     private void selectCurrency() {
         userData.setCurrencyCode(currencyChoiceBox.getValue());
         currencyChoiceBox.getStyleClass().removeAll("ChangedValue");
