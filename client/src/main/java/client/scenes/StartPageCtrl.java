@@ -5,9 +5,11 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import jakarta.ws.rs.*;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
 import java.io.File;
@@ -30,6 +32,10 @@ public class StartPageCtrl {
     @FXML
     private VBox recentEventsVBox;
     @FXML
+    private Button adminButton;
+    @FXML
+    private Button settingsButton;
+    @FXML
     public Region veil;
 
 
@@ -46,6 +52,41 @@ public class StartPageCtrl {
         //event links
         recentEventsVBox.getChildren().setAll(UserData.getInstance().getRecentUUIDs()
             .stream().map(EventHyperlink::new).toList());
+
+        setTraversalPolicy();
+
+        // Set the initial focus to the first node in custom order
+        Platform.runLater(() -> newEvent.requestFocus());
+    }
+
+    private void setTraversalPolicy() {
+        List<Node> nodesInOrder = new ArrayList<>(List.of(newEvent, createButton,
+                joinedEvent, joinButton));
+        // Assuming recentEventsVBox contains Hyperlink nodes
+        nodesInOrder.addAll(recentEventsVBox.getChildren());
+        nodesInOrder.add(settingsButton);
+        nodesInOrder.add(adminButton);
+
+        // Add an event filter to each node
+        for (int i = 0; i < nodesInOrder.size(); i++) {
+            int index = i;
+            nodesInOrder.get(i).addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                if (event.getCode() == KeyCode.TAB) {
+                    Node nextNode;
+                    if (event.isShiftDown()) {
+                        // Move to the previous node in the list
+                        int previousIndex = (index - 1 + nodesInOrder.size()) % nodesInOrder.size();
+                        nextNode = nodesInOrder.get(previousIndex);
+                    } else {
+                        // Move to the next node in the list
+                        int nextIndex = (index + 1) % nodesInOrder.size();
+                        nextNode = nodesInOrder.get(nextIndex);
+                    }
+                    nextNode.requestFocus();
+                    event.consume();
+                }
+            });
+        }
     }
 
 

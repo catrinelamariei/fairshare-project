@@ -13,6 +13,6 @@
 }
 
 .button:focused {
-    -fx-border-color: #0e102e !important;
+    -fx-border-color: #af87d6 !important;
     -fx-border-width: 2px !important;
 }
