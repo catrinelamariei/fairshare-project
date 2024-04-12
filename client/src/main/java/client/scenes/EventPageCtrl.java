@@ -1005,7 +1005,8 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant) {
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant)
+            throws IllegalArgumentException{
         if (newParticipant == null) {
             return;
         }
@@ -1013,11 +1014,12 @@ public class EventPageCtrl implements Initializable {
         try {
             if (newParticipant.getFirstName().isEmpty() || newParticipant.getLastName().isEmpty()
                     || newParticipant.getEmail().isEmpty()) {
+                MainCtrl.alert("Please enter valid participant data");
                 throw new IllegalArgumentException();
             }
             if (invalidEmail(newParticipant.getEmail())) {
                 MainCtrl.alert("Please enter a valid email address");
-                return;
+                throw new IllegalArgumentException();
             }
             if (newParticipant.getBic().isEmpty()) {
                 newParticipant.setBic("-");
@@ -1032,8 +1034,6 @@ public class EventPageCtrl implements Initializable {
             server.putParticipant(newParticipant);
             load();
 
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
         } catch (WebApplicationException e) {
             System.err.println("Error updating participant: " + e.getMessage());
         }
