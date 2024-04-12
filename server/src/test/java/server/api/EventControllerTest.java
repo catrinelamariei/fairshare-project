@@ -61,7 +61,7 @@ public class EventControllerTest {
         when(repo.existsById(event.id)).thenReturn(true);
         when(d2e.update(eventDTO)).thenReturn(event);
         doNothing().when(smtMock).convertAndSend("/topic/events", eventDTO);
-        ResponseEntity<EventDTO> response = controller.updateEventName(event.id, eventDTO);
+        ResponseEntity<EventDTO> response = controller.renameEventName(event.id, eventDTO);
         verify(d2e).update(eventDTO);
         assertEquals(eventDTO, response.getBody());
         verify(smtMock).convertAndSend("/topic/events", eventDTO);
@@ -70,27 +70,27 @@ public class EventControllerTest {
     @Test
     public void updateEventNotFound() {
         when(repo.existsById(event.id)).thenReturn(false);
-        ResponseEntity<EventDTO> response = controller.updateEventName(event.id, eventDTO);
+        ResponseEntity<EventDTO> response = controller.renameEventName(event.id, eventDTO);
         assertEquals(ResponseEntity.notFound().build(), response);
     }
 
     @Test
     public void updateEventBadRequest() {
-        ResponseEntity<EventDTO> response = controller.updateEventName(null, eventDTO);
+        ResponseEntity<EventDTO> response = controller.renameEventName(null, eventDTO);
         assertEquals(ResponseEntity.badRequest().build(), response);
 
-        response = controller.updateEventName(event.id, null);
+        response = controller.renameEventName(event.id, null);
         assertEquals(ResponseEntity.badRequest().build(), response);
 
-        response = controller.updateEventName(null, null);
+        response = controller.renameEventName(null, null);
         assertEquals(ResponseEntity.badRequest().build(), response);
 
         eventDTO.name = null;
-        response = controller.updateEventName(event.id, eventDTO);
+        response = controller.renameEventName(event.id, eventDTO);
         assertEquals(ResponseEntity.badRequest().build(), response);
 
         eventDTO.name = "";
-        response = controller.updateEventName(event.id, eventDTO);
+        response = controller.renameEventName(event.id, eventDTO);
         assertEquals(ResponseEntity.badRequest().build(), response);
     }
 
