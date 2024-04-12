@@ -68,6 +68,7 @@ public class MainCtrl {
 
         this.settingsPageCtrl = settingsPage.getKey();
         this.settingsPage = new Scene(settingsPage.getValue());
+        sideStage.setScene(this.settingsPage); //update after language switch
         startPageCtrl.veil.visibleProperty().bind(sideStage.showingProperty());
 
         showStartPage();
