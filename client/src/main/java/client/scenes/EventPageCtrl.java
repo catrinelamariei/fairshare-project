@@ -680,40 +680,50 @@ public class EventPageCtrl implements Initializable {
         return false;
     }
 
-    private static BigDecimal isValidAmount(String transactionAmountString) {
+    BigDecimal isValidAmount(String transactionAmountString) {
         BigDecimal amount;
         try {
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             return null;
+        } catch (NullPointerException e){
+            return null;
         }
         return amount;
     }
 
-    private boolean checkInput(String name, String transactionAmountString, String currency,
-                               LocalDate localDate, ParticipantDTO author) {
+    boolean checkInput(String name, String transactionAmountString, String currency,
+                       LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter the name of the expense");
+            alert("Please enter the name of the expense");
             return true;
         }
         if (author == null) {
-            MainCtrl.alert("Please chose the author of the transaction");
+            alert("Please chose the author of the transaction");
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            MainCtrl.alert("Please enter the amount of the expense");
+            alert("Please enter the amount of the expense");
             return true;
         }
         if (currency == null) {
-            MainCtrl.alert("Please enter the currency of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
         if (localDate == null) {
-            MainCtrl.alert("Please enter the date of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
 
         return false;
+    }
+
+    private void alert(String text){
+        try{
+            MainCtrl.alert(text);
+        } catch (Exception e){
+            System.out.println("can't produce an alert in testing");
+        }
     }
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
@@ -872,7 +882,7 @@ public class EventPageCtrl implements Initializable {
         debts.getPanes().removeAll(toRemove);
     }
 
-    private boolean invalidEmail(String email) {
+    boolean invalidEmail(String email) {
         // Regex pattern to match email address
         String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regexPattern);

@@ -48,3 +48,9 @@ out/
 
 ### Client Config ###
 client/config.json
+
+### Server Exchange rates ###
+server/server/src/main/resources/rates
+
+### Client Exchange rates ###
+client/client/src/main/resources/client/rates
