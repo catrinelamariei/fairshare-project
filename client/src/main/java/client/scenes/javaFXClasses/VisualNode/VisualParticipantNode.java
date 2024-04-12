@@ -166,7 +166,7 @@ public class VisualParticipantNode extends ParticipantNode {
         ImageView saveview = new ImageView(saveimg);
         Image editimg = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
         ImageView editview = new ImageView(editimg);
-        editSaveButton.setGraphic(isEditable ? saveview : editview);
+        editSaveButton.setGraphic(editing ? saveview : editview);
     }
 
     private void cancelEdit() {
