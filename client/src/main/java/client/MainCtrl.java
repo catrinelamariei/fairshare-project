@@ -4,9 +4,6 @@ import client.scenes.*;
 import client.utils.KeyEvents.EventPageKeyEventHandler;
 import com.google.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
-import client.utils.ServerUtils;
-import commons.DTOs.EventDTO;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import javafx.application.Platform;
 import javafx.scene.*;
@@ -36,12 +33,12 @@ public class MainCtrl {
     private SettingsPageCtrl settingsPageCtrl;
     private Scene settingsPage;
 
-    private final ServerUtils server;
+//    private final ServerUtils server;
 
 
     @Inject
-    public MainCtrl(ServerUtils server) {
-        this.server = server;
+    public MainCtrl(UserData userData) {
+        this.userData = userData;
         sideStage.initModality(Modality.APPLICATION_MODAL);
         sideStage.setOnCloseRequest(windowEvent -> userData.save());
     }
@@ -95,14 +92,8 @@ public class MainCtrl {
     }
 
     public void showAdminPage() {
-        if (UserData.getInstance().getToken() == null) {
-            showAdminCheckPage(); //if no key is present, obtain one
-            return;
-        }
-
-        primaryStage.setTitle("<EventName>: admin panel");
+        primaryStage.setTitle(Main.getTranslation("admin_panel"));
         try {
-            primaryStage.setTitle(getEventName() + " - " + Main.getTranslation("admin_panel"));
             adminPageCtrl.load();
             primaryStage.setScene(adminPage);
         } catch (NotAuthorizedException e) {
@@ -111,7 +102,7 @@ public class MainCtrl {
     }
 
     public void showAdminCheckPage() {
-        primaryStage.setTitle(getEventName() + " - " +  Main.getTranslation("admin_panel_login"));
+        primaryStage.setTitle(Main.getTranslation("admin_panel_login"));
         primaryStage.setScene(privCheckPage);
     }
 
@@ -147,11 +138,5 @@ public class MainCtrl {
         alert.setContentText(msg);
         alert.showAndWait();
     }
-
-    private String getEventName() {
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
-        return event.getName();
-    }
-
 
 }

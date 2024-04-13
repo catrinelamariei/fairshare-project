@@ -304,7 +304,7 @@ public class EventPageCtrl implements Initializable {
 
     public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
-        eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+        eventDTO = server.getEvent(userData.getCurrentUUID());
 
 
         //update name
