@@ -4,6 +4,7 @@ import client.*;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import jakarta.ws.rs.core.Response;
+import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.*;
 import javafx.scene.text.Text;
@@ -19,7 +20,9 @@ public class PrivCheckPageCtrl {
     private final MainCtrl mainCtrl;
     private final String serverUrl;
     public PasswordField password;
-    public Text text;
+
+    @FXML
+    private Text text;
 
     @Inject
     public PrivCheckPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
@@ -27,7 +30,6 @@ public class PrivCheckPageCtrl {
         this.serverUrl = data.getServerURL();
         this.server = server;
         this.mainCtrl = mainCtrl;
-        text = new Text();
     }
 
     public void initialize(URL location, ResourceBundle resources) {

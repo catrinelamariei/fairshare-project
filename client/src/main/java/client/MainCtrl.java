@@ -2,6 +2,7 @@ package client;
 
 import client.scenes.*;
 import client.utils.KeyEvents.EventPageKeyEventHandler;
+import client.utils.KeyEvents.PrivCheckPageKeyEventHandler;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import javafx.application.Platform;
@@ -54,6 +55,8 @@ public class MainCtrl {
 
         this.privCheckPageCtrl = privCheckPage.getKey();
         this.privCheckPage = new Scene(privCheckPage.getValue());
+        this.privCheckPage.setOnKeyPressed(
+                new PrivCheckPageKeyEventHandler(this.privCheckPageCtrl));
 
         this.adminPageCtrl = adminPage.getKey();
         this.adminPage = new Scene(adminPage.getValue());
