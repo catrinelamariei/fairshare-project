@@ -16,7 +16,7 @@ import javafx.scene.text.*;
 import java.util.*;
 
 public class VisualParticipantNode extends ParticipantNode {
-    //service variables:
+    // variables:
     private boolean editing = false;
     private ParticipantDTO screenshot;
 
@@ -47,8 +47,8 @@ public class VisualParticipantNode extends ParticipantNode {
      * @param participant data to be used/displayed
      */
     protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl,
-                                    UserData userData) {
-        super(participant.id, participant.getFullName(), eventPageCtrl, userData);
+                                    UserData userData, ServerUtils serverUtils) {
+        super(participant.id, participant.getFullName(), eventPageCtrl, userData, serverUtils);
         this.getStyleClass().add("participants"); //set CSS class
 
         //apply style to all text
@@ -191,7 +191,6 @@ public class VisualParticipantNode extends ParticipantNode {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 // Delete participant from the server
-                ServerUtils serverUtils = new ServerUtils(userData);
                 serverUtils.deleteParticipant(id);
 
                 // Remove the participant from the UI

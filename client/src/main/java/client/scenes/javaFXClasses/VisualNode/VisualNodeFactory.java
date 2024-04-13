@@ -37,12 +37,12 @@ public final class VisualNodeFactory implements NodeFactory {
 
     @Override
     public EventNode createEventNode(EventDTO e) {
-        return new VisualEventNode(e, mainCtrl, jsonUtil, userData);
+        return new VisualEventNode(e, mainCtrl, jsonUtil, userData, server);
     }
 
     @Override
     public ParticipantNode createParticipantNode(ParticipantDTO p) {
-        return new VisualParticipantNode(p, epcProvider.get(), userData);
+        return new VisualParticipantNode(p, epcProvider.get(), userData, server);
     }
 
     @Override

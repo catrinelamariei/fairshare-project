@@ -43,7 +43,7 @@ public class ServerUtils {
     private StompSession session;
 
     @Inject
-    public ServerUtils(UserData userData) {
+    private ServerUtils(UserData userData) {
         this.userData = userData;
         this.session =  connect(getWebSocketURL());
     }

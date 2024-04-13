@@ -32,12 +32,13 @@ public class PojoNodeFactory implements NodeFactory {
 
     @Override
     public EventNode createEventNode(EventDTO e) {
-        return new EventNode(mainCtrl, jsonUtil, userData, new UserData.Pair<>(e.id, e.name));
+        return new EventNode(mainCtrl, jsonUtil, userData, new UserData.Pair<>(e.id, e.name),
+                server);
     }
 
     @Override
     public ParticipantNode createParticipantNode(ParticipantDTO p) {
-        return new ParticipantNode(p.id, p.getFullName(), eventPageCtrl, userData);
+        return new ParticipantNode(p.id, p.getFullName(), eventPageCtrl, userData, server);
     }
 
     @Override

@@ -7,8 +7,6 @@ import jakarta.ws.rs.core.Response;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.*;
 import javafx.scene.text.Text;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URL;
 import java.util.ResourceBundle;
