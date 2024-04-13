@@ -40,9 +40,6 @@ public class TransactionController {
             @RequestBody TransactionDTO ts) {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
         TransactionDTO t = new TransactionDTO(d2e.create(ts));
-
-        //listeners.values().forEach((k, l)->l.accept(t));
-
         listeners.values().forEach(listener -> {
             listener.accept(t);
         });

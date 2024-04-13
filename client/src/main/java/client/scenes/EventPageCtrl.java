@@ -322,6 +322,13 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
+
+        server.registerForEventNameUpdates(eventName -> {
+            Platform.runLater(() -> {
+                //eventTitle.setText(eventName);
+                load();
+            });
+        });
     }
 
 

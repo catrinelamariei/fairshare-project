@@ -324,6 +324,9 @@ public class ServerUtils {
             transactionEXEC.shutdownNow();
             execDeleteTransaction.shutdownNow();
         }
+        if(eventNameExecutor!=null){
+            eventNameExecutor.shutdownNow();
+        }
 
         if(execUpdateParticipant != null && execDeleteParticipant != null ){
             execUpdateParticipant.shutdownNow();
@@ -397,5 +400,27 @@ public class ServerUtils {
                 .target(url).path("api/test/reach/")
                 .request()
                 .get().getStatusInfo();
+    }
+
+    ExecutorService eventNameExecutor;
+    public void registerForEventNameUpdates(Consumer<String> consumer) {
+        eventNameExecutor= Executors.newSingleThreadExecutor();
+        eventNameExecutor.submit(() -> {
+            while (!Thread.interrupted()) {
+
+                var response = ClientBuilder.newClient()
+                        .target(userData.getServerURL())
+                        .path("api/event/name/updates")
+                        .request(APPLICATION_JSON)
+                        .get(Response.class);
+
+                if (response.getStatus() == HttpStatus.OK.value()) {
+                    String eventName = response.readEntity(String.class);
+                    consumer.accept(eventName);
+                }
+
+
+            }
+        });
     }
 }

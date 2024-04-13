@@ -7,10 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.Services.DTOtoEntity;
 import server.database.EventRepository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/api/event")
@@ -18,6 +21,8 @@ public class EventController {
     private final EventRepository repo;
     private final DTOtoEntity d2e;
     private final SimpMessagingTemplate messagingTemplate;
+    private final Map<Object, Consumer<String>> listeners = new ConcurrentHashMap<>();
+
 
     public EventController(EventRepository repo,
                            DTOtoEntity dtoToEntity,
@@ -77,6 +82,9 @@ public class EventController {
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
         eventDTO.id = id;
         EventDTO updated = new EventDTO(d2e.update(eventDTO));
+        listeners.values().forEach(listener -> {
+            listener.accept(updated.getName());
+        });
         if(messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/events", updated);
         }
@@ -90,6 +98,10 @@ public class EventController {
         if(messagingTemplate != null) {
             messagingTemplate.convertAndSend("/topic/events", updated);
         }
+
+        listeners.values().forEach(listener -> {
+            listener.accept(updated.getName());
+        });
         return ResponseEntity.ok(updated);
     }
 
@@ -105,5 +117,25 @@ public class EventController {
             messagingTemplate.convertAndSend("/topic/deletedEvent", new EventDTO(e));
         }
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/name/updates")
+    public DeferredResult<ResponseEntity<String>> eventNameUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var deferredResult = new DeferredResult<ResponseEntity<String>>(5000L, noContent);
+
+        // Define a unique key for this listener
+        var key = new Object();
+
+        // Add the listener to your existing listeners map
+        listeners.put(key, eventName -> {
+            deferredResult.setResult(ResponseEntity.ok(eventName));
+        });
+
+        // Remove the listener when the request is completed
+        deferredResult.onCompletion(() -> {
+            listeners.remove(key);
+        });
+
+        return deferredResult;
     }
 }
