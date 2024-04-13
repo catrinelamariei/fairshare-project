@@ -14,7 +14,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 public class RateUtils {
 
     public static RateDTO getRate(String from, String to,
-                                  Date date) throws WebApplicationException {
+                                  Date date, UserData userData) throws WebApplicationException {
 
 
         if(from.equals(to))
@@ -46,7 +46,7 @@ public class RateUtils {
         }
 
         RateDTO result =  ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/rate/")
+                .target(userData.getServerURL()).path("api/rate/")
                 .request(APPLICATION_JSON)
                 .post(Entity.entity(rate, APPLICATION_JSON),RateDTO.class);
 

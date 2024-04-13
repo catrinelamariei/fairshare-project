@@ -24,7 +24,7 @@ import java.util.*;
 public class SettingsPageCtrl implements Initializable {
     //Services
     private final ServerUtils server;
-    private final UserData userData = UserData.getInstance(); //should be injected
+    private final UserData userData;
 
     //Languages
     @FXML
@@ -43,8 +43,9 @@ public class SettingsPageCtrl implements Initializable {
     private ComboBox<String> urlList;
 
     @Inject
-    public SettingsPageCtrl(ServerUtils serverUtils) {
+    public SettingsPageCtrl(ServerUtils serverUtils, UserData userData) {
         this.server = serverUtils;
+        this.userData = userData;
     }
 
     @Override
