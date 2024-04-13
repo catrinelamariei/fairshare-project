@@ -32,7 +32,7 @@ import javafx.util.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.math.*;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.*;
 import java.util.*;
@@ -100,6 +100,8 @@ public class EventPageCtrl implements Initializable {
     private Button cancelTransaction;
     @FXML
     public VBox transactions;
+    @FXML
+    private VBox tagsVBox;
     private ToggleGroup toggleGroup;
     private TransactionNode transactionEditTarget;
 
@@ -378,14 +380,6 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
-        tagsInput.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((obs, oldSelection, newSelection) -> {
-                    if (newSelection != null) {
-                        String colorCode = newSelection.color.colorCode;
-                        tagsInput.setStyle("-fx-background-color: " + colorCode + ";");
-                    }
-                });
 
         // statistics clear
         pieChart.getData().clear();
@@ -399,13 +393,6 @@ public class EventPageCtrl implements Initializable {
 
         server.stop();
         subscribe();
-    }
-
-    public void clearTagsInput() {
-        tagsInput.setValue(null);
-        // TODO: fix the color
-        tagsInput.setStyle("-fx-background-color:#98A8F8;");
-        tagsInput.setStyle("-fx-border-color: #AA77FF;");
     }
 
     private HBox hboxFromTag(TagDTO t) {
@@ -559,7 +546,7 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         if (createTransaction(ts) != null)
-            MainCtrl.inform("Expense", "Expense \"" + ts.getSubject() + "\" Created!");
+            MainCtrl.inform("Expense","Expense \"" + ts.getSubject() + "\" Created!");
 
     }
 
@@ -594,14 +581,14 @@ public class EventPageCtrl implements Initializable {
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
         eventCostFiltered.setText("\u20AC " +
-                e.getTransactions().stream()
-                        .filter(
-                                ts -> ts.getTags()
-                                        .stream()
-                                        .map(tag -> tag.getName())
-                                        .noneMatch(tagName -> tagName.equals("debt")))
-                        .mapToDouble(ts -> ts.getAmount().doubleValue())
-                        .sum());
+               e.getTransactions().stream()
+                .filter(
+                        ts -> ts.getTags()
+                                .stream()
+                                .map(tag -> tag.getName())
+                                .noneMatch(tagName -> tagName.equals("debt")))
+                .mapToDouble(ts -> ts.getAmount().doubleValue())
+                .sum());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -611,7 +598,6 @@ public class EventPageCtrl implements Initializable {
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
         ParticipantDTO author = authorInput.getValue();
-        TagDTO tag = tagsInput.getValue();
 
 
         //radio buttons
@@ -636,8 +622,7 @@ public class EventPageCtrl implements Initializable {
 
         Date date = java.sql.Date.valueOf(localDate);
         return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
-                date, currency, amount, author, participants,
-                new HashSet<>(Arrays.asList(tag)), name);
+                date, currency, amount, author, participants, tags, name);
     }
 
     public void clearTransaction() {
@@ -648,7 +633,9 @@ public class EventPageCtrl implements Initializable {
         customSplit.setSelected(false);
         currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
-        clearTagsInput();
+        tagsInput.setValue(null);
+        tags.clear();
+        tagsVBox.getChildren().clear();
         for (Node node : vboxParticipantsTransaction.getChildren()) {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
@@ -742,7 +729,7 @@ public class EventPageCtrl implements Initializable {
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
         Set<ParticipantDTO> participants = new HashSet<>();
-        if (selectedRadioButton == getEqualSplit()) {
+        if (selectedRadioButton == equalSplit) {
             // Handle split equally logic
             ObservableList<ParticipantDTO> choiceBoxItems = authorInput.getItems();
             participants = new HashSet<>(choiceBoxItems);
@@ -764,10 +751,6 @@ public class EventPageCtrl implements Initializable {
 
         }
         return participants;
-    }
-
-    private RadioButton getEqualSplit() {
-        return equalSplit;
     }
 
     public void onAddParticipant() {
@@ -835,35 +818,10 @@ public class EventPageCtrl implements Initializable {
             PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
             PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
-        // end if no debts to simplify
-        if (positive.isEmpty()) {
-            MainCtrl.inform("Debts", "No debts to simplify!");
-            return;
-        }
-
-        // display debts if there are debts to simplify
-        while (!positive.isEmpty() && !negative.isEmpty()) {
-
-            Pair<ParticipantDTO, Double> pos = positive.poll();
-            Pair<ParticipantDTO, Double> neg = negative.poll();
-
-            ParticipantDTO creditor = pos.getKey();
-            ParticipantDTO debtor = neg.getKey();
-            Double credit = pos.getValue();
-            Double debt = neg.getValue();
-            double settlementAmount = Math.min(credit, Math.abs(debt));
-
-            // deal with currency later
-            DebtNode debtNode = nodeFactory.createDebtNode(debtor, creditor, "eur",
-                    settlementAmount, event, server, this);
-            debts.getPanes().add(debtNode);
-            // Update debts
-            credit -= settlementAmount;
-            debt += settlementAmount;
-
-            // Reinsert participants into priority queues if they still have non-zero debt
-            if (debt < 0) {
-                negative.offer(new Pair<>(debtor, debt));
+            // end if no debts to simplify
+            if (positive.isEmpty()) {
+                MainCtrl.inform("Debts", "No debts to simplify!");
+                return;
             }
 
             // display debts if there are debts to simplify
@@ -913,7 +871,7 @@ public class EventPageCtrl implements Initializable {
     public void filterDebts() {
         String selectedCreditor = (String) creditorFilter.getValue();
         // remove other debtNodes if a creditor is selected
-        Set<TitledPane> toRemove = new HashSet<>();
+        Set<TitledPane> toRemove = new HashSet<>() ;
         if (!selectedCreditor.equals("All")) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
@@ -946,7 +904,7 @@ public class EventPageCtrl implements Initializable {
             alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            if (result.get() == ButtonType.OK){
                 server.deleteEvent(currentUUID);
                 UserData.getInstance().getRecentUUIDs()
                         .removeIf(p -> p.getKey().equals(currentUUID));
@@ -1016,40 +974,25 @@ public class EventPageCtrl implements Initializable {
     }
 
     public void fillTransaction(TransactionDTO transaction) {
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         this.transactionName.setText(transaction.getSubject());
         this.transactionAmount.setText(transaction.getAmount().toString());
         this.currencyCodeInput.setValue(transaction.getCurrencyCode());
         this.transactionDate.setValue(transaction.getDate().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate());
         this.authorInput.setValue(transaction.getAuthor());
-        if (transaction.getTags().size() > 0) {
-            this.tagsInput.setValue(transaction.getTags().iterator().next());
-            this.tagsInput.setStyle("-fx-background-color: " + transaction.getTags()
-                    .iterator().next().color.colorCode + ";");
-        }
-        if (transaction.getParticipants().size() == event.participants.size()) {
-            this.toggleGroup.selectToggle(equalSplit);
-            vboxParticipantsTransaction.getChildren().forEach(node -> {
-                if (node instanceof CheckBox) {
-                    CheckBox checkBox = (CheckBox) node;
-                    checkBox.setDisable(true);
-                    checkBox.setSelected(true);
-                }
-            });
-        } else {
-            this.toggleGroup.selectToggle(customSplit);
-            vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
-                    .map(CheckBox.class::cast)
-                    .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
-                    .forEach(cb -> cb.setSelected(true));
-        }
+        this.toggleGroup.selectToggle(customSplit);
 
+        //select checkboxes of participants
+        vboxParticipantsTransaction.getChildren().stream().filter(CheckBox.class::isInstance)
+                .map(CheckBox.class::cast)
+                .filter(cb -> transaction.getParticipants().contains(cb.getUserData()))
+                .forEach(cb -> cb.setSelected(true));
     }
 
     //TODO do we need this method maybe we can use only updateTransaction?
     public void submitEditTransaction(ActionEvent event) {
         TransactionDTO ts = readTransactionFields();
+
         updateTransaction(ts);
     }
 
@@ -1115,48 +1058,19 @@ public class EventPageCtrl implements Initializable {
         Map<String, String> tagToColor = new HashMap<>();
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
-        for (TransactionDTO t : transactions) {
+        for(TransactionDTO t : transactions){
             Set<TagDTO> tags = t.getTags();
-            for (TagDTO tag : tags) {
+            for(TagDTO tag : tags){
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
-                if (tagToAmount.containsKey(tagName)) {
-                    BigDecimal newAmount = tagToAmount.get(tagName).add(amount);
-                    tagToAmount.put(tagName, newAmount);
-                } else {
-                    tagToAmount.put(tagName, amount);
-                    tagToColor.put(tagName, tag.color.colorCode);
-                }
+                tagToAmount.put(tagName, amount);
+                tagToColor.put(tagName, tag.color.colorCode);
             }
         }
 
-        final BigDecimal totalAmount = transactions.stream()
-                .map(TransactionDTO::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (totalAmount.compareTo(BigDecimal.ZERO) == 0) {
-            MainCtrl.inform("Statistics", "No statistics to display");
-            return;
-        } else {
-            pieChart.setVisible(true);
-        }
-
-        MathContext mc
-                = new MathContext(5);
-
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
                 tagToAmount.entrySet().stream()
-                        .map(e -> {
-                            PieChart.Data data = new PieChart.Data(e.getKey(),
-                                    e.getValue().doubleValue());
-                            double percentage = e.getValue()
-                                    .divide(totalAmount, mc)
-                                    .doubleValue() * 100;
-                            data.nameProperty().bind(
-                                    Bindings.concat(
-                                            data.getName(), " ",
-                                            Bindings.format("%.1f%%", percentage)));
-                            return data;
-                        })
+                        .map(e -> new PieChart.Data(e.getKey(), e.getValue().doubleValue()))
                         .collect(Collectors.toList())
         );
 
@@ -1164,12 +1078,16 @@ public class EventPageCtrl implements Initializable {
 
         // Set the color of each pie slice to match the corresponding tag color
         pieData.forEach(data -> {
-            // Extract the tag name from the pie slice's name (removing the percentage part)
-            String tagName = data.getName().substring(0, data.getName().lastIndexOf(" "));
-            String color = tagToColor.get(tagName);
+            String color = tagToColor.get(data.getName());
             data.getNode().setStyle("-fx-pie-color: " + color + ";");
         });
 
+        if (pieChart.getData().isEmpty()) {
+            MainCtrl.inform("Statistics","No statistics to display");
+            return;
+        } else {
+            pieChart.setVisible(true);
+        }
 
         // disable automatic generated legend
         pieChart.setLegendVisible(false);
@@ -1179,14 +1097,12 @@ public class EventPageCtrl implements Initializable {
         pieData.forEach(data -> {
             HBox legendItem = new HBox();
             legendItem.setSpacing(10);
-            Circle circle = new Circle(7, Color.web(tagToColor.get(
-                    data.getName().substring(0, data.getName().lastIndexOf(" ")))));
-            Label nameLabel = new Label(data
-                    .getName()
-                    .substring(0, data.getName().lastIndexOf(" ")));
+            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName())));
+            Label nameLabel = new Label(data.getName());
             legendItem.getChildren().addAll(circle, nameLabel);
             legendBox.getChildren().add(legendItem);
         });
+
     }
 
     public String printTotalExpenses() {
