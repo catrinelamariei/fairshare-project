@@ -218,7 +218,7 @@
                                                                    <Font size="13.0" />
                                                                </font>
                                                            </Text>
-                                                           <Text layoutX="451.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%text_expense_type">
+                                                           <Text layoutX="450.0" layoutY="266.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%text_expense_type">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
@@ -241,13 +241,7 @@
                                                                    </ScrollPane>
                                                                </children>
                                                            </VBox>
-                                                           <Button fx:id="addTagButton" layoutX="633.0" layoutY="257.0" mnemonicParsing="false" onAction="#addTag" text="%add_tag" />
-                                                           <ScrollPane fitToWidth="true" layoutX="451.0" layoutY="289.0" prefHeight="108.0" prefWidth="245.0" style="-fx-border-color: #98A8F8;">
-                                                               <content>
-                                                                   <VBox fx:id="tagsVBox" />
-                                                               </content>
-                                                           </ScrollPane>
-                                                           <ComboBox fx:id="tagsInput" layoutX="450.0" layoutY="257.0" prefWidth="150.0" />
+                                                           <ComboBox fx:id="tagsInput" layoutX="450.0" layoutY="276.0" prefWidth="150.0" />
                                                        </children>
                                                    </AnchorPane>
                                                    <HBox alignment="CENTER">
