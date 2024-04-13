@@ -233,10 +233,10 @@ public class ServerUtils {
     }
 
 //////////////////////////////////////
-    public static ExecutorService EXEC;
+    public static ExecutorService transactionEXEC;
     public void registerForUpdatesTransaction(Consumer<TransactionDTO> consumer){
-        EXEC = Executors.newSingleThreadExecutor();
-        EXEC.submit(()->{
+        transactionEXEC = Executors.newSingleThreadExecutor();
+        transactionEXEC.submit(()->{
             while(!Thread.interrupted()) {
                 var res = ClientBuilder.newClient()
                         .target(userData.getServerURL())
@@ -308,11 +308,9 @@ public class ServerUtils {
                         .path("/api/transaction/deletion/updates")
                         .request(APPLICATION_JSON)
                         .get(Response.class);
-
                 if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
                     continue;
                 }
-
                 if (response.getStatus() == HttpStatus.OK.value()) {
                     UUID deletedTransactionId = response.readEntity(UUID.class);
                     listener.accept(deletedTransactionId);
@@ -322,8 +320,8 @@ public class ServerUtils {
     }
 
     public void stop(){
-        if(EXEC!=null && execDeleteTransaction!=null){
-            EXEC.shutdownNow();
+        if(transactionEXEC !=null && execDeleteTransaction!=null){
+            transactionEXEC.shutdownNow();
             execDeleteTransaction.shutdownNow();
         }
 

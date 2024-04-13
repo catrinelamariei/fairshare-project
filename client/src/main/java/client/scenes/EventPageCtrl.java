@@ -294,6 +294,12 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
+        subscribe2();
+
+
+    }
+
+    private void subscribe2 (){
         server.registerForUpdatesTransaction(t ->{
             Platform.runLater(()->{
                 if(t.eventId.equals(userData.getCurrentUUID())){
@@ -316,9 +322,8 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
-
-
     }
+
 
     private void loadTransactions(){
         transactions.getChildren().clear();

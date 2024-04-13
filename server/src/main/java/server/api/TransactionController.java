@@ -1,7 +1,6 @@
 package server.api;
 
 import commons.DTOs.*;
-import commons.Participant;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
@@ -93,29 +92,15 @@ public class TransactionController {
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
         if(id==null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
-
-        Transaction transaction = repo.getReferenceById(id);
-
-//        Optional<Transaction> t = repo.findById(id);
-//        Transaction transaction = t.get();
-//
-//
-//        if(messagingTemplate != null) {
-//            messagingTemplate.convertAndSend("/topic/events", new TransactionDTO(transaction)
-//                    .getEventId());
-//        }
+        Optional<Transaction> t = repo.findById(id);
+        Transaction transaction = t.get();
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", new TransactionDTO(transaction)
+                    .getEventId());
+        }
         repo.delete(transaction);
         notifyListenersDeletion(id);
         return ResponseEntity.ok().build();
-
-//        TransactionDTO transactionDTO = new TransactionDTO(transaction);
-//        repo.delete(transaction);
-//
-//        if(messagingTemplate != null) {
-//            messagingTemplate.convertAndSend("/topic/events", transactionDTO.getEventId());
-//        }
-//        return ResponseEntity.ok().build();
-        // Transaction transaction = repo.getReferenceById(id);
 
     }
 
