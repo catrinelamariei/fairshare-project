@@ -301,7 +301,7 @@ public class ServerUtils {
 
     public void registerForTransactionDeletionUpdates(Consumer<UUID> listener) {
         execDeleteTransaction = Executors.newSingleThreadExecutor();
-        execDeleteParticipant.submit(() -> {
+        execDeleteTransaction.submit(() -> {
             while (!Thread.interrupted()) {
                 var response = ClientBuilder.newClient()
                         .target(userData.getServerURL())
