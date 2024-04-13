@@ -5,6 +5,7 @@ import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.*;
 import com.google.inject.*;
+import commons.Currency.RateDTO;
 import commons.DTOs.*;
 import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
@@ -220,7 +221,7 @@ public class EventPageCtrl implements Initializable {
         updateChart.setOnAction(e -> {
             updateChart.setText(resources.getString("update_stats"));
             loadPieChart();
-            eventCost.setText("\u20AC " + printTotalExpenses());
+            eventCost.setText(printTotalExpenses()+userData.getCurrencyCode());
             updateTotalExpenses();
         });
 
@@ -583,8 +584,7 @@ public class EventPageCtrl implements Initializable {
 
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(userData.getCurrentUUID());
-        eventCostFiltered.setText("\u20AC " +
-               e.getTransactions().stream()
+        double sum =  e.getTransactions().stream()
                 .filter(
                         ts -> ts.getTags()
                                 .stream()
@@ -592,7 +592,13 @@ public class EventPageCtrl implements Initializable {
                                 //todo
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
-                .sum());
+                .sum();
+        RateDTO rate = RateUtils.getRate("EUR", userData.getCurrencyCode(), new Date(),
+                userData);
+        BigDecimal newValue = new BigDecimal(sum);
+        newValue = newValue.multiply(BigDecimal.valueOf(rate.rate));
+        eventCostFiltered.setText(String.format("%.2f",newValue.doubleValue())
+                + userData.getCurrencyCode());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -1114,11 +1120,13 @@ public class EventPageCtrl implements Initializable {
     public String printTotalExpenses() {
         EventDTO event = server.getEvent(userData.getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
-        double totalExpenses = transactions.stream()
+        BigDecimal totalExpenses = transactions.stream()
                 .map(TransactionDTO::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .doubleValue();
-        return (String.valueOf(totalExpenses));
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        RateDTO rate = RateUtils.getRate("EUR", userData.getCurrencyCode(), new Date(),
+                userData);
+        totalExpenses = totalExpenses.multiply(BigDecimal.valueOf(rate.rate));
+        return (String.format("%.2f", totalExpenses.doubleValue()));
     }
 
 }
