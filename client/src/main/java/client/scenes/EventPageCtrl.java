@@ -100,8 +100,6 @@ public class EventPageCtrl implements Initializable {
     private Button cancelTransaction;
     @FXML
     public VBox transactions;
-    @FXML
-    private VBox tagsVBox;
     private ToggleGroup toggleGroup;
     private TransactionNode transactionEditTarget;
 
@@ -157,7 +155,6 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private GridPane stats;
 
-    Set<TagDTO> tags = new HashSet<>();
 
     @FXML
     private ChoiceBox<String> payerFilter;
@@ -454,35 +451,6 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    @FXML
-    private void addTag() {
-        TagDTO input = tagsInput.getValue();
-        if (input == null) {
-            MainCtrl.alert("Please choose a tag from the dropdown " +
-                    "menu to add a tag");
-            return;
-        } else if (tags.contains(input)) {
-            MainCtrl.alert("Tag already added");
-            return;
-        }
-        tagsInput.setValue(null);
-
-        HBox tagBox = new HBox();
-        Button deleteTag = new Button("X");
-        deleteTag.setOnAction(e2 -> {
-            tags.remove(input);
-            tagsVBox.getChildren().remove(tagBox);
-        });
-        Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        tagBox.getChildren().add(new Text(input.getName()));
-        tagBox.getChildren().add(spacer);
-        tagBox.getChildren().add(deleteTag);
-        tagBox.setStyle("-fx-background-color: " + input.color.colorCode + ";");
-        tagsVBox.getChildren().add(tagBox);
-        tags.add(input);
-    }
-
     public void createTag() {
         String name = tagNameInput.getText();
         Tag.Color color = tagColor.getValue();
@@ -617,7 +585,8 @@ public class EventPageCtrl implements Initializable {
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
         ParticipantDTO author = authorInput.getValue();
-
+        Set<TagDTO> tags = new HashSet<>();
+        tags.add(tagsInput.getValue());
 
         //radio buttons
         Set<ParticipantDTO> participants;
@@ -653,8 +622,6 @@ public class EventPageCtrl implements Initializable {
         currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
         tagsInput.setValue(null);
-        tags.clear();
-        tagsVBox.getChildren().clear();
         for (Node node : vboxParticipantsTransaction.getChildren()) {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
