@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.Main;
 import client.MainCtrl;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -57,6 +58,18 @@ public class TransactionPageCtrl implements Initializable {
     public TransactionPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
+
+
+        // temporary for test
+        //todo: delete?
+        this.event = new Event("name");
+        event.id = new UUID(0, 1);
+        Participant p1 = new Participant(event, "fn1", "ln1", "1@gmail.com", "IBAN", "BIC");
+        Participant p2 = new Participant(event, "fn2", "ln2", "2@gmail.com", "IBAN", "BIC");
+        Participant p3 = new Participant(event, "fn3", "ln3", "2@gmail.com", "IBAN", "BIC");
+        event.participants.add(p1);
+        event.participants.add(p2);
+        event.participants.add(p3);
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -115,7 +128,7 @@ public class TransactionPageCtrl implements Initializable {
         // TODO: tags
 
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        alert.setTitle(Main.getTranslation("error"));
         alert.setHeaderText(null);
 
 
@@ -158,9 +171,10 @@ public class TransactionPageCtrl implements Initializable {
 //            server.addTransaction(transaction);
             event.addTransaction(transaction);
             alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Transaction Created");
+            alert.setTitle(Main.getTranslation("expense_created"));
             alert.setHeaderText(null);
-            alert.setContentText("Transaction " + subject + " is successfully created!");
+            alert.setContentText(Main.getTranslation("expense_creation_start")
+                    + subject + Main.getTranslation("expense_creation_end"));
             alert.showAndWait();
             eventPage();
         }
@@ -177,20 +191,20 @@ public class TransactionPageCtrl implements Initializable {
             .filter(item -> !item.getText().equals(authortxt))
             .findAny().isPresent();
         boolean hasInvalid = true;
-        if (authortxt ==null || authortxt.isEmpty()) {
-            alert.setContentText("Please select a payer");
+        if (authortxt == null || authortxt.isEmpty()) {
+            alert.setContentText(Main.getTranslation("empty_expense_author"));
             alert.showAndWait();
-        } else if (subject ==null || subject.isEmpty()) {
-            alert.setContentText("Please enter a description");
+        } else if (subject == null || subject.isEmpty()) {
+            alert.setContentText(Main.getTranslation("empty_expense_name"));
             alert.showAndWait();
-        } else if (amounttxt ==null || amounttxt.isEmpty()) {
-            alert.setContentText("Amount cannot be 0");
+        } else if (amounttxt == null || amounttxt.isEmpty()) {
+            alert.setContentText(Main.getTranslation("empty_expense_amount"));
             alert.showAndWait();
         } else if (dateInput.getValue()==null) {
-            alert.setContentText("Date cannot be empty");
+            alert.setContentText(Main.getTranslation("empty_expense_date"));
             alert.showAndWait();
         } else if (customSplit.isSelected() && !participantIsSelected) {
-            alert.setContentText("Select at least 1 participant that isn't the author");
+            alert.setContentText(Main.getTranslation("other_participant"));
             alert.showAndWait();
         } else return false;
         return true;

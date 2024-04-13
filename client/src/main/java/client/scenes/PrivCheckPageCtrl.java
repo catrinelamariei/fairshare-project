@@ -46,10 +46,11 @@ public class PrivCheckPageCtrl {
                 userData.setToken(response.readEntity(String.class));
                 adminPage();
             }else{
-                MainCtrl.alert(String.format("ERROR AUTHENTICATING [%d]", response.getStatus()));
+                MainCtrl.alert(String.format(Main.getTranslation("wrong_code") + " [%d]",
+                        response.getStatus()));
             }
         }else{
-            MainCtrl.alert("Please provide a password");
+            MainCtrl.alert(Main.getTranslation("provide_password"));
         }
 
     }
