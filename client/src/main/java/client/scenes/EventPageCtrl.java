@@ -1058,13 +1058,13 @@ public class EventPageCtrl implements Initializable {
         Map<String, String> tagToColor = new HashMap<>();
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
-        tagToAmount.put("Uncategorized", BigDecimal.ZERO);
-        tagToColor.put("Uncategorized", "#808080");
+        tagToAmount.put("uncategorized", BigDecimal.ZERO);
+        tagToColor.put("uncategorized", "#808080");
         for (TransactionDTO t : transactions) {
             Set<TagDTO> tags = t.getTags();
             if (tags.isEmpty()) {
-                BigDecimal newAmount = tagToAmount.get("Uncategorized").add(t.amount);
-                tagToAmount.put("Uncategorized", newAmount);
+                BigDecimal newAmount = tagToAmount.get("uncategorized").add(t.amount);
+                tagToAmount.put("uncategorized", newAmount);
             } else {
                 TagDTO tag = tags.iterator().next();
                 String tagName = tag.getName();
