@@ -11,20 +11,21 @@ class RateTest {
 
     @Test
     void testEquals() {
-        Rate rate1 = new Rate("EUR", "USD", 1.1795, new Date());
-        Rate rate2 = new Rate("EUR", "USD", 1.1795, new Date());
+        Date date = new Date();
+        Rate rate1 = new Rate("EUR", "USD", 1.1795, date);
+        Rate rate2 = new Rate("EUR", "USD", 1.1795, date);
         assertEquals(rate1, rate2);
 
-        Rate rate3 = new Rate("EUR", "CHF", 1.1795, new Date());
+        Rate rate3 = new Rate("EUR", "CHF", 1.1795, date);
         assertNotEquals(rate1, rate3);
 
-        Rate rate4 = new Rate("EUR", "USD", 1.1796, new Date());
+        Rate rate4 = new Rate("EUR", "USD", 1.1796, date);
         assertNotEquals(rate1, rate4);
 
         Rate rate5 = new Rate("EUR", "USD", 1.1795, new Date(2020-1900, 10, 10, 17, 0, 0));
         assertNotEquals(rate1, rate5);
 
-        Rate rate6 = new Rate("CHF", "USD", 1.1795, new Date());
+        Rate rate6 = new Rate("CHF", "USD", 1.1795, date);
         assertNotEquals(rate1, rate6);
     }
 

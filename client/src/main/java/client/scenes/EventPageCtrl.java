@@ -9,11 +9,12 @@ import commons.DTOs.*;
 import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
-import javafx.beans.binding.Bindings;
+import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
 import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -47,6 +48,7 @@ public class EventPageCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
     public final UndoService undoService; //should be made private using factory injection
+
     private EventDTO eventDTO;
 
     //delete event
@@ -207,6 +209,8 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
+        subscribe();
+
         //loading stats
         updateChart.setText(resources.getString("load_stats"));
         updateChart.setOnAction(e -> {
@@ -215,6 +219,83 @@ public class EventPageCtrl implements Initializable {
             eventCost.setText("\u20AC " + printTotalExpenses());
             updateTotalExpenses();
         });
+
+    }
+
+    private void subscribe() {
+        server.registerForUpdatesParticipant(p->{
+            Platform.runLater(()->{
+                if(p.eventId.equals(UserData.getInstance().getCurrentUUID())){
+                    participants.getPanes().clear();
+                    eventDTO.participants.removeIf(participantDTO ->
+                            participantDTO.getId().equals(p.getId()));
+                    eventDTO.participants.add(p);
+                    participants.getPanes().addAll(eventDTO.participants.stream()
+                            .map(nodeFactory::createParticipantNode).toList());
+                    authorInput.getItems().clear();
+                    authorInput.getItems().addAll(eventDTO.participants);
+                    vboxParticipantsTransaction.getChildren().clear();
+                    vboxParticipantsTransaction.getChildren().addAll(eventDTO.participants.stream()
+                            .map(EventPageCtrl::participantCheckbox).toList());
+                    payerFilter.getItems().clear();
+                    participantFilter.getItems().clear();
+                    payerFilter.getItems().add("All");
+                    participantFilter.getItems().add("All");
+                    for (ParticipantDTO part : eventDTO.participants) {
+                        payerFilter.getItems().add(part.getFullName());
+                        participantFilter.getItems().add(part.getFullName());
+                    }
+                    payerFilter.setValue("All");
+                    participantFilter.setValue("All");
+                }
+
+
+            });
+        });
+
+        server.registerForParticipantDeletionUpdates(id->{
+            Platform.runLater(()->{
+                if(eventDTO.participants.stream().anyMatch(p->p.getId().equals(id))){
+                    eventDTO.participants.removeIf(p->p.getId().equals(id));
+                    participants.getPanes().clear();
+                    participants.getPanes().addAll(eventDTO.participants.stream()
+                            .map(nodeFactory::createParticipantNode).toList());
+                    authorInput.getItems().clear();
+                    authorInput.getItems().addAll(eventDTO.participants);
+                    vboxParticipantsTransaction.getChildren().clear();
+                    vboxParticipantsTransaction.getChildren().addAll(eventDTO.participants.stream()
+                            .map(EventPageCtrl::participantCheckbox).toList());
+                    payerFilter.getItems().clear();
+                    participantFilter.getItems().clear();
+                    payerFilter.getItems().add("All");
+                    participantFilter.getItems().add("All");
+                    for (ParticipantDTO part : eventDTO.participants) {
+                        payerFilter.getItems().add(part.getFullName());
+                        participantFilter.getItems().add(part.getFullName());
+                    }
+                    payerFilter.setValue("All");
+                    participantFilter.setValue("All");
+
+
+                    //this is necessary because sometimes, deleting
+                    // a participant will also delete a transaction
+                    EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+                    transactions.getChildren().clear();
+                    transactions.getChildren().addAll(e.transactions.stream()
+                            .map(nodeFactory::createTransactionNode).toList());
+
+
+
+                }
+            });
+        });
+    }
+
+    private void loadTransactions(){
+        transactions.getChildren().clear();
+        transactions.getChildren().addAll(eventDTO.transactions.stream()
+                .map(nodeFactory::createTransactionNode).toList());
+
     }
 
     public void load() throws WebApplicationException {
@@ -270,6 +351,7 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
+        tagsInput.getItems().add(0, null);
 
         //load tags
         tagNameInput.clear();
@@ -278,8 +360,6 @@ public class EventPageCtrl implements Initializable {
                 .map(t -> hboxFromTag(t)).toList());
         // load colors
         tagColor.getItems().addAll(Tag.Color.values());
-
-        // TODO: replace with color code
 
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
@@ -316,6 +396,9 @@ public class EventPageCtrl implements Initializable {
         pieChart.setVisible(false);
 
         undoService.clear();
+
+        server.stop();
+        subscribe();
     }
 
     public void clearTagsInput() {
@@ -326,15 +409,23 @@ public class EventPageCtrl implements Initializable {
     }
 
     private HBox hboxFromTag(TagDTO t) {
+        //creation
         HBox hbox = new HBox();
         hbox.setPrefHeight(47);
         hbox.setAlignment(Pos.CENTER_LEFT);
-        // TODO: replace with color code
-        hbox.setStyle("-fx-background-color: " + t.color);
+        hbox.setStyle("-fx-background-color: " + t.color.colorCode);
         Text text = new Text(t.getName());
         Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
         Button deleteTag = new Button("X");
+
+        //styling
+        hbox.setPrefHeight(40);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setStyle("-fx-background-color: " + t.color); // TODO: replace with color code
+        hbox.setPadding(new Insets(10.0d, 20.0d, 10.0d, 10.0));
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        //actions
         deleteTag.setOnAction(e -> {
             allTagsVBox.getChildren().remove(hbox);
             tagsInput.getItems().remove(t);
@@ -344,9 +435,9 @@ public class EventPageCtrl implements Initializable {
                 System.err.println("Error deleting tag: " + ex.getMessage());
             }
         });
-        hbox.getChildren().add(text);
-        hbox.getChildren().add(spacer);
-        hbox.getChildren().add(deleteTag);
+
+        //assembly
+        hbox.getChildren().addAll(text, spacer, deleteTag);
         return hbox;
     }
 
@@ -356,6 +447,35 @@ public class EventPageCtrl implements Initializable {
         return checkBox;
     }
 
+
+    @FXML
+    private void addTag() {
+        TagDTO input = tagsInput.getValue();
+        if (input == null) {
+            MainCtrl.alert("Please choose a tag from the dropdown " +
+                    "menu to add a tag");
+            return;
+        } else if (tags.contains(input)) {
+            MainCtrl.alert("Tag already added");
+            return;
+        }
+        tagsInput.setValue(null);
+
+        HBox tagBox = new HBox();
+        Button deleteTag = new Button("X");
+        deleteTag.setOnAction(e2 -> {
+            tags.remove(input);
+            tagsVBox.getChildren().remove(tagBox);
+        });
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        tagBox.getChildren().add(new Text(input.getName()));
+        tagBox.getChildren().add(spacer);
+        tagBox.getChildren().add(deleteTag);
+        tagBox.setStyle("-fx-background-color: " + input.color.colorCode + ";");
+        tagsVBox.getChildren().add(tagBox);
+        tags.add(input);
+    }
 
     public void createTag() {
         String name = tagNameInput.getText();
@@ -446,7 +566,6 @@ public class EventPageCtrl implements Initializable {
     public TransactionDTO createTransaction(TransactionDTO ts) {
         if (ts == null) return null;
 
-
         try {
             ts = server.postTransaction(ts);
             undoService.addAction(CREATE, ts);
@@ -467,6 +586,7 @@ public class EventPageCtrl implements Initializable {
         }
 
         clearTransaction();
+        showOverviewTransactions();
         return ts;
     }
 
@@ -567,47 +687,57 @@ public class EventPageCtrl implements Initializable {
         } else if (selectedRadioButton == null) {
             MainCtrl.alert("Please select an option for splitting the expense.");
         } else if (customSplit.isSelected() && !participantIsSelected) {
-            MainCtrl.alert("Please choose at least one participant other than yourself.");
+            MainCtrl.alert("Please choose at least one participant");
         } else {
             return true;
         }
         return false;
     }
 
-    private static BigDecimal isValidAmount(String transactionAmountString) {
+    BigDecimal isValidAmount(String transactionAmountString) {
         BigDecimal amount;
         try {
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             return null;
+        } catch (NullPointerException e){
+            return null;
         }
         return amount;
     }
 
-    private boolean checkInput(String name, String transactionAmountString, String currency,
-                               LocalDate localDate, ParticipantDTO author) {
+    boolean checkInput(String name, String transactionAmountString, String currency,
+                       LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter the name of the expense");
+            alert("Please enter the name of the expense");
             return true;
         }
         if (author == null) {
-            MainCtrl.alert("Please chose the author of the transaction");
+            alert("Please chose the author of the transaction");
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            MainCtrl.alert("Please enter the amount of the expense");
+            alert("Please enter the amount of the expense");
             return true;
         }
         if (currency == null) {
-            MainCtrl.alert("Please enter the currency of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
         if (localDate == null) {
-            MainCtrl.alert("Please enter the date of the expense");
+            alert("Please enter the currency of the expense");
             return true;
         }
 
         return false;
+    }
+
+    private void alert(String text){
+        try{
+            MainCtrl.alert(text);
+        } catch (Exception e){
+            System.out.println("can't produce an alert in testing");
+        }
     }
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
@@ -696,13 +826,14 @@ public class EventPageCtrl implements Initializable {
     @FXML
     public void debtSimplification() {
 
-        debts.getPanes().clear();
+        try {
+            debts.getPanes().clear();
 
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
 
-        DebtGraph graph = new DebtGraph(event);
-        PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
-        PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
+            DebtGraph graph = new DebtGraph(event);
+            PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
+            PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
         // end if no debts to simplify
         if (positive.isEmpty()) {
@@ -734,14 +865,47 @@ public class EventPageCtrl implements Initializable {
             if (debt < 0) {
                 negative.offer(new Pair<>(debtor, debt));
             }
-            if (credit > 0) {
-                positive.offer(new Pair<>(creditor, credit));
+
+            // display debts if there are debts to simplify
+            while (!positive.isEmpty() && !negative.isEmpty()) {
+
+                Pair<ParticipantDTO, Double> pos = positive.poll();
+                Pair<ParticipantDTO, Double> neg = negative.poll();
+
+                ParticipantDTO creditor = pos.getKey();
+                ParticipantDTO debtor = neg.getKey();
+                Double credit = pos.getValue();
+                Double debt = neg.getValue();
+                double settlementAmount = Math.min(credit, Math.abs(debt));
+
+                // deal with currency later
+                DebtNode debtNode = nodeFactory.createDebtNode(debtor, creditor, "eur",
+                        settlementAmount, event, server, this);
+                debts.getPanes().add(debtNode);
+                // Update debts
+                credit -= settlementAmount;
+                debt += settlementAmount;
+
+                // Reinsert participants into priority queues if they still have non-zero debt
+                if (debt < 0) {
+                    negative.offer(new Pair<>(debtor, debt));
+                }
+                if (credit > 0) {
+                    positive.offer(new Pair<>(creditor, credit));
+                }
+            }
+
+            // update the button
+            settleButton.setText("Refresh debts");
+            filterDebts();
+        } catch (Exception e) {
+            if(e.getMessage().equals("No participants")){
+                MainCtrl.alert( "A transaction has no beneficiaries." +
+                        " Please add participants to all transactions.");
+            } else {
+                MainCtrl.alert("Error simplifying debts");
             }
         }
-
-        // update the button
-        settleButton.setText("Refresh debts");
-        filterDebts();
 
     }
 
@@ -761,7 +925,7 @@ public class EventPageCtrl implements Initializable {
         debts.getPanes().removeAll(toRemove);
     }
 
-    private boolean invalidEmail(String email) {
+    boolean invalidEmail(String email) {
         // Regex pattern to match email address
         String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regexPattern);
@@ -810,7 +974,7 @@ public class EventPageCtrl implements Initializable {
             eventDTO.name = newEventName;
             //eventTitle.setText(newEventName);
             try {
-                server.putEvent(eventDTO);
+                server.patchEvent(eventDTO);
                 eventTitle.setText(newEventName);
             } catch (WebApplicationException e) {
                 System.err.println("Error updating event name: " + e.getMessage());
@@ -909,7 +1073,8 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant) {
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant)
+            throws IllegalArgumentException{
         if (newParticipant == null) {
             return;
         }
@@ -917,11 +1082,12 @@ public class EventPageCtrl implements Initializable {
         try {
             if (newParticipant.getFirstName().isEmpty() || newParticipant.getLastName().isEmpty()
                     || newParticipant.getEmail().isEmpty()) {
+                MainCtrl.alert("Please enter valid participant data");
                 throw new IllegalArgumentException();
             }
             if (invalidEmail(newParticipant.getEmail())) {
                 MainCtrl.alert("Please enter a valid email address");
-                return;
+                throw new IllegalArgumentException();
             }
             if (newParticipant.getBic().isEmpty()) {
                 newParticipant.setBic("-");
@@ -936,8 +1102,6 @@ public class EventPageCtrl implements Initializable {
             server.putParticipant(newParticipant);
             load();
 
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
         } catch (WebApplicationException e) {
             System.err.println("Error updating participant: " + e.getMessage());
         }

@@ -28,7 +28,6 @@
     -fx-font: italic 15 "System";
 }
 
-/* without this it's goign to throw an exception */
 .root {
-    -fx-accent: #ffffff;
+    -fx-accent: #808080;
 }

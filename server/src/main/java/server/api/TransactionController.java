@@ -3,13 +3,17 @@ package server.api;
 import commons.DTOs.*;
 import commons.Transaction;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.DeferredResult;
 import server.Services.DTOtoEntity;
 import server.database.TransactionRepository;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 
 @RestController
@@ -18,6 +22,10 @@ public class TransactionController {
     private final TransactionRepository repo;
     private final DTOtoEntity d2e;
     private final SimpMessagingTemplate messagingTemplate;
+    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    private Map<Object, Consumer<UUID>> deletionListeners = new ConcurrentHashMap<>();
+
+
 
     public TransactionController(TransactionRepository repo,
                                  DTOtoEntity dtoToEntity,
@@ -87,4 +95,38 @@ public class TransactionController {
         }
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/updates")
+    public DeferredResult<ResponseEntity<TransactionDTO>> getUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var res = new DeferredResult<ResponseEntity<TransactionDTO>>(5000L, noContent);
+        var key = new Object();
+        listeners.put(key, t ->{
+            res.setResult(ResponseEntity.ok(t));
+        });
+        res.onCompletion(()->{
+            listeners.remove(key);
+        });
+        return res;
+    }
+
+    @GetMapping("/deletion/updates")
+    public DeferredResult<ResponseEntity<UUID>> registerForTransactionDeletionUpdates() {
+        var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        var deferredResult = new DeferredResult<ResponseEntity<UUID>>(5000L, noContent);
+        var key = new Object();
+
+        // Register a listener for deletion updates
+        deletionListeners.put(key, deletedTransactionId -> {
+            deferredResult.setResult(ResponseEntity.ok(deletedTransactionId));
+        });
+
+        // Remove the listener when the long polling request is completed
+        deferredResult.onCompletion(() -> {
+            deletionListeners.remove(key);
+        });
+
+        return deferredResult;
+    }
+
 }

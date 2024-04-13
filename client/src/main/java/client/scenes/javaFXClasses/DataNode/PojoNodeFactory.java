@@ -3,6 +3,7 @@ package client.scenes.javaFXClasses.DataNode;
 import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
+import client.utils.EventJsonUtil;
 import client.utils.ServerUtils;
 import commons.DTOs.*;
 
@@ -10,11 +11,14 @@ public class PojoNodeFactory implements NodeFactory {
     private final MainCtrl mainCtrl;
     private final EventPageCtrl eventPageCtrl;
     private final ServerUtils server;
+    private final EventJsonUtil jsonUtil;
 
-    public PojoNodeFactory(MainCtrl mainCtrl, EventPageCtrl eventPageCtrl, ServerUtils server) {
+    public PojoNodeFactory(MainCtrl mainCtrl, EventPageCtrl eventPageCtrl, ServerUtils server,
+                           EventJsonUtil jsonUtil) {
         this.mainCtrl = mainCtrl;
         this.eventPageCtrl = eventPageCtrl;
         this.server = server;
+        this.jsonUtil = jsonUtil;
     }
 
     @Override
@@ -26,7 +30,7 @@ public class PojoNodeFactory implements NodeFactory {
 
     @Override
     public EventNode createEventNode(EventDTO e) {
-        return new EventNode(mainCtrl, new UserData.Pair<>(e.id, e.name));
+        return new EventNode(mainCtrl, jsonUtil, new UserData.Pair<>(e.id, e.name));
     }
 
     @Override

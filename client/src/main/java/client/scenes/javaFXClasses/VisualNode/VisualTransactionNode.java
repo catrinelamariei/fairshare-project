@@ -5,10 +5,10 @@ import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.utils.*;
 import commons.Currency.RateDTO;
-import commons.DTOs.TransactionDTO;
+import commons.DTOs.*;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
@@ -59,7 +59,18 @@ public class VisualTransactionNode extends TransactionNode {
         desc.setWrappingWidth(400.0);
         //set css class to .participants
 
-        VBox body = new VBox(desc, participants);
+        TagDTO tag = ts.tags.stream().findFirst().orElse(null);
+        Label tagTxt;
+        VBox body;
+        if (tag != null) {
+            tagTxt = new Label(tag.name);
+            tagTxt.getStyleClass().add("tagText");
+            tagTxt.setStyle("-fx-background-color: " + tag.color.colorCode + ";");
+            tagTxt.setWrapText(true);
+            body = new VBox(desc, participants, tagTxt);
+        } else {
+            body = new VBox(desc, participants);
+        }
 
         // Delete Button
         Button deleteTransactionButton = new Button("Delete");
@@ -105,6 +116,8 @@ public class VisualTransactionNode extends TransactionNode {
             TransactionDTO old = server.getTransaction(id);
             eventPageCtrl.undoService.addAction(UndoService.TsAction.DELETE, old);
             server.deleteTransaction(id);
+
+
         } catch (IllegalArgumentException e) {
             System.err.println("Error parsing UUID: " + e.getMessage());
         } catch (Exception e) {

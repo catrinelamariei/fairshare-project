@@ -16,6 +16,10 @@ import javafx.scene.text.*;
 import java.util.*;
 
 public class VisualParticipantNode extends ParticipantNode {
+    //service variables:
+    private boolean editing = false;
+    private ParticipantDTO screenshot;
+
     //create text (shared among all ParticipantNodes)
     Text fNameText = new Text("First Name");
     Text lNameText = new Text("Last Name");
@@ -77,6 +81,7 @@ public class VisualParticipantNode extends ParticipantNode {
         gridPane.add(ibanField, 1, 3);
         gridPane.add(bicField, 1, 4);
 
+
         //set insets
         Insets insets = new Insets(10.0d);
         gridPane.getChildren().forEach(n -> gridPane.setMargin(n, insets));
@@ -119,6 +124,11 @@ public class VisualParticipantNode extends ParticipantNode {
         //create HBox, set child
         HBox container = new HBox(gridPane, buttons);
         this.setContent(container);
+
+        //add behaviour (on close, stop editing)
+        this.expandedProperty().addListener((obs, old, expanded) -> {
+            if (!expanded) this.cancelEdit();
+        });
     }
 
     /**
@@ -127,18 +137,44 @@ public class VisualParticipantNode extends ParticipantNode {
      */
     public void editParticipantFields(ActionEvent actionEvent) {
         System.out.println("editParticipant method called");
-        boolean isEditable = !fNameField.isEditable();
-        fNameField.setEditable(isEditable);
-        lNameField.setEditable(isEditable);
-        emailField.setEditable(isEditable);
-        ibanField.setEditable(isEditable);
-        bicField.setEditable(isEditable);
 
-        if(editSaveButton.getText().equals("Save")) {
-            ParticipantDTO p = getUpdatedParticipantData();
-            eventPageCtrl.updateParticipant(this, p);
+        if(editing) { //already edititing -> try to save
+            ParticipantDTO p = getParticipantFieldsData();
+            try {
+                eventPageCtrl.updateParticipant(this, p);
+            }  catch (IllegalArgumentException e) {
+                return; //continue editing
+            }
+        } else { //not editing yet -> take screenshot
+            screenshot = getParticipantFieldsData();
         }
-        editSaveButton.setText(isEditable ? "Save" : "Edit");
+
+        //if successful, toggle editing process
+        toggleEdit();
+    }
+
+    private void toggleEdit() {
+        editing = !editing;
+        fNameField.setEditable(editing);
+        lNameField.setEditable(editing);
+        emailField.setEditable(editing);
+        ibanField.setEditable(editing);
+        bicField.setEditable(editing);
+
+        editSaveButton.setText(editing ? "Save" : "Edit");
+        Image saveimg = new Image(getClass().getResourceAsStream(
+                "/client/Images/save.png"),20d, 20d, true, false);
+        ImageView saveview = new ImageView(saveimg);
+        Image editimg = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+        ImageView editview = new ImageView(editimg);
+        editSaveButton.setGraphic(editing ? saveview : editview);
+    }
+
+    private void cancelEdit() {
+        if (!editing) return; //nothing to cancel
+
+        putParticipantFieldsData(screenshot); //restore screenshot
+        toggleEdit(); //stop editing
     }
 
     private void deleteParticipant(ActionEvent actionEvent) {
@@ -172,7 +208,7 @@ public class VisualParticipantNode extends ParticipantNode {
 
     }
 
-    public ParticipantDTO getUpdatedParticipantData(){
+    public ParticipantDTO getParticipantFieldsData() {
         String updatedFirstName = fNameField.getText().trim();
         String updatedLastName = lNameField.getText().trim();
         String updatedEmail = emailField.getText().trim();
@@ -181,5 +217,13 @@ public class VisualParticipantNode extends ParticipantNode {
         UUID eventId = UserData.getInstance().getCurrentUUID();
         return new ParticipantDTO(id, eventId, updatedFirstName,
                 updatedLastName, updatedEmail, updatedIban, updatedBic);
+    }
+
+    public void putParticipantFieldsData(ParticipantDTO participantDTO) {
+        fNameField.setText(participantDTO.firstName);
+        lNameField.setText(participantDTO.lastName);
+        emailField.setText(participantDTO.email);
+        ibanField.setText(participantDTO.iban);
+        bicField.setText(participantDTO.bic);
     }
 }
