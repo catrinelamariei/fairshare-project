@@ -15,27 +15,27 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class VisualDebtNode extends DebtNode {
-    protected VisualDebtNode(ParticipantDTO debtor, ParticipantDTO creditor,
-                    String currencyCode, double amount,
-                             EventDTO event, ServerUtils server,
-                             EventPageCtrl ctrl) {
 
-        super(debtor, creditor, currencyCode, amount, event, server, ctrl);
+
+    protected VisualDebtNode(ParticipantDTO debtor, ParticipantDTO creditor, String currencyCode,
+                             double amount, EventDTO event, ServerUtils server, EventPageCtrl ctrl,
+                             UserData userData) {
+        super(debtor, creditor, currencyCode, amount, event, server, ctrl, userData);
 
         String txt = null;
-        if (UserData.getInstance().getCurrencyCode().equals(currencyCode)) {
+        if (userData.getCurrencyCode().equals(currencyCode)) {
             txt = String.format("%s gives %.2f%s to %s",
                     debtor.getFullName(), amount,
                     currencyCode, creditor.getFullName());
         } else {
-            RateDTO rate = RateUtils.getRate(currencyCode,
-                    UserData.getInstance().getCurrencyCode(), new Date());
+            RateDTO rate = RateUtils.getRate(currencyCode, userData.getCurrencyCode(), new Date(),
+                    userData);
             BigDecimal amountInPreferred = BigDecimal.valueOf(amount)
                     .multiply(BigDecimal.valueOf(rate.rate));
             txt = String.format("%s gives %.2f%s(%.2f%s) to %s",
                     debtor.getFullName(), amount,
                     "EUR",amountInPreferred,
-                    UserData.getInstance().getCurrencyCode(), creditor.getFullName());
+                    userData.getCurrencyCode(), creditor.getFullName());
         }
 
         this.setText(txt);

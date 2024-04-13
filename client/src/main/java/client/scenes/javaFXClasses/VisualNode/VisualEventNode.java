@@ -86,8 +86,9 @@ public class VisualEventNode extends EventNode {
      * create eventnode from data
      * @param event data source
      */
-    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl, EventJsonUtil jsonUtil) {
-        super(mainCtrl, jsonUtil, new Pair<>(event.getId(), event.getName()));
+    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl, EventJsonUtil jsonUtil,
+                              UserData userData) {
+        super(mainCtrl, jsonUtil, userData, new Pair<>(event.getId(), event.getName()));
         this.initialize();
 
         this.setText(event.name);
@@ -100,7 +101,7 @@ public class VisualEventNode extends EventNode {
 
     //buttons
     private void join(ActionEvent actionEvent) {
-        UserData.getInstance().setCurrentUUID(idNamePair);
+        userData.setCurrentUUID(idNamePair);
         mainCtrl.showEventPage();
     }
 
@@ -134,11 +135,11 @@ public class VisualEventNode extends EventNode {
             ;
 
             ((Accordion) this.getParent()).getPanes().remove(this);
-            (new ServerUtils()).deleteEvent(idNamePair.getKey());
+            (new ServerUtils(userData)).deleteEvent(idNamePair.getKey());
 
             // TODO: put these lines into service
             mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
-            UserData.getInstance().getRecentUUIDs()
+            userData.getRecentUUIDs()
                     .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
         }
     }

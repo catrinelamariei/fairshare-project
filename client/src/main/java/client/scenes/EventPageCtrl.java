@@ -48,6 +48,7 @@ public class EventPageCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
     public final UndoService undoService; //should be made private using factory injection
+    private final UserData userData;
 
     private EventDTO eventDTO;
 
@@ -172,11 +173,12 @@ public class EventPageCtrl implements Initializable {
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
-                         NodeFactory nodeFactory) {
+                         NodeFactory nodeFactory, UserData userData) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.undoService = undoService;
         this.nodeFactory = nodeFactory;
+        this.userData = userData;
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -227,7 +229,7 @@ public class EventPageCtrl implements Initializable {
     private void subscribe() {
         server.registerForUpdatesParticipant(p->{
             Platform.runLater(()->{
-                if(p.eventId.equals(UserData.getInstance().getCurrentUUID())){
+                if(p.eventId.equals(userData.getCurrentUUID())){
                     participants.getPanes().clear();
                     eventDTO.participants.removeIf(participantDTO ->
                             participantDTO.getId().equals(p.getId()));
@@ -281,7 +283,7 @@ public class EventPageCtrl implements Initializable {
 
                     //this is necessary because sometimes, deleting
                     // a participant will also delete a transaction
-                    EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+                    EventDTO e = server.getEvent(userData.getCurrentUUID());
                     transactions.getChildren().clear();
                     transactions.getChildren().addAll(e.transactions.stream()
                             .map(nodeFactory::createTransactionNode).toList());
@@ -303,7 +305,7 @@ public class EventPageCtrl implements Initializable {
     public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
 
-        eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+        eventDTO = server.getEvent(userData.getCurrentUUID());
 
         //update name
         eventTitle.setText(eventDTO.name);
@@ -474,7 +476,7 @@ public class EventPageCtrl implements Initializable {
             MainCtrl.alert("Please choose a color");
             return;
         }
-        TagDTO tag = new TagDTO(null, UserData.getInstance().getCurrentUUID(), name, color);
+        TagDTO tag = new TagDTO(null, userData.getCurrentUUID(), name, color);
         try {
             tag = server.postTag(tag);
             tagsInput.getItems().add(tag);
@@ -498,7 +500,7 @@ public class EventPageCtrl implements Initializable {
 
     public void copyInviteCode() {
 
-        if (UserData.getInstance().getCurrentUUID() == null) {
+        if (userData.getCurrentUUID() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -512,7 +514,7 @@ public class EventPageCtrl implements Initializable {
         //get invite code (String)
         //copy data to clipboard
         StringSelection content = new StringSelection(
-                UserData.getInstance().getCurrentUUID().toString());
+                userData.getCurrentUUID().toString());
         clipboard.setContents(content, null);
 
 
@@ -579,7 +581,7 @@ public class EventPageCtrl implements Initializable {
 
 
     public void updateTotalExpenses() {
-        EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+        EventDTO e = server.getEvent(userData.getCurrentUUID());
         eventCostFiltered.setText("\u20AC " +
                e.getTransactions().stream()
                 .filter(
@@ -621,7 +623,7 @@ public class EventPageCtrl implements Initializable {
 
 
         Date date = java.sql.Date.valueOf(localDate);
-        return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
+        return new TransactionDTO(null, userData.getCurrentUUID(),
                 date, currency, amount, author, participants, tags, name);
     }
 
@@ -780,7 +782,7 @@ public class EventPageCtrl implements Initializable {
             if (ibanText.isEmpty()) {
                 ibanText = "-";
             }
-            participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
+            participantDTO = new ParticipantDTO(null, userData.getCurrentUUID(),
                     fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
 
@@ -812,7 +814,7 @@ public class EventPageCtrl implements Initializable {
         try {
             debts.getPanes().clear();
 
-            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+            EventDTO event = server.getEvent(userData.getCurrentUUID());
 
             DebtGraph graph = new DebtGraph(event);
             PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
@@ -893,11 +895,11 @@ public class EventPageCtrl implements Initializable {
 
     public void onDeleteEvent() {
         try {
-//            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+//            EventDTO event = server.getEvent(userData.getCurrentUUID());
 //            UUID eventId = event.getId();
 //            server.deleteEvent(eventId);
 //            mainCtrl.showStartPage();
-            UUID currentUUID = UserData.getInstance().getCurrentUUID();
+            UUID currentUUID = userData.getCurrentUUID();
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(Main.getTranslation("delete_event_confirmation"));
@@ -906,7 +908,7 @@ public class EventPageCtrl implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK){
                 server.deleteEvent(currentUUID);
-                UserData.getInstance().getRecentUUIDs()
+                userData.getRecentUUIDs()
                         .removeIf(p -> p.getKey().equals(currentUUID));
                 mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
 
@@ -959,7 +961,7 @@ public class EventPageCtrl implements Initializable {
     public void filterTransactions() {
         String selectedPayer = (String) payerFilter.getValue();
         String selectedParticipant = (String) participantFilter.getValue();
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        EventDTO event = server.getEvent(userData.getCurrentUUID());
 
         transactions.getChildren().setAll(
                 event.transactions
@@ -1056,7 +1058,7 @@ public class EventPageCtrl implements Initializable {
 
         Map<String, BigDecimal> tagToAmount = new HashMap<>();
         Map<String, String> tagToColor = new HashMap<>();
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        EventDTO event = server.getEvent(userData.getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
         for(TransactionDTO t : transactions){
             Set<TagDTO> tags = t.getTags();
@@ -1106,7 +1108,7 @@ public class EventPageCtrl implements Initializable {
     }
 
     public String printTotalExpenses() {
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        EventDTO event = server.getEvent(userData.getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
         double totalExpenses = transactions.stream()
                 .map(TransactionDTO::getAmount)

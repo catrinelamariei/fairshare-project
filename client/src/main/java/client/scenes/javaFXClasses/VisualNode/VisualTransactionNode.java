@@ -25,8 +25,8 @@ public class VisualTransactionNode extends TransactionNode {
      * @param ts transaction to be displayed (data source)
      */
     protected VisualTransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl,
-                                    ServerUtils server) {
-        super(eventPageCtrl, server, ts.id);
+                                    ServerUtils server, UserData userData) {
+        super(eventPageCtrl, server, ts.id, userData);
 
         //date
         Text date = new Text(formatter.format(ts.date));
@@ -38,13 +38,13 @@ public class VisualTransactionNode extends TransactionNode {
             default -> ts.currencyCode;
         };
             
-        RateDTO rate = RateUtils.getRate(ts.currencyCode,
-                UserData.getInstance().getCurrencyCode(), ts.date);
+        RateDTO rate = RateUtils.getRate(ts.currencyCode, userData.getCurrencyCode(), ts.date,
+                userData);
         BigDecimal amountInPreferred = ts.amount.multiply(BigDecimal.valueOf(rate.rate));
 
         Text desc = new Text(String.format("%s paid %.2f%s for %s",
             ts.author.firstName.trim(), amountInPreferred,
-                UserData.getInstance().getCurrencyCode(), ts.subject));
+                userData.getCurrencyCode(), ts.subject));
                 
         desc.getStyleClass().add("desc"); //set css class to .desc
 

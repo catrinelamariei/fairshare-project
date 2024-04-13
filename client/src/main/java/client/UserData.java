@@ -3,6 +3,7 @@ package client;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Provides;
 
 import java.io.*;
 import java.util.*;
@@ -12,7 +13,7 @@ import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 @JsonPropertyOrder({"languageCode", "preferredCurrency", "selectedURL", "urlDataList"})
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 setterVisibility = JsonAutoDetect.Visibility.NONE)
-public final class UserData{
+public class UserData{
     // All values in here are default values and will be overwritten at startup if a
     // config file is found. The file regularly gets persisted.
 
@@ -29,7 +30,6 @@ public final class UserData{
     //NOT INCLUDED IN JSON
     private final static String configFileName = "config.json";
     private final static ObjectMapper objectMapper = new ObjectMapper().enable(INDENT_OUTPUT);
-    private final static UserData INSTANCE = load();
 
     private UserData() {};
 
@@ -44,7 +44,7 @@ public final class UserData{
         this.urlDataList = urlDataList;
     }
 
-    private static UserData load() {
+    public static UserData load() {
         try {
             return objectMapper.readValue(new File(configFileName), UserData.class);
         } catch (JsonProcessingException e) {
@@ -66,10 +66,6 @@ public final class UserData{
     }
 
     //getters
-    public static UserData getInstance() {
-        return INSTANCE;
-    }
-
     public UUID getCurrentUUID() {
         return getRecentUUIDs().peekFirst().getKey();
     }

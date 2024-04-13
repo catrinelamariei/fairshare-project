@@ -2,6 +2,7 @@ package client;
 
 import client.scenes.*;
 import client.utils.KeyEvents.EventPageKeyEventHandler;
+import com.google.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
 import javafx.application.Platform;
@@ -11,6 +12,8 @@ import javafx.stage.*;
 import javafx.util.Pair;
 
 public class MainCtrl {
+    //services
+    private final UserData userData;
 
     public Stage primaryStage;
 
@@ -30,9 +33,12 @@ public class MainCtrl {
     private SettingsPageCtrl settingsPageCtrl;
     private Scene settingsPage;
 
-    public MainCtrl() {
+    @Inject
+    public MainCtrl(UserData userData) {
+        this.userData = userData;
+        
         sideStage.initModality(Modality.APPLICATION_MODAL);
-        sideStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
+        sideStage.setOnCloseRequest(windowEvent -> userData.save());
     }
 
     public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
@@ -43,7 +49,7 @@ public class MainCtrl {
                            Pair<SettingsPageCtrl, Parent> settingsPage) {
 
         this.primaryStage = primaryStage;
-        this.primaryStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
+        this.primaryStage.setOnCloseRequest(windowEvent -> userData.save());
 
         this.startPageCtrl = startPage.getKey();
         this.startPage = new Scene(startPage.getValue());
