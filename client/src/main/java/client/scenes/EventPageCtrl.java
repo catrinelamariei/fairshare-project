@@ -697,23 +697,23 @@ public class EventPageCtrl implements Initializable {
     boolean checkInput(String name, String transactionAmountString, String currency,
                        LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            alert(Main.getTranslation("empty_expense_name"));
+            MainCtrl.alert(Main.getTranslation("empty_expense_name"));
             return true;
         }
         if (author == null) {
-            alert(Main.getTranslation("author_not_selected"));
+            MainCtrl.alert(Main.getTranslation("author_not_selected"));
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            alert(Main.getTranslation("empty_expense_amount"));
+            MainCtrl.alert(Main.getTranslation("empty_expense_amount"));
             return true;
         }
         if (currency == null) {
-            alert(Main.getTranslation("empty_expense_currency"));
+            MainCtrl.alert(Main.getTranslation("empty_expense_currency"));
             return true;
         }
         if (localDate == null) {
-            alert(Main.getTranslation("empty_expense_date"));
+            MainCtrl.alert(Main.getTranslation("empty_expense_date"));
             return true;
         }
 
