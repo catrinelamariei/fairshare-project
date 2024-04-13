@@ -24,7 +24,7 @@ import java.util.*;
 public class SettingsPageCtrl implements Initializable {
     //Services
     private final ServerUtils server;
-    private final UserData userData = UserData.getInstance(); //should be injected
+    private final UserData userData;
 
     //Languages
     @FXML
@@ -43,8 +43,9 @@ public class SettingsPageCtrl implements Initializable {
     private ComboBox<String> urlList;
 
     @Inject
-    public SettingsPageCtrl(ServerUtils serverUtils) {
+    public SettingsPageCtrl(ServerUtils serverUtils, UserData userData) {
         this.server = serverUtils;
+        this.userData = userData;
     }
 
     @Override
@@ -90,9 +91,9 @@ public class SettingsPageCtrl implements Initializable {
     @FXML
     private void downloadLanguage() {
         FileChooser fc = new FileChooser();
-        fc.setTitle("Saving language pack");
-        fc.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("language file", "*.properties"));
+        fc.setTitle(Main.getTranslation("languageSave"));
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                Main.getTranslation("languageFileType"), "*.properties"));
         fc.setInitialFileName(languageChoiceBox.getValue() + ".properties");
         fc.setInitialDirectory(new File(System.getProperty("user.home")));
 
@@ -102,7 +103,7 @@ public class SettingsPageCtrl implements Initializable {
             Path destination = fc.showSaveDialog(languageChoiceBox.getScene().getWindow()).toPath();
             Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            MainCtrl.alert("Error during saving");
+            MainCtrl.alert(Main.getTranslation("SavingError"));
             System.err.println(e);
         } catch (NullPointerException ignored) {} //filechooser closed without picking file
     }
@@ -141,7 +142,7 @@ public class SettingsPageCtrl implements Initializable {
             }
         } catch (Exception e) {
             System.err.println(e);
-            statusText.setText("unavailable");
+            statusText.setText(Main.getTranslation("unavailable"));
         }
         statusText.setFill(Color.RED);
     }

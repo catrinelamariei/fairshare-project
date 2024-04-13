@@ -86,8 +86,10 @@ public class VisualEventNode extends EventNode {
      * create eventnode from data
      * @param event data source
      */
-    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl, EventJsonUtil jsonUtil) {
-        super(mainCtrl, jsonUtil, new Pair<>(event.getId(), event.getName()));
+    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl, EventJsonUtil jsonUtil,
+                              UserData userData, ServerUtils serverUtils) {
+        super(mainCtrl, jsonUtil, userData, new Pair<>(event.getId(), event.getName()),
+                serverUtils);
         this.initialize();
 
         this.setText(event.name);
@@ -100,14 +102,14 @@ public class VisualEventNode extends EventNode {
 
     //buttons
     private void join(ActionEvent actionEvent) {
-        UserData.getInstance().setCurrentUUID(idNamePair);
+        userData.setCurrentUUID(idNamePair);
         mainCtrl.showEventPage();
     }
 
     private void jsonSave(ActionEvent actionEvent) {
         //getting location to save file
         FileChooser fileCHooser = new FileChooser();
-        fileCHooser.setTitle("Save JSON");
+        fileCHooser.setTitle(Main.getTranslation("save_json"));
         FileChooser.ExtensionFilter extensionFilter =
             new FileChooser.ExtensionFilter("JSON", "*.json");
         fileCHooser.getExtensionFilters().add(extensionFilter);
@@ -126,19 +128,19 @@ public class VisualEventNode extends EventNode {
 
     private void delete(ActionEvent actionEvent) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Event");
-        alert.setHeaderText("Are you sure you want to delete this event?");
+        alert.setTitle(Main.getTranslation("delete_event"));
+        alert.setHeaderText(Main.getTranslation("sure_of_deletion"));
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             ;
 
             ((Accordion) this.getParent()).getPanes().remove(this);
-            (new ServerUtils()).deleteEvent(idNamePair.getKey());
+            serverUtils.deleteEvent(idNamePair.getKey());
 
             // TODO: put these lines into service
             mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
-            UserData.getInstance().getRecentUUIDs()
+            userData.getRecentUUIDs()
                     .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
         }
     }
