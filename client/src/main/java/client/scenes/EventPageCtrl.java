@@ -214,14 +214,7 @@ public class EventPageCtrl implements Initializable {
         });
 
         subscribe();
-//        server.registerForUpdatesTransaction(t ->{
-//            Platform.runLater(()->{
-//                eventDTO = server.getEvent(userData.getCurrentUUID());
-//                transactions.getChildren().clear();
-//                transactions.getChildren().addAll(eventDTO.transactions.stream()
-//                        .map(nodeFactory::createTransactionNode).toList());
-//            });
-//        });
+
         //loading stats
         updateChart.setText(resources.getString("load_stats"));
         updateChart.setOnAction(e -> {
@@ -308,6 +301,18 @@ public class EventPageCtrl implements Initializable {
                     transactions.getChildren().clear();
                     transactions.getChildren().addAll(eventDTO.transactions.stream()
                             .map(nodeFactory::createTransactionNode).toList());
+                }
+            });
+        });
+
+        server.registerForTransactionDeletionUpdates(id ->{
+            Platform.runLater(()->{
+                if(eventDTO.transactions.stream().anyMatch(t->t.getId().equals(id))){
+                    EventDTO e = server.getEvent(userData.getCurrentUUID());
+                    transactions.getChildren().clear();
+                    transactions.getChildren().addAll(e.transactions.stream()
+                            .map(nodeFactory::createTransactionNode).toList());
+
                 }
             });
         });

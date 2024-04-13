@@ -297,67 +297,42 @@ public class ServerUtils {
         });
     }
 
-    public void stop(){
-//<<<<<<< HEAD
-//        execUpdateParticipant.shutdownNow();
-//        execDeleteParticipant.shutdownNow();
-        if(EXEC!=null)
-            EXEC.shutdownNow();
+    private static ExecutorService execDeleteTransaction;
 
-//=======
+    public void registerForTransactionDeletionUpdates(Consumer<UUID> listener) {
+        execDeleteTransaction = Executors.newSingleThreadExecutor();
+        execDeleteParticipant.submit(() -> {
+            while (!Thread.interrupted()) {
+                var response = ClientBuilder.newClient()
+                        .target(userData.getServerURL())
+                        .path("/api/transaction/deletion/updates")
+                        .request(APPLICATION_JSON)
+                        .get(Response.class);
+
+                if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
+                    continue;
+                }
+
+                if (response.getStatus() == HttpStatus.OK.value()) {
+                    UUID deletedTransactionId = response.readEntity(UUID.class);
+                    listener.accept(deletedTransactionId);
+                }
+            }
+        });
+    }
+
+    public void stop(){
+        if(EXEC!=null && execDeleteTransaction!=null){
+            EXEC.shutdownNow();
+            execDeleteTransaction.shutdownNow();
+        }
+
         if(execUpdateParticipant != null && execDeleteParticipant != null ){
             execUpdateParticipant.shutdownNow();
             execDeleteParticipant.shutdownNow();
         }
-//>>>>>>> c225beead3b9fba818d36e92290991d14315c114
     }
-//    private static final ExecutorService execDeleteTransaction
-//            = Executors.newSingleThreadExecutor();
 
-//    public void registerForDeletionUpdates(Runnable action) {
-//        execDeleteTransaction.submit(() -> {
-//            while (!Thread.interrupted()) {
-//                var response = ClientBuilder.newClient()
-//                        .target(userData.getServerURL())
-//                        .path("/api/transactions/deletion/updates")
-//                        .request(APPLICATION_JSON)
-//                        .get(Response.class);
-//
-//                if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
-//                    continue;
-//                }
-//
-//                if (response.getStatus() == HttpStatus.OK.value()) {
-//                    String deletedTransactionId = response.readEntity(String.class);
-//                    action.run();
-//                }
-//            }
-//        });
-//    }
-//    private static final ExecutorService execDelTransaction = Executors.newSingleThreadExecutor();
-
-//    public static void registerForTransactionDeletionUpdates(Consumer<UUID> listener) {
-//        execDeleteTransaction.submit(() -> {
-//            System.out.println("am intrat22222222222222");
-//
-//            while (!Thread.interrupted()) {
-//                var response = ClientBuilder.newClient()
-//                        .target(userData.getServerURL())
-//                        .path("/api/transactions/deletion/updates")
-//                        .request(APPLICATION_JSON)
-//                        .get(Response.class);
-//
-//                if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
-//                    continue;
-//                }
-//
-//                if (response.getStatus() == HttpStatus.OK.value()) {
-//                    UUID deletedTransactionId = response.readEntity(UUID.class);
-//                    listener.accept(deletedTransactionId);
-//                }
-//            }
-//        });
-//    }
     private String getWebSocketURL() {
         String url = userData.getServerURL();
         url = url.replaceFirst("http", "ws");

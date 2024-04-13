@@ -61,16 +61,6 @@ public class Main extends Application {
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
                 privCheckPage, startPage, settingsPage);
 
-//                privCheckPage, startPage, transactionPage);
-
-//        primaryStage.show();
-//        primaryStage.setOnCloseRequest(e->{
-//            eventPage.getKey().stop();
-//        });
-
-
-//=======
-//>>>>>>> c225beead3b9fba818d36e92290991d14315c114
     }
 
     public static ResourceBundle loadLanguages(String languageCode) {
