@@ -7,6 +7,7 @@ import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
+import javafx.application.Platform;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
 import javafx.stage.*;
@@ -124,13 +125,17 @@ public class MainCtrl {
     }
 
     // Display an error message if the input is invalid
+
     public static void alert(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(Main.getTranslation("error"));
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText(msg);
+            alert.showAndWait();
+        });
     }
+
 
     public static void inform(String title, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

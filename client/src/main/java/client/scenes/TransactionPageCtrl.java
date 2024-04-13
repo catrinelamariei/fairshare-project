@@ -59,6 +59,7 @@ public class TransactionPageCtrl implements Initializable {
         this.server = server;
         this.mainCtrl = mainCtrl;
 
+
         // temporary for test
         //todo: delete?
         this.event = new Event("name");

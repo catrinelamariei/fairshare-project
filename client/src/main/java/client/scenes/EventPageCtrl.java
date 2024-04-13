@@ -351,6 +351,7 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
+        tagsInput.getItems().add(0, null);
 
         //load tags
         tagNameInput.clear();
@@ -359,8 +360,6 @@ public class EventPageCtrl implements Initializable {
                 .map(t -> hboxFromTag(t)).toList());
         // load colors
         tagColor.getItems().addAll(Tag.Color.values());
-
-        // TODO: replace with color code
 
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
@@ -397,6 +396,9 @@ public class EventPageCtrl implements Initializable {
     private HBox hboxFromTag(TagDTO t) {
         //creation
         HBox hbox = new HBox();
+        hbox.setPrefHeight(47);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setStyle("-fx-background-color: " + t.color.colorCode);
         Text text = new Text(t.getName());
         Pane spacer = new Pane();
         Button deleteTag = new Button("X");
@@ -680,18 +682,20 @@ public class EventPageCtrl implements Initializable {
         return false;
     }
 
-    private static BigDecimal isValidAmount(String transactionAmountString) {
+    BigDecimal isValidAmount(String transactionAmountString) {
         BigDecimal amount;
         try {
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             return null;
+        } catch (NullPointerException e){
+            return null;
         }
         return amount;
     }
 
-    private boolean checkInput(String name, String transactionAmountString, String currency,
-                               LocalDate localDate, ParticipantDTO author) {
+    boolean checkInput(String name, String transactionAmountString, String currency,
+                       LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
             MainCtrl.alert(Main.getTranslation("empty_expense_name"));
             return true;
@@ -714,6 +718,14 @@ public class EventPageCtrl implements Initializable {
         }
 
         return false;
+    }
+
+    private void alert(String text){
+        try{
+            MainCtrl.alert(text);
+        } catch (Exception e){
+            System.out.println("can't produce an alert in testing");
+        }
     }
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
@@ -874,7 +886,7 @@ public class EventPageCtrl implements Initializable {
         debts.getPanes().removeAll(toRemove);
     }
 
-    private boolean invalidEmail(String email) {
+    boolean invalidEmail(String email) {
         // Regex pattern to match email address
         String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regexPattern);

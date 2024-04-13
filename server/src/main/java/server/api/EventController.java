@@ -69,8 +69,8 @@ public class EventController {
 
 
     @Transactional
-    @PatchMapping("/{id}")
-    public ResponseEntity<EventDTO> updateEventName(@PathVariable("id") UUID id,
+    @PutMapping("/{id}")
+    public ResponseEntity<EventDTO> renameEventName(@PathVariable("id") UUID id,
                                                     @RequestBody EventDTO eventDTO) {
         if (id == null || eventDTO == null  || !eventDTO.validate())
             return ResponseEntity.badRequest().build();
@@ -86,7 +86,11 @@ public class EventController {
     @Transactional
     @PutMapping
     public ResponseEntity<EventDTO> updateEvent(@RequestBody EventDTO eventDTO) {
-        return ResponseEntity.ok(new EventDTO(d2e.set(eventDTO)));
+        EventDTO updated = new EventDTO(d2e.set(eventDTO));
+        if(messagingTemplate != null) {
+            messagingTemplate.convertAndSend("/topic/events", updated);
+        }
+        return ResponseEntity.ok(updated);
     }
 
     // TODO: manage dependencies
