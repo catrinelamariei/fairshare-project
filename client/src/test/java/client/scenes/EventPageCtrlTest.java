@@ -44,6 +44,7 @@ public class EventPageCtrlTest {
         when(transactionDTO.getAmount()).thenReturn(BigDecimal.valueOf(100.0));
         userData.getRecentUUIDs().clear();
         userData.getRecentUUIDs().add(new UserData.Pair<>(mockId, "Mock Event"));
+        when(userData.getCurrencyCode()).thenReturn("EUR");
     }
 
     @Test
@@ -51,7 +52,7 @@ public class EventPageCtrlTest {
         when(tagDTO.getName()).thenReturn("tagname");
         eventPageCtrl.updateTotalExpenses();
 
-        assertEquals("\u20AC 100.0", eventPageCtrl.eventCostFiltered.getText());
+        assertEquals("100.00EUR", eventPageCtrl.eventCostFiltered.getText());
     }
 
     @Test
@@ -59,6 +60,6 @@ public class EventPageCtrlTest {
         when(tagDTO.getName()).thenReturn("debt");
         eventPageCtrl.updateTotalExpenses();
 
-        assertEquals("\u20AC 0.0", eventPageCtrl.eventCostFiltered.getText());
+        assertEquals("0.00EUR", eventPageCtrl.eventCostFiltered.getText());
     }
 }
