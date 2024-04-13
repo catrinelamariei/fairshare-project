@@ -6,13 +6,15 @@ import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.*;
 import com.google.inject.*;
 import commons.DTOs.*;
+import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
-import javafx.geometry.Bounds;
+import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -21,6 +23,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.util.Duration;
@@ -44,6 +48,7 @@ public class EventPageCtrl implements Initializable {
     private final MainCtrl mainCtrl;
     private final NodeFactory nodeFactory;
     public final UndoService undoService; //should be made private using factory injection
+    private final UserData userData;
 
     private EventDTO eventDTO;
 
@@ -58,6 +63,8 @@ public class EventPageCtrl implements Initializable {
     //event header
     @FXML
     private Text eventTitle;
+    @FXML
+    private Text inviteCodeText;
 
     //transaction attributes and buttons
     @FXML
@@ -127,9 +134,7 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TabPane participantTabPane;
     @FXML
-    Text totalExpenses;
-    @FXML
-    private Button statsButton;
+    Text eventCostFiltered;
 
     @FXML
     private TabPane expenseTabPane;
@@ -148,6 +153,10 @@ public class EventPageCtrl implements Initializable {
     private Button updateChart;
     @FXML
     private Text eventCost;
+    @FXML
+    private VBox legendBox;
+    @FXML
+    private GridPane stats;
 
     Set<TagDTO> tags = new HashSet<>();
 
@@ -155,14 +164,21 @@ public class EventPageCtrl implements Initializable {
     private ChoiceBox<String> payerFilter;
     @FXML
     private ChoiceBox<String> participantFilter;
+    @FXML
+    private TextField tagNameInput;
+    @FXML
+    private ComboBox<Tag.Color> tagColor;
+    @FXML
+    private VBox allTagsVBox;
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
-                         NodeFactory nodeFactory) {
+                         NodeFactory nodeFactory, UserData userData) {
         this.server = server;
         this.mainCtrl = mainCtrl;
         this.undoService = undoService;
         this.nodeFactory = nodeFactory;
+        this.userData = userData;
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -198,7 +214,7 @@ public class EventPageCtrl implements Initializable {
         });
         server.registerForUpdatesTransaction(t ->{
             Platform.runLater(()->{
-                eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
+                eventDTO = server.getEvent(userData.getCurrentUUID());
                 transactions.getChildren().clear();
                 transactions.getChildren().addAll(eventDTO.transactions.stream()
                         .map(nodeFactory::createTransactionNode).toList());
@@ -207,12 +223,21 @@ public class EventPageCtrl implements Initializable {
 
         subscribe();
 
+        //loading stats
+        updateChart.setText(resources.getString("load_stats"));
+        updateChart.setOnAction(e -> {
+            updateChart.setText(resources.getString("update_stats"));
+            loadPieChart();
+            eventCost.setText("\u20AC " + printTotalExpenses());
+            updateTotalExpenses();
+        });
+
     }
 
     private void subscribe() {
         server.registerForUpdatesParticipant(p->{
             Platform.runLater(()->{
-                if(p.eventId.equals(UserData.getInstance().getCurrentUUID())){
+                if(p.eventId.equals(userData.getCurrentUUID())){
                     participants.getPanes().clear();
                     eventDTO.participants.removeIf(participantDTO ->
                             participantDTO.getId().equals(p.getId()));
@@ -266,7 +291,7 @@ public class EventPageCtrl implements Initializable {
 
                     //this is necessary because sometimes, deleting
                     // a participant will also delete a transaction
-                    EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
+                    EventDTO e = server.getEvent(userData.getCurrentUUID());
                     transactions.getChildren().clear();
                     transactions.getChildren().addAll(e.transactions.stream()
                             .map(nodeFactory::createTransactionNode).toList());
@@ -285,24 +310,16 @@ public class EventPageCtrl implements Initializable {
         transactions.getChildren().addAll(eventDTO.transactions.stream()
                 .map(nodeFactory::createTransactionNode).toList());
 
-
-        //loading stats
-        updateChart.setText("Load Statistics");
-        updateChart.setOnAction(e -> {
-            updateChart.setText("Refresh statistics");
-            loadPieChart();
-            eventCost.setText("\u20AC " + printTotalExpenses());
-            updateTotalExpenses();
-        });
     }
 
     public void load() throws WebApplicationException {
         System.out.println("loading EventPage");
+        eventDTO = server.getEvent(userData.getCurrentUUID());
 
-        eventDTO = server.getEvent(UserData.getInstance().getCurrentUUID());
 
         //update name
         eventTitle.setText(eventDTO.name);
+        inviteCodeText.setText(eventDTO.id.toString());
 
         //load transactions
         transactions.getChildren().clear();
@@ -331,8 +348,7 @@ public class EventPageCtrl implements Initializable {
 
         // debt
         debts.getPanes().clear();
-        settleButton.setText("Settle debts");
-        //c1f05a35-1407-4ba1-ada3-0692649256b8
+        settleButton.setText(Main.getTranslation("settle_debts"));
 
         //choiceboxes for transaction filter
         payerFilter.getItems().clear();
@@ -348,6 +364,16 @@ public class EventPageCtrl implements Initializable {
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
+        tagsInput.getItems().add(0, null);
+
+        //load tags
+        tagNameInput.clear();
+        tagColor.setValue(null);
+        allTagsVBox.getChildren().setAll(eventDTO.tags.stream()
+                .map(t -> hboxFromTag(t)).toList());
+        // load colors
+        tagColor.getItems().addAll(Tag.Color.values());
+
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
             public ListCell<TagDTO> call(ListView<TagDTO> param) {
@@ -365,7 +391,52 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
+
+        // statistics clear
+        pieChart.getData().clear();
+        legendBox.getChildren().clear();
+        eventCost.setText(null);
+        eventCostFiltered.setText(null);
+        stats.setVisible(false);
+        pieChart.setVisible(false);
+
         undoService.clear();
+
+        server.stop();
+        subscribe();
+    }
+
+    private HBox hboxFromTag(TagDTO t) {
+        //creation
+        HBox hbox = new HBox();
+        hbox.setPrefHeight(47);
+        hbox.setAlignment(Pos.CENTER_LEFT);
+        hbox.setStyle("-fx-background-color: " + t.color.colorCode);
+        Text text = new Text(t.getName());
+        Pane spacer = new Pane();
+        Button deleteTag = new Button("X");
+
+        //styling
+        hbox.setPrefHeight(40);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.setStyle("-fx-background-color: " + t.color); // TODO: replace with color code
+        hbox.setPadding(new Insets(10.0d, 20.0d, 10.0d, 10.0));
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        //actions
+        deleteTag.setOnAction(e -> {
+            allTagsVBox.getChildren().remove(hbox);
+            tagsInput.getItems().remove(t);
+            try {
+                server.deleteTag(t.id);
+            } catch (WebApplicationException ex) {
+                System.err.println("Error deleting tag: " + ex.getMessage());
+            }
+        });
+
+        //assembly
+        hbox.getChildren().addAll(text, spacer, deleteTag);
+        return hbox;
     }
 
     private static CheckBox participantCheckbox(ParticipantDTO participant) {
@@ -379,10 +450,10 @@ public class EventPageCtrl implements Initializable {
     private void addTag() {
         TagDTO input = tagsInput.getValue();
         if (input == null) {
-            MainCtrl.alert("Please choose a tag from the dropdown menu");
+            alert(Main.getTranslation("tag_input"));
             return;
         } else if (tags.contains(input)) {
-            MainCtrl.alert("Tag already added");
+            alert(Main.getTranslation("tag_already"));
             return;
         }
         tagsInput.setValue(null);
@@ -403,6 +474,30 @@ public class EventPageCtrl implements Initializable {
         tags.add(input);
     }
 
+    public void createTag() {
+        String name = tagNameInput.getText();
+        Tag.Color color = tagColor.getValue();
+        if (name == null || name.isEmpty()) {
+            alert(Main.getTranslation("tag_name_null"));
+            return;
+        } else if (color == null) {
+            alert(Main.getTranslation("choose_color"));
+            return;
+        }
+        TagDTO tag = new TagDTO(null, userData.getCurrentUUID(), name, color);
+        try {
+            tag = server.postTag(tag);
+            tagsInput.getItems().add(tag);
+            HBox hbox = hboxFromTag(tag);
+            allTagsVBox.getChildren().add(hbox);
+        } catch (WebApplicationException e) {
+            System.err.println("Error creating tag: " + e.getMessage());
+        }
+        MainCtrl.inform(Main.getTranslation("tag"), Main.getTranslation("tag_created"));
+        tagNameInput.clear();
+        tagColor.setValue(null);
+    }
+
     public void gotoHome() {
         mainCtrl.showStartPage();
     }
@@ -413,11 +508,11 @@ public class EventPageCtrl implements Initializable {
 
     public void copyInviteCode() {
 
-        if (UserData.getInstance().getCurrentUUID() == null) {
+        if (userData.getCurrentUUID() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
+            alert.setTitle(Main.getTranslation("error"));
             alert.setHeaderText(null);
-            alert.setContentText("Event not found");
+            alert.setContentText(Main.getTranslation("event_not_found"));
             alert.showAndWait();
             return;
         }
@@ -427,12 +522,12 @@ public class EventPageCtrl implements Initializable {
         //get invite code (String)
         //copy data to clipboard
         StringSelection content = new StringSelection(
-                UserData.getInstance().getCurrentUUID().toString());
+                userData.getCurrentUUID().toString());
         clipboard.setContents(content, null);
 
 
         //display copied for 3 seconds
-        Label label = new Label("Copied to clipboard!");
+        Label label = new Label(Main.getTranslation("clipboard_copy"));
         label.setStyle("-fx-font-size: 14px;"); // Set label font size
         StackPane stackPane = new StackPane(label);
         stackPane.setStyle(
@@ -461,7 +556,9 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         if (createTransaction(ts) != null)
-            MainCtrl.inform("Expense","Expense \"" + ts.getSubject() + "\" Created!");
+            MainCtrl.inform(Main.getTranslation("expense"),
+                    Main.getTranslation("expense_creation_start") + ts.getSubject()
+                            + Main.getTranslation("expense_creation_end"));
 
     }
 
@@ -473,6 +570,7 @@ public class EventPageCtrl implements Initializable {
             undoService.addAction(CREATE, ts);
             String selectedPayer = payerFilter.getValue();
             String selectedParticipant = participantFilter.getValue();
+            //todo
             if ((selectedPayer.equals("All")
                     || selectedPayer.equals(ts.author.getFullName()))
                     && (selectedParticipant.equals("All") ||
@@ -494,17 +592,17 @@ public class EventPageCtrl implements Initializable {
 
 
     public void updateTotalExpenses() {
-        EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
-        totalExpenses.setText("\u20AC" +
-                String.valueOf(e.getTransactions().stream()
+        EventDTO e = server.getEvent(userData.getCurrentUUID());
+        eventCostFiltered.setText("\u20AC " +
+               e.getTransactions().stream()
                 .filter(
                         ts -> ts.getTags()
                                 .stream()
                                 .map(tag -> tag.getName())
+                                //todo
                                 .noneMatch(tagName -> tagName.equals("debt")))
                 .mapToDouble(ts -> ts.getAmount().doubleValue())
-                .sum()));
-        System.out.println(totalExpenses.getText());
+                .sum());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -537,7 +635,7 @@ public class EventPageCtrl implements Initializable {
 
 
         Date date = java.sql.Date.valueOf(localDate);
-        return new TransactionDTO(null, UserData.getInstance().getCurrentUUID(),
+        return new TransactionDTO(null, userData.getCurrentUUID(),
                 date, currency, amount, author, participants, tags, name);
     }
 
@@ -561,7 +659,7 @@ public class EventPageCtrl implements Initializable {
 
         //return buttons/fields to default functions/value
         submitTransaction.setOnAction(this::onCreateTransaction);
-        addExpenseTab.setText("Add Expense");
+        addExpenseTab.setText(Main.getTranslation("add_expense"));
         vboxParticipantsTransaction.getChildren().forEach(node -> {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
@@ -578,59 +676,69 @@ public class EventPageCtrl implements Initializable {
                                 RadioButton selectedRadioButton,
                                 boolean participantIsSelected) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter a description.");
+            alert(Main.getTranslation("empty_expense_name"));
         } else if (author == null) {
-            MainCtrl.alert("Please select a payer.");
+            alert(Main.getTranslation("empty_expense_author"));
         } else if (amount == null) {
-            MainCtrl.alert("Please enter a valid amount.");
+            alert(Main.getTranslation("empty_expense_amount"));
         } else if (currency == null || currency.isEmpty()) {
-            MainCtrl.alert("Please choose a currency code.");
+            alert(Main.getTranslation("empty_expense_currency"));
         } else if (localDate == null) {
-            MainCtrl.alert("Please choose a date.");
+            alert(Main.getTranslation("empty_expense_date"));
         } else if (selectedRadioButton == null) {
-            MainCtrl.alert("Please select an option for splitting the expense.");
+            alert(Main.getTranslation("split_not_selected"));
         } else if (customSplit.isSelected() && !participantIsSelected) {
-            MainCtrl.alert("Please choose at least one participant other than yourself.");
+            alert(Main.getTranslation("other_participant"));
         } else {
             return true;
         }
         return false;
     }
 
-    private static BigDecimal isValidAmount(String transactionAmountString) {
+    BigDecimal isValidAmount(String transactionAmountString) {
         BigDecimal amount;
         try {
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             return null;
+        } catch (NullPointerException e){
+            return null;
         }
         return amount;
     }
 
-    private boolean checkInput(String name, String transactionAmountString, String currency,
-                               LocalDate localDate, ParticipantDTO author) {
+    boolean checkInput(String name, String transactionAmountString, String currency,
+                       LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert("Please enter the name of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_name"));
             return true;
         }
         if (author == null) {
-            MainCtrl.alert("Please chose the author of the transaction");
+            MainCtrl.alert(Main.getTranslation("author_not_selected"));
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            MainCtrl.alert("Please enter the amount of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_amount"));
             return true;
         }
         if (currency == null) {
-            MainCtrl.alert("Please enter the currency of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_currency"));
             return true;
         }
         if (localDate == null) {
-            MainCtrl.alert("Please enter the date of the expense");
+            MainCtrl.alert(Main.getTranslation("empty_expense_date"));
             return true;
         }
 
         return false;
+    }
+
+    private void alert(String text){
+        try{
+            MainCtrl.alert(text);
+        } catch (Exception e){
+            System.out.println("can't produce an alert in testing");
+        }
     }
 
     private Set<ParticipantDTO> getTransactionParticipants(RadioButton selectedRadioButton) {
@@ -669,15 +777,15 @@ public class EventPageCtrl implements Initializable {
 
         try {
             if (fName.isEmpty()) {
-                MainCtrl.alert("Please enter the first name");
+                alert(Main.getTranslation("empty_first_name"));
                 return;
             }
             if (lName.isEmpty()) {
-                MainCtrl.alert("Please enter the last name");
+                alert(Main.getTranslation("empty_last_name"));
                 return;
             }
             if (mail.isEmpty() || invalidEmail(mail)) {
-                MainCtrl.alert("Please enter a valid email address");
+                alert(Main.getTranslation("invalid_email"));
                 return;
             }
             if (bicText.isEmpty()) {
@@ -686,7 +794,7 @@ public class EventPageCtrl implements Initializable {
             if (ibanText.isEmpty()) {
                 ibanText = "-";
             }
-            participantDTO = new ParticipantDTO(null, UserData.getInstance().getCurrentUUID(),
+            participantDTO = new ParticipantDTO(null, userData.getCurrentUUID(),
                     fName, lName, mail, ibanText, bicText);
             participantDTO = server.postParticipant(participantDTO);
 
@@ -699,7 +807,7 @@ public class EventPageCtrl implements Initializable {
             creditorFilter.getItems().add(participantDTO.getFullName());
             showOverviewParticipants();
         } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
+            alert("Please enter valid participant data");
             return;
         } catch (WebApplicationException e) {
             System.err.println("Error adding participant: " + e.getMessage());
@@ -715,52 +823,62 @@ public class EventPageCtrl implements Initializable {
     @FXML
     public void debtSimplification() {
 
-        debts.getPanes().clear();
+        try {
+            debts.getPanes().clear();
 
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+            EventDTO event = server.getEvent(userData.getCurrentUUID());
 
-        DebtGraph graph = new DebtGraph(event);
-        PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
-        PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
+            DebtGraph graph = new DebtGraph(event);
+            PriorityQueue<Pair<ParticipantDTO, Double>> positive = graph.positive;
+            PriorityQueue<Pair<ParticipantDTO, Double>> negative = graph.negative;
 
-        // end if no debts to simplify
-        if (positive.isEmpty()) {
-            MainCtrl.inform("Debts","No debts to simplify!");
-            return;
-        }
-
-        // display debts if there are debts to simplify
-        while (!positive.isEmpty() && !negative.isEmpty()) {
-
-            Pair<ParticipantDTO, Double> pos = positive.poll();
-            Pair<ParticipantDTO, Double> neg = negative.poll();
-
-            ParticipantDTO creditor = pos.getKey();
-            ParticipantDTO debtor = neg.getKey();
-            Double credit = pos.getValue();
-            Double debt = neg.getValue();
-            double settlementAmount = Math.min(credit, Math.abs(debt));
-
-            // deal with currency later
-            DebtNode debtNode = nodeFactory.createDebtNode(debtor, creditor, "eur",
-                    settlementAmount, event, server, this);
-            debts.getPanes().add(debtNode);
-            // Update debts
-            credit -= settlementAmount;
-            debt += settlementAmount;
-
-            // Reinsert participants into priority queues if they still have non-zero debt
-            if (debt < 0) {
-                negative.offer(new Pair<>(debtor, debt));
+            // end if no debts to simplify
+            if (positive.isEmpty()) {
+                MainCtrl.inform(Main.getTranslation("debts"), Main.getTranslation("no_debts"));
+                return;
             }
-            if (credit > 0) {
-                positive.offer(new Pair<>(creditor, credit));
+
+            // display debts if there are debts to simplify
+            while (!positive.isEmpty() && !negative.isEmpty()) {
+
+                Pair<ParticipantDTO, Double> pos = positive.poll();
+                Pair<ParticipantDTO, Double> neg = negative.poll();
+
+                ParticipantDTO creditor = pos.getKey();
+                ParticipantDTO debtor = neg.getKey();
+                Double credit = pos.getValue();
+                Double debt = neg.getValue();
+                double settlementAmount = Math.min(credit, Math.abs(debt));
+
+                // deal with currency later
+                DebtNode debtNode = nodeFactory.createDebtNode(debtor, creditor, "eur",
+                        settlementAmount, event, server, this);
+                debts.getPanes().add(debtNode);
+                // Update debts
+                credit -= settlementAmount;
+                debt += settlementAmount;
+
+                // Reinsert participants into priority queues if they still have non-zero debt
+                if (debt < 0) {
+                    negative.offer(new Pair<>(debtor, debt));
+                }
+                if (credit > 0) {
+                    positive.offer(new Pair<>(creditor, credit));
+                }
+            }
+
+            // update the button
+            settleButton.setText(Main.getTranslation("refresh_debts"));
+            filterDebts();
+        } catch (Exception e) {
+            //TODO below:
+            if(e.getMessage().equals("No participants")){
+                alert( Main.getTranslation("expense_without_beneficiary")+
+                        Main.getTranslation("add_participants_to_expense"));
+            } else {
+                alert(Main.getTranslation("debts_error"));
             }
         }
-
-        // update the button
-        settleButton.setText("Refresh debts");
-        filterDebts();
 
     }
 
@@ -769,7 +887,8 @@ public class EventPageCtrl implements Initializable {
         String selectedCreditor = (String) creditorFilter.getValue();
         // remove other debtNodes if a creditor is selected
         Set<TitledPane> toRemove = new HashSet<>() ;
-        if (!selectedCreditor.equals("All")) {
+        //TODO:
+        if (!(selectedCreditor.equals("All"))) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
                 if (!node.creditor.getFullName().equals(selectedCreditor)) {
@@ -780,7 +899,7 @@ public class EventPageCtrl implements Initializable {
         debts.getPanes().removeAll(toRemove);
     }
 
-    private boolean invalidEmail(String email) {
+    boolean invalidEmail(String email) {
         // Regex pattern to match email address
         String regexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regexPattern);
@@ -790,18 +909,28 @@ public class EventPageCtrl implements Initializable {
 
     public void onDeleteEvent() {
         try {
-//            EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+//            EventDTO event = server.getEvent(userData.getCurrentUUID());
 //            UUID eventId = event.getId();
 //            server.deleteEvent(eventId);
 //            mainCtrl.showStartPage();
-            UUID currentUUID = UserData.getInstance().getCurrentUUID();
+            UUID currentUUID = userData.getCurrentUUID();
 
-            server.deleteEvent(currentUUID);
-            UserData.getInstance().getRecentUUIDs().removeIf(p -> p.getKey().equals(currentUUID));
-            mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(Main.getTranslation("delete_event_confirmation"));
+            alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
-            mainCtrl.showStartPage();
-            MainCtrl.alert("Event deleted!");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                server.deleteEvent(currentUUID);
+                userData.getRecentUUIDs()
+                        .removeIf(p -> p.getKey().equals(currentUUID));
+                mainCtrl.startPageCtrl.deleteRecentEvent(currentUUID);
+
+                mainCtrl.showStartPage();
+                MainCtrl.inform(Main.getTranslation("deleted"),
+                        Main.getTranslation("event_deleted_success"));
+            }
+
         } catch (WebApplicationException e) {
             System.err.println("Error deleting event: " + e.getMessage());
         }
@@ -809,9 +938,9 @@ public class EventPageCtrl implements Initializable {
 
     public void onEditEvent() {
         TextInputDialog dialog = new TextInputDialog(eventDTO.name);
-        dialog.setTitle("Edit Event Name");
+        dialog.setTitle(Main.getTranslation("edit_event_name"));
         dialog.setHeaderText(null);
-        dialog.setContentText("Enter the new event name:");
+        dialog.setContentText(Main.getTranslation("new_event_name"));
 
         Optional<String> result = dialog.showAndWait();
 
@@ -819,7 +948,7 @@ public class EventPageCtrl implements Initializable {
             eventDTO.name = newEventName;
             //eventTitle.setText(newEventName);
             try {
-                server.putEvent(eventDTO);
+                server.patchEvent(eventDTO);
                 eventTitle.setText(newEventName);
             } catch (WebApplicationException e) {
                 System.err.println("Error updating event name: " + e.getMessage());
@@ -837,7 +966,7 @@ public class EventPageCtrl implements Initializable {
 
     public void enableEditing(TransactionNode tsn) {
         transactionEditTarget = tsn;
-        addExpenseTab.setText("Edit Expense");
+        addExpenseTab.setText(Main.getTranslation("edit_expense"));
         addExpenseTab.getTabPane().getSelectionModel().select(addExpenseTab);
         submitTransaction.setOnAction(this::submitEditTransaction);
     }
@@ -846,7 +975,7 @@ public class EventPageCtrl implements Initializable {
     public void filterTransactions() {
         String selectedPayer = (String) payerFilter.getValue();
         String selectedParticipant = (String) participantFilter.getValue();
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        EventDTO event = server.getEvent(userData.getCurrentUUID());
 
         transactions.getChildren().setAll(
                 event.transactions
@@ -886,7 +1015,7 @@ public class EventPageCtrl implements Initializable {
     private void updateTransaction(TransactionDTO ts) {
         if (ts == null) return;
         if (transactionEditTarget == null) {
-            MainCtrl.alert("ERROR: no transaction target set");
+            MainCtrl.alert(Main.getTranslation("expense_target"));
             return;
         }
 
@@ -903,7 +1032,8 @@ public class EventPageCtrl implements Initializable {
     }
 
 
-    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant) {
+    public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant)
+            throws IllegalArgumentException{
         if (newParticipant == null) {
             return;
         }
@@ -911,11 +1041,12 @@ public class EventPageCtrl implements Initializable {
         try {
             if (newParticipant.getFirstName().isEmpty() || newParticipant.getLastName().isEmpty()
                     || newParticipant.getEmail().isEmpty()) {
+                MainCtrl.alert("Please enter valid participant data");
                 throw new IllegalArgumentException();
             }
             if (invalidEmail(newParticipant.getEmail())) {
-                MainCtrl.alert("Please enter a valid email address");
-                return;
+                MainCtrl.alert(Main.getTranslation("invalid_email"));
+                throw new IllegalArgumentException();
             }
             if (newParticipant.getBic().isEmpty()) {
                 newParticipant.setBic("-");
@@ -930,17 +1061,18 @@ public class EventPageCtrl implements Initializable {
             server.putParticipant(newParticipant);
             load();
 
-        } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
-        } catch (WebApplicationException e) {
+        }  catch (WebApplicationException e) {
             System.err.println("Error updating participant: " + e.getMessage());
         }
     }
 
     public void loadPieChart() {
 
+        stats.setVisible(true);
+
         Map<String, BigDecimal> tagToAmount = new HashMap<>();
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        Map<String, String> tagToColor = new HashMap<>();
+        EventDTO event = server.getEvent(userData.getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
         for(TransactionDTO t : transactions){
             Set<TagDTO> tags = t.getTags();
@@ -948,6 +1080,7 @@ public class EventPageCtrl implements Initializable {
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
                 tagToAmount.put(tagName, amount);
+                tagToColor.put(tagName, tag.color.colorCode);
             }
         }
 
@@ -958,10 +1091,38 @@ public class EventPageCtrl implements Initializable {
         );
 
         pieChart.setData(pieData);
+
+        // Set the color of each pie slice to match the corresponding tag color
+        pieData.forEach(data -> {
+            String color = tagToColor.get(data.getName());
+            data.getNode().setStyle("-fx-pie-color: " + color + ";");
+        });
+
+        if (pieChart.getData().isEmpty()) {
+            MainCtrl.inform(Main.getTranslation("statistics"),Main.getTranslation("no_statistics"));
+            return;
+        } else {
+            pieChart.setVisible(true);
+        }
+
+        // disable automatic generated legend
+        pieChart.setLegendVisible(false);
+
+        // Create a legend manually and set the color of each legend item
+        legendBox.getChildren().clear();
+        pieData.forEach(data -> {
+            HBox legendItem = new HBox();
+            legendItem.setSpacing(10);
+            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName())));
+            Label nameLabel = new Label(data.getName());
+            legendItem.getChildren().addAll(circle, nameLabel);
+            legendBox.getChildren().add(legendItem);
+        });
+
     }
 
     public String printTotalExpenses() {
-        EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
+        EventDTO event = server.getEvent(userData.getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
         double totalExpenses = transactions.stream()
                 .map(TransactionDTO::getAmount)

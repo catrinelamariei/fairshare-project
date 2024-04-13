@@ -1,5 +1,6 @@
 package client.scenes.javaFXClasses.VisualNode;
 
+import client.Main;
 import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.ParticipantNode;
@@ -9,15 +10,20 @@ import javafx.event.ActionEvent;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 
 import java.util.*;
 
 public class VisualParticipantNode extends ParticipantNode {
+    // variables:
+    private boolean editing = false;
+    private ParticipantDTO screenshot;
+
     //create text (shared among all ParticipantNodes)
-    Text fNameText = new Text("First Name");
-    Text lNameText = new Text("Last Name");
+    Text fNameText = new Text(Main.getTranslation("f_name"));
+    Text lNameText = new Text(Main.getTranslation("l_name"));
     Text emailText = new Text("Email");
     Text ibanText = new Text("IBAN");
     Text bicText = new Text("BIC");
@@ -41,8 +47,9 @@ public class VisualParticipantNode extends ParticipantNode {
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
      * @param participant data to be used/displayed
      */
-    protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl) {
-        super(participant.id, participant.getFullName(), eventPageCtrl);
+    protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl,
+                                    UserData userData, ServerUtils serverUtils) {
+        super(participant.id, participant.getFullName(), eventPageCtrl, userData, serverUtils);
         this.getStyleClass().add("participants"); //set CSS class
 
         //apply style to all text
@@ -86,8 +93,12 @@ public class VisualParticipantNode extends ParticipantNode {
         col1.setHgrow(Priority.ALWAYS);
         gridPane.getColumnConstraints().addAll(col0, col1);
 
+        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+
+
+        ImageView imgv = new ImageView(img);
         //create button
-        editSaveButton = new Button("Edit");
+        editSaveButton = new Button(Main.getTranslation("edit"),imgv);
         editSaveButton.setOnAction(this::editParticipantFields);
         editSaveButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
@@ -97,9 +108,10 @@ public class VisualParticipantNode extends ParticipantNode {
         toggleButtonPane.resize(0d, 0d); //it should shrink
 
         //delete button
-        deleteButton = new Button("Delete");
+        deleteButton = new Button(Main.getTranslation("delete"));
         deleteButton.setOnAction(this::deleteParticipant);
         deleteButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
+        deleteButton.setStyle("-fx-text-fill: #ff0000;");
         // Add delete button to the layout
         TilePane deleteButtonPane = new TilePane(deleteButton);
         deleteButtonPane.setAlignment(Pos.CENTER);
@@ -113,6 +125,11 @@ public class VisualParticipantNode extends ParticipantNode {
         //create HBox, set child
         HBox container = new HBox(gridPane, buttons);
         this.setContent(container);
+
+        //add behaviour (on close, stop editing)
+        this.expandedProperty().addListener((obs, old, expanded) -> {
+            if (!expanded) this.cancelEdit();
+        });
     }
 
     /**
@@ -121,18 +138,38 @@ public class VisualParticipantNode extends ParticipantNode {
      */
     public void editParticipantFields(ActionEvent actionEvent) {
         System.out.println("editParticipant method called");
-        boolean isEditable = !fNameField.isEditable();
-        fNameField.setEditable(isEditable);
-        lNameField.setEditable(isEditable);
-        emailField.setEditable(isEditable);
-        ibanField.setEditable(isEditable);
-        bicField.setEditable(isEditable);
 
-        if(editSaveButton.getText().equals("Save")) {
-            ParticipantDTO p = getUpdatedParticipantData();
-            eventPageCtrl.updateParticipant(this, p);
+        if(editing) { //already edititing -> try to save
+            ParticipantDTO p = getParticipantFieldsData();
+            try {
+                eventPageCtrl.updateParticipant(this, p);
+            }  catch (IllegalArgumentException e) {
+                return; //continue editing
+            }
+        } else { //not editing yet -> take screenshot
+            screenshot = getParticipantFieldsData();
         }
-        editSaveButton.setText(isEditable ? "Save" : "Edit");
+
+        //if successful, toggle editing process
+        toggleEdit();
+    }
+
+    private void toggleEdit() {
+        editing = !editing;
+        fNameField.setEditable(editing);
+        lNameField.setEditable(editing);
+        emailField.setEditable(editing);
+        ibanField.setEditable(editing);
+        bicField.setEditable(editing);
+
+        editSaveButton.setText(editing ? Main.getTranslation("save") : Main.getTranslation("edit"));
+    }
+
+    private void cancelEdit() {
+        if (!editing) return; //nothing to cancel
+
+        putParticipantFieldsData(screenshot); //restore screenshot
+        toggleEdit(); //stop editing
     }
 
     private void deleteParticipant(ActionEvent actionEvent) {
@@ -141,32 +178,46 @@ public class VisualParticipantNode extends ParticipantNode {
             return;
         }
         try {
-            // Delete participant from the server
-            ServerUtils serverUtils = new ServerUtils();
-            serverUtils.deleteParticipant(id);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(Main.getTranslation("delete_event"));
+            alert.setHeaderText(Main.getTranslation("want_to_delete"));
 
-            // Remove the participant from the UI
-            Node parent = this.getParent();
-            if (parent instanceof Accordion) {
-                Accordion accordion = (Accordion) parent;
-                accordion.getPanes().remove(this);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                // Delete participant from the server
+                serverUtils.deleteParticipant(id);
+
+                // Remove the participant from the UI
+                Node parent = this.getParent();
+                if (parent instanceof Accordion) {
+                    Accordion accordion = (Accordion) parent;
+                    accordion.getPanes().remove(this);
+                }
+
+                System.out.println("Participant deleted successfully.");
             }
-
-            System.out.println("Participant deleted successfully.");
         } catch (Exception e) {
             System.err.println("Error deleting participant: " + e.getMessage());
         }
 
     }
 
-    public ParticipantDTO getUpdatedParticipantData(){
+    public ParticipantDTO getParticipantFieldsData() {
         String updatedFirstName = fNameField.getText().trim();
         String updatedLastName = lNameField.getText().trim();
         String updatedEmail = emailField.getText().trim();
         String updatedIban = ibanField.getText().trim();
         String updatedBic = bicField.getText().trim();
-        UUID eventId = UserData.getInstance().getCurrentUUID();
+        UUID eventId = userData.getCurrentUUID();
         return new ParticipantDTO(id, eventId, updatedFirstName,
                 updatedLastName, updatedEmail, updatedIban, updatedBic);
+    }
+
+    public void putParticipantFieldsData(ParticipantDTO participantDTO) {
+        fNameField.setText(participantDTO.firstName);
+        lNameField.setText(participantDTO.lastName);
+        emailField.setText(participantDTO.email);
+        ibanField.setText(participantDTO.iban);
+        bicField.setText(participantDTO.bic);
     }
 }

@@ -1,17 +1,18 @@
 package client.scenes.javaFXClasses.VisualNode;
 
+import client.Main;
 import client.UserData;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.utils.*;
 import commons.Currency.RateDTO;
-import commons.DTOs.TransactionDTO;
+import commons.DTOs.*;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -25,8 +26,8 @@ public class VisualTransactionNode extends TransactionNode {
      * @param ts transaction to be displayed (data source)
      */
     protected VisualTransactionNode(TransactionDTO ts, EventPageCtrl eventPageCtrl,
-                                    ServerUtils server) {
-        super(eventPageCtrl, server, ts.id);
+                                    ServerUtils server, UserData userData) {
+        super(eventPageCtrl, server, ts.id, userData);
 
         //date
         Text date = new Text(formatter.format(ts.date));
@@ -38,13 +39,14 @@ public class VisualTransactionNode extends TransactionNode {
             default -> ts.currencyCode;
         };
             
-        RateDTO rate = RateUtils.getRate(ts.currencyCode,
-                UserData.getInstance().getCurrencyCode(), ts.date);
+        RateDTO rate = RateUtils.getRate(ts.currencyCode, userData.getCurrencyCode(), ts.date,
+                userData);
         BigDecimal amountInPreferred = ts.amount.multiply(BigDecimal.valueOf(rate.rate));
 
-        Text desc = new Text(String.format("%s paid %.2f%s for %s",
+        Text desc = new Text(String.format("%s " + Main.getTranslation("paid") + " %.2f%s "
+                        + Main.getTranslation("for") + " %s",
             ts.author.firstName.trim(), amountInPreferred,
-                UserData.getInstance().getCurrencyCode(), ts.subject));
+                userData.getCurrencyCode(), ts.subject));
                 
         desc.getStyleClass().add("desc"); //set css class to .desc
 
@@ -53,22 +55,40 @@ public class VisualTransactionNode extends TransactionNode {
                 .map(p -> p.firstName.trim())
                 .collect(Collectors.joining(", "))
             + ")"); //concatenate with ", " in between each name
-        participants.getStyleClass().add("participantText"); //set css class to .participants
+        participants.getStyleClass().add("participantText");
 
-        VBox body = new VBox(desc, participants);
+        participants.setWrappingWidth(400.0);
+        desc.setWrappingWidth(400.0);
+        //set css class to .participants
+
+        TagDTO tag = ts.tags.stream().findFirst().orElse(null);
+        Label tagTxt;
+        VBox body;
+        if (tag != null) {
+            tagTxt = new Label(tag.name);
+            tagTxt.getStyleClass().add("tagText");
+            tagTxt.setStyle("-fx-background-color: " + tag.color.colorCode + ";");
+            tagTxt.setWrapText(true);
+            body = new VBox(desc, participants, tagTxt);
+        } else {
+            body = new VBox(desc, participants);
+        }
 
         // Delete Button
-        Button deleteTransactionButton = new Button("Delete");
+        Button deleteTransactionButton = new Button(Main.getTranslation("delete"));
+        deleteTransactionButton.setStyle("-fx-text-fill: #ff0000;");
         deleteTransactionButton.setOnAction(this::deleteTransaction);
+        deleteTransactionButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
         // Edit Button: some options below
 //        Image img = new Image("/client/Images/edit-button-3.png", 25d, 25d, true, false);
 //        Image img = new Image("/client/Images/edit-button-1.png", 30d, 30d, true, false);
-        Image img = new Image("/client/Images/edit-button-2.png", 30d, 30d, true, false);
+        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
 
 
         ImageView imgv = new ImageView(img);
-        Button btn = new Button("", imgv);
+        Button btn = new Button(Main.getTranslation("edit"), imgv);
+        btn.setFont(Font.font("System", FontWeight.BOLD, 20.0));
         btn.setOnAction(this::editTransaction); //attach method to button
 
         //assembling it all

@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/AdminPage.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AdminPageCtrl">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/AdminPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.AdminPageCtrl">
    <center>
       <VBox alignment="TOP_CENTER" maxWidth="800.0" minWidth="800.0" prefHeight="800.0" prefWidth="800.0" scaleShape="false" style="-fx-background-color: CDFCF6;" BorderPane.alignment="CENTER">
          <children>
@@ -28,7 +44,7 @@
                   </Text>
                   <TilePane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#generateEventTest" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="???Event Generator Test">
+                        <Button mnemonicParsing="false" onAction="#uploadJson" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="%upload_event">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -55,158 +71,66 @@
                                                       <GridPane hgap="10.0" style="-fx-background-color: FAF7F0;" vgap="10.0">
                                                         <columnConstraints>
                                                           <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
-                                                          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" prefWidth="240.0" />
-                                                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" prefWidth="250.0" />
                                                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                                                         </columnConstraints>
-                                                        <rowConstraints>
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                                        </rowConstraints>
                                                          <children>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ID">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Outstanding Balance" GridPane.rowIndex="4">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%outstanding_balance" GridPane.rowIndex="4">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Transactions" GridPane.rowIndex="3">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%expenses" GridPane.rowIndex="3">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Participants" GridPane.rowIndex="2">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%participants" GridPane.rowIndex="2">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Creation Date" GridPane.rowIndex="1">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%creation_date" GridPane.rowIndex="1">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="20.0" />
                                                                </font>
                                                             </Text>
-                                                            <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="68.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="JOIN" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowSpan="2">
+                                                            <Button mnemonicParsing="false" prefWidth="125.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%join" GridPane.columnIndex="2" GridPane.rowSpan="2">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="16.0" />
                                                                </font></Button>
-                                                            <Button mnemonicParsing="false" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="DELETE" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
+                                                            <Button mnemonicParsing="false" prefWidth="125.0" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="%delete" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
                                                                <font>
-                                                                  <Font size="14.0" />
+                                                                  <Font name="System Bold" size="16.0" />
                                                                </font></Button>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="245.0" style="-fx-border-color: #98A8F8;" text="00000000-0000-0000-0000-000000000000" GridPane.columnIndex="1">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="00000000-0000-0000-0000-000000000000" GridPane.columnIndex="1">
                                                             </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="246.0" prefHeight="27.0" prefWidth="246.0" style="-fx-border-color: #98A8F8;" text="542.79$" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="542.79$" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                             </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="246.0" prefHeight="27.0" prefWidth="246.0" style="-fx-border-color: #98A8F8;" text="32" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="32" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                             </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="246.0" prefHeight="27.0" prefWidth="246.0" style="-fx-border-color: #98A8F8;" text="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                             </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="246.0" prefHeight="27.0" prefWidth="246.0" style="-fx-border-color: #98A8F8;" text="01/01/2024" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                            <TextField alignment="CENTER" editable="false" style="-fx-border-color: #98A8F8;" text="01/01/2024" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                             </TextField>
+                                                            <Button mnemonicParsing="false" prefWidth="125.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%download_uppercase" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="3">
+                                                               <font>
+                                                                  <Font name="System Bold" size="16.0" />
+                                                               </font>
+                                                            </Button>
                                                          </children>
-                                                      </GridPane>
-                                                   </content>
-                                                </TitledPane>
-                                                <TitledPane animated="false" text="EventName">
-                                                   <content>
-                                                      <GridPane style="-fx-background-color: FAF7F0;">
-                                                         <columnConstraints>
-                                                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" />
-                                                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" prefWidth="240.0" />
-                                                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
-                                                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
-                                                         </columnConstraints>
                                                          <rowConstraints>
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                            <RowConstraints />
+                                                            <RowConstraints />
+                                                            <RowConstraints />
+                                                            <RowConstraints />
+                                                            <RowConstraints />
                                                          </rowConstraints>
-                                                         <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ID">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Outstanding Balance" GridPane.rowIndex="4">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Transactions" GridPane.rowIndex="3">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Participants" GridPane.rowIndex="2">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Creation Date" GridPane.rowIndex="1">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </Text>
-                                                            <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="JOIN" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowSpan="2">
-                                                               <font>
-                                                                  <Font size="16.0" />
-                                                               </font>
-                                                            </Button>
-                                                            <Button mnemonicParsing="false" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="DELETE" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="2">
-                                                               <font>
-                                                                  <Font size="16.0" />
-                                                               </font>
-                                                            </Button>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="245.0" style="-fx-border-color: #98A8F8;" text="00000000-0000-0000-0000-000000000000" GridPane.columnIndex="1">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="242.0" prefHeight="27.0" prefWidth="242.0" style="-fx-border-color: #98A8F8;" text="542.79$" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="242.0" prefHeight="27.0" prefWidth="242.0" style="-fx-border-color: #98A8F8;" text="32" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="243.0" prefHeight="27.0" prefWidth="243.0" style="-fx-border-color: #98A8F8;" text="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </TextField>
-                                                            <TextField alignment="CENTER" editable="false" maxWidth="244.0" prefHeight="27.0" prefWidth="244.0" style="-fx-border-color: #98A8F8;" text="01/01/2024" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </GridPane.margin>
-                                                            </TextField>
-                                                         </children>
                                                       </GridPane>
                                                    </content>
                                                 </TitledPane>
@@ -221,10 +145,10 @@
                                  <graphic>
                                     <HBox alignment="CENTER" prefHeight="25.0">
                                        <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Overview" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%overview" />
                                           <HBox fx:id="sortingContainer" alignment="CENTER">
                                              <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="sort on">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%sort_on">
                                                    <HBox.margin>
                                                       <Insets left="5.0" />
                                                    </HBox.margin>
@@ -237,7 +161,7 @@
                                                       <Insets left="5.0" />
                                                    </HBox.margin>
                                                 </ChoiceBox>
-                                                <Button fx:id="ascDescButton" mnemonicParsing="false" onAction="#toggleAscDesc" prefWidth="80.0" text="Ascending">
+                                                <Button fx:id="ascDescButton" mnemonicParsing="false" onAction="#toggleAscDesc" prefWidth="80.0" text="%ascending">
                                                    <HBox.margin>
                                                       <Insets left="5.0" />
                                                    </HBox.margin>
@@ -248,7 +172,6 @@
                                     </HBox>
                                  </graphic>
                             </Tab>
-                              <Tab text="Queries" />
                           </tabs>
                         </TabPane>
                      </content>

@@ -2,6 +2,7 @@ package client.scenes.javaFXClasses.VisualNode;
 
 import client.*;
 import client.scenes.javaFXClasses.DataNode.EventNode;
+import client.utils.EventJsonUtil;
 import client.utils.ServerUtils;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
@@ -9,7 +10,11 @@ import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -42,20 +47,17 @@ public class VisualEventNode extends EventNode {
         //text-fields styling
         List.of(idField, dateField, participantField, transactionField, balanceField)
                 .forEach(tf -> {tf.setEditable(false); tf.setAlignment(Pos.CENTER);});
-        idField.setMaxWidth(245.0d);
-        dateField.setMaxWidth(70.0d);
-        participantField.setMaxWidth(30.0d);
-        transactionField.setMaxWidth(30.0d);
-        balanceField.setMaxWidth(60.0d);
 
         //buttons
         Button joinButton = new Button("JOIN");
+        Button downloadButton = new Button("DOWNLOAD");
         Button deleteButton = new Button("DELETE");
         joinButton.setOnAction(this::join);
+        downloadButton.setOnAction(this::jsonSave);
         deleteButton.setOnAction(this::delete);
 
         //gridpance css styling
-        GridPane gridPane = new GridPane(10.0d, 0.0d); //gaps between cells
+        GridPane gridPane = new GridPane(10.0d, 10.0d); //gaps between cells
         gridPane.getStyleClass().add("EventNode");
 
         //gridpane (col/row constraints)
@@ -63,21 +65,18 @@ public class VisualEventNode extends EventNode {
         ColumnConstraints col1 = new ColumnConstraints();
         ColumnConstraints col2 = new ColumnConstraints();
         col0.setHalignment(HPos.RIGHT);
-        col1.setHalignment(HPos.LEFT);
+        col1.setPrefWidth(250d);
+        col1.setMaxWidth(Double.NEGATIVE_INFINITY);
         col2.setHalignment(HPos.CENTER);
-        gridPane.getColumnConstraints().addAll(col0, col1, col2, col2);
+        gridPane.getColumnConstraints().addAll(col0, col1, col2);
         gridPane.getColumnConstraints().forEach(cc -> cc.setHgrow(Priority.SOMETIMES));
-
-        RowConstraints rowConstr = new RowConstraints();
-        rowConstr.setMinHeight(10d);
-        rowConstr.setPrefHeight(30d);
-        gridPane.getRowConstraints().addAll(rowConstr, rowConstr, rowConstr, rowConstr, rowConstr);
 
         //gridpane (contents)
         gridPane.addColumn(0, idText, dateText, participantText, transactionText, balanceText);
         gridPane.addColumn(1, idField, dateField, participantField, transactionField, balanceField);
-        gridPane.add(joinButton, 2, 0, 2, 2); //button (span 2)
-        gridPane.add(deleteButton, 2, 3, 2, 2); //button (span 2)
+        gridPane.add(joinButton, 2, 0, 1, 2); //button (span 2)
+        gridPane.add(downloadButton, 2, 1, 1, 3);
+        gridPane.add(deleteButton, 2, 3, 1, 2); //button (span 2)
 
         //finalize (add gridpane to this)
         this.setContent(gridPane);
@@ -87,8 +86,10 @@ public class VisualEventNode extends EventNode {
      * create eventnode from data
      * @param event data source
      */
-    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl) {
-        super(mainCtrl, new Pair<>(event.getId(), event.getName()));
+    protected VisualEventNode(EventDTO event, MainCtrl mainCtrl, EventJsonUtil jsonUtil,
+                              UserData userData, ServerUtils serverUtils) {
+        super(mainCtrl, jsonUtil, userData, new Pair<>(event.getId(), event.getName()),
+                serverUtils);
         this.initialize();
 
         this.setText(event.name);
@@ -101,18 +102,47 @@ public class VisualEventNode extends EventNode {
 
     //buttons
     private void join(ActionEvent actionEvent) {
-        UserData.getInstance().setCurrentUUID(idNamePair);
+        userData.setCurrentUUID(idNamePair);
         mainCtrl.showEventPage();
     }
 
-    private void delete(ActionEvent actionEvent) {
-        ((Accordion) this.getParent()).getPanes().remove(this);
-        (new ServerUtils()).deleteEvent(idNamePair.getKey());
+    private void jsonSave(ActionEvent actionEvent) {
+        //getting location to save file
+        FileChooser fileCHooser = new FileChooser();
+        fileCHooser.setTitle(Main.getTranslation("save_json"));
+        FileChooser.ExtensionFilter extensionFilter =
+            new FileChooser.ExtensionFilter("JSON", "*.json");
+        fileCHooser.getExtensionFilters().add(extensionFilter);
+        fileCHooser.setSelectedExtensionFilter(extensionFilter);
+        File file = fileCHooser.showSaveDialog(mainCtrl.primaryStage);
 
-        // TODO: put these lines into service
-        mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
-        UserData.getInstance().getRecentUUIDs()
-                .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+        //creating and saving file
+        try {
+            FileWriter fw = new FileWriter(file);
+            fw.write(jsonUtil.getJson(idNamePair.getKey()));
+            fw.close();
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+    }
+
+    private void delete(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(Main.getTranslation("delete_event"));
+        alert.setHeaderText(Main.getTranslation("sure_of_deletion"));
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            ;
+
+            ((Accordion) this.getParent()).getPanes().remove(this);
+            serverUtils.deleteEvent(idNamePair.getKey());
+
+            // TODO: put these lines into service
+            mainCtrl.startPageCtrl.deleteRecentEvent(idNamePair.getKey());
+            userData.getRecentUUIDs()
+                    .removeIf(p -> p.getKey().equals(idNamePair.getKey()));
+        }
     }
 
     @Override

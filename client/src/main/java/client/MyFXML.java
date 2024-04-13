@@ -4,18 +4,13 @@ import client.scenes.EventPageCtrl;
 import com.google.inject.Injector;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.util.Builder;
-import javafx.util.BuilderFactory;
-import javafx.util.Callback;
-import javafx.util.Pair;
+import javafx.util.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MyFXML {
 

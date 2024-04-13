@@ -3,21 +3,18 @@ package client.utils;
 import client.UserData;
 import commons.Currency.RateDTO;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.*;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.Scanner;
+import java.nio.file.*;
+import java.util.*;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class RateUtils {
 
     public static RateDTO getRate(String from, String to,
-                                  Date date) throws WebApplicationException {
+                                  Date date, UserData userData) throws WebApplicationException {
 
 
         if(from.equals(to))
@@ -49,7 +46,7 @@ public class RateUtils {
         }
 
         RateDTO result =  ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/rate/")
+                .target(userData.getServerURL()).path("api/rate/")
                 .request(APPLICATION_JSON)
                 .post(Entity.entity(rate, APPLICATION_JSON),RateDTO.class);
 

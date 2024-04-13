@@ -36,5 +36,6 @@ public class Config implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         //use authenticator for all URLs regarding "/data" endpoint
         registry.addInterceptor(new Authenticator()).addPathPatterns("/data", "/data/**");
+        registry.addInterceptor(new Authenticator()).addPathPatterns("/api/event", "/api/event/");
     }
 }

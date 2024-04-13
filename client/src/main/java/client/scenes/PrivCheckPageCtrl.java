@@ -3,11 +3,10 @@ package client.scenes;
 import client.*;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import javafx.scene.control.PasswordField;
 import javafx.scene.input.*;
 import javafx.scene.text.Text;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,17 +15,16 @@ import java.util.ResourceBundle;
 public class PrivCheckPageCtrl {
     private final ServerUtils server;
     private final MainCtrl mainCtrl;
-    private final String serverUrl;
+    private final UserData userData;
+
     public PasswordField password;
-    public Text text;
+    public Text text = new Text();
 
     @Inject
-    public PrivCheckPageCtrl(ServerUtils server, MainCtrl mainCtrl) {
-        UserData data = UserData.getInstance();
-        this.serverUrl = data.getServerURL();
+    public PrivCheckPageCtrl(ServerUtils server, MainCtrl mainCtrl, UserData userData) {
         this.server = server;
         this.mainCtrl = mainCtrl;
-        text = new Text();
+        this.userData = userData;
     }
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -42,19 +40,17 @@ public class PrivCheckPageCtrl {
     public void login() {
         String passwordText = password.getText();
         if(passwordText!=null && !passwordText.isEmpty()){
-            String response = postRequest(password.getText());
+            Response response = server.adminReqToken(passwordText);
 
-            if(!response.equals("Invalid password")) {
-                UserData data = UserData.getInstance();
-                data.setToken(response);
-                System.out.println("1. token: " + response);
+            if(response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+                userData.setToken(response.readEntity(String.class));
                 adminPage();
             }else{
-                text.setStyle("-fx-text-fill: red;");
-                text.setText("Wrong code");
+                MainCtrl.alert(String.format(Main.getTranslation("wrong_code") + " [%d]",
+                        response.getStatus()));
             }
         }else{
-            mainCtrl.alert("Please provide a password");
+            MainCtrl.alert(Main.getTranslation("provide_password"));
         }
 
     }
@@ -67,18 +63,8 @@ public class PrivCheckPageCtrl {
         mainCtrl.showStartPage();
     }
 
-
-
     public void requestCodeGeneration(){
-        RestTemplate restTemplate = new RestTemplate();
-        String url = serverUrl + "/admin";
-        String response = restTemplate.getForObject(url, String.class);
-    }
-    public String postRequest(String code) {
-        RestTemplate restTemplate = new RestTemplate();
-        String url = serverUrl + "/admin";
-        ResponseEntity<String> response = restTemplate.postForEntity(url, code, String.class);
-        return response.getBody();
+        server.adminReqCode();
     }
 }
 

@@ -6,26 +6,27 @@ import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.util.*;
+import java.util.ResourceBundle;
 
 import static com.google.inject.Guice.createInjector;
 
 public class Main extends Application {
-
     public static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
     private static ResourceBundle languageBundle;
     private static Stage primaryStage;
+    private final UserData userData = INJECTOR.getInstance(UserData.class);
+
     public static void main(String[] args) {
         launch();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //UserData.getInstance().getLangCode()
+        //userData.getLangCode()
         //Locale locale = Locale.getDefault(); // Get default locale
         this.primaryStage = primaryStage;
-        initializeUI(UserData.getInstance().getLanguageCode());
+        initializeUI(userData.getLanguageCode());
 
         primaryStage.onCloseRequestProperty().set(e -> {
             try {
@@ -34,6 +35,8 @@ public class Main extends Application {
                 ex.printStackTrace();
             }
         });
+
+        primaryStage.show();
 
     }
 
@@ -51,23 +54,27 @@ public class Main extends Application {
                 "client", "scenes", "AdminPage.fxml");
         var privCheckPage = FXML.load(PrivCheckPageCtrl.class, languageBundle,
                 "client", "scenes", "PrivCheckPage.fxml");
-        var transactionPage = FXML.load(TransactionPageCtrl.class, languageBundle,
-                "client", "scenes", "TransactionPage.fxml");
+        var settingsPage = FXML.load(SettingsPageCtrl.class, languageBundle,
+                    "client", "scenes", "SettingsPage.fxml");
 
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
-                privCheckPage, startPage, transactionPage);
+                privCheckPage, startPage, settingsPage);
 
-        primaryStage.show();
+//                privCheckPage, startPage, transactionPage);
 
+//        primaryStage.show();
 //        primaryStage.setOnCloseRequest(e->{
 //            eventPage.getKey().stop();
 //        });
+
+
+//=======
+//>>>>>>> c225beead3b9fba818d36e92290991d14315c114
     }
 
     public static ResourceBundle loadLanguages(String languageCode) {
         return ResourceBundle.getBundle("client.lang." + languageCode);
-
     }
 
     public static String getTranslation(String variable){

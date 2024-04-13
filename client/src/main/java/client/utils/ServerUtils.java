@@ -16,10 +16,12 @@
 package client.utils;
 
 import client.UserData;
+import com.google.inject.Inject;
 import commons.DTOs.*;
+import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.*;
-import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.*;
 import jakarta.ws.rs.core.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -33,16 +35,24 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ServerUtils {
+    private final UserData userData;
+    private StompSession session;
+
+    @Inject
+    private ServerUtils(UserData userData) {
+        this.userData = userData;
+        this.session =  connect(getWebSocketURL());
+    }
+
     //events
     //I think there is a problem with this method
     public EventDTO getEvent(UUID id) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/event/" + id)
+            .target(userData.getServerURL()).path("api/event/" + id)
             .request(APPLICATION_JSON)
             .get(EventDTO.class);
     }
@@ -54,22 +64,29 @@ public class ServerUtils {
      */
     public EventDTO postEvent(EventDTO event) throws WebApplicationException {
         return ClientBuilder.newClient() //
-                .target(UserData.getInstance().getServerURL()).path("api/event") //
+                .target(userData.getServerURL()).path("api/event") //
                 .request(APPLICATION_JSON) //
                 .post(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
     }
 
-    public EventDTO putEvent(EventDTO eventDTO) throws WebApplicationException {
+    public EventDTO patchEvent(EventDTO eventDTO) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL())
+            .target(userData.getServerURL())
                 .path("/api/event/"+eventDTO.getId())
             .request(APPLICATION_JSON)
             .put(Entity.entity(eventDTO, APPLICATION_JSON), EventDTO.class);
     }
 
+    public EventDTO putEvent(EventDTO event) throws WebApplicationException {
+        return ClientBuilder.newClient() //
+            .target(userData.getServerURL()).path("api/event") //
+            .request(APPLICATION_JSON) //
+            .put(Entity.entity(event, APPLICATION_JSON), EventDTO.class);
+    }
+
     public void deleteEvent(UUID id) throws WebApplicationException {
         ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL())
+                .target(userData.getServerURL())
                 .path("api/event/" + id)
                 .request()
                 .delete();
@@ -79,9 +96,9 @@ public class ServerUtils {
     @SuppressWarnings("unchecked")
     public Collection<EventDTO> getAllEvents() throws WebApplicationException {
         return ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/event")
+                .target(userData.getServerURL()).path("api/event")
                 .request(APPLICATION_JSON)
-                .header("Authorization", "Bearer " + UserData.getInstance().getToken())
+                .header("Authorization", "Bearer " + userData.getToken())
                 .get(new GenericType<Collection<EventDTO>>() {});
     }
 
@@ -89,7 +106,7 @@ public class ServerUtils {
     //transactions
     public TransactionDTO getTransaction(UUID id) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/transaction/" + id)
+            .target(userData.getServerURL()).path("api/transaction/" + id)
             .request(APPLICATION_JSON)
             .get(TransactionDTO.class);
     }
@@ -101,14 +118,14 @@ public class ServerUtils {
      */
     public TransactionDTO postTransaction(TransactionDTO ts) throws WebApplicationException {
         return ClientBuilder.newClient() //
-                .target(UserData.getInstance().getServerURL()).path("api/transaction") //
+                .target(userData.getServerURL()).path("api/transaction") //
                 .request(APPLICATION_JSON) //
                 .post(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
 
     public TransactionDTO putTransaction(TransactionDTO ts) throws WebApplicationException {
         return ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/transaction")
+                .target(userData.getServerURL()).path("api/transaction")
                 .request(APPLICATION_JSON)
                 .put(Entity.entity(ts, APPLICATION_JSON), TransactionDTO.class);
     }
@@ -120,7 +137,7 @@ public class ServerUtils {
      */
     public void deleteTransaction(UUID id) throws WebApplicationException {
         ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/transaction/" + id)
+                .target(userData.getServerURL()).path("api/transaction/" + id)
                 .request()
                 .delete(); // Send DELETE request
     }
@@ -128,7 +145,7 @@ public class ServerUtils {
     //participants
     public ParticipantDTO getParticipant(UUID id) throws WebApplicationException {
         return ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/participants/" + id)
+                .target(userData.getServerURL()).path("api/participants/" + id)
                 .request(APPLICATION_JSON)
                 .get(ParticipantDTO.class);
     }
@@ -138,21 +155,21 @@ public class ServerUtils {
 
     public ParticipantDTO postParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/participants")
+                .target(userData.getServerURL()).path("api/participants")
                 .request(APPLICATION_JSON)
                 .post(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public ParticipantDTO putParticipant(ParticipantDTO p) throws WebApplicationException {
         return ClientBuilder.newClient()
-                .target(UserData.getInstance().getServerURL()).path("api/participants/")
+                .target(userData.getServerURL()).path("api/participants/")
                 .request(APPLICATION_JSON)
                 .put(Entity.entity(p, APPLICATION_JSON), ParticipantDTO.class);
     }
 
     public void deleteParticipant(UUID id) throws WebApplicationException {
         ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/participants/" + id)
+            .target(userData.getServerURL()).path("api/participants/" + id)
             .request()
             .delete();
     }
@@ -164,7 +181,7 @@ public class ServerUtils {
 
     public TagDTO postTag(TagDTO t) throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("api/tags/")
+            .target(userData.getServerURL()).path("api/tags/")
             .request(APPLICATION_JSON)
             .post(Entity.entity(t, APPLICATION_JSON), TagDTO.class);
     }
@@ -174,15 +191,18 @@ public class ServerUtils {
     }
 
     public void deleteTag(UUID id) throws WebApplicationException {
-
+        ClientBuilder.newClient()
+                .target(userData.getServerURL()).path("api/tags/" + id)
+                .request()
+                .delete();
     }
 
     //JSON
     public String getJSON() throws WebApplicationException {
         return ClientBuilder.newClient()
-            .target(UserData.getInstance().getServerURL()).path("data/JSON")
+            .target(userData.getServerURL()).path("data/JSON")
             .request(APPLICATION_JSON)
-            .header("Authorization", "Bearer " + UserData.getInstance().getToken())
+            .header("Authorization", "Bearer " + userData.getToken())
             .get(String.class);
     }
 
@@ -197,13 +217,29 @@ public class ServerUtils {
     public void putJSON(String json, UUID id) throws WebApplicationException {
 
     }
+
+    //ADMIN
+    public Response.StatusType adminReqCode() {
+        return ClientBuilder.newClient()
+                .target(userData.getServerURL()).path("/admin")
+                .request().get().getStatusInfo();
+    }
+
+    public Response adminReqToken(String code) {
+        return ClientBuilder.newClient()
+                .target(userData.getServerURL()).path("/admin")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(code, APPLICATION_JSON));
+    }
+
 //////////////////////////////////////
-    private static final ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
     public void registerForUpdatesTransaction(Consumer<TransactionDTO> consumer){
         EXEC.submit(()->{
             while(!Thread.interrupted()) {
                 var res = ClientBuilder.newClient()
-                        .target(UserData.getInstance().getServerURL()).path("api/transaction/updates")
+                        .target(userData.getServerURL())
+                        .path("api/transaction/updates")
                         .request(APPLICATION_JSON)
                         .get(Response.class);
                 if(res.getStatus()==204){
@@ -216,13 +252,13 @@ public class ServerUtils {
     }
 
 
-    private static ExecutorService execUpdateParticipant = Executors.newSingleThreadExecutor();
+    private static ExecutorService execUpdateParticipant;
     public void registerForUpdatesParticipant(Consumer<ParticipantDTO> consumer) {
         execUpdateParticipant = Executors.newSingleThreadExecutor();
         execUpdateParticipant.submit(() -> {
             while (!Thread.interrupted()) {
                 var res = ClientBuilder.newClient()
-                        .target(UserData.getInstance().getServerURL())
+                        .target(userData.getServerURL())
                         .path("/api/participants/updates")
                         .request(APPLICATION_JSON)
                         .get(Response.class);
@@ -235,14 +271,15 @@ public class ServerUtils {
         });
     }
 
-    private static final ExecutorService execDeleteParticipant
-            = Executors.newSingleThreadExecutor();
+    private static ExecutorService execDeleteParticipant;
+
 
     public void registerForParticipantDeletionUpdates(Consumer<UUID> listener) {
+        execDeleteParticipant = Executors.newSingleThreadExecutor();
         execDeleteParticipant.submit(() -> {
             while (!Thread.interrupted()) {
                 var response = ClientBuilder.newClient()
-                        .target(UserData.getInstance().getServerURL())
+                        .target(userData.getServerURL())
                         .path("/api/participants/deletes")
                         .request(APPLICATION_JSON)
                         .get(Response.class);
@@ -260,10 +297,18 @@ public class ServerUtils {
     }
 
     public void stop(){
-        execUpdateParticipant.shutdownNow();
-        execDeleteParticipant.shutdownNow();
-        EXEC.shutdownNow();
+//<<<<<<< HEAD
+//        execUpdateParticipant.shutdownNow();
+//        execDeleteParticipant.shutdownNow();
+        if(EXEC!=null)
+            EXEC.shutdownNow();
 
+//=======
+        if(execUpdateParticipant != null && execDeleteParticipant != null ){
+            execUpdateParticipant.shutdownNow();
+            execDeleteParticipant.shutdownNow();
+        }
+//>>>>>>> c225beead3b9fba818d36e92290991d14315c114
     }
 //    private static final ExecutorService execDeleteTransaction
 //            = Executors.newSingleThreadExecutor();
@@ -272,7 +317,7 @@ public class ServerUtils {
 //        execDeleteTransaction.submit(() -> {
 //            while (!Thread.interrupted()) {
 //                var response = ClientBuilder.newClient()
-//                        .target(UserData.getInstance().getServerURL())
+//                        .target(userData.getServerURL())
 //                        .path("/api/transactions/deletion/updates")
 //                        .request(APPLICATION_JSON)
 //                        .get(Response.class);
@@ -296,7 +341,7 @@ public class ServerUtils {
 //
 //            while (!Thread.interrupted()) {
 //                var response = ClientBuilder.newClient()
-//                        .target(UserData.getInstance().getServerURL())
+//                        .target(userData.getServerURL())
 //                        .path("/api/transactions/deletion/updates")
 //                        .request(APPLICATION_JSON)
 //                        .get(Response.class);
@@ -313,12 +358,12 @@ public class ServerUtils {
 //        });
 //    }
     private String getWebSocketURL() {
-        String url = UserData.getInstance().getServerURL();
+        String url = userData.getServerURL();
         url = url.replaceFirst("http", "ws");
         url = url + "/websocket";
         return url;
     }
-    private StompSession session = connect(getWebSocketURL()) ;
+
     private StompSession connect (String url) {
         var client = new StandardWebSocketClient();
         var stomp = new WebSocketStompClient(client);
@@ -334,30 +379,49 @@ public class ServerUtils {
         return null;
     }
     public void register(String dest, Consumer<EventDTO> consumer) {
-        session.subscribe(dest, new StompFrameHandler() {
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return EventDTO.class;
-            }
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                consumer.accept((EventDTO) payload) ;
-            }
-        });
+        if(session != null && session.isConnected()) {
+            session.subscribe(dest, new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return EventDTO.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    consumer.accept((EventDTO) payload);
+                }
+            });
+        }
     }
 
     public void register(String dest, Consumer<UUID> consumer, UUID id) {
-        session.subscribe(dest, new StompFrameHandler() {
-            @Override
-            public Type getPayloadType(StompHeaders headers) {
-                return UUID.class;
-            }
-            @Override
-            public void handleFrame(StompHeaders headers, Object payload) {
-                consumer.accept((UUID) payload) ;
-            }
-        });
+        if(session != null && session.isConnected()) {
+            session.subscribe(dest, new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders headers) {
+                    return UUID.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders headers, Object payload) {
+                    consumer.accept((UUID) payload);
+                }
+            });
+        }
     }
 
+    public void webSocketReconnect() {
+        if(session != null && session.isConnected()) {
+            session.disconnect();
+        }
+        session = connect(getWebSocketURL());
+    }
 
+    //Testing
+    public Response.StatusType reach(String url) throws ProcessingException {
+        return ClientBuilder.newClient()
+                .target(url).path("api/test/reach/")
+                .request()
+                .get().getStatusInfo();
+    }
 }

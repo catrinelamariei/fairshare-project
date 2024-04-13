@@ -12,8 +12,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 public class Participant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    public UUID id = UUID.randomUUID();
 
     @Column(nullable = false)
     public String firstName;
@@ -32,7 +31,7 @@ public class Participant {
 
     @ManyToOne
     public Event event;
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
     public Set<Transaction> paidTransactions;
 
     @ManyToMany(mappedBy = "participants")

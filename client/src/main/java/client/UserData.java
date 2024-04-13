@@ -9,34 +9,49 @@ import java.util.*;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
-public final class UserData{
+@JsonPropertyOrder({"languageCode", "preferredCurrency", "selectedURL", "urlDataList"})
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE)
+public class UserData{
     // All values in here are default values and will be overwritten at startup if a
     // config file is found. The file regularly gets persisted.
 
     //INCLUDED IN JSON
-    private String token;
-    private ArrayDeque<Pair<UUID, String>> recentUUIDs = new ArrayDeque<>();
-    private String serverURL = "http://localhost:8080/";
+    @JsonProperty
     private String languageCode = "EN";
-
+    @JsonProperty
     private String preferredCurrency = "EUR";
+    @JsonProperty
+    private String selectedURL = "http://localhost:8080/";
+    @JsonProperty
+    private ArrayList<UrlData> urlDataList = new ArrayList<>(List.of(new UrlData(selectedURL)));
 
     //NOT INCLUDED IN JSON
     private final static String configFileName = "config.json";
     private final static ObjectMapper objectMapper = new ObjectMapper().enable(INDENT_OUTPUT);
-    private final static UserData INSTANCE = new UserData().load();
 
-    private UserData() {}
+    private UserData() {};
 
-    private UserData load() {
+    @JsonCreator
+    private UserData(@JsonProperty("languageCode") String languageCode,
+                     @JsonProperty("preferredCurrency") String preferredCurrency,
+                     @JsonProperty("selectedURL") String selectedURL,
+                     @JsonProperty("urlDataList") ArrayList<UrlData> urlDataList) {
+        this.languageCode = languageCode;
+        this.preferredCurrency = preferredCurrency;
+        this.selectedURL = selectedURL;
+        this.urlDataList = urlDataList;
+    }
+
+    public static UserData load() {
         try {
-            this.update(objectMapper.readValue(new File(configFileName), UserData.class));
+            return objectMapper.readValue(new File(configFileName), UserData.class);
         } catch (JsonProcessingException e) {
             System.err.println("LOADING ERROR: creating JSON: " + e);
         } catch (IOException e) {
             System.err.println("LOADING ERROR: opening file: " + e);
         }
-        return this;
+        return new UserData(); //default values
     }
 
     public void save() {
@@ -49,74 +64,96 @@ public final class UserData{
         }
     }
 
-    /**
-     * overwrites all fields because instance might be saved in which
-     * case overwriting instance wouldn't suffice
-     * @param userData data source
-     */
-    private void update(UserData userData) {
-        this.token = userData.token;
-        this.recentUUIDs = userData.recentUUIDs;
-        this.serverURL = userData.serverURL;
-        this.languageCode = userData.languageCode;
-        this.preferredCurrency = userData.preferredCurrency;
-    }
-
-    @JsonIgnore
-    public static UserData getInstance() {
-        return INSTANCE;
-    }
-
-    public void setToken(String u) {
-        this.token = u;
-    }
-
-    public String getToken() {
-        return this.token;
-    }
-
-    public ArrayDeque<Pair<UUID, String>> getRecentUUIDs() {
-        return recentUUIDs;
-    }
-
-    public void setRecentUUIDs(
-        ArrayDeque<Pair<UUID, String>> recentUUIDs) {
-        this.recentUUIDs = recentUUIDs;
-    }
-
-    @JsonIgnore
+    //getters
     public UUID getCurrentUUID() {
         return getRecentUUIDs().peekFirst().getKey();
     }
 
-    public void setCurrentUUID(Pair<UUID, String> pair) {
-        recentUUIDs.removeIf(p -> p.getKey().equals(pair.getKey())); //remove if present
-        recentUUIDs.addFirst(pair); //(re-)insert at front
-        save(); //save to filesystem
+    private UrlData getUrlData() throws NoSuchElementException {
+        return urlDataList.stream().filter(urlData -> urlData.url.equals(selectedURL))
+                .findAny().get();
     }
 
-    public String getServerURL() {
-        return serverURL;
+    public String getToken() {
+        return getUrlData().token;
     }
 
-    public void setServerURL(String serverURL) {
-        this.serverURL = serverURL;
+    public ArrayDeque<Pair<UUID, String>> getRecentUUIDs() {
+        try {
+            return getUrlData().recentUUIDs;
+        } catch (NoSuchElementException e) { //selected URL not found -> try another
+            if (urlDataList.isEmpty()) {
+                setSelectedURL("http://localhost:8080"); //failsafe, return default URL
+            } else {
+                selectedURL = urlDataList.getFirst().url; //take other random url
+            }
+            return getRecentUUIDs(); //try again
+        }
     }
 
     public String getLanguageCode() {
         return languageCode;
     }
 
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
-    }
-
     public String getCurrencyCode() {
         return preferredCurrency;
     }
 
+    public String getServerURL() {
+        return selectedURL;
+    }
+
+    public List<String> getUrlList() {
+        return this.urlDataList.stream().map(urlData -> urlData.url).toList();
+    }
+
+    //setters (JSON)
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
+    public void setToken(String u) {
+        getUrlData().token = u;
+        save();
+    }
+
+    public void setCurrentUUID(Pair<UUID, String> pair) {
+        getRecentUUIDs().removeIf(p -> p.getKey().equals(pair.getKey())); //remove if present
+        getRecentUUIDs().addFirst(pair); //(re-)insert at front
+        save(); //save to filesystem
+    }
+
     public void setCurrencyCode(String currencyCode) {
         this.preferredCurrency = currencyCode;
+    }
+
+    public void setSelectedURL(String selectedURL) {
+        this.selectedURL = selectedURL;
+        try {
+            getUrlData();
+        } catch (NoSuchElementException e) {
+            urlDataList.add(new UrlData(selectedURL));
+        }
+    }
+
+    /**
+     * removes a url
+     * @param target target to be removed
+     * @return new selected url
+     */
+    public String removeUrl(String target) throws NoSuchElementException {
+        if (!urlDataList.removeIf(urlData -> urlData.url.equals(target)))
+            throw new NoSuchElementException(target);
+
+        if (selectedURL.equals(target)) {
+            try {
+                selectedURL = urlDataList.getFirst().url;
+            } catch (NoSuchElementException e) {
+                setSelectedURL("http://localhost:8080"); //revert to default
+            }
+        }
+
+        return selectedURL;
     }
 
     /**
@@ -147,6 +184,27 @@ public final class UserData{
 
         public void setValue(V value) {
             this.value = value;
+        }
+    }
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    private static final class UrlData {
+        private final String url;
+        private final ArrayDeque<Pair<UUID, String>> recentUUIDs;
+        private String token;
+
+        @JsonCreator
+        private UrlData(@JsonProperty("url") String url,
+                        @JsonProperty("recentUUIDs") ArrayDeque<Pair<UUID, String>> recentUUIDs,
+                        @JsonProperty("token") String token) {
+            this.url = url;
+            this.recentUUIDs = recentUUIDs;
+            this.token = token;
+        }
+
+        private UrlData(String url) {
+            this.url = url;
+            this.recentUUIDs = new ArrayDeque<>();
         }
     }
 }

@@ -1,4 +1,4 @@
-package client.utils;
+package client.utils.KeyEvents;
 
 import client.scenes.PrivCheckPageCtrl;
 import com.google.inject.Inject;

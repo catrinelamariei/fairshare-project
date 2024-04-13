@@ -30,7 +30,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
 
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
    <bottom>
@@ -59,30 +59,35 @@
                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                       </HBox.margin>
                   </Text>
-                  <Pane prefHeight="124.0" prefWidth="188.0" />
-                  <VBox alignment="CENTER" prefHeight="128.0" prefWidth="149.0">
+                  <Pane prefHeight="124.0" prefWidth="188.0">
+                  <children>
+                          <Button fx:id="editButton" layoutX="33.0" layoutY="30.0" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%edit_event" textAlignment="CENTER">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                          </Button>
+                          <Button fx:id="deleteEventButton" layoutX="34.0" layoutY="69.0" mnemonicParsing="false" onAction="#onDeleteEvent" prefHeight="20.0" prefWidth="121.0" style="-fx-background-color: ff8888; -fx-border-color: ffaaaa;" text="%delete_event" textAlignment="CENTER">
+                              <font>
+                                  <Font size="14.0" />
+                              </font>
+                          </Button>
+                  </children></Pane>
+                  <VBox alignment="CENTER" prefHeight="128.0" prefWidth="150.0">
                       <children>
+                     <Pane prefHeight="200.0" prefWidth="200.0">
+                        <children>
+                           <Text fx:id="inviteCodeText" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Code" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
 
-                          <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%copy_invite_code" textAlignment="CENTER" VBox.vgrow="NEVER">
-                              <font>
-                                  <Font size="14.0" />
-                              </font>
-                          </Button>
+                                <Button fx:id="copyButton" layoutX="14.0" layoutY="69.0" mnemonicParsing="false" onAction="#copyInviteCode" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%copy_invite_code" textAlignment="CENTER">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Button>
+                           <Text layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%invite_code" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
+                        </children>
+                     </Pane>
                           <Pane prefHeight="7.0" prefWidth="143.0" style="-fx-background-color: CDFCF6;" />
-                          <Button fx:id="editButton" mnemonicParsing="false" onAction="#onEditEvent" prefHeight="20.0" prefWidth="122.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%edit_event" textAlignment="CENTER">
-                              <font>
-                                  <Font size="14.0" />
-                              </font>
-                          </Button>
                           <Pane prefHeight="7.0" prefWidth="132.0" style="-fx-background-color: CDFCF6;" />
-                          <Button fx:id="deleteEventButton" mnemonicParsing="false" onAction="#onDeleteEvent" prefHeight="20.0" prefWidth="121.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%delete_event" textAlignment="CENTER" VBox.vgrow="NEVER">
-                              <font>
-                                  <Font size="14.0" />
-                              </font>
-                              <VBox.margin>
-                                  <Insets />
-                              </VBox.margin>
-                          </Button>
                       </children>
                       <HBox.margin>
                           <Insets />
@@ -104,7 +109,7 @@
                                <tabs>
                                    <Tab fx:id="overviewExpenses" style="-fx-background-color: FAF7F0;" text="%expenses_overview">
                                        <content>
-                                           <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
+                                           <ScrollPane fitToWidth="true" hbarPolicy="NEVER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" style="-fx-background-color: FAF7F0;" vbarPolicy="ALWAYS">
                                                <content>
                                                    <VBox minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                                        <children>
@@ -121,7 +126,7 @@
                                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                                        </rowConstraints>
                                                                        <children>
-                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%from" />
+                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%by" />
                                                                            <ChoiceBox fx:id="payerFilter" prefHeight="25.0" prefWidth="75.0" GridPane.rowIndex="1" />
                                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%including" GridPane.columnIndex="1" />
                                                                            <ChoiceBox fx:id="participantFilter" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -139,7 +144,7 @@
                                                                    <Insets bottom="5.0" />
                                                                </padding>
                                                            </HBox>
-                                                           <VBox fx:id="transactions" alignment="TOP_CENTER" style="-fx-background-color: FAF7F0;">
+                                                           <VBox fx:id="transactions" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: FAF7F0;">
                                                                <children>
                                                                    <HBox alignment="CENTER_LEFT" minHeight="-Infinity" prefHeight="100.0" style="-fx-border-color: BCCEF8;" styleClass="transaction">
                                                                        <children>
@@ -151,7 +156,7 @@
                                                                                    <Font size="14.0" />
                                                                                </font>
                                                                            </Text>
-                                                                           <VBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="542.0" HBox.hgrow="ALWAYS">
+                                                                           <VBox alignment="CENTER_LEFT" maxWidth="-Infinity" prefHeight="42.0" prefWidth="542.0" HBox.hgrow="ALWAYS">
                                                                                <children>
                                                                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="desc" text="John Paid $123 for Drinks">
                                                                                        <VBox.margin>
@@ -229,7 +234,7 @@
                                                            <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" style="-fx-border-color: #98A8F8;" />
                                                            <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
                                                            <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
-                                                           <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%who_payed">
+                                                           <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%who_paid">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
@@ -320,7 +325,7 @@
                                                                    </Button>
                                                                    <VBox prefHeight="22.0" prefWidth="754.0">
                                                                        <children>
-                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%refresh_debts" textAlignment="RIGHT" wrappingWidth="765.2526092529297" />
+                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%refresh_debts_static" textAlignment="RIGHT" wrappingWidth="765.2526092529297" />
                                                                        </children>
                                                                    </VBox>
                                                                    <Accordion fx:id="debts" prefHeight="382.0" prefWidth="754.0" />
@@ -482,12 +487,12 @@
                                                            <Font size="14.0" />
                                                        </font>
                                                    </Text>
-                                                   <TextField fx:id="firstName" layoutX="313.0" layoutY="80.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="lastName" layoutX="313.0" layoutY="140.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="email" layoutX="313.0" layoutY="200.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="iban" layoutX="313.0" layoutY="260.0" style="-fx-border-color: #98A8F8;" />
-                                                   <TextField fx:id="bic" layoutX="313.0" layoutY="320.0" style="-fx-border-color: #98A8F8;" />
-                                                   <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="%add_participant" />
+                                                   <TextField fx:id="firstName" layoutX="313.0" layoutY="80.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="lastName" layoutX="313.0" layoutY="140.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="email" layoutX="313.0" layoutY="200.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="iban" layoutX="313.0" layoutY="260.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <TextField fx:id="bic" layoutX="313.0" layoutY="320.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
+                                                   <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="%add_participant_button" />
                                                    <Text layoutX="314.0" layoutY="369.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%required_fields">
                                                        <font>
                                                            <Font size="12.0" />
@@ -505,11 +510,10 @@
                        <content>
                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                <children>
-                                   <PieChart fx:id="pieChart" layoutX="161.0" layoutY="90.0" prefHeight="333.0" prefWidth="456.0" title="%expense_distribution" />
-                                   <Button fx:id="updateChart" layoutX="326.0" layoutY="450.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" text="%update_pie" />
-                                   <VBox layoutX="21.0" layoutY="18.0" prefHeight="72.0" prefWidth="493.0">
+                                   <PieChart fx:id="pieChart" layoutX="40.0" layoutY="142.0" prefHeight="333.0" prefWidth="456.0" title="%expense_distribution" />
+                                   <VBox layoutX="21.0" layoutY="70.0" prefHeight="72.0" prefWidth="493.0">
                                        <children>
-                                 <GridPane>
+                                 <GridPane fx:id="stats">
                                    <columnConstraints>
                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -535,7 +539,7 @@
                                                           <Font size="18.0" />
                                                       </font>
                                                   </Text>
-                                       <Text fx:id="totalExpenses" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="496.71630859375" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <Text fx:id="eventCostFiltered" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="496.71630859375" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                           <font>
                                              <Font size="18.0" />
                                           </font>
@@ -544,11 +548,64 @@
                                  </GridPane>
                                        </children>
                                    </VBox>
+                           <VBox fx:id="legendBox" alignment="CENTER" layoutX="538.0" layoutY="230.0" spacing="10.0" />
+                                   <Button fx:id="updateChart" layoutX="21.0" layoutY="25.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" style="-fx-background-color: #98A8F8; -fx-background-color: #BCCEF8;" text="\%update_stats" />
                                </children>
                            </AnchorPane>
-                       </content>
-                   </Tab>
-               </tabs>
+                    </content>
+                  </Tab>
+                  <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%tags">
+                     <content>
+                        <AnchorPane style="-fx-background-color: FAF7F0;">
+                           <children>
+                               <HBox fx:id="test" spacing="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                               <padding>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                 </padding>
+                                 <children>
+                                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="350.0" prefHeight="200.0" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
+                                       <content>
+                                          <VBox fx:id="allTagsVBox" minWidth="-Infinity">
+                                          <children>
+                                             <HBox alignment="CENTER" fillHeight="false" style="-fx-background-color: #FF9999;">
+                                                <children>
+                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Food" />
+                                                   <Pane HBox.hgrow="ALWAYS" />
+                                                   <Button mnemonicParsing="false" text="X" />
+                                                </children>
+                                                <padding>
+                                                   <Insets bottom="10.0" left="10.0" right="20.0" top="10.0" />
+                                                </padding>
+                                             </HBox>
+                                          </children>
+                                       </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                    <GridPane minHeight="-Infinity" minWidth="-Infinity">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%tag_name" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%tag_color" GridPane.rowIndex="1" />
+                                          <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="%create_tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <ComboBox fx:id="tagColor" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField fx:id="tagNameInput" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+              </tabs>
               <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
               </VBox.margin>

@@ -39,7 +39,7 @@ public class TransactionTest {
         String currencyCode = "USD";
 
         Event event = new Event("event");
-        Transaction transaction = new Transaction(event,new Date(), currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Cheese-Burger");
+        Transaction transaction = new Transaction(event,date, currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Cheese-Burger");
 
         assertEquals(event, transaction.event);
         assertEquals(date, transaction.date);
@@ -57,6 +57,7 @@ public class TransactionTest {
         Event event1 = new Event("event1");
         Transaction transaction1 = new Transaction(event1, date, currencyCode, amount, new Participant(event1, "name", "email", "q", "iban", "bic"), "Chicken-Burger");
         Transaction transaction2 = new Transaction(event1, date, currencyCode, amount, new Participant(event1,"name", "email", "q", "iban", "bic"), "Chicken-Burger");
+        transaction2.id = transaction1.id;
 
         // Asserting that the two transactions are equal
         assertEquals(transaction1, transaction2);
@@ -82,6 +83,7 @@ public class TransactionTest {
         Event event = new Event("event");
         Transaction a = new Transaction(event, date, currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Chicken-Burger");
         Transaction b = new Transaction(event, date, currencyCode, amount, new Participant(event,"name", "email", "q", "iban", "bic"), "Chicken-Burger");
+        b.id = a.id;
 
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());

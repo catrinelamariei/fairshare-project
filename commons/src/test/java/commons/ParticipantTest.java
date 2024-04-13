@@ -22,6 +22,7 @@ class ParticipantTest {
       event = new Event("event");
       p1 = new Participant(event,firstName, lastName, email, iban, bic);
       p2 = new Participant(event, firstName, lastName, email, iban, bic);
+      p2.id = p1.id;
    }
 
    @Test
