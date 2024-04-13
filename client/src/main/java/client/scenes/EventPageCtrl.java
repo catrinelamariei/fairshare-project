@@ -14,8 +14,8 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.geometry.Insets;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -33,8 +33,7 @@ import javafx.util.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.*;
 import java.net.URL;
 import java.time.*;
 import java.util.*;
@@ -227,9 +226,9 @@ public class EventPageCtrl implements Initializable {
     }
 
     private void subscribe() {
-        server.registerForUpdatesParticipant(p->{
-            Platform.runLater(()->{
-                if(p.eventId.equals(UserData.getInstance().getCurrentUUID())){
+        server.registerForUpdatesParticipant(p -> {
+            Platform.runLater(() -> {
+                if (p.eventId.equals(UserData.getInstance().getCurrentUUID())) {
                     participants.getPanes().clear();
                     eventDTO.participants.removeIf(participantDTO ->
                             participantDTO.getId().equals(p.getId()));
@@ -257,10 +256,10 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
-        server.registerForParticipantDeletionUpdates(id->{
-            Platform.runLater(()->{
-                if(eventDTO.participants.stream().anyMatch(p->p.getId().equals(id))){
-                    eventDTO.participants.removeIf(p->p.getId().equals(id));
+        server.registerForParticipantDeletionUpdates(id -> {
+            Platform.runLater(() -> {
+                if (eventDTO.participants.stream().anyMatch(p -> p.getId().equals(id))) {
+                    eventDTO.participants.removeIf(p -> p.getId().equals(id));
                     participants.getPanes().clear();
                     participants.getPanes().addAll(eventDTO.participants.stream()
                             .map(nodeFactory::createParticipantNode).toList());
@@ -289,13 +288,12 @@ public class EventPageCtrl implements Initializable {
                             .map(nodeFactory::createTransactionNode).toList());
 
 
-
                 }
             });
         });
     }
 
-    private void loadTransactions(){
+    private void loadTransactions() {
         transactions.getChildren().clear();
         transactions.getChildren().addAll(eventDTO.transactions.stream()
                 .map(nodeFactory::createTransactionNode).toList());
@@ -548,7 +546,7 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         if (createTransaction(ts) != null)
-            MainCtrl.inform("Expense","Expense \"" + ts.getSubject() + "\" Created!");
+            MainCtrl.inform("Expense", "Expense \"" + ts.getSubject() + "\" Created!");
 
     }
 
@@ -583,14 +581,14 @@ public class EventPageCtrl implements Initializable {
     public void updateTotalExpenses() {
         EventDTO e = server.getEvent(UserData.getInstance().getCurrentUUID());
         eventCostFiltered.setText("\u20AC " +
-               e.getTransactions().stream()
-                .filter(
-                        ts -> ts.getTags()
-                                .stream()
-                                .map(tag -> tag.getName())
-                                .noneMatch(tagName -> tagName.equals("debt")))
-                .mapToDouble(ts -> ts.getAmount().doubleValue())
-                .sum());
+                e.getTransactions().stream()
+                        .filter(
+                                ts -> ts.getTags()
+                                        .stream()
+                                        .map(tag -> tag.getName())
+                                        .noneMatch(tagName -> tagName.equals("debt")))
+                        .mapToDouble(ts -> ts.getAmount().doubleValue())
+                        .sum());
     }
 
     private TransactionDTO readTransactionFields() {
@@ -689,7 +687,7 @@ public class EventPageCtrl implements Initializable {
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             return null;
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return null;
         }
         return amount;
@@ -721,10 +719,10 @@ public class EventPageCtrl implements Initializable {
         return false;
     }
 
-    private void alert(String text){
-        try{
+    private void alert(String text) {
+        try {
             MainCtrl.alert(text);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("can't produce an alert in testing");
         }
     }
@@ -859,8 +857,8 @@ public class EventPageCtrl implements Initializable {
             settleButton.setText("Refresh debts");
             filterDebts();
         } catch (Exception e) {
-            if(e.getMessage().equals("No participants")){
-                MainCtrl.alert( "A transaction has no beneficiaries." +
+            if (e.getMessage().equals("No participants")) {
+                MainCtrl.alert("A transaction has no beneficiaries." +
                         " Please add participants to all transactions.");
             } else {
                 MainCtrl.alert("Error simplifying debts");
@@ -873,7 +871,7 @@ public class EventPageCtrl implements Initializable {
     public void filterDebts() {
         String selectedCreditor = (String) creditorFilter.getValue();
         // remove other debtNodes if a creditor is selected
-        Set<TitledPane> toRemove = new HashSet<>() ;
+        Set<TitledPane> toRemove = new HashSet<>();
         if (!selectedCreditor.equals("All")) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
@@ -906,7 +904,7 @@ public class EventPageCtrl implements Initializable {
             alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 server.deleteEvent(currentUUID);
                 UserData.getInstance().getRecentUUIDs()
                         .removeIf(p -> p.getKey().equals(currentUUID));
@@ -1019,7 +1017,7 @@ public class EventPageCtrl implements Initializable {
 
 
     public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant)
-            throws IllegalArgumentException{
+            throws IllegalArgumentException {
         if (newParticipant == null) {
             return;
         }
@@ -1060,9 +1058,15 @@ public class EventPageCtrl implements Initializable {
         Map<String, String> tagToColor = new HashMap<>();
         EventDTO event = server.getEvent(UserData.getInstance().getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
-        for(TransactionDTO t : transactions){
+        tagToAmount.put("Uncategorized", BigDecimal.ZERO);
+        tagToColor.put("Uncategorized", "#808080");
+        for (TransactionDTO t : transactions) {
             Set<TagDTO> tags = t.getTags();
-            for(TagDTO tag : tags){
+            if (tags.isEmpty()) {
+                BigDecimal newAmount = tagToAmount.get("Uncategorized").add(t.amount);
+                tagToAmount.put("Uncategorized", newAmount);
+            } else {
+                TagDTO tag = tags.iterator().next();
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
                 if (tagToAmount.containsKey(tagName)) {
@@ -1073,6 +1077,7 @@ public class EventPageCtrl implements Initializable {
                     tagToColor.put(tagName, tag.color.colorCode);
                 }
             }
+
         }
 
         final BigDecimal totalAmount = transactions.stream()
@@ -1115,12 +1120,13 @@ public class EventPageCtrl implements Initializable {
 
         // Set the color of each pie slice to match the corresponding tag color
         pieData.forEach(data -> {
-            String color = tagToColor.get(data.getName());
+            String color = tagToColor.get(data.getName()
+                    .substring(0, data.getName().lastIndexOf(" ")));
             data.getNode().setStyle("-fx-pie-color: " + color + ";");
         });
 
         if (pieChart.getData().isEmpty()) {
-            MainCtrl.inform("Statistics","No statistics to display");
+            MainCtrl.inform("Statistics", "No statistics to display");
             return;
         } else {
             pieChart.setVisible(true);
@@ -1134,8 +1140,10 @@ public class EventPageCtrl implements Initializable {
         pieData.forEach(data -> {
             HBox legendItem = new HBox();
             legendItem.setSpacing(10);
-            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName())));
-            Label nameLabel = new Label(data.getName());
+            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName()
+                    .substring(0, data.getName().lastIndexOf(" ")))));
+            Label nameLabel = new Label(data.getName()
+                    .substring(0, data.getName().lastIndexOf(" ")));
             legendItem.getChildren().addAll(circle, nameLabel);
             legendBox.getChildren().add(legendItem);
         });
