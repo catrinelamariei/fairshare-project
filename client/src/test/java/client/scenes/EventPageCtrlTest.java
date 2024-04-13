@@ -1,10 +1,7 @@
 package client.scenes;
 
 import client.UserData;
-import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
-import client.MainCtrl;
-import client.utils.UndoService;
 import commons.DTOs.*;
 import javafx.scene.text.Text;
 import org.junit.jupiter.api.*;
@@ -13,14 +10,15 @@ import org.mockito.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class EventPageCtrlTest {
 
     @Mock
     private ServerUtils server;
+    @Spy
+    private UserData userData;
 
     @InjectMocks
     private EventPageCtrl eventPageCtrl;
@@ -45,8 +43,8 @@ public class EventPageCtrlTest {
         when(eventDTO.getTransactions()).thenReturn(new HashSet<>(Arrays.asList(transactionDTO)));
         when(transactionDTO.getTags()).thenReturn(new HashSet<>(Arrays.asList(tagDTO)));
         when(transactionDTO.getAmount()).thenReturn(BigDecimal.valueOf(100.0));
-        UserData.getInstance().getRecentUUIDs().clear();
-        UserData.getInstance().getRecentUUIDs().add(new UserData.Pair<>(mockId, "Mock Event"));
+        userData.getRecentUUIDs().clear();
+        userData.getRecentUUIDs().add(new UserData.Pair<>(mockId, "Mock Event"));
     }
 
     @Test
