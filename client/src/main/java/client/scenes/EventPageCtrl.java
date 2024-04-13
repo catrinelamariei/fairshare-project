@@ -586,7 +586,7 @@ public class EventPageCtrl implements Initializable {
         BigDecimal amount;
         ParticipantDTO author = authorInput.getValue();
         Set<TagDTO> tags = new HashSet<>();
-        tags.add(tagsInput.getValue());
+        if (tagsInput.getValue()!=null) tags.add(tagsInput.getValue());
 
         //radio buttons
         Set<ParticipantDTO> participants;
@@ -966,6 +966,7 @@ public class EventPageCtrl implements Initializable {
         this.transactionDate.setValue(transaction.getDate().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate());
         this.authorInput.setValue(transaction.getAuthor());
+        this.tagsInput.setValue(transaction.getTags().stream().findFirst().orElse(null));
         this.toggleGroup.selectToggle(customSplit);
 
         //select checkboxes of participants
@@ -980,6 +981,7 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         updateTransaction(ts);
+        MainCtrl.inform("Transaction","Transaction updated successfully");
     }
 
     private void updateTransaction(TransactionDTO ts) {
