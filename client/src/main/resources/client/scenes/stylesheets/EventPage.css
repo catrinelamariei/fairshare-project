@@ -36,3 +36,9 @@
     -fx-border-color: #000000 !important;
     -fx-border-width: 2px !important;
 }
+
+
+.choice-box:focused {
+    -fx-border-color: #000000 !important;
+    -fx-border-width: 2px !important;
+}
