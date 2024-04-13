@@ -101,8 +101,6 @@ public class EventPageCtrl implements Initializable {
     private Button cancelTransaction;
     @FXML
     public VBox transactions;
-    @FXML
-    private VBox tagsVBox;
     private ToggleGroup toggleGroup;
     private TransactionNode transactionEditTarget;
 
@@ -160,7 +158,6 @@ public class EventPageCtrl implements Initializable {
     @FXML
     private TabPane eventPane;
 
-    Set<TagDTO> tags = new HashSet<>();
 
     @FXML
     private ChoiceBox<String> payerFilter;
@@ -258,6 +255,29 @@ public class EventPageCtrl implements Initializable {
                     break;
             }
         });
+        
+        // load colors
+        tagColor.getItems().setAll(Tag.Color.values());
+
+        tagColor.setCellFactory(new Callback<ListView<Tag.Color>, ListCell<Tag.Color>>() {
+            @Override
+            public ListCell<Tag.Color> call(ListView<Tag.Color> param) {
+                return new ListCell<Tag.Color>() {
+                    @Override
+                    protected void updateItem(Tag.Color item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.name());
+                            setStyle("-fx-background-color: " + item.colorCode + ";");
+                        } else {
+                            setText(null);
+                        }
+                    }
+                };
+            }
+        });
+
+
     }
 
     private void subscribe() {
@@ -395,8 +415,6 @@ public class EventPageCtrl implements Initializable {
         tagColor.setValue(null);
         allTagsVBox.getChildren().setAll(eventDTO.tags.stream()
                 .map(t -> hboxFromTag(t)).toList());
-        // load colors
-        tagColor.getItems().addAll(Tag.Color.values());
 
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
@@ -443,7 +461,7 @@ public class EventPageCtrl implements Initializable {
         //styling
         hbox.setPrefHeight(40);
         hbox.setAlignment(Pos.CENTER);
-        hbox.setStyle("-fx-background-color: " + t.color); // TODO: replace with color code
+        hbox.setStyle("-fx-background-color: " + t.color.colorCode);
         hbox.setPadding(new Insets(10.0d, 20.0d, 10.0d, 10.0));
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -469,34 +487,6 @@ public class EventPageCtrl implements Initializable {
         return checkBox;
     }
 
-
-    @FXML
-    private void addTag() {
-        TagDTO input = tagsInput.getValue();
-        if (input == null) {
-            alert(Main.getTranslation("tag_input"));
-            return;
-        } else if (tags.contains(input)) {
-            alert(Main.getTranslation("tag_already"));
-            return;
-        }
-        tagsInput.setValue(null);
-
-        HBox tagBox = new HBox();
-        Button deleteTag = new Button("X");
-        deleteTag.setOnAction(e2 -> {
-            tags.remove(input);
-            tagsVBox.getChildren().remove(tagBox);
-        });
-        Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        tagBox.getChildren().add(new Text(input.getName()));
-        tagBox.getChildren().add(spacer);
-        tagBox.getChildren().add(deleteTag);
-        tagBox.setStyle("-fx-background-color: " + input.color.colorCode + ";");
-        tagsVBox.getChildren().add(tagBox);
-        tags.add(input);
-    }
 
     public void createTag() {
         String name = tagNameInput.getText();
@@ -636,7 +626,8 @@ public class EventPageCtrl implements Initializable {
         LocalDate localDate = transactionDate.getValue();
         BigDecimal amount;
         ParticipantDTO author = authorInput.getValue();
-
+        Set<TagDTO> tags = new HashSet<>();
+        if (tagsInput.getValue()!=null) tags.add(tagsInput.getValue());
 
         //radio buttons
         Set<ParticipantDTO> participants;
@@ -672,8 +663,6 @@ public class EventPageCtrl implements Initializable {
         currencyCodeInput.setValue(null);
         transactionDate.setValue(null);
         tagsInput.setValue(null);
-        tags.clear();
-        tagsVBox.getChildren().clear();
         for (Node node : vboxParticipantsTransaction.getChildren()) {
             if (node instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) node;
@@ -1020,6 +1009,7 @@ public class EventPageCtrl implements Initializable {
         this.transactionDate.setValue(transaction.getDate().toInstant()
                 .atZone(ZoneId.systemDefault()).toLocalDate());
         this.authorInput.setValue(transaction.getAuthor());
+        this.tagsInput.setValue(transaction.getTags().stream().findFirst().orElse(null));
         this.toggleGroup.selectToggle(customSplit);
 
         //select checkboxes of participants
@@ -1034,6 +1024,7 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         updateTransaction(ts);
+        MainCtrl.inform("Transaction","Transaction updated successfully");
     }
 
     private void updateTransaction(TransactionDTO ts) {
