@@ -17,7 +17,7 @@ import javafx.scene.text.*;
 import java.util.*;
 
 public class VisualParticipantNode extends ParticipantNode {
-    //service variables:
+    // variables:
     private boolean editing = false;
     private ParticipantDTO screenshot;
 
@@ -47,8 +47,9 @@ public class VisualParticipantNode extends ParticipantNode {
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
      * @param participant data to be used/displayed
      */
-    protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl) {
-        super(participant.id, participant.getFullName(), eventPageCtrl);
+    protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl,
+                                    UserData userData, ServerUtils serverUtils) {
+        super(participant.id, participant.getFullName(), eventPageCtrl, userData, serverUtils);
         this.getStyleClass().add("participants"); //set CSS class
 
         //apply style to all text
@@ -184,7 +185,6 @@ public class VisualParticipantNode extends ParticipantNode {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 // Delete participant from the server
-                ServerUtils serverUtils = new ServerUtils();
                 serverUtils.deleteParticipant(id);
 
                 // Remove the participant from the UI
@@ -208,7 +208,7 @@ public class VisualParticipantNode extends ParticipantNode {
         String updatedEmail = emailField.getText().trim();
         String updatedIban = ibanField.getText().trim();
         String updatedBic = bicField.getText().trim();
-        UUID eventId = UserData.getInstance().getCurrentUUID();
+        UUID eventId = userData.getCurrentUUID();
         return new ParticipantDTO(id, eventId, updatedFirstName,
                 updatedLastName, updatedEmail, updatedIban, updatedBic);
     }

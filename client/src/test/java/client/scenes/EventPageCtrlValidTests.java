@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.UserData;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.utils.ServerUtils;
 import client.MainCtrl;
@@ -13,6 +14,8 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+
 public class EventPageCtrlValidTests {
     private EventPageCtrl eventPageCtrl;
     @BeforeEach
@@ -21,10 +24,11 @@ public class EventPageCtrlValidTests {
         MainCtrl mockMainCtrl = mock(MainCtrl.class);
         UndoService mockUndoService = mock(UndoService.class);
         NodeFactory mockNodeFactory = mock(NodeFactory.class);
+        UserData userData = spy(UserData.load());
 
         // Create instance of EventPageCtrl with mocked dependencies
         eventPageCtrl = new EventPageCtrl(mockServer, mockMainCtrl,
-                mockUndoService, mockNodeFactory);
+                mockUndoService, mockNodeFactory, userData);
     }
 
     @Test
