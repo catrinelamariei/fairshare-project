@@ -8,7 +8,7 @@
    <children>
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" stylesheets="@/client/scenes/stylesheets/StartPage.css">
         <children>
-            <Button fx:id="joinButton" layoutX="313.0" layoutY="318.0" mnemonicParsing="false" onAction="#onJoinEvent" prefHeight="42.0" prefWidth="80.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%joinButton.text">
+            <Button fx:id="joinButton" layoutX="318.0" layoutY="318.0" mnemonicParsing="false" onAction="#onJoinEvent" prefHeight="42.0" prefWidth="110.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%joinButton.text">
                 <font>
                     <Font size="18.0" />
                 </font></Button>
@@ -18,7 +18,7 @@
                 <font>
                     <Font size="18.0" />
                 </font></Text>
-            <Button fx:id="createButton" layoutX="318.0" layoutY="217.0" mnemonicParsing="false" onAction="#onCreateEvent" prefHeight="42.0" prefWidth="80.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%createButton.text">
+            <Button fx:id="createButton" layoutX="318.0" layoutY="217.0" mnemonicParsing="false" onAction="#onCreateEvent" prefHeight="42.0" prefWidth="110.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%createButton.text">
                 <font>
                     <Font size="18.0" />
                 </font></Button>
@@ -26,7 +26,7 @@
                 <font>
                     <Font size="18.0" />
                 </font></Text>
-            <Text fx:id="recentlyVievedEventText" layoutX="122.0" layoutY="419.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%recentlyVievedEventText.text" wrappingWidth="200.0">
+            <Text fx:id="recentlyVievedEventText" layoutX="127.0" layoutY="419.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%recentlyVievedEventText.text" wrappingWidth="322.4000244140625">
                 <font>
                     <Font size="18.0" />
                 </font></Text>

@@ -23,7 +23,7 @@
               <children>
                   <HBox maxHeight="-Infinity" prefHeight="100.0" prefWidth="98.0">
                       <children>
-                          <Button alignment="TOP_CENTER" mnemonicParsing="false" onAction="#gotoHome" prefHeight="27.0" prefWidth="64.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%text_home">
+                          <Button alignment="TOP_CENTER" mnemonicParsing="false" onAction="#gotoHome" prefHeight="31.0" prefWidth="98.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%text_home">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -522,7 +522,7 @@
                                        </children>
                                    </VBox>
                            <VBox fx:id="legendBox" alignment="CENTER" layoutX="538.0" layoutY="230.0" spacing="10.0" />
-                                   <Button fx:id="updateChart" layoutX="21.0" layoutY="25.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" style="-fx-background-color: #98A8F8; -fx-background-color: #BCCEF8;" text="\%update_stats" />
+                                   <Button fx:id="updateChart" layoutX="21.0" layoutY="25.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="221.0" style="-fx-background-color: #98A8F8; -fx-background-color: #BCCEF8;" text="\%update_stats" />
                                </children>
                            </AnchorPane>
                     </content>
