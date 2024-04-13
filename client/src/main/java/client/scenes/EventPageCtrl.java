@@ -243,8 +243,6 @@ public class EventPageCtrl implements Initializable {
                     participantFilter.getItems().clear();
                     payerFilter.getItems().add("All");
                     participantFilter.getItems().add("All");
-//                    payerFilter.getItems().add(Main.getTranslation("all"));
-//                    participantFilter.getItems().add(Main.getTranslation("all"));
                     for (ParticipantDTO part : eventDTO.participants) {
                         payerFilter.getItems().add(part.getFullName());
                         participantFilter.getItems().add(part.getFullName());
@@ -273,16 +271,12 @@ public class EventPageCtrl implements Initializable {
                     participantFilter.getItems().clear();
                     payerFilter.getItems().add("All");
                     participantFilter.getItems().add("All");
-//                    payerFilter.getItems().add(Main.getTranslation("all"));
-//                    participantFilter.getItems().add(Main.getTranslation("all"));
                     for (ParticipantDTO part : eventDTO.participants) {
                         payerFilter.getItems().add(part.getFullName());
                         participantFilter.getItems().add(part.getFullName());
                     }
                     payerFilter.setValue("All");
                     participantFilter.setValue("All");
-//                    payerFilter.setValue(Main.getTranslation("all"));
-//                    participantFilter.setValue(Main.getTranslation("all"));
 
 
                     //this is necessary because sometimes, deleting
@@ -334,12 +328,10 @@ public class EventPageCtrl implements Initializable {
         //choiceboxes for debt filter
         creditorFilter.getItems().clear();
         creditorFilter.getItems().add("All");
-//        creditorFilter.getItems().add(Main.getTranslation("all"));
         for (ParticipantDTO participant : eventDTO.participants) {
             creditorFilter.getItems().add(participant.getFullName());
         }
         creditorFilter.setValue("All");
-//        creditorFilter.setValue(Main.getTranslation("all"));
 
         // debt
         debts.getPanes().clear();
@@ -350,16 +342,12 @@ public class EventPageCtrl implements Initializable {
         participantFilter.getItems().clear();
         payerFilter.getItems().add("All");
         participantFilter.getItems().add("All");
-//        payerFilter.getItems().add(Main.getTranslation("all"));
-//        participantFilter.getItems().add(Main.getTranslation("all"));
         for (ParticipantDTO p : eventDTO.participants) {
             payerFilter.getItems().add(p.getFullName());
             participantFilter.getItems().add(p.getFullName());
         }
         payerFilter.setValue("All");
         participantFilter.setValue("All");
-//        payerFilter.setValue(Main.getTranslation("all"));
-//        participantFilter.setValue(Main.getTranslation("all"));
 
         //tags
         tagsInput.getItems().setAll(eventDTO.tags.stream().toList());
@@ -569,12 +557,8 @@ public class EventPageCtrl implements Initializable {
             String selectedParticipant = participantFilter.getValue();
             //todo
             if ((selectedPayer.equals("All")
-//                    || (selectedPayer.equals("Alle"))
-//                    || (selectedPayer.equals("Tout"))
                     || selectedPayer.equals(ts.author.getFullName()))
                     && (selectedParticipant.equals("All") ||
-//                        selectedParticipant.equals("Alle") ||
-//                        selectedParticipant.equals("Tout") ||
                     ts.participants.stream().anyMatch(p ->
                             p.getFullName().equals(selectedParticipant)))) {
 
@@ -879,9 +863,7 @@ public class EventPageCtrl implements Initializable {
         // remove other debtNodes if a creditor is selected
         Set<TitledPane> toRemove = new HashSet<>() ;
         //TODO:
-        if (!(selectedCreditor.equals("All")
-                || selectedCreditor.equals("Alle")
-                || selectedCreditor.equals("Tout"))) {
+        if (!(selectedCreditor.equals("All"))) {
             debts.getPanes().forEach(debtNode -> {
                 DebtNode node = (DebtNode) debtNode;
                 if (!node.creditor.getFullName().equals(selectedCreditor)) {
