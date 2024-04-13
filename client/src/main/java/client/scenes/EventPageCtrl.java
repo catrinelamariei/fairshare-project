@@ -10,6 +10,7 @@ import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -33,6 +34,7 @@ import javafx.util.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.net.URL;
 import java.time.*;
 import java.util.*;
@@ -1063,14 +1065,49 @@ public class EventPageCtrl implements Initializable {
             for(TagDTO tag : tags){
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
-                tagToAmount.put(tagName, amount);
-                tagToColor.put(tagName, tag.color.colorCode);
+                if (tagToAmount.containsKey(tagName)) {
+                    BigDecimal newAmount = tagToAmount.get(tagName).add(amount);
+                    tagToAmount.put(tagName, newAmount);
+                } else {
+                    tagToAmount.put(tagName, amount);
+                    tagToColor.put(tagName, tag.color.colorCode);
+                }
             }
         }
 
+        final BigDecimal totalAmount = transactions.stream()
+                .map(TransactionDTO::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (totalAmount.compareTo(BigDecimal.ZERO) == 0) {
+            MainCtrl.inform("Statistics", "No statistics to display");
+            return;
+        } else {
+            pieChart.setVisible(true);
+        }
+
+//        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
+//                tagToAmount.entrySet().stream()
+//                        .map(e -> new PieChart.Data(e.getKey(), e.getValue().doubleValue()))
+//                        .collect(Collectors.toList())
+//        );
+
+        MathContext mc
+                = new MathContext(5);
+
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
                 tagToAmount.entrySet().stream()
-                        .map(e -> new PieChart.Data(e.getKey(), e.getValue().doubleValue()))
+                        .map(e -> {
+                            PieChart.Data data = new PieChart.Data(e.getKey(),
+                                    e.getValue().doubleValue());
+                            double percentage = e.getValue()
+                                    .divide(totalAmount, mc)
+                                    .doubleValue() * 100;
+                            data.nameProperty().bind(
+                                    Bindings.concat(
+                                            data.getName(), " ",
+                                            Bindings.format("%.1f%%", percentage)));
+                            return data;
+                        })
                         .collect(Collectors.toList())
         );
 
