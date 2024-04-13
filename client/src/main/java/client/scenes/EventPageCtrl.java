@@ -227,45 +227,35 @@ public class EventPageCtrl implements Initializable {
             updateTotalExpenses();
         });
 
-        // TODO: following method doesn't work yet
+        authorInput.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    authorInput.getSelectionModel().selectPrevious();
+                    event.consume();
+                    break;
+                case DOWN:
+                    authorInput.getSelectionModel().selectNext();
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
 
-//
-//        setTraversalPolicy();
-//
-//        // Set the initial focus to the first node in custom order
-//        Platform.runLater(() -> homeButton.requestFocus());
-//    }
-//
-//    private void setTraversalPolicy() {
-//        List<Node> nodesInOrder = new ArrayList<>(List.of(
-//                homeButton, editButton, deleteEventButton, copyButton,
-//                eventPane, expenseTabPane, participantTabPane
-//        ));
-////
-////        if (expensesTab.isSelected()) {
-////            nodesInOrder.add(6, expenseTabPane);
-////        } else if (participantsTab.isSelected()) {
-////            nodesInOrder.add(6, participantTabPane);
-////        }
-//
-//        for (int i = 0; i < nodesInOrder.size(); i++) {
-//            int index = i;
-//            nodesInOrder.get(i).addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-//                if (event.getCode() == KeyCode.TAB) {
-//                    Node nextNode;
-//                    if (event.isShiftDown()) {
-//                        int previousIndex = (index - 1 + nodesInOrder.size())
-//                        % nodesInOrder.size();
-//                        nextNode = nodesInOrder.get(previousIndex);
-//                    } else {
-//                        int nextIndex = (index + 1) % nodesInOrder.size();
-//                        nextNode = nodesInOrder.get(nextIndex);
-//                    }
-//                    nextNode.requestFocus();
-//                    event.consume();
-//                }
-//            });
-//        }
+        currencyCodeInput.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    currencyCodeInput.getSelectionModel().selectPrevious();
+                    event.consume();
+                    break;
+                case DOWN:
+                    currencyCodeInput.getSelectionModel().selectNext();
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     private void subscribe() {
