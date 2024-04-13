@@ -233,8 +233,9 @@ public class ServerUtils {
     }
 
 //////////////////////////////////////
-    private static ExecutorService EXEC = Executors.newSingleThreadExecutor();
+    public static ExecutorService EXEC;
     public void registerForUpdatesTransaction(Consumer<TransactionDTO> consumer){
+        EXEC = Executors.newSingleThreadExecutor();
         EXEC.submit(()->{
             while(!Thread.interrupted()) {
                 var res = ClientBuilder.newClient()

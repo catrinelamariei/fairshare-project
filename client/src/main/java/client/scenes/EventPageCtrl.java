@@ -212,17 +212,16 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
-        server.registerForUpdatesTransaction(t ->{
-            Platform.runLater(()->{
-                eventDTO = server.getEvent(userData.getCurrentUUID());
-                transactions.getChildren().clear();
-                transactions.getChildren().addAll(eventDTO.transactions.stream()
-                        .map(nodeFactory::createTransactionNode).toList());
-            });
-        });
 
         subscribe();
-
+//        server.registerForUpdatesTransaction(t ->{
+//            Platform.runLater(()->{
+//                eventDTO = server.getEvent(userData.getCurrentUUID());
+//                transactions.getChildren().clear();
+//                transactions.getChildren().addAll(eventDTO.transactions.stream()
+//                        .map(nodeFactory::createTransactionNode).toList());
+//            });
+//        });
         //loading stats
         updateChart.setText(resources.getString("load_stats"));
         updateChart.setOnAction(e -> {
@@ -298,6 +297,17 @@ public class EventPageCtrl implements Initializable {
 
 
 
+                }
+            });
+        });
+
+        server.registerForUpdatesTransaction(t ->{
+            Platform.runLater(()->{
+                if(t.eventId.equals(userData.getCurrentUUID())){
+                    eventDTO = server.getEvent(userData.getCurrentUUID());
+                    transactions.getChildren().clear();
+                    transactions.getChildren().addAll(eventDTO.transactions.stream()
+                            .map(nodeFactory::createTransactionNode).toList());
                 }
             });
         });

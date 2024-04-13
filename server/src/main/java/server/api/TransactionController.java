@@ -40,7 +40,13 @@ public class TransactionController {
             @RequestBody TransactionDTO ts) {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
         TransactionDTO t = new TransactionDTO(d2e.create(ts));
-        listeners.forEach((k, l)->l.accept(t));
+
+        //listeners.values().forEach((k, l)->l.accept(t));
+
+        listeners.values().forEach(listener -> {
+            listener.accept(t);
+        });
+
         EventDTO eventDTO = new EventDTO();
         eventDTO.id = t.eventId;
         eventDTO = new EventDTO(d2e.get(eventDTO));
@@ -98,7 +104,9 @@ public class TransactionController {
     }
 
     //private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
-    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+   // private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    private final Map<Object, Consumer<TransactionDTO>> listeners = new ConcurrentHashMap<>();
+
     @GetMapping("/updates")
     public DeferredResult<ResponseEntity<TransactionDTO>> getUpdates() {
         var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
