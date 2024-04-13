@@ -13,8 +13,8 @@ import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
-import javafx.geometry.*;
 import javafx.geometry.Insets;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
@@ -222,6 +222,27 @@ public class EventPageCtrl implements Initializable {
             updateTotalExpenses();
         });
 
+        // load colors
+        tagColor.getItems().setAll(Tag.Color.values());
+
+        tagColor.setCellFactory(new Callback<ListView<Tag.Color>, ListCell<Tag.Color>>() {
+            @Override
+            public ListCell<Tag.Color> call(ListView<Tag.Color> param) {
+                return new ListCell<Tag.Color>() {
+                    @Override
+                    protected void updateItem(Tag.Color item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.name());
+                            setStyle("-fx-background-color: " + item.colorCode + ";");
+                        } else {
+                            setText(null);
+                        }
+                    }
+                };
+            }
+        });
+
     }
 
     private void subscribe() {
@@ -360,8 +381,6 @@ public class EventPageCtrl implements Initializable {
         tagColor.setValue(null);
         allTagsVBox.getChildren().setAll(eventDTO.tags.stream()
                 .map(t -> hboxFromTag(t)).toList());
-        // load colors
-        tagColor.getItems().addAll(Tag.Color.values());
 
         tagsInput.setCellFactory(new Callback<ListView<TagDTO>, ListCell<TagDTO>>() {
             @Override
@@ -408,7 +427,7 @@ public class EventPageCtrl implements Initializable {
         //styling
         hbox.setPrefHeight(40);
         hbox.setAlignment(Pos.CENTER);
-        hbox.setStyle("-fx-background-color: " + t.color); // TODO: replace with color code
+        hbox.setStyle("-fx-background-color: " + t.color.colorCode);
         hbox.setPadding(new Insets(10.0d, 20.0d, 10.0d, 10.0));
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
