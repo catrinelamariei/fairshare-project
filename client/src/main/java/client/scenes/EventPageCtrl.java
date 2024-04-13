@@ -437,10 +437,10 @@ public class EventPageCtrl implements Initializable {
     private void addTag() {
         TagDTO input = tagsInput.getValue();
         if (input == null) {
-            MainCtrl.alert(Main.getTranslation("tag_input"));
+            alert(Main.getTranslation("tag_input"));
             return;
         } else if (tags.contains(input)) {
-            MainCtrl.alert(Main.getTranslation("tag_already"));
+            alert(Main.getTranslation("tag_already"));
             return;
         }
         tagsInput.setValue(null);
@@ -465,10 +465,10 @@ public class EventPageCtrl implements Initializable {
         String name = tagNameInput.getText();
         Tag.Color color = tagColor.getValue();
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert(Main.getTranslation("tag_name_null"));
+            alert(Main.getTranslation("tag_name_null"));
             return;
         } else if (color == null) {
-            MainCtrl.alert(Main.getTranslation("choose_color"));
+            alert(Main.getTranslation("choose_color"));
             return;
         }
         TagDTO tag = new TagDTO(null, UserData.getInstance().getCurrentUUID(), name, color);
@@ -663,19 +663,19 @@ public class EventPageCtrl implements Initializable {
                                 RadioButton selectedRadioButton,
                                 boolean participantIsSelected) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_name"));
+            alert(Main.getTranslation("empty_expense_name"));
         } else if (author == null) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_author"));
+            alert(Main.getTranslation("empty_expense_author"));
         } else if (amount == null) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_amount"));
+            alert(Main.getTranslation("empty_expense_amount"));
         } else if (currency == null || currency.isEmpty()) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_currency"));
+            alert(Main.getTranslation("empty_expense_currency"));
         } else if (localDate == null) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_date"));
+            alert(Main.getTranslation("empty_expense_date"));
         } else if (selectedRadioButton == null) {
-            MainCtrl.alert(Main.getTranslation("split_not_selected"));
+            alert(Main.getTranslation("split_not_selected"));
         } else if (customSplit.isSelected() && !participantIsSelected) {
-            MainCtrl.alert(Main.getTranslation("other_participant"));
+            alert(Main.getTranslation("other_participant"));
         } else {
             return true;
         }
@@ -697,23 +697,23 @@ public class EventPageCtrl implements Initializable {
     boolean checkInput(String name, String transactionAmountString, String currency,
                        LocalDate localDate, ParticipantDTO author) {
         if (name == null || name.isEmpty()) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_name"));
+            alert(Main.getTranslation("empty_expense_name"));
             return true;
         }
         if (author == null) {
-            MainCtrl.alert(Main.getTranslation("author_not_selected"));
+            alert(Main.getTranslation("author_not_selected"));
             return true;
         }
         if (transactionAmountString == null || transactionAmountString.isEmpty()) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_amount"));
+            alert(Main.getTranslation("empty_expense_amount"));
             return true;
         }
         if (currency == null) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_currency"));
+            alert(Main.getTranslation("empty_expense_currency"));
             return true;
         }
         if (localDate == null) {
-            MainCtrl.alert(Main.getTranslation("empty_expense_date"));
+            alert(Main.getTranslation("empty_expense_date"));
             return true;
         }
 
@@ -764,15 +764,15 @@ public class EventPageCtrl implements Initializable {
 
         try {
             if (fName.isEmpty()) {
-                MainCtrl.alert(Main.getTranslation("empty_first_name"));
+                alert(Main.getTranslation("empty_first_name"));
                 return;
             }
             if (lName.isEmpty()) {
-                MainCtrl.alert(Main.getTranslation("empty_last_name"));
+                alert(Main.getTranslation("empty_last_name"));
                 return;
             }
             if (mail.isEmpty() || invalidEmail(mail)) {
-                MainCtrl.alert(Main.getTranslation("invalid_email"));
+                alert(Main.getTranslation("invalid_email"));
                 return;
             }
             if (bicText.isEmpty()) {
@@ -794,7 +794,7 @@ public class EventPageCtrl implements Initializable {
             creditorFilter.getItems().add(participantDTO.getFullName());
             showOverviewParticipants();
         } catch (IllegalArgumentException e) {
-            MainCtrl.alert("Please enter valid participant data");
+            alert("Please enter valid participant data");
             return;
         } catch (WebApplicationException e) {
             System.err.println("Error adding participant: " + e.getMessage());
@@ -860,10 +860,10 @@ public class EventPageCtrl implements Initializable {
         } catch (Exception e) {
             //TODO below:
             if(e.getMessage().equals("No participants")){
-                MainCtrl.alert( Main.getTranslation("expense_without_beneficiary")+
+                alert( Main.getTranslation("expense_without_beneficiary")+
                         Main.getTranslation("add_participants_to_expense"));
             } else {
-                MainCtrl.alert(Main.getTranslation("debts_error"));
+                alert(Main.getTranslation("debts_error"));
             }
         }
 
