@@ -957,7 +957,8 @@ public class EventPageCtrl implements Initializable {
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
                 if (tagToAmount.containsKey(tagName)) {
-                    tagToAmount.get(tagName).add(amount);
+                    BigDecimal newAmount = tagToAmount.get(tagName).add(amount);
+                    tagToAmount.put(tagName, newAmount);
                 } else {
                     tagToAmount.put(tagName, amount);
                     tagToColor.put(tagName, tag.color.colorCode);
