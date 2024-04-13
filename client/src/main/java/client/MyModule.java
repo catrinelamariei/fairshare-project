@@ -37,4 +37,9 @@ public class MyModule extends AbstractModule {
         bind(EventJsonUtil.class).in(Scopes.SINGLETON);
         binder().disableCircularProxies();
     }
+
+    @Provides @Singleton
+    private UserData load() {
+        return UserData.load();
+    }
 }

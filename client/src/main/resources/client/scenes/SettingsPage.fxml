@@ -28,7 +28,7 @@
                   <RowConstraints vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="language" textAlignment="CENTER" underline="true">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%language" textAlignment="CENTER" underline="true">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
@@ -38,9 +38,9 @@
                         <ChoiceBox fx:id="languageChoiceBox" prefWidth="190.0" />
                         <HBox spacing="10.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#cancelLanguage" text="Cancel" />
-                              <Button mnemonicParsing="false" onAction="#selectLanguage" text="Select" />
-                              <Button mnemonicParsing="false" onAction="#downloadLanguage" text="Download" />
+                              <Button mnemonicParsing="false" onAction="#cancelLanguage" text="%text_cancel" />
+                              <Button mnemonicParsing="false" onAction="#selectLanguage" text="%select" />
+                              <Button mnemonicParsing="false" onAction="#downloadLanguage" text="%download" />
                            </children>
                         </HBox>
                      </children>
@@ -48,7 +48,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </VBox>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Currency" textAlignment="CENTER" underline="true" GridPane.columnIndex="1">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%currency" textAlignment="CENTER" underline="true" GridPane.columnIndex="1">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
@@ -65,8 +65,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Button mnemonicParsing="false" onAction="#cancelCurrency" text="Cancel" />
-                              <Button layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#selectCurrency" text="Select" GridPane.columnIndex="1" />
+                              <Button mnemonicParsing="false" onAction="#cancelCurrency" text="%text_cancel" />
+                              <Button layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#selectCurrency" text="%select" GridPane.columnIndex="1" />
                            </children>
                         </GridPane>
                      </children>
@@ -75,7 +75,7 @@
             </GridPane>
             <VBox alignment="CENTER" fillWidth="false">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="server" textAlignment="CENTER" underline="true">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%server" textAlignment="CENTER" underline="true">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
@@ -101,8 +101,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="status:" GridPane.rowIndex="1" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="connect new" underline="true" GridPane.columnSpan="2" GridPane.halignment="LEFT">
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%status" GridPane.rowIndex="1" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%connect_new" underline="true" GridPane.columnSpan="2" GridPane.halignment="LEFT">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -113,8 +113,12 @@
                                     <Insets />
                                  </GridPane.margin>
                               </TextField>
-                              <Button mnemonicParsing="false" onAction="#testConnection" text="Test Connection" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Button mnemonicParsing="false" onAction="#addConnection" text="Add" GridPane.rowIndex="3" />
+                              <HBox spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#addConnection" text="%text_add" />
+                                    <Button mnemonicParsing="false" onAction="#testConnection" text="%test_connection" />
+                                 </children>
+                              </HBox>
                            </children>
                         </GridPane>
                         <GridPane vgap="10.0" GridPane.columnIndex="1">
@@ -128,7 +132,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="saved" underline="true">
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%saved" underline="true">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -136,8 +140,8 @@
                               <ComboBox fx:id="urlList" prefWidth="170.0" GridPane.rowIndex="2" />
                               <HBox spacing="10.0" GridPane.rowIndex="3">
                                  <children>
-                                    <Button mnemonicParsing="false" onAction="#removeSavedConnection" text="Delete" />
-                                    <Button mnemonicParsing="false" onAction="#selectSavedConnection" text="Select" />
+                                    <Button mnemonicParsing="false" onAction="#removeSavedConnection" text="%delete" />
+                                    <Button mnemonicParsing="false" onAction="#selectSavedConnection" text="%select" />
                                  </children>
                                  <GridPane.margin>
                                     <Insets />
@@ -151,12 +155,12 @@
             </VBox>
             <VBox alignment="CENTER">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="keybinds" underline="true">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%keybinds" underline="true">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
                   </Text>
-                  <Text layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="general" underline="true">
+                  <Text layoutX="10.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%general" underline="true">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -172,7 +176,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Text text="Submit" GridPane.columnIndex="1">
+                        <Text text="%submit" GridPane.columnIndex="1">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -182,7 +186,7 @@
                               <Font size="16.0" />
                            </font>
                         </Text>
-                        <Text layoutX="303.0" layoutY="32.0" text="Next field" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Text layoutX="303.0" layoutY="32.0" text="%next_field" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -192,7 +196,7 @@
                               <Font size="16.0" />
                            </font>
                         </Text>
-                        <Text layoutX="233.0" layoutY="62.0" text="Previous field" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Text layoutX="233.0" layoutY="62.0" text="%previous_field" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -204,7 +208,7 @@
                         </Text>
                      </children>
                   </GridPane>
-                  <Text layoutX="261.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Event Page" underline="true">
+                  <Text layoutX="261.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%event_page" underline="true">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -218,7 +222,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Text text="Undo Transaction" GridPane.columnIndex="1">
+                        <Text text="%undo_transaction" GridPane.columnIndex="1">
                            <font>
                               <Font size="16.0" />
                            </font>

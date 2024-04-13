@@ -105,7 +105,7 @@
                                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                                        </rowConstraints>
                                                                        <children>
-                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%from" />
+                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%by" />
                                                                            <ChoiceBox fx:id="payerFilter" prefHeight="25.0" prefWidth="75.0" GridPane.rowIndex="1" />
                                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%including" GridPane.columnIndex="1" />
                                                                            <ChoiceBox fx:id="participantFilter" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -213,7 +213,7 @@
                                                            <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" style="-fx-border-color: #98A8F8;" />
                                                            <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
                                                            <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
-                                                           <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%who_payed">
+                                                           <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%who_paid">
                                                                <font>
                                                                    <Font size="13.0" />
                                                                </font>
@@ -304,7 +304,7 @@
                                                                    </Button>
                                                                    <VBox prefHeight="22.0" prefWidth="754.0">
                                                                        <children>
-                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%refresh_debts" textAlignment="RIGHT" wrappingWidth="765.2526092529297" />
+                                                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%refresh_debts_static" textAlignment="RIGHT" wrappingWidth="765.2526092529297" />
                                                                        </children>
                                                                    </VBox>
                                                                    <Accordion fx:id="debts" prefHeight="382.0" prefWidth="754.0" />
@@ -471,8 +471,8 @@
                                                    <TextField fx:id="email" layoutX="313.0" layoutY="200.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
                                                    <TextField fx:id="iban" layoutX="313.0" layoutY="260.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
                                                    <TextField fx:id="bic" layoutX="313.0" layoutY="320.0" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8;" />
-                                                   <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="Add Participant" />
-                                                   <Text layoutX="314.0" layoutY="369.0" strokeType="OUTSIDE" strokeWidth="0.0" text="* Required Fields">
+                                                   <Button fx:id="addParticipantButton" layoutX="342.0" layoutY="407.0" mnemonicParsing="false" onAction="#onAddParticipant" style="-fx-border-color: #98A8F8; -fx-background-color: BCCEF8;" text="%add_participant_button" />
+                                                   <Text layoutX="314.0" layoutY="369.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%required_fields">
                                                        <font>
                                                            <Font size="12.0" />
                                                        </font>
@@ -533,7 +533,7 @@
                            </AnchorPane>
                     </content>
                   </Tab>
-                  <Tab fx:id="tagsTab" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="Tags">
+                  <Tab fx:id="tagsTab" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%tags">
                      <content>
                         <AnchorPane style="-fx-background-color: FAF7F0;">
                            <children>
@@ -571,9 +571,9 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Name:" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Color:" GridPane.rowIndex="1" />
-                                          <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="create tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%tag_name" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%tag_color" GridPane.rowIndex="1" />
+                                          <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="%create_tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                                           <ComboBox fx:id="tagColor" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <TextField fx:id="tagNameInput" GridPane.columnIndex="1" />
                                        </children>
