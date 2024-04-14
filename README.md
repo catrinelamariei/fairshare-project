@@ -39,12 +39,13 @@ This page focuses on a single event and provides many ways to interact with it:
 - copying an invite-code which can be shared with others to join this event
 ### Admin-page
 This page is locked behind authorization which is done through a code generated on the server-side.  
-Authorization can be achieved by entering this code on the client-side.  
+Authorization can be achieved by entering the code provided by the server on the client-side.  
 Once authorized, a token is generated and stored, allowing future admin access without need for a new code.  
 From the page, the following is possible:
 - see all events stored in the DB along with some basic data regarding them
 - sort these events on creation-date, title, last-activity (asc/desc)
 - join an event to get access to it
+- import and export events as JSON files
 ### Keyboard navigation + shortcuts
 The program can be navigated using the keyboard.
 - Use tab to navigate between buttons.
