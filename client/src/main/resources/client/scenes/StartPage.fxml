@@ -30,7 +30,7 @@
                 <font>
                     <Font size="18.0" />
                 </font></Text>
-            <Button alignment="CENTER" layoutX="449.0" layoutY="692.0" mnemonicParsing="false" onAction="#adminPage" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%adminPage.text">
+            <Button fx:id="adminButton" alignment="CENTER" layoutX="449.0" layoutY="692.0" mnemonicParsing="false" onAction="#adminPage" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%adminPage.text">
                 <font>
                     <Font size="18.0" />
                 </font></Button>
@@ -50,10 +50,10 @@
             </Text>
             <VBox layoutX="740.0" prefHeight="800.0" prefWidth="60.0" style="-fx-background-color: #98A8F8;" />
             <VBox layoutX="680.0" prefHeight="800.0" prefWidth="60.0" style="-fx-background-color: BCCEF8;" />
-            <Button layoutX="14.0" layoutY="761.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#settingsPage" prefHeight="48.0" prefWidth="48.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0">
+            <Button fx:id="settingsButton" layoutX="14.0" layoutY="761.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#settingsPage" prefHeight="48.0" prefWidth="48.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0">
                 <graphic>
                     <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@/client/Images/icons8-window-settings-64.png"/>
+                        <Image url="@/client/Images/icons8-window-settings-64.png" />
                     </ImageView>
                 </graphic>
             </Button>

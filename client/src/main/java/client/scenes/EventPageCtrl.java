@@ -11,6 +11,7 @@ import commons.Tag;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.*;
@@ -33,7 +34,7 @@ import javafx.util.*;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.math.BigDecimal;
+import java.math.*;
 import java.net.URL;
 import java.time.*;
 import java.util.*;
@@ -156,6 +157,8 @@ public class EventPageCtrl implements Initializable {
     private VBox legendBox;
     @FXML
     private GridPane stats;
+    @FXML
+    private TabPane eventPane;
 
 
     @FXML
@@ -168,6 +171,9 @@ public class EventPageCtrl implements Initializable {
     private ComboBox<Tag.Color> tagColor;
     @FXML
     private VBox allTagsVBox;
+    @FXML
+    private Button homeButton;
+
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
@@ -222,6 +228,36 @@ public class EventPageCtrl implements Initializable {
             updateTotalExpenses();
         });
 
+        authorInput.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    authorInput.getSelectionModel().selectPrevious();
+                    event.consume();
+                    break;
+                case DOWN:
+                    authorInput.getSelectionModel().selectNext();
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        currencyCodeInput.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    currencyCodeInput.getSelectionModel().selectPrevious();
+                    event.consume();
+                    break;
+                case DOWN:
+                    currencyCodeInput.getSelectionModel().selectNext();
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
+        
         // load colors
         tagColor.getItems().setAll(Tag.Color.values());
 
@@ -242,6 +278,7 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
+
 
     }
 
@@ -276,10 +313,10 @@ public class EventPageCtrl implements Initializable {
             });
         });
 
-        server.registerForParticipantDeletionUpdates(id->{
-            Platform.runLater(()->{
-                if(eventDTO.participants.stream().anyMatch(p->p.getId().equals(id))){
-                    eventDTO.participants.removeIf(p->p.getId().equals(id));
+        server.registerForParticipantDeletionUpdates(id -> {
+            Platform.runLater(() -> {
+                if (eventDTO.participants.stream().anyMatch(p -> p.getId().equals(id))) {
+                    eventDTO.participants.removeIf(p -> p.getId().equals(id));
                     participants.getPanes().clear();
                     participants.getPanes().addAll(eventDTO.participants.stream()
                             .map(nodeFactory::createParticipantNode).toList());
@@ -308,13 +345,12 @@ public class EventPageCtrl implements Initializable {
                             .map(nodeFactory::createTransactionNode).toList());
 
 
-
                 }
             });
         });
     }
 
-    private void loadTransactions(){
+    private void loadTransactions() {
         transactions.getChildren().clear();
         transactions.getChildren().addAll(eventDTO.transactions.stream()
                 .map(nodeFactory::createTransactionNode).toList());
@@ -684,7 +720,7 @@ public class EventPageCtrl implements Initializable {
             amount = new BigDecimal(transactionAmountString);
         } catch (NumberFormatException e) {
             return null;
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return null;
         }
         return amount;
@@ -716,10 +752,10 @@ public class EventPageCtrl implements Initializable {
         return false;
     }
 
-    private void alert(String text){
-        try{
+    private void alert(String text) {
+        try {
             MainCtrl.alert(text);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("can't produce an alert in testing");
         }
     }
@@ -903,7 +939,7 @@ public class EventPageCtrl implements Initializable {
             alert.setHeaderText(Main.getTranslation("delete_event_confirmation_title"));
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 server.deleteEvent(currentUUID);
                 userData.getRecentUUIDs()
                         .removeIf(p -> p.getKey().equals(currentUUID));
@@ -994,7 +1030,8 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         updateTransaction(ts);
-        MainCtrl.inform("Transaction","Transaction updated successfully");
+        MainCtrl.inform(Main.getTranslation("expenses"),
+                Main.getTranslation("Successfully_updated_transaction"));
     }
 
     private void updateTransaction(TransactionDTO ts) {
@@ -1018,7 +1055,7 @@ public class EventPageCtrl implements Initializable {
 
 
     public void updateParticipant(ParticipantNode oldNode, ParticipantDTO newParticipant)
-            throws IllegalArgumentException{
+            throws IllegalArgumentException {
         if (newParticipant == null) {
             return;
         }
@@ -1059,19 +1096,59 @@ public class EventPageCtrl implements Initializable {
         Map<String, String> tagToColor = new HashMap<>();
         EventDTO event = server.getEvent(userData.getCurrentUUID());
         Set<TransactionDTO> transactions = event.getTransactions();
-        for(TransactionDTO t : transactions){
+        tagToAmount.put("uncategorized", BigDecimal.ZERO);
+        tagToColor.put("uncategorized", "#808080");
+        for (TransactionDTO t : transactions) {
             Set<TagDTO> tags = t.getTags();
-            for(TagDTO tag : tags){
+            if (tags.isEmpty()) {
+                BigDecimal newAmount = tagToAmount.get("uncategorized").add(t.amount);
+                tagToAmount.put("uncategorized", newAmount);
+            } else {
+                TagDTO tag = tags.iterator().next();
                 String tagName = tag.getName();
                 BigDecimal amount = t.getAmount();
-                tagToAmount.put(tagName, amount);
-                tagToColor.put(tagName, tag.color.colorCode);
+                if (tagToAmount.containsKey(tagName)) {
+                    BigDecimal newAmount = tagToAmount.get(tagName).add(amount);
+                    tagToAmount.put(tagName, newAmount);
+                } else {
+                    tagToAmount.put(tagName, amount);
+                    tagToColor.put(tagName, tag.color.colorCode);
+                }
             }
+
         }
+        if (tagToAmount.get("uncategorized").compareTo(BigDecimal.ZERO) == 0) {
+            tagToAmount.remove("uncategorized");
+            tagToColor.remove("uncategorized");
+        }
+
+        final BigDecimal totalAmount = transactions.stream()
+                .map(TransactionDTO::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (totalAmount.compareTo(BigDecimal.ZERO) == 0) {
+            MainCtrl.inform("Statistics", Main.getTranslation("no_statistics"));
+            return;
+        } else {
+            pieChart.setVisible(true);
+        }
+
+        MathContext mc
+                = new MathContext(5);
 
         ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList(
                 tagToAmount.entrySet().stream()
-                        .map(e -> new PieChart.Data(e.getKey(), e.getValue().doubleValue()))
+                        .map(e -> {
+                            PieChart.Data data = new PieChart.Data(e.getKey(),
+                                    e.getValue().doubleValue());
+                            double percentage = e.getValue()
+                                    .divide(totalAmount, mc)
+                                    .doubleValue() * 100;
+                            data.nameProperty().bind(
+                                    Bindings.concat(
+                                            data.getName(), " ",
+                                            Bindings.format("%.1f%%", percentage)));
+                            return data;
+                        })
                         .collect(Collectors.toList())
         );
 
@@ -1079,16 +1156,10 @@ public class EventPageCtrl implements Initializable {
 
         // Set the color of each pie slice to match the corresponding tag color
         pieData.forEach(data -> {
-            String color = tagToColor.get(data.getName());
+            String color = tagToColor.get(data.getName()
+                    .substring(0, data.getName().lastIndexOf(" ")));
             data.getNode().setStyle("-fx-pie-color: " + color + ";");
         });
-
-        if (pieChart.getData().isEmpty()) {
-            MainCtrl.inform(Main.getTranslation("statistics"),Main.getTranslation("no_statistics"));
-            return;
-        } else {
-            pieChart.setVisible(true);
-        }
 
         // disable automatic generated legend
         pieChart.setLegendVisible(false);
@@ -1098,8 +1169,10 @@ public class EventPageCtrl implements Initializable {
         pieData.forEach(data -> {
             HBox legendItem = new HBox();
             legendItem.setSpacing(10);
-            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName())));
-            Label nameLabel = new Label(data.getName());
+            Circle circle = new Circle(7, Color.web(tagToColor.get(data.getName()
+                    .substring(0, data.getName().lastIndexOf(" ")))));
+            Label nameLabel = new Label(data.getName()
+                    .substring(0, data.getName().lastIndexOf(" ")));
             legendItem.getChildren().addAll(circle, nameLabel);
             legendBox.getChildren().add(legendItem);
         });

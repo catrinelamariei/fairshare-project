@@ -1,4 +1,5 @@
 package client.scenes;
+
 import client.UserData;
 import client.utils.ServerUtils;
 import commons.DTOs.*;
@@ -9,7 +10,7 @@ import org.mockito.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class EventPageCtrlTest {

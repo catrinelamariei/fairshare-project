@@ -1,7 +1,6 @@
 package client.utils;
 
-import client.MainCtrl;
-import client.UserData;
+import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
