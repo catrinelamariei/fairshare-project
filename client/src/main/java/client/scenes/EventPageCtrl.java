@@ -24,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -173,6 +174,10 @@ public class EventPageCtrl implements Initializable {
     private VBox allTagsVBox;
     @FXML
     private Button homeButton;
+    @FXML
+    private Button createTagButton;
+    @FXML
+    private Button filterButton;
 
 
     @Inject
@@ -227,6 +232,14 @@ public class EventPageCtrl implements Initializable {
             eventCost.setText(printTotalExpenses()+userData.getCurrencyCode());
             updateTotalExpenses();
         });
+        updateChart.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                updateChart.setText(resources.getString("update_stats"));
+                loadPieChart();
+                eventCost.setText(printTotalExpenses()+userData.getCurrencyCode());
+                updateTotalExpenses();
+            }
+        });
 
         authorInput.setOnKeyPressed(event -> {
             switch (event.getCode()) {
@@ -279,6 +292,53 @@ public class EventPageCtrl implements Initializable {
             }
         });
 
+        homeButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.gotoHome();
+            }
+        });
+
+        editButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.onEditEvent();
+            }
+        });
+
+        deleteEventButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.onDeleteEvent();
+            }
+        });
+
+        copyButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.copyInviteCode();
+            }
+        });
+
+        createTagButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.createTag();
+            }
+        });
+
+        filterButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.filterTransactions();
+            }
+        });
+
+        settleButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.debtSimplification();
+            }
+        });
+
+        cancelTransaction.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.clearTransaction();
+            }
+        });
 
     }
 
@@ -513,6 +573,17 @@ public class EventPageCtrl implements Initializable {
                 System.err.println("Error deleting tag: " + ex.getMessage());
             }
         });
+        deleteTag.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                allTagsVBox.getChildren().remove(hbox);
+                tagsInput.getItems().remove(t);
+                try {
+                    server.deleteTag(t.id);
+                } catch (WebApplicationException ex) {
+                    System.err.println("Error deleting tag: " + ex.getMessage());
+                }
+            }
+        });
 
         //assembly
         hbox.getChildren().addAll(text, spacer, deleteTag);
@@ -715,6 +786,11 @@ public class EventPageCtrl implements Initializable {
 
         //return buttons/fields to default functions/value
         submitTransaction.setOnAction(this::onCreateTransaction);
+        submitTransaction.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.onCreateTransaction(new ActionEvent());
+            }
+        });
         addExpenseTab.setText(Main.getTranslation("add_expense"));
         vboxParticipantsTransaction.getChildren().forEach(node -> {
             if (node instanceof CheckBox) {

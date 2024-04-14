@@ -7,6 +7,7 @@ import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.*;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -50,8 +51,20 @@ public class VisualEventNode extends EventNode {
         Button downloadButton = new Button("DOWNLOAD");
         Button deleteButton = new Button("DELETE");
         joinButton.setOnAction(this::join);
+        joinButton.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER)
+                this.join(new ActionEvent());
+        });
         downloadButton.setOnAction(this::jsonSave);
+        downloadButton.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER)
+                this.jsonSave(new ActionEvent());
+        });
         deleteButton.setOnAction(this::delete);
+        deleteButton.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER)
+                this.delete(new ActionEvent());
+        });
 
         //gridpance css styling
         GridPane gridPane = new GridPane(10.0d, 10.0d); //gaps between cells

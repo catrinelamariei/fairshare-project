@@ -90,6 +90,17 @@ public class StartPageCtrl {
                     nextNode.requestFocus();
                     event.consume();
                 }
+                if (event.getCode() == KeyCode.ENTER) {
+                    if (nodesInOrder.get(index) == createButton) {
+                        onCreateEvent();
+                    } else if (nodesInOrder.get(index) == joinButton) {
+                        onJoinEvent();
+                    } else if (nodesInOrder.get(index) == settingsButton) {
+                        settingsPage();
+                    } else if (nodesInOrder.get(index) == adminButton) {
+                        adminPage();
+                    }
+                }
             });
         }
     }
