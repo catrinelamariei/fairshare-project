@@ -1030,7 +1030,8 @@ public class EventPageCtrl implements Initializable {
         TransactionDTO ts = readTransactionFields();
 
         updateTransaction(ts);
-        MainCtrl.inform("Transaction","Transaction updated successfully");
+        MainCtrl.inform(Main.getTranslation("expenses"),
+                Main.getTranslation("Successfully_updated_transaction"));
     }
 
     private void updateTransaction(TransactionDTO ts) {
@@ -1125,7 +1126,7 @@ public class EventPageCtrl implements Initializable {
                 .map(TransactionDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (totalAmount.compareTo(BigDecimal.ZERO) == 0) {
-            MainCtrl.inform("Statistics", "No statistics to display");
+            MainCtrl.inform("Statistics", Main.getTranslation("no_statistics"));
             return;
         } else {
             pieChart.setVisible(true);
@@ -1159,13 +1160,6 @@ public class EventPageCtrl implements Initializable {
                     .substring(0, data.getName().lastIndexOf(" ")));
             data.getNode().setStyle("-fx-pie-color: " + color + ";");
         });
-
-        if (pieChart.getData().isEmpty()) {
-            MainCtrl.inform(Main.getTranslation("statistics"),Main.getTranslation("no_statistics"));
-            return;
-        } else {
-            pieChart.setVisible(true);
-        }
 
         // disable automatic generated legend
         pieChart.setLegendVisible(false);
