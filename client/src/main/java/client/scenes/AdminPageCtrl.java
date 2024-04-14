@@ -1,11 +1,9 @@
 package client.scenes;
 
-import client.Main;
-import client.MainCtrl;
+import client.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
-import client.utils.EventJsonUtil;
-import client.utils.ServerUtils;
+import client.utils.*;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
@@ -16,8 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;

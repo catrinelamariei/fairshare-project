@@ -3,8 +3,7 @@ package client.scenes.javaFXClasses.DataNode;
 import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.EventJsonUtil;
-import client.utils.ServerUtils;
+import client.utils.*;
 import commons.DTOs.*;
 
 public class PojoNodeFactory implements NodeFactory {

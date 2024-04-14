@@ -2,8 +2,7 @@ package client.scenes.javaFXClasses.VisualNode;
 
 import client.*;
 import client.scenes.javaFXClasses.DataNode.EventNode;
-import client.utils.EventJsonUtil;
-import client.utils.ServerUtils;
+import client.utils.*;
 import commons.DTOs.EventDTO;
 import javafx.event.ActionEvent;
 import javafx.geometry.*;
@@ -12,9 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 

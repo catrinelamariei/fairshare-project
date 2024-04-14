@@ -122,16 +122,10 @@ public class EventController {
     public DeferredResult<ResponseEntity<String>> eventNameUpdates() {
         var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         var deferredResult = new DeferredResult<ResponseEntity<String>>(5000L, noContent);
-
-        // Define a unique key for this listener
         var key = new Object();
-
-        // Add the listener to your existing listeners map
         listeners.put(key, eventName -> {
             deferredResult.setResult(ResponseEntity.ok(eventName));
         });
-
-        // Remove the listener when the request is completed
         deferredResult.onCompletion(() -> {
             listeners.remove(key);
         });

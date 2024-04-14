@@ -1,7 +1,6 @@
 package client.scenes.javaFXClasses.VisualNode;
 
-import client.Main;
-import client.UserData;
+import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.ParticipantNode;
 import client.utils.ServerUtils;
@@ -93,7 +92,7 @@ public class VisualParticipantNode extends ParticipantNode {
         col1.setHgrow(Priority.ALWAYS);
         gridPane.getColumnConstraints().addAll(col0, col1);
 
-        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+        Image img = new Image("/client/Images/edit-button-3.png", 20d, 20d, true, false);
 
 
         ImageView imgv = new ImageView(img);

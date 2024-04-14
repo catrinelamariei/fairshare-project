@@ -35,8 +35,7 @@ This page focuses on a single event and provides many ways to interact with it:
   - participants
   - tags
 - seeing statistics regarding transactions
-- *running custom queries* &rarr; **will this be implemented?**
-- creating a concise overview for a selected participant showing their incoming and outgoing debts
+- creating a concise overview for a selected participant showing their incoming or outgoing debts
 - copying an invite-code which can be shared with others to join this event
 ### Admin-page
 This page is locked behind authorization which is done through a code generated on the server-side.  
@@ -46,5 +45,10 @@ From the page, the following is possible:
 - see all events stored in the DB along with some basic data regarding them
 - sort these events on creation-date, title, last-activity (asc/desc)
 - join an event to get access to it
-
+### Keyboard navigation + shortcuts
+The program can be navigated using the keyboard.
+- Use tab to navigate between buttons.
+- Use arrow keys to navigate between tabs & dropdown options.
+- Use enter to select/submit.
+- Use ctrl+z to undo transactions in event-page.
 ---

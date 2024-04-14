@@ -1,7 +1,6 @@
 package client.utils;
 
 import client.UserData;
-import com.google.inject.Inject;
 import commons.Currency.RateDTO;
 import org.junit.jupiter.api.Test;
 

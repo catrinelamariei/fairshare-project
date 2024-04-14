@@ -1,7 +1,6 @@
 package client.scenes.javaFXClasses.VisualNode;
 
-import client.Main;
-import client.UserData;
+import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.TransactionNode;
 import client.utils.*;
@@ -78,17 +77,17 @@ public class VisualTransactionNode extends TransactionNode {
         Button deleteTransactionButton = new Button(Main.getTranslation("delete"));
         deleteTransactionButton.setStyle("-fx-text-fill: #ff0000;");
         deleteTransactionButton.setOnAction(this::deleteTransaction);
-        deleteTransactionButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
+        deleteTransactionButton.setFont(Font.font("System", FontWeight.BOLD, 14.0));
 
         // Edit Button: some options below
 //        Image img = new Image("/client/Images/edit-button-3.png", 25d, 25d, true, false);
 //        Image img = new Image("/client/Images/edit-button-1.png", 30d, 30d, true, false);
-        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+        Image img = new Image("/client/Images/edit-button-3.png", 14d, 14d, true, false);
 
 
         ImageView imgv = new ImageView(img);
         Button btn = new Button(Main.getTranslation("edit"), imgv);
-        btn.setFont(Font.font("System", FontWeight.BOLD, 20.0));
+        btn.setFont(Font.font("System", FontWeight.BOLD, 14.0));
         btn.setOnAction(this::editTransaction); //attach method to button
 
         //assembling it all

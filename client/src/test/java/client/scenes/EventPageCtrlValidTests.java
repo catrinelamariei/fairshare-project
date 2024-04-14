@@ -1,20 +1,16 @@
 package client.scenes;
 
-import client.UserData;
+import client.*;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.ServerUtils;
-import client.MainCtrl;
-import client.utils.UndoService;
-import commons.DTOs.*;
+import client.utils.*;
+import commons.DTOs.ParticipantDTO;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 public class EventPageCtrlValidTests {
     private EventPageCtrl eventPageCtrl;
