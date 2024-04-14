@@ -156,6 +156,8 @@ public class EventPageCtrl implements Initializable {
     private VBox legendBox;
     @FXML
     private GridPane stats;
+    @FXML
+    private TabPane eventPane;
 
 
     @FXML
@@ -168,6 +170,9 @@ public class EventPageCtrl implements Initializable {
     private ComboBox<Tag.Color> tagColor;
     @FXML
     private VBox allTagsVBox;
+    @FXML
+    private Button homeButton;
+
 
     @Inject
     public EventPageCtrl(ServerUtils server, MainCtrl mainCtrl, UndoService undoService,
@@ -222,6 +227,36 @@ public class EventPageCtrl implements Initializable {
             updateTotalExpenses();
         });
 
+        authorInput.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    authorInput.getSelectionModel().selectPrevious();
+                    event.consume();
+                    break;
+                case DOWN:
+                    authorInput.getSelectionModel().selectNext();
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        currencyCodeInput.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case UP:
+                    currencyCodeInput.getSelectionModel().selectPrevious();
+                    event.consume();
+                    break;
+                case DOWN:
+                    currencyCodeInput.getSelectionModel().selectNext();
+                    event.consume();
+                    break;
+                default:
+                    break;
+            }
+        });
+        
         // load colors
         tagColor.getItems().setAll(Tag.Color.values());
 
@@ -242,6 +277,7 @@ public class EventPageCtrl implements Initializable {
                 };
             }
         });
+
 
     }
 

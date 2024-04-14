@@ -23,7 +23,7 @@
               <children>
                   <HBox maxHeight="-Infinity" prefHeight="100.0" prefWidth="98.0">
                       <children>
-                          <Button alignment="TOP_CENTER" mnemonicParsing="false" onAction="#gotoHome" prefHeight="27.0" prefWidth="64.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%text_home">
+                          <Button fx:id="homeButton" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#gotoHome" prefHeight="27.0" prefWidth="64.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%text_home">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -62,7 +62,7 @@
                                         <Font size="14.0" />
                                     </font>
                                 </Button>
-                           <Text layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%invite_code" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
+                           <Text layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%invite_code" textAlignment="CENTER" wrappingWidth="149.3367919921875" />
                         </children>
                      </Pane>
                           <Pane prefHeight="7.0" prefWidth="143.0" style="-fx-background-color: CDFCF6;" />
@@ -80,9 +80,9 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
               </padding>
            </HBox>
-           <TabPane style="-fx-border-color: #98A8F8; -fx-background-color: FAF7F0;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+           <TabPane fx:id="eventPane" style="-fx-border-color: #98A8F8; -fx-background-color: FAF7F0;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                <tabs>
-                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%expenses">
+                   <Tab fx:id="expensesTab" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%expenses">
                        <content>
                            <TabPane fx:id="expenseTabPane" tabClosingPolicy="UNAVAILABLE">
                                <tabs>
@@ -276,7 +276,7 @@
                                            </VBox>
                                        </content>
                                    </Tab>
-                                   <Tab style="-fx-background-color: FAF7F0;" text="%debts">
+                                   <Tab fx:id="debtsTab" style="-fx-background-color: FAF7F0;" text="%debts">
                                        <content>
                                            <ScrollPane prefHeight="200.0" prefWidth="200.0">
                                                <content>
@@ -316,7 +316,7 @@
                            </TabPane>
                        </content>
                    </Tab>
-                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%participants">
+                   <Tab fx:id="participantsTab" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%participants">
                        <content>
                            <TabPane fx:id="participantTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                                <tabs>
@@ -479,7 +479,7 @@
                            </TabPane>
                        </content>
                    </Tab>
-                   <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%statistics">
+                   <Tab fx:id="statsTab" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%statistics">
                        <content>
                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                <children>
@@ -527,7 +527,7 @@
                            </AnchorPane>
                     </content>
                   </Tab>
-                  <Tab style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%tags">
+                  <Tab fx:id="tagsTab" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%tags">
                      <content>
                         <AnchorPane style="-fx-background-color: FAF7F0;">
                            <children>

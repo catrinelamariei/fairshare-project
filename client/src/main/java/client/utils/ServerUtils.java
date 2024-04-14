@@ -18,11 +18,9 @@ package client.utils;
 import client.UserData;
 import com.google.inject.Inject;
 import commons.DTOs.*;
-import jakarta.ws.rs.ProcessingException;
-import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.*;
 import jakarta.ws.rs.core.*;
-import jakarta.ws.rs.core.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
@@ -31,10 +29,8 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 

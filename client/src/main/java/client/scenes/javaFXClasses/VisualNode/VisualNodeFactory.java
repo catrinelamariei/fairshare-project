@@ -1,12 +1,10 @@
 package client.scenes.javaFXClasses.VisualNode;
 
-import client.MainCtrl;
-import client.UserData;
+import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
-import client.utils.EventJsonUtil;
-import client.utils.ServerUtils;
+import client.utils.*;
 import com.google.inject.*;
 import commons.DTOs.*;
 
