@@ -232,8 +232,8 @@
                                                            </Text>
                                                            <TextField fx:id="transactionName" layoutX="108.0" layoutY="65.0" style="-fx-border-color: #98A8F8;" />
                                                            <TextField fx:id="transactionAmount" layoutX="107.0" layoutY="206.0" prefHeight="27.0" prefWidth="150.0" style="-fx-border-color: #98A8F8;" />
-                                                           <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
-                                                           <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF; -fx-background-color: #98A8F8;" />
+                                                           <ChoiceBox fx:id="authorInput" layoutX="107.0" layoutY="134.0" prefHeight="23.0" prefWidth="150.0" style="-fx-border-color: AA77FF;" />
+                                                           <ChoiceBox fx:id="currencyCodeInput" layoutX="272.0" layoutY="209.0" prefHeight="12.0" prefWidth="50.0" style="-fx-border-color: AA77FF;" />
                                                            <Text layoutX="108.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%who_paid">
                                                                <font>
                                                                    <Font size="13.0" />
@@ -253,8 +253,17 @@
                                                                    </Text>
                                                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" />
                                                                    <RadioButton fx:id="equalSplit" mnemonicParsing="false" text="%equally_between_everyone" />
-                                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.800048828125" />
+                                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.0">
+                                                                       <font>
+                                                                           <Font size="5.0" />
+                                                                       </font>
+                                                                   </Text>
                                                                    <RadioButton fx:id="customSplit" mnemonicParsing="false" text="%only_some_people" />
+                                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="1.0">
+                                                                      <font>
+                                                                         <Font size="5.0" />
+                                                                      </font>
+                                                                   </Text>
                                                                    <ScrollPane fx:id="participantsScrollPane" prefHeight="108.0" prefWidth="148.0" style="-fx-border-color: #98A8F8;">
                                                                        <content>
                                                                            <VBox fx:id="vboxParticipantsTransaction" prefHeight="123.0" prefWidth="226.0" style="-fx-border-color: #98A8F8;" />
@@ -262,7 +271,7 @@
                                                                    </ScrollPane>
                                                                </children>
                                                            </VBox>
-                                                           <ComboBox fx:id="tagsInput" layoutX="450.0" layoutY="276.0" prefWidth="150.0" />
+                                                           <ComboBox fx:id="tagsInput" layoutX="450.0" layoutY="276.0" prefWidth="150.0" style="-fx-border-color: AA77FF;" />
                                                        </children>
                                                    </AnchorPane>
                                                    <HBox alignment="CENTER">
