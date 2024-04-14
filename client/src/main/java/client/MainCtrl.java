@@ -5,6 +5,7 @@ import client.utils.KeyEvents.EventPageKeyEventHandler;
 import client.utils.KeyEvents.PrivCheckPageKeyEventHandler;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.NotFoundException;
+import com.google.inject.Inject;
 import javafx.application.Platform;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
@@ -12,6 +13,8 @@ import javafx.stage.*;
 import javafx.util.Pair;
 
 public class MainCtrl {
+    //services
+    private final UserData userData;
 
     public Stage primaryStage;
 
@@ -31,12 +34,18 @@ public class MainCtrl {
     private SettingsPageCtrl settingsPageCtrl;
     private Scene settingsPage;
 
-    public MainCtrl() {
+//    private final ServerUtils server;
+
+
+    @Inject
+    public MainCtrl(UserData userData) {
+        this.userData = userData;
         sideStage.initModality(Modality.APPLICATION_MODAL);
-        sideStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
+        sideStage.setOnCloseRequest(windowEvent -> userData.save());
     }
 
-    public void initialize(Stage primaryStage, Pair<StartPageCtrl, Parent> startPage,
+    public void initialize(Stage primaryStage,
+                           Pair<StartPageCtrl, Parent> startPage,
                            Pair<EventPageCtrl, Parent> eventPage,
                            Pair<AdminPageCtrl, Parent> adminPage,
                            Pair<PrivCheckPageCtrl, Parent> privCheckPage,
@@ -44,7 +53,7 @@ public class MainCtrl {
                            Pair<SettingsPageCtrl, Parent> settingsPage) {
 
         this.primaryStage = primaryStage;
-        this.primaryStage.setOnCloseRequest(windowEvent -> UserData.getInstance().save());
+        this.primaryStage.setOnCloseRequest(windowEvent -> userData.save());
 
         this.startPageCtrl = startPage.getKey();
         this.startPage = new Scene(startPage.getValue());
@@ -63,6 +72,7 @@ public class MainCtrl {
 
         this.settingsPageCtrl = settingsPage.getKey();
         this.settingsPage = new Scene(settingsPage.getValue());
+        sideStage.setScene(this.settingsPage); //update after language switch
         startPageCtrl.veil.visibleProperty().bind(sideStage.showingProperty());
 
         showStartPage();
@@ -70,7 +80,7 @@ public class MainCtrl {
     }
 
     public void showStartPage() {
-        primaryStage.setTitle("Home Screen");
+        primaryStage.setTitle(Main.getTranslation("home_screen"));
         primaryStage.setScene(startPage);
     }
 
@@ -78,14 +88,14 @@ public class MainCtrl {
         try {
             eventPageCtrl.load(); //INITIALIZE eventPage with data
             primaryStage.setScene(eventPage);
-            primaryStage.setTitle("event");
+            primaryStage.setTitle(Main.getTranslation("event"));
         } catch (NotFoundException e) {
-            MainCtrl.alert("404 - EVENT NOT FOUND!");
+            MainCtrl.alert(Main.getTranslation("event_not_found_404"));
         }
     }
 
     public void showAdminPage() {
-        primaryStage.setTitle("<EventName>: admin panel");
+        primaryStage.setTitle(Main.getTranslation("admin_panel"));
         try {
             adminPageCtrl.load();
             primaryStage.setScene(adminPage);
@@ -95,7 +105,7 @@ public class MainCtrl {
     }
 
     public void showAdminCheckPage() {
-        primaryStage.setTitle("<EventName>: admin panel login");
+        primaryStage.setTitle(Main.getTranslation("admin_panel_login"));
         primaryStage.setScene(privCheckPage);
     }
 
@@ -105,7 +115,7 @@ public class MainCtrl {
      */
     public void showSettingsPage() {
         sideStage.setScene(settingsPage);
-        sideStage.setTitle("Settings");
+        sideStage.setTitle(Main.getTranslation("settings"));
 
         sideStage.showAndWait(); //waits until sideStage is closed
         startPageCtrl.initialize(); //TODO: check if this is actually sufficient to switch url
@@ -131,6 +141,5 @@ public class MainCtrl {
         alert.setContentText(msg);
         alert.showAndWait();
     }
-
 
 }

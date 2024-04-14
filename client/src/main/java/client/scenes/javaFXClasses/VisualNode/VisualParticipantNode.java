@@ -1,6 +1,6 @@
 package client.scenes.javaFXClasses.VisualNode;
 
-import client.UserData;
+import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.ParticipantNode;
 import client.utils.ServerUtils;
@@ -16,13 +16,13 @@ import javafx.scene.text.*;
 import java.util.*;
 
 public class VisualParticipantNode extends ParticipantNode {
-    //service variables:
+    // variables:
     private boolean editing = false;
     private ParticipantDTO screenshot;
 
     //create text (shared among all ParticipantNodes)
-    Text fNameText = new Text("First Name");
-    Text lNameText = new Text("Last Name");
+    Text fNameText = new Text(Main.getTranslation("f_name"));
+    Text lNameText = new Text(Main.getTranslation("l_name"));
     Text emailText = new Text("Email");
     Text ibanText = new Text("IBAN");
     Text bicText = new Text("BIC");
@@ -46,8 +46,9 @@ public class VisualParticipantNode extends ParticipantNode {
      * creates new javaFX ParticipantNode and fills it with data from ParticipantDTO
      * @param participant data to be used/displayed
      */
-    protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl) {
-        super(participant.id, participant.getFullName(), eventPageCtrl);
+    protected VisualParticipantNode(ParticipantDTO participant, EventPageCtrl eventPageCtrl,
+                                    UserData userData, ServerUtils serverUtils) {
+        super(participant.id, participant.getFullName(), eventPageCtrl, userData, serverUtils);
         this.getStyleClass().add("participants"); //set CSS class
 
         //apply style to all text
@@ -81,7 +82,6 @@ public class VisualParticipantNode extends ParticipantNode {
         gridPane.add(ibanField, 1, 3);
         gridPane.add(bicField, 1, 4);
 
-
         //set insets
         Insets insets = new Insets(10.0d);
         gridPane.getChildren().forEach(n -> gridPane.setMargin(n, insets));
@@ -92,12 +92,12 @@ public class VisualParticipantNode extends ParticipantNode {
         col1.setHgrow(Priority.ALWAYS);
         gridPane.getColumnConstraints().addAll(col0, col1);
 
-        Image img = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
+        Image img = new Image("/client/Images/edit-button-3.png", 20d, 20d, true, false);
 
 
         ImageView imgv = new ImageView(img);
         //create button
-        editSaveButton = new Button("Edit",imgv);
+        editSaveButton = new Button(Main.getTranslation("edit"),imgv);
         editSaveButton.setOnAction(this::editParticipantFields);
         editSaveButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
@@ -107,7 +107,7 @@ public class VisualParticipantNode extends ParticipantNode {
         toggleButtonPane.resize(0d, 0d); //it should shrink
 
         //delete button
-        deleteButton = new Button("Delete");
+        deleteButton = new Button(Main.getTranslation("delete"));
         deleteButton.setOnAction(this::deleteParticipant);
         deleteButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
         deleteButton.setStyle("-fx-text-fill: #ff0000;");
@@ -161,13 +161,7 @@ public class VisualParticipantNode extends ParticipantNode {
         ibanField.setEditable(editing);
         bicField.setEditable(editing);
 
-        editSaveButton.setText(editing ? "Save" : "Edit");
-        Image saveimg = new Image(getClass().getResourceAsStream(
-                "/client/Images/save.png"),20d, 20d, true, false);
-        ImageView saveview = new ImageView(saveimg);
-        Image editimg = new Image("/client/Images/edit-button-2.png", 20d, 20d, true, false);
-        ImageView editview = new ImageView(editimg);
-        editSaveButton.setGraphic(editing ? saveview : editview);
+        editSaveButton.setText(editing ? Main.getTranslation("save") : Main.getTranslation("edit"));
     }
 
     private void cancelEdit() {
@@ -184,13 +178,12 @@ public class VisualParticipantNode extends ParticipantNode {
         }
         try {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete event");
-            alert.setHeaderText("Do you want to delete this participant?");
+            alert.setTitle(Main.getTranslation("delete_event"));
+            alert.setHeaderText(Main.getTranslation("want_to_delete"));
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 // Delete participant from the server
-                ServerUtils serverUtils = new ServerUtils();
                 serverUtils.deleteParticipant(id);
 
                 // Remove the participant from the UI
@@ -214,7 +207,7 @@ public class VisualParticipantNode extends ParticipantNode {
         String updatedEmail = emailField.getText().trim();
         String updatedIban = ibanField.getText().trim();
         String updatedBic = bicField.getText().trim();
-        UUID eventId = UserData.getInstance().getCurrentUUID();
+        UUID eventId = userData.getCurrentUUID();
         return new ParticipantDTO(id, eventId, updatedFirstName,
                 updatedLastName, updatedEmail, updatedIban, updatedBic);
     }

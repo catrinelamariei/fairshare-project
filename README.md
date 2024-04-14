@@ -35,16 +35,43 @@ This page focuses on a single event and provides many ways to interact with it:
   - participants
   - tags
 - seeing statistics regarding transactions
-- *running custom queries* &rarr; **will this be implemented?**
-- creating a concise overview for a selected participant showing their incoming and outgoing debts
+- creating a concise overview for a selected participant showing their incoming or outgoing debts
 - copying an invite-code which can be shared with others to join this event
 ### Admin-page
 This page is locked behind authorization which is done through a code generated on the server-side.  
-Authorization can be achieved by entering this code on the client-side.  
+Authorization can be achieved by entering the code provided by the server on the client-side.  
 Once authorized, a token is generated and stored, allowing future admin access without need for a new code.  
 From the page, the following is possible:
 - see all events stored in the DB along with some basic data regarding them
 - sort these events on creation-date, title, last-activity (asc/desc)
 - join an event to get access to it
+- import and export events as JSON files
+### Keyboard navigation + shortcuts
+The program can be navigated using the keyboard.
+- Use tab to navigate between buttons.
+- Use arrow keys to navigate between tabs & dropdown options.
+- Use enter to select/submit.
+- Use ctrl+z to undo transactions in event-page.
+### Preferred currency
+The program supports multiple currencies and allows the user to select their preferred currency from the settings.
+- The currency is used to display sums so a user might better understand the amounts.
+- We use a third party API to convert the currency to the preferred currency.
+- Currently, we support Euro, Dollar and Swiss Francs.
+- The user can change the currency at any time.
+- Currency exchange rates are cached both on the server and in the client.
+- The proper functionality of the currency conversion is dependent on the third party API,
+- so in case of loss of connection or the third party's API stops or is changed, the rates might be incorrect or outdated.
+- On the client-side, the currency is stored in the local storage and is not shared with the server. (See RateUtils.java)
+- On the server, the rates is stored in a Set, but also in storage,
+- in the cause of loss of communication with the third party, to give a rough estimate (See CurrencyExchange.java)
+- In the database everything is stored in the base currency (Euro) and is converted to the preferred currency when displayed.
+- For settling debts, both the base currency and the preferred currency are used.
 
 ---
+## Technical details
+### WebSockets
+- We use WebSockets to update the admin page in real-time.
+- When an update occurs that would be relevant to the admin page,
+- the server sends a message to the admin page.
+- This includes: adding, updating or deleting an event, transaction, participant, and also when a JSON dump is uploaded
+- For implementation see: ServerUtils.java, AdminPageCtrl.java, WebSocketConfig.java and the respective controllers.

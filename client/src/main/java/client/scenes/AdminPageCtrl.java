@@ -1,10 +1,9 @@
 package client.scenes;
 
-import client.MainCtrl;
+import client.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualEventNode;
-import client.utils.EventJsonUtil;
-import client.utils.ServerUtils;
+import client.utils.*;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import commons.Event;
@@ -15,8 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -154,7 +152,8 @@ public class AdminPageCtrl implements Initializable {
 
     public void toggleAscDesc() {
         ascending = !ascending;
-        ascDescButton.setText(ascending ? "Ascending" : "Descending");
+        ascDescButton.setText(ascending ? Main.getTranslation("ascending")
+                : Main.getTranslation("descending"));
         reSort();
     }
 
@@ -175,7 +174,7 @@ public class AdminPageCtrl implements Initializable {
     private void uploadJson() throws IOException {
         //get file
         FileChooser fileCHooser = new FileChooser();
-        fileCHooser.setTitle("Load JSON");
+        fileCHooser.setTitle(Main.getTranslation("load_json"));
         FileChooser.ExtensionFilter extensionFilter =
             new FileChooser.ExtensionFilter("JSON", "*.json");
         fileCHooser.getExtensionFilters().add(extensionFilter);

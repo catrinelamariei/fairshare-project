@@ -1,6 +1,6 @@
 package client.utils;
 
-import client.MainCtrl;
+import client.*;
 import client.scenes.EventPageCtrl;
 import client.scenes.javaFXClasses.DataNode.*;
 import client.scenes.javaFXClasses.NodeFactory;
@@ -37,8 +37,8 @@ public class UndoServiceTest {
         this.eventPageCtrl = mock(EventPageCtrl.class);
         this.eventPageCtrl.transactions = mock(VBox.class);
         this.server = mock(ServerUtils.class);
-        this.nodeFactory = spy (new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server,
-            spy(new EventJsonUtil(server))));
+        this.nodeFactory = spy(new PojoNodeFactory(mock(MainCtrl.class), eventPageCtrl, server,
+            spy(new EventJsonUtil(server)), UserData.load()));
         this.undoService = new UndoService(new TestProvider<>(eventPageCtrl), server, nodeFactory);
 
 

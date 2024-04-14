@@ -19,7 +19,6 @@ import client.scenes.*;
 import client.scenes.javaFXClasses.NodeFactory;
 import client.scenes.javaFXClasses.VisualNode.VisualNodeFactory;
 import client.utils.*;
-import client.utils.EventJsonUtil;
 import com.google.inject.*;
 
 public class MyModule extends AbstractModule {
@@ -36,5 +35,10 @@ public class MyModule extends AbstractModule {
         bind(UndoService.class).in(Scopes.SINGLETON);
         bind(EventJsonUtil.class).in(Scopes.SINGLETON);
         binder().disableCircularProxies();
+    }
+
+    @Provides @Singleton
+    private UserData load() {
+        return UserData.load();
     }
 }

@@ -11,21 +11,22 @@ import java.util.ResourceBundle;
 import static com.google.inject.Guice.createInjector;
 
 public class Main extends Application {
-
     public static final Injector INJECTOR = createInjector(new MyModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
     private static ResourceBundle languageBundle;
     private static Stage primaryStage;
+    private final UserData userData = INJECTOR.getInstance(UserData.class);
+
     public static void main(String[] args) {
         launch();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //UserData.getInstance().getLangCode()
+        //userData.getLangCode()
         //Locale locale = Locale.getDefault(); // Get default locale
         this.primaryStage = primaryStage;
-        initializeUI(UserData.getInstance().getLanguageCode());
+        initializeUI(userData.getLanguageCode());
 
         primaryStage.onCloseRequestProperty().set(e -> {
             try {
@@ -34,7 +35,9 @@ public class Main extends Application {
                 ex.printStackTrace();
             }
         });
+
         primaryStage.show();
+
     }
 
     public static void initializeUI(String langCode) {
@@ -57,6 +60,7 @@ public class Main extends Application {
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
                 privCheckPage, startPage, settingsPage);
+
     }
 
     public static ResourceBundle loadLanguages(String languageCode) {
