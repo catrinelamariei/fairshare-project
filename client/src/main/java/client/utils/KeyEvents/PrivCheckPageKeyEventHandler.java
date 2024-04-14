@@ -4,10 +4,10 @@ import client.scenes.PrivCheckPageCtrl;
 import com.google.inject.Inject;
 
 public class PrivCheckPageKeyEventHandler implements GeneralKeyEventHandler {
-    private PrivCheckPageCtrl privCheckPageCtrl;
+    private final PrivCheckPageCtrl privCheckPageCtrl;
 
     @Inject
-    private PrivCheckPageKeyEventHandler(PrivCheckPageCtrl privCheckPageCtrl) {
+    public PrivCheckPageKeyEventHandler(PrivCheckPageCtrl privCheckPageCtrl) {
         this.privCheckPageCtrl = privCheckPageCtrl;
     }
 
