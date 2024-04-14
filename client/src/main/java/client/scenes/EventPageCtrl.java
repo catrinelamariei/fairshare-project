@@ -190,6 +190,7 @@ public class EventPageCtrl implements Initializable {
         this.userData = userData;
     }
 
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:MethodLength"})
     public void initialize(URL location, ResourceBundle resources) {
         currencyCodeInput.getItems().addAll("EUR", "USD", "CHF");
         //radio buttons
