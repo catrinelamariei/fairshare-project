@@ -51,4 +51,26 @@ The program can be navigated using the keyboard.
 - Use arrow keys to navigate between tabs & dropdown options.
 - Use enter to select/submit.
 - Use ctrl+z to undo transactions in event-page.
+### Preferred currency
+The program supports multiple currencies and allows the user to select their preferred currency from the settings.
+- The currency is used to display sums so a user might better understand the amounts.
+- We use a third party API to convert the currency to the preferred currency.
+- Currently, we support Euro, Dollar and Swiss Francs.
+- The user can change the currency at any time.
+- Currency exchange rates are cached both on the server and in the client.
+- The proper functionality of the currency conversion is dependent on the third party API,
+- so in case of loss of connection or the third party's API stops or is changed, the rates might be incorrect or outdated.
+- On the client-side, the currency is stored in the local storage and is not shared with the server. (See RateUtils.java)
+- On the server, the rates is stored in a Set, but also in storage,
+- in the cause of loss of communication with the third party, to give a rough estimate (See CurrencyExchange.java)
+- In the database everything is stored in the base currency (Euro) and is converted to the preferred currency when displayed.
+- For settling debts, both the base currency and the preferred currency are used.
+
 ---
+## Technical details
+### WebSockets
+- We use WebSockets to update the admin page in real-time.
+- When an update occurs that would be relevant to the admin page,
+- the server sends a message to the admin page.
+- This includes: adding, updating or deleting an event, transaction, participant, and also when a JSON dump is uploaded
+- For implementation see: ServerUtils.java, AdminPageCtrl.java, WebSocketConfig.java and the respective controllers.
