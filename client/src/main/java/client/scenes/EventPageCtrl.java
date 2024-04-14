@@ -348,7 +348,44 @@ public class EventPageCtrl implements Initializable {
                 }
             });
         });
+
+        subscribe2();
+
+
     }
+
+    private void subscribe2 (){
+        server.registerForUpdatesTransaction(t ->{
+            Platform.runLater(()->{
+                if(t.eventId.equals(userData.getCurrentUUID())){
+                    eventDTO = server.getEvent(userData.getCurrentUUID());
+                    transactions.getChildren().clear();
+                    transactions.getChildren().addAll(eventDTO.transactions.stream()
+                            .map(nodeFactory::createTransactionNode).toList());
+                }
+            });
+        });
+
+        server.registerForTransactionDeletionUpdates(id ->{
+            Platform.runLater(()->{
+                if(eventDTO.transactions.stream().anyMatch(t->t.getId().equals(id))){
+                    EventDTO e = server.getEvent(userData.getCurrentUUID());
+                    transactions.getChildren().clear();
+                    transactions.getChildren().addAll(e.transactions.stream()
+                            .map(nodeFactory::createTransactionNode).toList());
+
+                }
+            });
+        });
+
+        server.registerForEventNameUpdates(eventName -> {
+            Platform.runLater(() -> {
+                //eventTitle.setText(eventName);
+                load();
+            });
+        });
+    }
+
 
     private void loadTransactions() {
         transactions.getChildren().clear();
@@ -1189,6 +1226,10 @@ public class EventPageCtrl implements Initializable {
                 userData);
         totalExpenses = totalExpenses.multiply(BigDecimal.valueOf(rate.rate));
         return (String.format("%.2f", totalExpenses.doubleValue()));
+    }
+
+    public void stop(){
+        server.stop();
     }
 
 }

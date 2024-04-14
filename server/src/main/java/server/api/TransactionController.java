@@ -22,8 +22,8 @@ public class TransactionController {
     private final TransactionRepository repo;
     private final DTOtoEntity d2e;
     private final SimpMessagingTemplate messagingTemplate;
-    private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
-    private Map<Object, Consumer<UUID>> deletionListeners = new ConcurrentHashMap<>();
+    //private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    private final Map<Object, Consumer<UUID>> deletionListeners = new ConcurrentHashMap<>();
 
 
 
@@ -40,6 +40,10 @@ public class TransactionController {
             @RequestBody TransactionDTO ts) {
         if(ts == null || !ts.validate()) return ResponseEntity.badRequest().build();
         TransactionDTO t = new TransactionDTO(d2e.create(ts));
+        listeners.values().forEach(listener -> {
+            listener.accept(t);
+        });
+
         EventDTO eventDTO = new EventDTO();
         eventDTO.id = t.eventId;
         eventDTO = new EventDTO(d2e.get(eventDTO));
@@ -85,16 +89,26 @@ public class TransactionController {
     public ResponseEntity<TransactionDTO> deleteTransactionById(@PathVariable("id") UUID id) {
         if(id==null) return ResponseEntity.badRequest().build();
         if (!repo.existsById(id)) return ResponseEntity.notFound().build();
-        Transaction transaction = repo.getReferenceById(id);
-
-        TransactionDTO transactionDTO = new TransactionDTO(transaction);
-        repo.delete(transaction);
-
+        Optional<Transaction> t = repo.findById(id);
+        Transaction transaction = t.get();
         if(messagingTemplate != null) {
-            messagingTemplate.convertAndSend("/topic/events", transactionDTO.getEventId());
+            messagingTemplate.convertAndSend("/topic/events", new TransactionDTO(transaction)
+                    .getEventId());
         }
+        repo.delete(transaction);
+        notifyListenersDeletion(id);
         return ResponseEntity.ok().build();
+
     }
+
+    private void notifyListenersDeletion(UUID id) {
+        deletionListeners.values().forEach(listener -> {
+            listener.accept(id);
+        });
+    }
+    //private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+   // private Map<Object, Consumer<TransactionDTO>> listeners = new HashMap<>();
+    private final Map<Object, Consumer<TransactionDTO>> listeners = new ConcurrentHashMap<>();
 
     @GetMapping("/updates")
     public DeferredResult<ResponseEntity<TransactionDTO>> getUpdates() {
@@ -113,20 +127,17 @@ public class TransactionController {
     @GetMapping("/deletion/updates")
     public DeferredResult<ResponseEntity<UUID>> registerForTransactionDeletionUpdates() {
         var noContent = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        var deferredResult = new DeferredResult<ResponseEntity<UUID>>(5000L, noContent);
+        var res = new DeferredResult<ResponseEntity<UUID>>(5000L, noContent);
         var key = new Object();
 
-        // Register a listener for deletion updates
-        deletionListeners.put(key, deletedTransactionId -> {
-            deferredResult.setResult(ResponseEntity.ok(deletedTransactionId));
+        deletionListeners.put(key, t ->{
+            res.setResult(ResponseEntity.ok(t));
         });
-
-        // Remove the listener when the long polling request is completed
-        deferredResult.onCompletion(() -> {
+        res.onCompletion(()->{
             deletionListeners.remove(key);
         });
 
-        return deferredResult;
+        return res;
     }
 
 }

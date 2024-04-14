@@ -35,7 +35,9 @@ public class Main extends Application {
                 ex.printStackTrace();
             }
         });
+
         primaryStage.show();
+
     }
 
     public static void initializeUI(String langCode) {
@@ -58,6 +60,7 @@ public class Main extends Application {
         var mainCtrl = INJECTOR.getInstance(MainCtrl.class);
         mainCtrl.initialize(primaryStage, mainPage, eventPage, adminPage,
                 privCheckPage, startPage, settingsPage);
+
     }
 
     public static ResourceBundle loadLanguages(String languageCode) {

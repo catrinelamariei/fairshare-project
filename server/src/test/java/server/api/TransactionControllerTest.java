@@ -128,10 +128,16 @@ public class TransactionControllerTest {
 
     @Test
     public void deleteTransactionById() {
+//        when(repo.existsById(transaction.id)).thenReturn(true);
+//        when(repo.getReferenceById(transaction.id)).thenReturn(transaction);
+//        ResponseEntity<TransactionDTO> response = controller.deleteTransactionById(transaction.id);
+//        verify(repo).delete(transaction);
+
         when(repo.existsById(transaction.id)).thenReturn(true);
-        when(repo.getReferenceById(transaction.id)).thenReturn(transaction);
+        when(repo.findById(transaction.id)).thenReturn(Optional.of(transaction));
         ResponseEntity<TransactionDTO> response = controller.deleteTransactionById(transaction.id);
         verify(repo).delete(transaction);
+        assertEquals(ResponseEntity.ok().build(), response);
     }
 
     @Test
