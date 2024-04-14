@@ -3,12 +3,33 @@
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">
 
 <!--<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: darkgray;" stylesheets="@/client/scenes/stylesheets/EventPage.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.EventPageCtrl">-->
@@ -109,7 +130,7 @@
                                                                            <ChoiceBox fx:id="payerFilter" prefHeight="25.0" prefWidth="75.0" GridPane.rowIndex="1" />
                                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%including" GridPane.columnIndex="1" />
                                                                            <ChoiceBox fx:id="participantFilter" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                                           <Button mnemonicParsing="false" onAction="#filterTransactions" text="%filter" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                                                           <Button fx:id="filterButton" mnemonicParsing="false" onAction="#filterTransactions" text="%filter" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                                                        </children>
                                                                        <HBox.margin>
                                                                            <Insets left="5.0" />
@@ -567,7 +588,7 @@
                                        <children>
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%tag_name" />
                                           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="%tag_color" GridPane.rowIndex="1" />
-                                          <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="%create_tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                          <Button fx:id="createTagButton" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#createTag" text="%create_tag" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                                           <ComboBox fx:id="tagColor" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                           <TextField fx:id="tagNameInput" GridPane.columnIndex="1" />
                                        </children>

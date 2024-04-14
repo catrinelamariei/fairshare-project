@@ -10,6 +10,7 @@ import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 
@@ -99,6 +100,11 @@ public class VisualParticipantNode extends ParticipantNode {
         //create button
         editSaveButton = new Button(Main.getTranslation("edit"),imgv);
         editSaveButton.setOnAction(this::editParticipantFields);
+        editSaveButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.editParticipantFields(new ActionEvent());
+            }
+        });
         editSaveButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
 
         //create pane
@@ -109,6 +115,11 @@ public class VisualParticipantNode extends ParticipantNode {
         //delete button
         deleteButton = new Button(Main.getTranslation("delete"));
         deleteButton.setOnAction(this::deleteParticipant);
+        deleteButton.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ENTER){
+                this.deleteParticipant(new ActionEvent());
+            }
+        });
         deleteButton.setFont(Font.font("System", FontWeight.BOLD, 20.0));
         deleteButton.setStyle("-fx-text-fill: #ff0000;");
         // Add delete button to the layout

@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 
@@ -77,6 +78,11 @@ public class VisualTransactionNode extends TransactionNode {
         Button deleteTransactionButton = new Button(Main.getTranslation("delete"));
         deleteTransactionButton.setStyle("-fx-text-fill: #ff0000;");
         deleteTransactionButton.setOnAction(this::deleteTransaction);
+        deleteTransactionButton.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                this.deleteTransaction(new ActionEvent());
+            }
+        });
         deleteTransactionButton.setFont(Font.font("System", FontWeight.BOLD, 14.0));
 
         // Edit Button: some options below
@@ -89,6 +95,11 @@ public class VisualTransactionNode extends TransactionNode {
         Button btn = new Button(Main.getTranslation("edit"), imgv);
         btn.setFont(Font.font("System", FontWeight.BOLD, 14.0));
         btn.setOnAction(this::editTransaction); //attach method to button
+        btn.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                this.editTransaction(new ActionEvent());
+            }
+        });
 
         //assembling it all
         this.getChildren().addAll(date, body, btn, deleteTransactionButton); //add all nodes to HBox
