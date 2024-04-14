@@ -1117,9 +1117,9 @@ public class EventPageCtrl implements Initializable {
             }
 
         }
-        if (tagToAmount.get("Uncategorized").compareTo(BigDecimal.ZERO) == 0) {
-            tagToAmount.remove("Uncategorized");
-            tagToColor.remove("Uncategorized");
+        if (tagToAmount.get("uncategorized").compareTo(BigDecimal.ZERO) == 0) {
+            tagToAmount.remove("uncategorized");
+            tagToColor.remove("uncategorized");
         }
 
         final BigDecimal totalAmount = transactions.stream()
