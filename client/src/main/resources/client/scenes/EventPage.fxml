@@ -23,7 +23,7 @@
               <children>
                   <HBox maxHeight="-Infinity" prefHeight="100.0" prefWidth="98.0">
                       <children>
-                          <Button fx:id="homeButton" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#gotoHome" prefHeight="27.0" prefWidth="64.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%text_home">
+                          <Button fx:id="homeButton" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#gotoHome" prefHeight="31.0" prefWidth="98.0" style="-fx-background-color: BCCEF8; -fx-border-color: #98A8F8;" text="%text_home">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -246,7 +246,7 @@
                                                    </AnchorPane>
                                                    <HBox alignment="CENTER">
                                                        <children>
-                                                           <Button fx:id="submitTransaction" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateTransaction" prefWidth="81.0" text="%submit">
+                                                           <Button fx:id="submitTransaction" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateTransaction" prefHeight="40.0" prefWidth="130.0" text="%submit">
                                                                <font>
                                                                    <Font size="18.0" />
                                                                </font>
@@ -254,7 +254,7 @@
                                                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                                </HBox.margin>
                                                            </Button>
-                                                           <Button fx:id="cancelTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="339.0" layoutY="30.0" mnemonicParsing="false" onAction="#clearTransaction" prefWidth="81.0" text="%text_cancel" textFill="#ff2424be">
+                                                           <Button fx:id="cancelTransaction" alignment="CENTER" contentDisplay="CENTER" layoutX="339.0" layoutY="30.0" mnemonicParsing="false" onAction="#clearTransaction" prefHeight="40.0" prefWidth="130.0" text="%text_cancel" textFill="#ff2424be">
                                                                <font>
                                                                    <Font size="18.0" />
                                                                </font>
@@ -522,7 +522,7 @@
                                        </children>
                                    </VBox>
                            <VBox fx:id="legendBox" alignment="CENTER" layoutX="538.0" layoutY="230.0" spacing="10.0" />
-                                   <Button fx:id="updateChart" layoutX="21.0" layoutY="25.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="126.0" style="-fx-background-color: #98A8F8; -fx-background-color: #BCCEF8;" text="\%update_stats" />
+                                   <Button fx:id="updateChart" layoutX="21.0" layoutY="25.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="221.0" style="-fx-background-color: #98A8F8; -fx-background-color: #BCCEF8;" text="\%update_stats" />
                                </children>
                            </AnchorPane>
                     </content>
