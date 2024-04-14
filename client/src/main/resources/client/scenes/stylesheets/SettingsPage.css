@@ -18,3 +18,8 @@
     -fx-border-color: #B86667;
     -fx-text-fill: #410000;
 }
+
+.button:focused {
+    -fx-border-color: #000000 !important;
+    -fx-border-width: 2px !important;
+}

@@ -5,9 +5,11 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.DTOs.EventDTO;
 import jakarta.ws.rs.*;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
 import java.io.File;
@@ -16,9 +18,13 @@ import java.util.*;
 import static client.UserData.Pair;
 
 public class StartPageCtrl {
-    private ServerUtils serverUtils;
-    private MainCtrl mainCtrl;
-    private Main main;
+    //services
+    private final ServerUtils serverUtils;
+    private final MainCtrl mainCtrl;
+    private final Main main;
+    private final UserData userData;
+
+    //FXML
     @FXML
     private Button createButton;
     @FXML
@@ -30,22 +36,62 @@ public class StartPageCtrl {
     @FXML
     private VBox recentEventsVBox;
     @FXML
+    private Button adminButton;
+    @FXML
+    private Button settingsButton;
+    @FXML
     public Region veil;
 
 
     @Inject
-    public StartPageCtrl(ServerUtils serverUtils, MainCtrl mainCtrl, Main main) {
+    public StartPageCtrl(ServerUtils serverUtils, MainCtrl mainCtrl, Main main, UserData userData) {
         this.serverUtils = serverUtils;
         this.mainCtrl = mainCtrl;
         this.main = main;
+        this.userData = userData;
     }
 
     @FXML
     public void initialize() {
 
         //event links
-        recentEventsVBox.getChildren().setAll(UserData.getInstance().getRecentUUIDs()
+        recentEventsVBox.getChildren().setAll(userData.getRecentUUIDs()
             .stream().map(EventHyperlink::new).toList());
+
+        setTraversalPolicy();
+
+        // Set the initial focus to the first node in custom order
+        Platform.runLater(() -> newEvent.requestFocus());
+    }
+
+    private void setTraversalPolicy() {
+        List<Node> nodesInOrder = new ArrayList<>(List.of(newEvent, createButton,
+                joinedEvent, joinButton));
+        // Assuming recentEventsVBox contains Hyperlink nodes
+        nodesInOrder.addAll(recentEventsVBox.getChildren());
+        nodesInOrder.add(settingsButton);
+        nodesInOrder.add(adminButton);
+
+        // Add an event filter to each node
+        for (int i = 0; i < nodesInOrder.size(); i++) {
+            int index = i;
+            nodesInOrder.get(i).addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                if (event.getCode() == KeyCode.TAB) {
+                    Node nextNode;
+                    if (event.isShiftDown()) {
+                        // Move to the previous node in the list
+                        int previousIndex = (index - 1 + nodesInOrder.size()) % nodesInOrder.size();
+                        nextNode = nodesInOrder.get(previousIndex);
+                    } else {
+                        // Move to the next node in the list
+                        int nextIndex = (index + 1) % nodesInOrder.size();
+                        nextNode = nodesInOrder.get(nextIndex);
+                    }
+                    nextNode.requestFocus();
+                    event.consume();
+                }
+            });
+        }
     }
 
 
@@ -58,13 +104,13 @@ public class StartPageCtrl {
             if (text == null || text.isEmpty()) throw new IllegalArgumentException();
             e = serverUtils.postEvent(new EventDTO(null, text));
         } catch (IllegalArgumentException ex) {
-            MainCtrl.alert("Please enter a valid event name.");
+            MainCtrl.alert(Main.getTranslation("invalid_event_name"));
             return;
         } catch (WebApplicationException ex) {
             MainCtrl.alert(ex.getMessage());
             return;
         }catch (ProcessingException ex){
-            MainCtrl.alert("Server is not available");
+            MainCtrl.alert(Main.getTranslation("server_not_available"));
             return;
         }
 
@@ -75,7 +121,9 @@ public class StartPageCtrl {
         setCurrentEvent(pair);
 
         //confirmation dialog
-        MainCtrl.inform("Event","Event \"" + text + "\" Created!");
+        MainCtrl.inform(Main.getTranslation("event"),
+                Main.getTranslation("event_creation_start")
+                + text + Main.getTranslation("event_creation_end"));
         mainCtrl.showEventPage();
     }
 
@@ -84,7 +132,7 @@ public class StartPageCtrl {
      * @param pair pair of ID (of event) and name (local stored to use if event is deleted)
      */
     private void setCurrentEvent(Pair<UUID, String> pair) {
-        UserData.getInstance().setCurrentUUID(pair);
+        userData.setCurrentUUID(pair);
         Optional<Node> hyperlinkMatch = recentEventsVBox.getChildren().stream()
             .filter(ehl -> ((EventHyperlink) ehl).pair.getKey().equals(pair.getKey())).findFirst();
         if (hyperlinkMatch.isPresent()) { //hyperlink already present? move to top
@@ -110,18 +158,18 @@ public class StartPageCtrl {
                 joinedEvent.clear();
                 System.out.println(ehl.pair.getValue() + " Event joined");
                 recentEventsVBox.getChildren().add(ehl);
-                UserData.getInstance().setCurrentUUID(ehl.pair);
+                userData.setCurrentUUID(ehl.pair);
                 eventPage();
             }catch(NotFoundException e){
-                MainCtrl.alert("Event not found: no event found with said UUID");
+                MainCtrl.alert(Main.getTranslation("event_not_found_2"));
             } catch (IllegalArgumentException e) {
                 MainCtrl.alert(String.format(
-                        "The following is not a properly structured invite code\n[%s]", text));
+                        Main.getTranslation("invite_code_error") + "\n[%s]", text));
             }
 
         } else {
             // Display an error message if the input is invalid
-            MainCtrl.alert("Event not found: code was empty or null");
+            MainCtrl.alert(Main.getTranslation("event_not_found_3"));
         }
     }
 
@@ -152,7 +200,7 @@ public class StartPageCtrl {
             try {
                 this.pair = new Pair<>(p.getKey(), serverUtils.getEvent(p.getKey()).getName());
                 this.setOnAction(event -> {
-                    UserData.getInstance().setCurrentUUID(this.pair);
+                    userData.setCurrentUUID(this.pair);
                     recentEventsVBox.getChildren().remove(this);
                     recentEventsVBox.getChildren().add(0, this);
                     eventPage();
